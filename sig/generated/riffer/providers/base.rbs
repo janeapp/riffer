@@ -1,9 +1,9 @@
 # Generated from lib/riffer/providers/base.rb with RBS::Inline
 
 class Riffer::Providers::Base
-  self.@semconv_provider_name: String?
+  self.@pricing_key: Symbol?
 
-  @provider_key: Symbol?
+  self.@semconv_provider_name: String?
 
   @configured_client: untyped
 
@@ -15,10 +15,6 @@ class Riffer::Providers::Base
 
   WIRE_SEPARATOR: String
 
-  # The name the provider is registered under, which prices and traces it.
-  # Repository.build passes it; nil leaves the provider unpriced.
-  attr_reader provider_key: Symbol?
-
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -27,9 +23,16 @@ class Riffer::Providers::Base
   # : () -> String
   def self.semconv_provider_name: () -> String
 
+  # The provider half of a pricing id (+"<pricing_key>/<model>"+). Shared by
+  # every registration of the class, so each class has one price list.
+  # Subclasses inherit an overridden key; otherwise it derives from the class name.
   # --
-  # : (?key: (String | Symbol)?, ?client: untyped) -> void
-  def initialize: (?key: (String | Symbol)?, ?client: untyped) -> void
+  # : () -> Symbol?
+  def self.pricing_key: () -> Symbol?
+
+  # --
+  # : (?client: untyped) -> void
+  def initialize: (?client: untyped) -> void
 
   # --
   # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant

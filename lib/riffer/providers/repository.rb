@@ -4,8 +4,7 @@
 module Riffer::Providers::Repository
   extend self
 
-  # @rbs @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
-  # @rbs @options: Hash[Symbol, Hash[Symbol, untyped]]
+  # @rbs @registrations: Hash[Symbol, ^() -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)]
 
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
@@ -17,44 +16,35 @@ module Riffer::Providers::Repository
     mock: -> { Riffer::Providers::Mock },
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  @registrations = {} #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
-  @options = {} #: Hash[Symbol, Hash[Symbol, untyped]]
+  @registrations = {} #: Hash[Symbol, ^() -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)]
 
   # Not synchronized — register during boot, before concurrent generation
-  # begins. +options+ are passed to +new+ on every build.
+  # begins.
   #--
-  #: ((String | Symbol), **untyped) { () -> singleton(Riffer::Providers::Base) } -> void
-  def register(identifier, **options, &factory)
-    raise Riffer::ArgumentError, "key: is set from the identifier, not an option" if options.key?(:key)
-
-    key = identifier.to_sym
-    @registrations[key] = factory
-    @options[key] = options
+  #: ((String | Symbol)) { () -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base) } -> void
+  def register(identifier, &factory)
+    @registrations[identifier.to_sym] = factory
   end
 
   #--
   #: ((String | Symbol)) -> void
   def unregister(identifier)
-    key = identifier.to_sym
-    @registrations.delete(key)
-    @options.delete(key)
+    @registrations.delete(identifier.to_sym)
   end
 
   #--
-  #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
+  #: ((String | Symbol)) -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)?
   def find(identifier)
     key = identifier.to_sym
     (@registrations[key] || REPO[key])&.call
   end
 
+  # The block runs on every call, so each build is a fresh provider — memoize
+  # an expensive client yourself, e.g. behind the +client:+ Proc.
   #--
   #: ((String | Symbol)) -> Riffer::Providers::Base?
   def build(identifier)
-    key = identifier.to_sym
-    provider_class = find(key)
-    return nil unless provider_class
-
-    options = @options[key] || {} #: Hash[Symbol, untyped]
-    provider_class.new(key: key, **options)
+    provider = find(identifier)
+    provider.is_a?(Class) ? provider.new : provider
   end
 end

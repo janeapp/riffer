@@ -98,18 +98,21 @@ describe Riffer::Evals::Judge do
     end
   end
 
-  describe "with a provider registered under a named identifier with options" do
-    it "builds the provider with those options and the registered key" do
-      Riffer::Providers::Repository.register(
-        :named_instance,
-        responses: [{ content: "", tool_calls: [{ name: "evaluation", arguments: { score: 1.0, reason: "ok" } }] }],
-      ) { Riffer::Providers::Mock }
+  describe "with a provider instance registered under a named identifier" do
+    it "uses the instance the registration builds, with its client" do
+      client = Object.new
+      Riffer::Providers::Repository.register(:named_instance) do
+        Riffer::Providers::Mock.new(
+          responses: [{ content: "", tool_calls: [{ name: "evaluation", arguments: { score: 1.0, reason: "ok" } }] }],
+          client: client,
+        )
+      end
       judge = Riffer::Evals::Judge.new(model: "named_instance/eval-model")
 
       result = judge.evaluate(instructions: "Assess.", input: "in", output: "out")
 
       expect(result[:score]).must_equal 1.0
-      expect(judge.send(:provider_instance).provider_key).must_equal :named_instance
+      expect(judge.send(:provider_instance).send(:client)).must_be_same_as client
     ensure
       Riffer::Providers::Repository.unregister(:named_instance)
     end

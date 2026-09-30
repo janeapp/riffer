@@ -6,6 +6,9 @@ require "json"
 class BaseTestNamedProvider < Riffer::Providers::Base
 end
 
+class BaseTestInternalOpenAI < Riffer::Providers::OpenAI
+end
+
 class ChatTracingExplodingProvider < Riffer::Providers::Mock
   private
 
@@ -53,6 +56,24 @@ describe Riffer::Providers::Base do
 
     it "falls back to unknown for anonymous classes" do
       expect(Class.new(Riffer::Providers::Base).semconv_provider_name).must_equal "unknown"
+    end
+  end
+
+  describe ".pricing_key" do
+    it "derives the snake_cased class name by default" do
+      expect(BaseTestNamedProvider.pricing_key).must_equal :base_test_named_provider
+    end
+
+    it "derives the built-in name for providers without an override" do
+      expect(Riffer::Providers::AmazonBedrock.pricing_key).must_equal :amazon_bedrock
+    end
+
+    it "is inherited by subclasses of a provider that overrides it" do
+      expect(BaseTestInternalOpenAI.pricing_key).must_equal :openai
+    end
+
+    it "is nil for anonymous classes" do
+      expect(Class.new(Riffer::Providers::Base).pricing_key).must_be_nil
     end
   end
 
@@ -369,22 +390,6 @@ describe Riffer::Providers::Base do
           "gen_ai.request.model" => "riffer-1",
         },
       )
-    end
-
-    it "omits riffer.provider.key on a provider built with .new" do
-      provider.generate_text(prompt: "Hello", model: "riffer-1")
-
-      expect(chat_span.attributes).wont_include "riffer.provider.key"
-    end
-
-    it "stamps riffer.provider.key with the registered name when built through the registry" do
-      Riffer::Providers::Repository.register(:internal_mock) { Riffer::Providers::Mock }
-      registered = Riffer::Providers::Repository.build(:internal_mock)
-      registered.generate_text(prompt: "Hello", model: "riffer-1")
-
-      expect(chat_span.attributes["riffer.provider.key"]).must_equal "internal_mock"
-    ensure
-      Riffer::Providers::Repository.unregister(:internal_mock)
     end
 
     it "records token usage when reported" do

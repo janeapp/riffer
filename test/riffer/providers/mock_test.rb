@@ -495,7 +495,7 @@ describe Riffer::Providers::Mock do
 
     it "attaches cost to token usage when the model is priced" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
-      provider = Riffer::Providers::Repository.build(:mock)
+      provider = Riffer::Providers::Mock.new
       provider.stub_response(
         "hi",
         token_usage: Riffer::Providers::TokenUsage.new(
@@ -509,7 +509,7 @@ describe Riffer::Providers::Mock do
     end
 
     it "leaves cost nil when the model is unpriced" do
-      provider = Riffer::Providers::Repository.build(:mock)
+      provider = Riffer::Providers::Mock.new
       provider.stub_response(
         "hi",
         token_usage: Riffer::Providers::TokenUsage.new(
@@ -524,7 +524,7 @@ describe Riffer::Providers::Mock do
 
     it "carries cost on the streamed TokenUsageDone event" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
-      provider = Riffer::Providers::Repository.build(:mock)
+      provider = Riffer::Providers::Mock.new
       provider.stub_response(
         "hi",
         token_usage: Riffer::Providers::TokenUsage.new(
@@ -538,43 +538,41 @@ describe Riffer::Providers::Mock do
       expect(usage_done.token_usage.cost).must_equal 18.0
     end
 
-    it "prices two registrations of the same provider class under their own keys" do
+    it "prices two registrations of the same provider class from one pricing_key entry" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
-      Riffer.config.pricing.set("mock_two/riffer-1", input: 1.0, output: 1.0)
-      Riffer::Providers::Repository.register(:mock_two) { Riffer::Providers::Mock }
       usage = Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000)
+      Riffer::Providers::Repository.register(:mock_one) { Riffer::Providers::Mock.new(client: Object.new) }
+      Riffer::Providers::Repository.register(:mock_two) { Riffer::Providers::Mock.new(client: Object.new) }
 
-      first = Riffer::Providers::Repository.build(:mock)
-      first.stub_response("hi", token_usage: usage)
-      second = Riffer::Providers::Repository.build(:mock_two)
-      second.stub_response("hi", token_usage: usage)
+      costs = %i[mock_one mock_two].map do |id|
+        provider = Riffer::Providers::Repository.build(id)
+        provider.stub_response("hi", token_usage: usage)
+        provider.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
+      end
 
-      first_cost = first.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
-      second_cost = second.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
-
-      expect([first_cost, second_cost]).must_equal [18.0, 2.0]
+      expect(costs).must_equal [18.0, 18.0]
     ensure
-      Riffer::Providers::Repository.unregister(:mock_two)
+      %i[mock_one mock_two].each { |id| Riffer::Providers::Repository.unregister(id) }
     end
 
-    it "accepts a registered client" do
-      client = Object.new
-      Riffer::Providers::Repository.register(:mock_client, client: client) { Riffer::Providers::Mock }
-
-      expect(Riffer::Providers::Repository.build(:mock_client).send(:client)).must_be_same_as client
-    ensure
-      Riffer::Providers::Repository.unregister(:mock_client)
-    end
-
-    it "leaves a provider built with .new unpriced" do
-      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
-      provider = Riffer::Providers::Mock.new
+    it "ignores a pricing entry keyed by the registration name" do
+      Riffer.config.pricing.set("mock_named/riffer-1", input: 3.0, output: 15.0)
+      Riffer::Providers::Repository.register(:mock_named) { Riffer::Providers::Mock.new }
+      provider = Riffer::Providers::Repository.build(:mock_named)
       provider.stub_response(
         "hi",
         token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000),
       )
 
       expect(provider.generate_text(prompt: "x", model: "riffer-1").token_usage.cost).must_be_nil
+    ensure
+      Riffer::Providers::Repository.unregister(:mock_named)
+    end
+
+    it "accepts a constructor client" do
+      client = Object.new
+
+      expect(Riffer::Providers::Mock.new(client: client).send(:client)).must_be_same_as client
     end
   end
   describe "reasoning" do

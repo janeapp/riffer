@@ -23,6 +23,12 @@ describe Riffer::Providers::AzureOpenAI do
     end
   end
 
+  describe ".pricing_key" do
+    it "returns the built-in registry name" do
+      expect(Riffer::Providers::AzureOpenAI.pricing_key).must_equal :azure_openai
+    end
+  end
+
   describe "#initialize" do
     it "creates the provider" do
       provider = Riffer::Providers::AzureOpenAI.new

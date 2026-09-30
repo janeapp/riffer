@@ -17,8 +17,12 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : (?key: (String | Symbol)?, ?client: untyped) -> void
-  def initialize: (?key: (String | Symbol)?, ?client: untyped) -> void
+  # : () -> Symbol
+  def self.pricing_key: () -> Symbol
+
+  # --
+  # : (?client: untyped) -> void
+  def initialize: (?client: untyped) -> void
 
   # --
   # : (Riffer::Messages::User::FilePart) -> Symbol

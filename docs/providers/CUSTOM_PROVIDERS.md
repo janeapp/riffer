@@ -123,11 +123,11 @@ end
 
 ## Client resolution
 
-If your provider defines `initialize`, it must accept and forward `key:` to `super` — `Repository.build` passes the registered name as `key:` on every build, and an `initialize` that doesn't accept it raises `ArgumentError`. Accept and forward `client:` too so a registration can give it a per-instance client (see "Registering Your Provider" below):
+If your provider defines `initialize`, accept and forward `client:` to `super` so a registration can give an instance its own client (see "Registering Your Provider" below):
 
 ```ruby
-def initialize(key: nil, client: nil)
-  super(key: key, client: client)
+def initialize(client: nil)
+  super(client: client)
   depends_on "my_provider_gem"
 end
 ```
@@ -146,8 +146,8 @@ For lazy loading of external gems:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(key: nil, client: nil)
-    super(key: key, client: client)
+  def initialize(client: nil)
+    super(client: client)
     depends_on "my_provider_gem"  # Only loaded when provider is used
   end
 
@@ -167,20 +167,19 @@ Register your provider under an identifier.
 Riffer::Providers::Repository.register(:my_provider) { Riffer::Providers::MyProvider }
 ```
 
-The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
+The block can return a provider class or a provider instance. `Repository.build` (what agents and judges call) runs the block on every build: a class is instantiated with `new` and an instance is returned as-is, so a block that calls `.new` itself yields a fresh provider on every build. The block runs lazily, so the provider class need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
 
-`Repository.build` (what agents and judges call) resolves the class and calls `new(key: identifier, **options)`, where `options` are any keyword arguments given to `register`. `key:` becomes the provider's `provider_key`, which is what pricing lookups (`pricing.set("my_provider/model", ...)`) and the `riffer.provider.key` span attribute key off. A provider built directly with `.new` and no `key:` is not priced. `register` rejects a `key:` option — the key is always the identifier.
-
-Registration options cover the common case where the existing OpenAI-compatible provider is enough and only the endpoint and credential differ — no new provider class needed:
+Returning an instance covers the common case where an existing provider is enough and only the endpoint and credential differ — no new provider class needed:
 
 ```ruby
-Riffer::Providers::Repository.register(
-  :local_vllm,
-  client: OpenAI::Client.new(base_url: "http://vllm:8000/v1", api_key: "x"),
-) { Riffer::Providers::OpenAI }
+vllm_client = OpenAI::Client.new(base_url: "http://vllm:8000/v1", api_key: "x")
+
+Riffer::Providers::Repository.register(:local_vllm) do
+  Riffer::Providers::OpenAI.new(client: vllm_client)
+end
 ```
 
-`model 'local_vllm/llama-3.1-70b'` then routes to that vLLM deployment.
+`model 'local_vllm/llama-3.1-70b'` then routes to that vLLM deployment. It is priced from `openai/llama-3.1-70b` — see [Pricing Key](#pricing-key).
 
 Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.
 
@@ -361,6 +360,18 @@ def self.semconv_provider_name
 end
 ```
 
+## Pricing Key
+
+[Pricing](../CONFIGURATION.md#pricing) looks up `"<pricing_key>/<model>"`, where `pricing_key` is a class method — not the name the provider is registered under. Every registration of a class, and every instance built directly with `.new`, shares that class's price list. The default is your snake_cased class name (`Riffer::Providers::LocalVllm` prices as `local_vllm/<model>`); override it to share another name's rates:
+
+```ruby
+def self.pricing_key
+  :my_provider
+end
+```
+
+A subclass inherits its parent's override — `class InternalOpenAI < Riffer::Providers::OpenAI` prices as `openai/<model>` — but a subclass of a provider without an override derives its own key from its class name.
+
 ## Error Handling
 
 Raise appropriate Riffer errors:
@@ -382,8 +393,8 @@ end
 # lib/riffer/providers/my_provider.rb
 
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(key: nil, client: nil)
-    super(key: key, client: client)
+  def initialize(client: nil)
+    super(client: client)
     depends_on "my_provider_gem"
   end
 

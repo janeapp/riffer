@@ -55,7 +55,7 @@ describe Riffer::Providers::Repository do
 
   describe ".build" do
     after do
-      %i[jane instance_jane openai].each { |id| Riffer::Providers::Repository.unregister(id) }
+      %i[jane openai].each { |id| Riffer::Providers::Repository.unregister(id) }
     end
 
     it "instantiates a class-returning factory" do
@@ -64,50 +64,40 @@ describe Riffer::Providers::Repository do
       expect(provider).must_be_instance_of Riffer::Providers::Mock
     end
 
-    it "sets the identifier as the provider_key" do
-      provider = Riffer::Providers::Repository.build(:mock)
-
-      expect(provider.provider_key).must_equal :mock
-    end
-
     it "works with a string identifier" do
       provider = Riffer::Providers::Repository.build("mock")
 
       expect(provider).must_be_instance_of Riffer::Providers::Mock
     end
 
-    it "passes registration options to new" do
+    it "returns the instance an instance-returning factory builds" do
+      instance = Riffer::Providers::Mock.new
+      Riffer::Providers::Repository.register(:jane) { instance }
+
+      expect(Riffer::Providers::Repository.build(:jane)).must_be_same_as instance
+    end
+
+    it "keeps the client an instance registration was built with" do
       client = Object.new
-      Riffer::Providers::Repository.register(:instance_jane, client: client) { Riffer::Providers::OpenAI }
+      Riffer::Providers::Repository.register(:jane) { Riffer::Providers::OpenAI.new(client: client) }
 
-      provider = Riffer::Providers::Repository.build(:instance_jane)
-
-      expect(provider.send(:client)).must_be_same_as client
+      expect(Riffer::Providers::Repository.build(:jane).send(:client)).must_be_same_as client
     end
 
-    it "sets the registered identifier as the provider_key" do
-      Riffer::Providers::Repository.register(:instance_jane) { Riffer::Providers::Mock }
-
-      expect(Riffer::Providers::Repository.build(:instance_jane).provider_key).must_equal :instance_jane
-    end
-
-    it "builds a new instance on every call" do
+    it "builds a new instance on every call for a class registration" do
       first = Riffer::Providers::Repository.build(:mock)
       second = Riffer::Providers::Repository.build(:mock)
 
       expect(first).wont_be_same_as second
     end
 
-    it "raises when a custom initialize does not accept key:" do
-      custom = Class.new(Riffer::Providers::Base) do
-        def initialize
-          super
-          @ready = true
-        end
-      end
-      Riffer::Providers::Repository.register(:jane) { custom }
+    it "runs the factory on every call for an instance registration" do
+      Riffer::Providers::Repository.register(:jane) { Riffer::Providers::Mock.new }
 
-      expect { Riffer::Providers::Repository.build(:jane) }.must_raise ArgumentError
+      first = Riffer::Providers::Repository.build(:jane)
+      second = Riffer::Providers::Repository.build(:jane)
+
+      expect(first).wont_be_same_as second
     end
 
     it "instantiates a class-returning custom registration" do
@@ -133,22 +123,17 @@ describe Riffer::Providers::Repository do
     end
   end
 
+  describe "built-in pricing keys" do
+    it "match the built-in identifiers" do
+      Riffer::Providers::Repository::REPO.each do |identifier, factory|
+        expect(factory.call.pricing_key).must_equal identifier
+      end
+    end
+  end
+
   describe ".register" do
     after do
       %i[jane openai].each { |id| Riffer::Providers::Repository.unregister(id) }
-    end
-
-    it "rejects key: as an option" do
-      expect do
-        Riffer::Providers::Repository.register(:jane, key: :other) { Riffer::Providers::Mock }
-      end.must_raise Riffer::ArgumentError
-    end
-
-    it "drops a registration's options on unregister" do
-      Riffer::Providers::Repository.register(:mock, responses: [{ content: "custom" }]) { Riffer::Providers::Mock }
-      Riffer::Providers::Repository.unregister(:mock)
-
-      expect(Riffer::Providers::Repository.build(:mock).generate_text(prompt: "x").content).wont_equal "custom"
     end
 
     it "resolves a registered custom provider via find" do
@@ -156,6 +141,13 @@ describe Riffer::Providers::Repository do
       Riffer::Providers::Repository.register(:jane) { custom }
 
       expect(Riffer::Providers::Repository.find(:jane)).must_equal custom
+    end
+
+    it "returns the instance from find for an instance registration" do
+      instance = Riffer::Providers::Mock.new
+      Riffer::Providers::Repository.register(:jane) { instance }
+
+      expect(Riffer::Providers::Repository.find(:jane)).must_be_same_as instance
     end
 
     it "resolves a registered custom provider from a string identifier" do

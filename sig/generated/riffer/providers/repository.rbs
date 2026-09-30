@@ -1,26 +1,26 @@
 # Generated from lib/riffer/providers/repository.rb with RBS::Inline
 
 module Riffer::Providers::Repository
-  @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
-
-  @options: Hash[Symbol, Hash[Symbol, untyped]]
+  @registrations: Hash[Symbol, ^() -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)]
 
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Not synchronized — register during boot, before concurrent generation
-  # begins. +options+ are passed to +new+ on every build.
+  # begins.
   # --
-  # : ((String | Symbol), **untyped) { () -> singleton(Riffer::Providers::Base) } -> void
-  def register: (String | Symbol, **untyped) { () -> singleton(Riffer::Providers::Base) } -> void
+  # : ((String | Symbol)) { () -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base) } -> void
+  def register: (String | Symbol) { () -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base) } -> void
 
   # --
   # : ((String | Symbol)) -> void
   def unregister: (String | Symbol) -> void
 
   # --
-  # : ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
-  def find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
+  # : ((String | Symbol)) -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)?
+  def find: (String | Symbol) -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)?
 
+  # The block runs on every call, so each build is a fresh provider — memoize
+  # an expensive client yourself, e.g. behind the +client:+ Proc.
   # --
   # : ((String | Symbol)) -> Riffer::Providers::Base?
   def build: (String | Symbol) -> Riffer::Providers::Base?

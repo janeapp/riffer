@@ -134,10 +134,11 @@ describe Riffer::Agent do
       end
     end
 
-    describe "with a provider registered under a named identifier with options" do
-      it "builds the provider with those options and the registered key" do
-        Riffer::Providers::Repository.register(:named_instance, responses: [{ content: "Named instance reply" }]) do
-          Riffer::Providers::Mock
+    describe "with a provider instance registered under a named identifier" do
+      it "uses the instance the registration builds, with its client" do
+        client = Object.new
+        Riffer::Providers::Repository.register(:named_instance) do
+          Riffer::Providers::Mock.new(responses: [{ content: "Named instance reply" }], client: client)
         end
         klass = stub_agent("Agent") do
           model "named_instance/any"
@@ -145,7 +146,7 @@ describe Riffer::Agent do
 
         agent = klass.new
 
-        expect(agent.provider.provider_key).must_equal :named_instance
+        expect(agent.provider.send(:client)).must_be_same_as client
         expect(agent.generate("Hi").content).must_equal "Named instance reply"
       ensure
         Riffer::Providers::Repository.unregister(:named_instance)

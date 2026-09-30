@@ -8,14 +8,10 @@ class Riffer::Providers::Base
   # @rbs @current_model: String?
   # @rbs @client: untyped
   # @rbs @configured_client: untyped
-  # @rbs @provider_key: Symbol?
   # @rbs self.@semconv_provider_name: String?
+  # @rbs self.@pricing_key: Symbol?
 
   WIRE_SEPARATOR = "__" #: String
-
-  # The name the provider is registered under, which prices and traces it.
-  # Repository.build passes it; nil leaves the provider unpriced.
-  attr_reader :provider_key #: Symbol? # @dynamic provider_key
 
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -35,10 +31,21 @@ class Riffer::Providers::Base
     @semconv_provider_name ||= Riffer::Helpers::Identifier.derive(class_name.split("::").last)
   end
 
+  # The provider half of a pricing id (+"<pricing_key>/<model>"+). Shared by
+  # every registration of the class, so each class has one price list.
+  # Subclasses inherit an overridden key; otherwise it derives from the class name.
   #--
-  #: (?key: (String | Symbol)?, ?client: untyped) -> void
-  def initialize(key: nil, client: nil)
-    @provider_key = key&.to_sym
+  #: () -> Symbol?
+  def self.pricing_key
+    # Anonymous classes stay uncached, as in semconv_provider_name.
+    class_name = name or return nil
+
+    @pricing_key ||= Riffer::Helpers::Identifier.derive(class_name.split("::").last).to_sym
+  end
+
+  #--
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
     @configured_client = client
   end
 
@@ -210,7 +217,7 @@ class Riffer::Providers::Base
     pricing = Riffer.config.pricing
     return nil if pricing.empty?
 
-    key = provider_key
+    key = self.class.pricing_key
     return nil unless key
 
     pricing.rates_for("#{key}/#{model}")
@@ -282,7 +289,6 @@ class Riffer::Providers::Base
       "gen_ai.provider.name" => self.class.semconv_provider_name,
     } #: Hash[String, untyped]
     attributes["gen_ai.request.model"] = model if model
-    attributes["riffer.provider.key"] = provider_key.to_s if provider_key
 
     REQUEST_PARAM_ATTRIBUTES.each do |key, attribute|
       value = options[key]

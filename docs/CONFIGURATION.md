@@ -230,7 +230,7 @@ Configure per-model token prices and riffer computes the cost of each LLM call o
 
 ```ruby
 Riffer.configure do |config|
-  # Rates are per million tokens, keyed by the same "provider/model" id you give the agent.
+  # Rates are per million tokens, keyed by "provider/model" — the built-in provider name, not a registration name.
   config.pricing.set("anthropic/claude-sonnet-4-6", input: 3.0, output: 15.0, cache_read: 0.30, cache_write: 3.75)
   config.pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
 
@@ -239,13 +239,13 @@ Riffer.configure do |config|
 end
 ```
 
-| Argument       | Description                                                                                                                                                                        |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `models`       | A `provider/model` id (e.g. `"openai/gpt-4"`) — the same string you pass to `model` — or an array of ids that share one set of rates. No alias matching; raises on a malformed id. |
-| `input:`       | Price per **million** input tokens. Required. Applies to the uncached portion of `input_tokens`.                                                                                   |
-| `output:`      | Price per **million** output tokens. Required.                                                                                                                                     |
-| `cache_read:`  | Price per million cache-read tokens. Optional — when omitted, cache reads bill at the `input:` rate.                                                                               |
-| `cache_write:` | Price per million cache-write tokens. Optional — when omitted, cache writes bill at the `input:` rate.                                                                             |
+| Argument       | Description                                                                                                                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `models`       | A `provider/model` id (e.g. `"openai/gpt-4"`) — for built-in names, the same string you pass to `model` — or an array of ids that share one set of rates. No alias matching; raises on a malformed id. |
+| `input:`       | Price per **million** input tokens. Required. Applies to the uncached portion of `input_tokens`.                                                                                                       |
+| `output:`      | Price per **million** output tokens. Required.                                                                                                                                                         |
+| `cache_read:`  | Price per million cache-read tokens. Optional — when omitted, cache reads bill at the `input:` rate.                                                                                                   |
+| `cache_write:` | Price per million cache-write tokens. Optional — when omitted, cache writes bill at the `input:` rate.                                                                                                 |
 
 Because the cache buckets are subsets of `input_tokens`, the cost formula subtracts them before applying the input rate:
 
@@ -258,7 +258,7 @@ cost = (input − cache_read − cache_write) × input_rate
 
 (all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing — it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
 
-The `provider` half of the id is the name the provider was resolved under — what agents, judges, and `Riffer::Providers::Repository.build` look it up by. A provider built directly with `.new` is priced only if you pass that name as `key:`; see [Provider Registry](providers/PROVIDERS.md#provider-registry).
+The `provider` half of the id is the provider class's `pricing_key` (the built-in name, e.g. `amazon_bedrock`), not the name it is registered under — so an agent on `bedrock_ca_central_1/us.anthropic.claude-sonnet-5` is priced from `amazon_bedrock/us.anthropic.claude-sonnet-5`.
 
 ### Message ID Strategy
 
@@ -397,32 +397,21 @@ Riffer.configure do |config|
 end
 ```
 
-When a single process has to reach two different accounts or endpoints, register the provider class under another name with its own client, rather than reading from global config:
+When a single process has to reach two different accounts or endpoints, register a provider instance under another name, carrying its own client, rather than reading from global config:
 
 ```ruby
-Riffer::Providers::Repository.register(
-  :internal_openai,
-  client: OpenAI::Client.new(api_key: ENV.fetch('INTERNAL_OPENAI_KEY'), base_url: ENV.fetch('INTERNAL_GATEWAY')),
-) { Riffer::Providers::OpenAI }
+internal_client = OpenAI::Client.new(api_key: ENV.fetch('INTERNAL_OPENAI_KEY'), base_url: ENV.fetch('INTERNAL_GATEWAY'))
+
+Riffer::Providers::Repository.register(:internal_openai) do
+  Riffer::Providers::OpenAI.new(client: internal_client)
+end
 ```
 
 Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere.
 
-Keyword arguments to `register` are passed to the provider's `new` each time an agent or judge builds it, along with `key:` set to the registered name. They are evaluated once, at registration, so a client instance is shared by every provider built from that registration — the same sharing `config.<provider>.client` has. `client:` accepts a client instance or a zero-arg `Proc` resolved on every call; use a `Proc` for anything that must vary per process or credential lifetime. Resolution order is constructor `client:` first, then `config.<provider>.client`, then credentials:
+The block runs every time an agent or judge builds the provider, so each build is a fresh provider instance. A client built inside the block is rebuilt on every build too — build it outside, as above, or pass a zero-arg `Proc` that memoizes it (the Proc is resolved on every call, so it is also the tool for fork safety and expiring credentials). Resolution order is constructor `client:` first, then `config.<provider>.client`, then credentials.
 
-```ruby
-Riffer::Providers::Repository.register(:bedrock_ca_central_1, client: -> { BedrockClient.memoized(:ca_central_1) }) do
-  Riffer::Providers::AmazonBedrock
-end
-```
-
-Pricing entries are keyed by the registered name, not the provider class, so two registrations of the same class price independently:
-
-```ruby
-Riffer.config.pricing.set('bedrock_ca_central_1/us.anthropic.claude-sonnet-5', input: 3.0, output: 15.0)
-```
-
-Spans from a named instance carry `riffer.provider.key` set to the registered name — see [Tracing](TRACING.md).
+A registration still prices from the provider class's `pricing_key` — `internal_openai/gpt-5-mini` is priced from `openai/gpt-5-mini` (see [Pricing](#pricing)).
 
 What _can_ vary per agent is the model and the generation parameters:
 

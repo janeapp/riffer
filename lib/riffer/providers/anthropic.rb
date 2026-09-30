@@ -34,8 +34,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (?key: (String | Symbol)?, ?client: untyped) -> void
-  def initialize(key: nil, client: nil)
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
     super
     depends_on "anthropic"
   end

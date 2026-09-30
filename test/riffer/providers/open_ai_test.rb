@@ -27,6 +27,12 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe ".pricing_key" do
+    it "returns the built-in registry name" do
+      expect(Riffer::Providers::OpenAI.pricing_key).must_equal :openai
+    end
+  end
+
   describe "finish reasons" do
     let(:provider) { Riffer::Providers::OpenAI.new }
 

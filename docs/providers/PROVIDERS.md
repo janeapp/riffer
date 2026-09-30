@@ -189,14 +189,12 @@ Riffer::Providers::Repository.find(:mock)
 # => Riffer::Providers::Mock
 ```
 
-`find` returns the provider class. Agents and judges call `Repository.build` instead, which instantiates it with `key:` set to the identifier, plus any options given to `register`:
+`find` returns whatever the registration block returns — a class for the built-ins and class registrations, an instance for instance registrations. Agents and judges call `Repository.build` instead, which always returns an instance: it calls `new` on a class and returns an instance as-is.
 
 ```ruby
 Riffer::Providers::Repository.build(:openai)
-# => #<Riffer::Providers::OpenAI> with provider_key == :openai
+# => #<Riffer::Providers::OpenAI>
 ```
-
-`provider_key` is what [pricing](../CONFIGURATION.md#pricing) and the `riffer.provider.key` span attribute key off. A provider built directly with `.new` has no `provider_key` unless you pass `key:` (`Riffer::Providers::OpenAI.new(key: :openai)`); without one it is unpriced and its spans carry no `riffer.provider.key`.
 
 See [Custom Providers → Registering Your Provider](CUSTOM_PROVIDERS.md#registering-your-provider) for registering multiple named instances of the same provider class (different clients, credentials, or endpoints).
 

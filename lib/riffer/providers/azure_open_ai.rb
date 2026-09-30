@@ -8,6 +8,12 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
     "azure.ai.openai"
   end
 
+  #--
+  #: () -> Symbol
+  def self.pricing_key
+    :azure_openai
+  end
+
   private
 
   #--

@@ -38,6 +38,12 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe ".pricing_key" do
+    it "returns the built-in registry name" do
+      expect(Riffer::Providers::OpenRouter.pricing_key).must_equal :openrouter
+    end
+  end
+
   describe "finish reasons" do
     let(:provider) { Riffer::Providers::OpenRouter.new }
 

@@ -25,8 +25,14 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (?key: (String | Symbol)?, ?client: untyped) -> void
-  def initialize(key: nil, client: nil)
+  #: () -> Symbol
+  def self.pricing_key
+    :openai
+  end
+
+  #--
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
     super
     depends_on "openai"
   end
