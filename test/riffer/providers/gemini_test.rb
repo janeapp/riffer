@@ -845,6 +845,7 @@ describe Riffer::Providers::Gemini do
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20, cachedContentTokenCount: 80 } },
+          model: nil,
         )
 
         expect(usage.cache_read_tokens).must_equal 80
@@ -855,6 +856,7 @@ describe Riffer::Providers::Gemini do
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } },
+          model: nil,
         )
 
         expect(usage.cache_read_tokens).must_be_nil
@@ -867,6 +869,7 @@ describe Riffer::Providers::Gemini do
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20, thoughtsTokenCount: 30 } },
+          model: nil,
         )
 
         expect(usage.output_tokens).must_equal 50
@@ -877,6 +880,7 @@ describe Riffer::Providers::Gemini do
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } },
+          model: nil,
         )
 
         expect(usage.output_tokens).must_equal 20

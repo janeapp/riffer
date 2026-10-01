@@ -16,7 +16,7 @@ class ChatTracingExplodingProvider < Riffer::Providers::Mock
     raise Riffer::Error, "generate boom"
   end
 
-  def execute_stream(_params, yielder)
+  def execute_stream(_params, yielder, tools:, model:)
     yielder << Riffer::StreamEvents::TextDelta.new("partial")
     raise Riffer::Error, "stream boom"
   end
@@ -25,7 +25,7 @@ end
 class ChatTracingSilentStreamProvider < Riffer::Providers::Mock
   private
 
-  def execute_stream(params, yielder); end
+  def execute_stream(params, yielder, tools:, model:); end
 end
 
 class RawFinishReasonProvider < Riffer::Providers::Mock

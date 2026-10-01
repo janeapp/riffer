@@ -106,8 +106,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (Hash[Symbol, untyped], tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     parts = response.dig(:candidates, 0, :content, :parts)
     return [] unless parts
 
@@ -124,12 +124,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (Hash[Symbol, untyped], model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     usage = response[:usageMetadata]
     return nil unless usage
 
-    build_token_usage(usage)
+    build_token_usage(usage, model: model)
   end
 
   #--
@@ -153,8 +153,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
-  def build_token_usage(usage)
+  #: (Hash[Symbol, untyped], model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage, model:)
     apply_pricing(
       Riffer::Providers::TokenUsage.new(
         input_tokens: usage[:promptTokenCount] || 0,
@@ -162,13 +162,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
         output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
         cache_read_tokens: usage[:cachedContentTokenCount],
       ),
+      model: model,
     )
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
-    model = params[:model]
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     body = params.except(:model)
 
     full_text = +""
@@ -212,12 +212,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
         usage = parsed[:usageMetadata]
         if usage && usage[:candidatesTokenCount]
-          yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
+          yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage, model: model))
         end
       end
     end
 
-    path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
+    path = "#{api_path(params[:model], 'streamGenerateContent')}?alt=sse"
     client.post_stream(path, body) { |chunk| process_chunk.call(chunk) }
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?

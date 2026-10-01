@@ -53,12 +53,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
   # --
-  # : (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
+  # : (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
 
   # --
-  # : (untyped) -> Riffer::Providers::TokenUsage
-  def build_token_usage: (untyped) -> Riffer::Providers::TokenUsage
+  # : (untyped, model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage: (untyped, model: String?) -> Riffer::Providers::TokenUsage
 
   # --
   # : (untyped) -> Riffer::Providers::FinishReason?
@@ -73,8 +73,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def extract_content: (untyped) -> String
 
   # --
-  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
   # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
@@ -87,8 +87,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def build_reasoning_part: (?text: String?, ?signature: String?, ?redacted_content: String?) -> Riffer::Messages::Assistant::ReasoningPart
 
   # --
-  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
 
   # --
   # : (untyped) -> void
@@ -99,8 +99,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def raise_if_stream_exception!: (untyped) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)]) -> void
+  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)]) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
@@ -125,8 +125,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_metadata_usage: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, model: String?) -> void
+  def handle_metadata_usage: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, model: String?) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

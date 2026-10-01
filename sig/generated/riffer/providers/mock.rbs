@@ -44,8 +44,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
-  # : (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
+  # : (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
 
   # --
   # : (untyped) -> Riffer::Providers::FinishReason?
@@ -60,12 +60,12 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def extract_content: (untyped) -> String
 
   # --
-  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
-  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
 
   # --
   # : () -> Hash[Symbol, untyped]

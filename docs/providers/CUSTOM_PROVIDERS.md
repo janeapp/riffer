@@ -4,7 +4,7 @@ You can create custom providers to connect Riffer to other LLM services.
 
 ## Basic Structure
 
-Extend `Riffer::Providers::Base` and implement the five required hook methods:
+Extend `Riffer::Providers::Base` and implement the required hook methods:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
@@ -38,7 +38,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     client.generate(**params)
   end
 
-  def execute_stream(params, yielder)
+  def execute_stream(params, yielder, tools:, model:)
     client.stream(**params) do |chunk|
       case chunk.type
       when :text
@@ -56,25 +56,21 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     end
   end
 
-  def extract_token_usage(response)
+  def extract_token_usage(response, model:)
     usage = response.usage
     return nil unless usage
 
-    Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens,
-      output_tokens: usage.output_tokens
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens
+      ),
+      model: model
     )
   end
 
-  def extract_assistant_message(response, token_usage = nil)
-    text = response.text
-    tool_calls = extract_tool_calls(response)
-
-    Riffer::Messages::Assistant.new(
-      text,
-      tool_calls: tool_calls,
-      token_usage: token_usage
-    )
+  def extract_content(response)
+    response.text || ""
   end
 
   # Helper methods (provider-specific)
@@ -106,7 +102,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     }
   end
 
-  def extract_tool_calls(response)
+  def extract_tool_calls(response, tools:)
     return [] unless response.tool_calls
 
     response.tool_calls.map do |tc|
@@ -120,6 +116,12 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
   end
 end
 ```
+
+## Per-call arguments
+
+`execute_stream(params, yielder, tools:, model:)`, `extract_tool_calls(response, tools:)`, and `extract_token_usage(response, model:)` receive the current call's tools and model as keyword arguments. `tools:` is the call's tool classes, for mapping wire tool names back to them; `model:` is the model name, for `apply_pricing(usage, model:)` to attach cost. Accept these keywords even when your provider ignores them, because the base class always passes them.
+
+Read per-call values from these arguments, never from instance variables set during a call. A registration block can return one shared provider instance (see [Registering Your Provider](#registering-your-provider)), so concurrent agents may call the same instance at once, and a stream's body runs only when it is consumed.
 
 ## Client resolution
 
@@ -430,7 +432,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     client.create(**params)
   end
 
-  def execute_stream(params, yielder)
+  def execute_stream(params, yielder, tools:, model:)
     accumulated_text = ""
 
     client.stream(**params) do |event|
@@ -442,22 +444,26 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
         yielder << Riffer::StreamEvents::TextDone.new(accumulated_text)
       when :usage
         yielder << Riffer::StreamEvents::TokenUsageDone.new(
-          token_usage: Riffer::Providers::TokenUsage.new(
-            input_tokens: event.usage.input_tokens,
-            output_tokens: event.usage.output_tokens
-          )
+          token_usage: build_token_usage(event.usage, model: model)
         )
       end
     end
   end
 
-  def extract_token_usage(response)
+  def extract_token_usage(response, model:)
     usage = response.usage
     return nil unless usage
 
-    Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens,
-      output_tokens: usage.output_tokens
+    build_token_usage(usage, model: model)
+  end
+
+  def build_token_usage(usage, model:)
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens
+      ),
+      model: model
     )
   end
 

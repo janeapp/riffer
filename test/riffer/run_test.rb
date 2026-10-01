@@ -3854,7 +3854,7 @@ describe Riffer::Agent::Run do
 
     it "persists a streamed part that has no format" do
       agent = agent_class.new
-      agent.provider.define_singleton_method(:execute_stream) do |_params, yielder|
+      agent.provider.define_singleton_method(:execute_stream) do |_params, yielder, tools:, model:|
         yielder << Riffer::StreamEvents::ReasoningDelta.new("Let me think")
         yield_reasoning_done(yielder, "Let me think")
         yielder << Riffer::StreamEvents::TextDone.new("Answer")

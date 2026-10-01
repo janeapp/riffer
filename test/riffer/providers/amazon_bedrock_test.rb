@@ -1430,7 +1430,7 @@ describe Riffer::Providers::AmazonBedrock do
             cache_read_input_tokens: 100,
           ),
         )
-        token_usage = provider.send(:extract_token_usage, response)
+        token_usage = provider.send(:extract_token_usage, response, model: nil)
 
         expect(token_usage.input_tokens).must_equal 112
       end
@@ -1440,7 +1440,7 @@ describe Riffer::Providers::AmazonBedrock do
         response = Aws::BedrockRuntime::Types::ConverseResponse.new(
           usage: Aws::BedrockRuntime::Types::TokenUsage.new(input_tokens: 9, output_tokens: 16),
         )
-        token_usage = provider.send(:extract_token_usage, response)
+        token_usage = provider.send(:extract_token_usage, response, model: nil)
 
         expect(token_usage.input_tokens).must_equal 9
       end

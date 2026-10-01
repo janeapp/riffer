@@ -127,24 +127,25 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     typed_response = response #: OpenAI::Models::Chat::ChatCompletion
     usage = typed_response.usage
     return nil unless usage
 
-    build_token_usage(usage)
+    build_token_usage(usage, model: model)
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage
-  def build_token_usage(usage)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage, model:)
     apply_pricing(
       Riffer::Providers::TokenUsage.new(
         input_tokens: usage.prompt_tokens,
         output_tokens: usage.completion_tokens,
         cache_read_tokens: usage.prompt_tokens_details&.cached_tokens,
       ),
+      model: model,
     )
   end
 
@@ -186,8 +187,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     typed_response = response #: OpenAI::Models::Chat::ChatCompletion
     message = typed_response.choices.first&.message
     return [] unless message
@@ -200,7 +201,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: tc.id,
-        name: decode_tool_name(tc.function.name, tools: @current_tools),
+        name: decode_tool_name(tc.function.name, tools: tools),
         arguments: tc.function.arguments,
       )
     end
@@ -240,8 +241,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     # OpenRouter omits usage from streams unless explicitly opted in.
     stream_options = (params[:stream_options] || {}).merge(include_usage: true)
     stream_params = params.merge(stream_options: stream_options)
@@ -259,7 +260,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     stream = client.chat.completions.stream_raw(**stream_params)
     begin
       stream.each do |chunk|
-        handle_stream_chunk(chunk, state: state, yielder: yielder)
+        handle_stream_chunk(chunk, state: state, yielder: yielder, tools: tools, model: model)
       end
     ensure
       # The OpenAI SDK does not auto-close the SSE socket on iteration
@@ -280,8 +281,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_stream_chunk(chunk, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def handle_stream_chunk(chunk, state:, yielder:, tools:, model:)
     typed_chunk = chunk #: OpenAI::Models::Chat::ChatCompletionChunk
     choice = typed_chunk.choices&.first
     delta = choice&.delta
@@ -289,7 +290,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     if delta
       handle_text_delta(delta, state: state, yielder: yielder)
       handle_reasoning_delta(delta, state: state, yielder: yielder)
-      handle_tool_call_deltas(delta, state: state, yielder: yielder)
+      handle_tool_call_deltas(delta, state: state, yielder: yielder, tools: tools)
     end
 
     state[:finish_reason] = choice.finish_reason if choice&.finish_reason
@@ -299,7 +300,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     return unless typed_chunk.usage
 
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(typed_chunk.usage))
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(typed_chunk.usage, model: model))
   end
 
   #--
@@ -339,8 +340,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_tool_call_deltas(delta, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)]) -> void
+  def handle_tool_call_deltas(delta, state:, yielder:, tools:)
     typed_delta = delta #: OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta
     tool_calls = typed_delta.tool_calls
     return if tool_calls.nil? || tool_calls.empty?
@@ -352,7 +353,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       fn = tc.function
       next unless fn
 
-      entry[:name] = decode_tool_name(fn.name, tools: @current_tools) if fn.name
+      entry[:name] = decode_tool_name(fn.name, tools: tools) if fn.name
 
       args_delta = fn.arguments
       next if args_delta.nil? || args_delta.empty?

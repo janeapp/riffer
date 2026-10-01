@@ -501,7 +501,7 @@ describe Riffer::Providers::OpenRouter do
       usage = OpenAI::Models::CompletionUsage.new(prompt_tokens: 42, completion_tokens: 17, total_tokens: 59)
       response = OpenAI::Models::Chat::ChatCompletion.new(usage: usage)
 
-      result = provider.send(:extract_token_usage, response)
+      result = provider.send(:extract_token_usage, response, model: nil)
 
       expect(result.input_tokens).must_equal 42
       expect(result.output_tokens).must_equal 17
@@ -510,7 +510,7 @@ describe Riffer::Providers::OpenRouter do
     it "returns nil when usage is missing" do
       response = OpenAI::Models::Chat::ChatCompletion.new
 
-      expect(provider.send(:extract_token_usage, response)).must_be_nil
+      expect(provider.send(:extract_token_usage, response, model: nil)).must_be_nil
     end
   end
 
@@ -1049,7 +1049,7 @@ describe Riffer::Providers::OpenRouter do
             prompt_tokens_details: OpenAI::Models::CompletionUsage::PromptTokensDetails.new(cached_tokens: 100),
           ),
         )
-        token_usage = provider.send(:extract_token_usage, response)
+        token_usage = provider.send(:extract_token_usage, response, model: nil)
 
         expect(token_usage.cache_read_tokens).must_equal 100
       end
@@ -1059,7 +1059,7 @@ describe Riffer::Providers::OpenRouter do
         response = OpenAI::Models::Chat::ChatCompletion.new(
           usage: OpenAI::Models::CompletionUsage.new(prompt_tokens: 580, completion_tokens: 54, total_tokens: 634),
         )
-        token_usage = provider.send(:extract_token_usage, response)
+        token_usage = provider.send(:extract_token_usage, response, model: nil)
 
         expect(token_usage.cache_read_tokens).must_be_nil
       end

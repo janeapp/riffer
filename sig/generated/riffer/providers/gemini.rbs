@@ -36,12 +36,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def extract_content: (Hash[Symbol, untyped]) -> String
 
   # --
-  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (Hash[Symbol, untyped], tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (Hash[Symbol, untyped], tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
-  # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
+  # : (Hash[Symbol, untyped], model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (Hash[Symbol, untyped], model: String?) -> Riffer::Providers::TokenUsage?
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
@@ -52,12 +52,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def build_finish_reason: (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
 
   # --
-  # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
-  def build_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
+  # : (Hash[Symbol, untyped], model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage: (Hash[Symbol, untyped], model: String?) -> Riffer::Providers::TokenUsage
 
   # --
-  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

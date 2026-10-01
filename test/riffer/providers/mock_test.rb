@@ -569,6 +569,23 @@ describe Riffer::Providers::Mock do
       Riffer::Providers::Repository.unregister(:mock_named)
     end
 
+    it "prices interleaved streams on one shared instance by each call's model" do
+      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
+      Riffer.config.pricing.set("mock/riffer-2", input: 1.0, output: 5.0)
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000)
+      provider = Riffer::Providers::Mock.new
+      provider.stub_response("one", token_usage: usage)
+      provider.stub_response("two", token_usage: usage)
+
+      first = provider.stream_text(prompt: "x", model: "riffer-1")
+      second = provider.stream_text(prompt: "x", model: "riffer-2")
+      costs = [second, first].map do |stream|
+        stream.to_a.grep(Riffer::StreamEvents::TokenUsageDone).first.token_usage.cost
+      end
+
+      expect(costs).must_equal [6.0, 18.0]
+    end
+
     it "accepts a constructor client" do
       client = Object.new
 

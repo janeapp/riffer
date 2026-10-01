@@ -987,6 +987,39 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "a shared instance" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    let(:event_struct) { Struct.new(:type, :item, :item_id, :arguments, :response) }
+    let(:item_struct) { Struct.new(:type, :id, :name, :call_id) }
+
+    it "decodes each interleaved stream's tool names against that call's tools" do
+      tool = stub_tool do
+        identifier "ns/lookup"
+        description "Look something up"
+      end
+      events = [
+        event_struct.new(
+          type: :"response.output_item.added",
+          item: item_struct.new(type: :function_call, id: "fc_1", name: "ns__lookup", call_id: "call_1"),
+        ),
+        event_struct.new(type: :"response.function_call_arguments.done", item_id: "fc_1", arguments: "{}"),
+        event_struct.new(type: :"response.completed"),
+      ]
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
+      stream_double.define_singleton_method(:close) {}
+      install_stream_double(provider, stream_double)
+
+      with_tool = provider.stream_text(prompt: "Hi", model: "gpt-5-mini", tools: [tool])
+      without_tool = provider.stream_text(prompt: "Hi", model: "gpt-5-mini")
+      names = [without_tool, with_tool].map do |stream|
+        stream.to_a.grep(Riffer::StreamEvents::ToolCallDone).map(&:name)
+      end
+
+      expect(names).must_equal [["ns__lookup"], ["ns/lookup"]]
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

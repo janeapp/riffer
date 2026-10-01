@@ -1371,7 +1371,7 @@ describe Riffer::Providers::Anthropic do
           cache_creation_input_tokens: 3,
           cache_read_input_tokens: 100,
         )
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage), model: nil)
 
         expect(token_usage.input_tokens).must_equal 112
       end
@@ -1384,7 +1384,7 @@ describe Riffer::Providers::Anthropic do
           cache_creation_input_tokens: 3,
           cache_read_input_tokens: 100,
         )
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage), model: nil)
 
         expect(token_usage.cache_write_tokens).must_equal 3
       end
@@ -1397,7 +1397,7 @@ describe Riffer::Providers::Anthropic do
           cache_creation_input_tokens: 3,
           cache_read_input_tokens: 100,
         )
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage), model: nil)
 
         expect(token_usage.cache_read_tokens).must_equal 100
       end
@@ -1405,7 +1405,7 @@ describe Riffer::Providers::Anthropic do
       it "treats unreported cache buckets as zero" do
         provider = Riffer::Providers::Anthropic.new
         usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16)
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage), model: nil)
 
         expect(token_usage.input_tokens).must_equal 9
       end

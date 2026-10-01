@@ -115,10 +115,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     message = response #: Anthropic::Models::Message
-    build_token_usage(message.usage)
+    build_token_usage(message.usage, model: model)
   end
 
   #--
@@ -138,8 +138,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage
-  def build_token_usage(usage)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage, model:)
     cache_write = usage.cache_creation_input_tokens
     cache_read = usage.cache_read_input_tokens
 
@@ -151,6 +151,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         cache_write_tokens: cache_write,
         cache_read_tokens: cache_read,
       ),
+      model: model,
     )
   end
 
@@ -162,8 +163,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     message = response #: Anthropic::Models::Message
     content_blocks = message.content
     return [] if content_blocks.nil? || content_blocks.empty?
@@ -175,7 +176,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
       tool_calls << Riffer::Messages::Assistant::ToolCall.new(
         call_id: block.id,
-        name: decode_tool_name(block.name, tools: @current_tools),
+        name: decode_tool_name(block.name, tools: tools),
         arguments: block.input.to_json,
       )
     end
@@ -207,8 +208,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     current_state = {
       text: nil,
       tool_call: nil,
@@ -242,7 +243,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
           case event.content_block
           when ::Anthropic::Models::ToolUseBlock
-            handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
+            handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder, tools: tools)
           when ::Anthropic::Models::ThinkingBlock, ::Anthropic::Models::RedactedThinkingBlock
             handle_content_block_stop_reasoning(event, yielder: yielder)
           when ::Anthropic::Models::ServerToolUseBlock
@@ -253,7 +254,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
           stream_completed = true
           handle_message_stop(
-            event, state: current_state, accumulated_message: stream.accumulated_message, yielder: yielder,
+            event,
+            state: current_state,
+            accumulated_message: stream.accumulated_message,
+            yielder: yielder,
+            model: model,
           )
         end
       end
@@ -315,14 +320,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_tool_use(event, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)]) -> void
+  def handle_content_block_stop_tool_use(event, state:, yielder:, tools:)
     content_block = event.content_block
     arguments = content_block.input.is_a?(String) ? content_block.input : content_block.input.to_json
     yielder << Riffer::StreamEvents::ToolCallDone.new(
       item_id: content_block.id,
       call_id: content_block.id,
-      name: decode_tool_name(content_block.name, tools: @current_tools),
+      name: decode_tool_name(content_block.name, tools: tools),
       arguments: arguments,
     )
     state[:tool_call] = nil
@@ -364,8 +369,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
-  def handle_message_stop(_event, state:, accumulated_message:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink, model: String?) -> void
+  def handle_message_stop(_event, state:, accumulated_message:, yielder:, model:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text]) if state[:text]
 
     message = accumulated_message #: Anthropic::Models::Message?
@@ -374,7 +379,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     usage = message&.usage
     return unless usage
 
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage, model: model))
   end
 
   #--

@@ -92,10 +92,10 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     usage = response[:token_usage]
-    usage && apply_pricing(usage)
+    usage && apply_pricing(usage, model: model)
   end
 
   #--
@@ -120,14 +120,14 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     response.is_a?(Hash) ? (response[:tool_calls] || []) : response.tool_calls
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     response = params[:response]
     full_content = response[:content] || ""
     tool_calls = response[:tool_calls] || []
@@ -175,7 +175,9 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
     yielder << Riffer::StreamEvents::TextDone.new(full_content)
     yield_finish_reason(yielder, extract_finish_reason(response))
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: apply_pricing(token_usage)) if token_usage
+    return unless token_usage
+
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: apply_pricing(token_usage, model: model))
   end
 
   #--

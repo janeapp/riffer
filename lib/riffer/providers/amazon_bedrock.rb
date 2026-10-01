@@ -163,15 +163,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
-    build_token_usage(typed_response.usage)
+    build_token_usage(typed_response.usage, model: model)
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage
-  def build_token_usage(usage)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage, model:)
     cache_write = usage.cache_write_input_tokens
     cache_read = usage.cache_read_input_tokens
 
@@ -183,6 +183,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         cache_write_tokens: cache_write,
         cache_read_tokens: cache_read,
       ),
+      model: model,
     )
   end
 
@@ -219,8 +220,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
     content_blocks = typed_response.output&.message&.content
     return [] if content_blocks.nil? || content_blocks.empty?
@@ -232,7 +233,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
       tool_calls << Riffer::Messages::Assistant::ToolCall.new(
         call_id: block.tool_use.tool_use_id,
-        name: decode_tool_name(block.tool_use.name, tools: @current_tools),
+        name: decode_tool_name(block.tool_use.name, tools: tools),
         arguments: block.tool_use.input.to_json,
       )
     end
@@ -278,8 +279,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     current_state = {
       text: nil,
       tool_call: nil,
@@ -292,7 +293,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       stream.on_event do |event|
         case event
         when Aws::BedrockRuntime::Types::ContentBlockStartEvent
-          handle_content_block_start_tool_use(event, state: current_state, yielder: yielder) if event.start&.tool_use
+          if event.start&.tool_use
+            handle_content_block_start_tool_use(event, state: current_state, yielder: yielder, tools: tools)
+          end
         when Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
           handle_content_block_delta_text_delta(event, state: current_state, yielder: yielder) if event.delta&.text
           handle_content_block_delta_tool_use(event, state: current_state, yielder: yielder) if event.delta&.tool_use
@@ -305,7 +308,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
           yielder << Riffer::StreamEvents::TextDone.new(current_state[:text]) if current_state[:text]
           yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
-          handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
+          handle_metadata_usage(event, state: current_state, yielder: yielder, model: model) if event.usage
         when Aws::Errors::EventError
           # The SDK hands an event-stream +:message-type: error+ frame to this
           # block as an EventError event rather than raising it.
@@ -346,12 +349,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_start_tool_use(event, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)]) -> void
+  def handle_content_block_start_tool_use(event, state:, yielder:, tools:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockStartEvent
     state[:tool_call] = {
       id: typed_event.start.tool_use.tool_use_id,
-      name: decode_tool_name(typed_event.start.tool_use.name, tools: @current_tools),
+      name: decode_tool_name(typed_event.start.tool_use.name, tools: tools),
       arguments: +"",
     }
   end
@@ -420,10 +423,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_metadata_usage(event, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, model: String?) -> void
+  def handle_metadata_usage(event, state:, yielder:, model:)
     typed_event = event #: Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(typed_event.usage))
+    token_usage = build_token_usage(typed_event.usage, model: model)
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage)
   end
 
   #--

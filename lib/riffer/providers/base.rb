@@ -4,8 +4,6 @@
 require "json"
 
 class Riffer::Providers::Base
-  # @rbs @current_tools: Array[singleton(Riffer::Tool)]
-  # @rbs @current_model: String?
   # @rbs @client: untyped
   # @rbs @configured_client: untyped
   # @rbs self.@semconv_provider_name: String?
@@ -53,8 +51,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
-    @current_model = model
+    tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
@@ -65,9 +62,9 @@ class Riffer::Providers::Base
       response = execute_generate(params)
 
       content = extract_content(response)
-      tool_calls = extract_tool_calls(response)
+      tool_calls = extract_tool_calls(response, tools: tools)
       reasoning = extract_reasoning(response)
-      token_usage = extract_token_usage(response)
+      token_usage = extract_token_usage(response, model: model)
       finish_reason = extract_finish_reason(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
 
@@ -91,8 +88,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
-    @current_model = model
+    tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
@@ -107,7 +103,7 @@ class Riffer::Providers::Base
       Riffer::Tracing.with_context(trace_context) do
         in_chat_span(model, messages, options) do |span|
           sink = span.recording? ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
-          execute_stream(params, sink)
+          execute_stream(params, sink, tools: tools, model: model)
           record_stream_outcome(span, sink) if sink.is_a?(Riffer::Tracing::StreamRecorder)
         end
       end
@@ -177,20 +173,20 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     raise NotImplementedError, "Subclasses must implement #execute_stream"
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     raise NotImplementedError, "Subclasses must implement #extract_token_usage"
   end
 
-  #: (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
-  def apply_pricing(usage)
-    rates = pricing_rates
+  #: (Riffer::Providers::TokenUsage, model: String?) -> Riffer::Providers::TokenUsage
+  def apply_pricing(usage, model:)
+    rates = pricing_rates(model)
     return usage unless rates
 
     cost = rates.cost_for(
@@ -209,9 +205,8 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: () -> Riffer::Config::Pricing::Rates?
-  def pricing_rates
-    model = @current_model
+  #: (String?) -> Riffer::Config::Pricing::Rates?
+  def pricing_rates(model)
     return nil unless model
 
     pricing = Riffer.config.pricing
@@ -244,8 +239,8 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     raise NotImplementedError, "Subclasses must implement #extract_tool_calls"
   end
 

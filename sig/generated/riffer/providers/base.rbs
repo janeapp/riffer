@@ -9,10 +9,6 @@ class Riffer::Providers::Base
 
   @client: untyped
 
-  @current_model: String?
-
-  @current_tools: Array[singleton(Riffer::Tool)]
-
   WIRE_SEPARATOR: String
 
   # --
@@ -80,19 +76,19 @@ class Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
   # --
-  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
 
   # --
-  # : (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
+  # : (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
 
-  # : (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
-  def apply_pricing: (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
+  # : (Riffer::Providers::TokenUsage, model: String?) -> Riffer::Providers::TokenUsage
+  def apply_pricing: (Riffer::Providers::TokenUsage, model: String?) -> Riffer::Providers::TokenUsage
 
   # --
-  # : () -> Riffer::Config::Pricing::Rates?
-  def pricing_rates: () -> Riffer::Config::Pricing::Rates?
+  # : (String?) -> Riffer::Config::Pricing::Rates?
+  def pricing_rates: (String?) -> Riffer::Config::Pricing::Rates?
 
   # --
   # : (untyped) -> Riffer::Providers::FinishReason?
@@ -107,8 +103,8 @@ class Riffer::Providers::Base
   def extract_content: (untyped) -> String
 
   # --
-  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # A deliberate whitelist — caller options outside it stay off spans.
   REQUEST_PARAM_ATTRIBUTES: Hash[Symbol, String]

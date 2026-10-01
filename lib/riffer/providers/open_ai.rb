@@ -121,24 +121,25 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response, model:)
     typed_response = response #: OpenAI::Models::Responses::Response
     usage = typed_response.usage
     return nil unless usage
 
-    build_token_usage(usage)
+    build_token_usage(usage, model: model)
   end
 
   #--
-  #: (untyped) -> Riffer::Providers::TokenUsage
-  def build_token_usage(usage)
+  #: (untyped, model: String?) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage, model:)
     apply_pricing(
       Riffer::Providers::TokenUsage.new(
         input_tokens: usage.input_tokens,
         output_tokens: usage.output_tokens,
         cache_read_tokens: usage.input_tokens_details&.cached_tokens,
       ),
+      model: model,
     )
   end
 
@@ -159,7 +160,9 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     mapping = FINISH_REASONS.fetch(status, :other)
     reason = mapping.is_a?(Hash) ? mapping.fetch(detail.to_s, :other) : mapping
     # A completed response signals tool use only through its output items.
-    reason = :tool_calls if reason == :stop && !extract_tool_calls(typed_response).empty?
+    if reason == :stop && typed_response.output.any?(::OpenAI::Models::Responses::ResponseFunctionToolCall)
+      reason = :tool_calls
+    end
 
     Riffer::Providers::FinishReason.new(reason: reason, raw: detail || status)
   end
@@ -188,8 +191,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (untyped, tools: Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response, tools:)
     typed_response = response #: OpenAI::Models::Responses::Response
     tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
@@ -198,7 +201,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
       tool_calls << Riffer::Messages::Assistant::ToolCall.new(
         call_id: item.call_id,
-        name: decode_tool_name(item.name, tools: @current_tools),
+        name: decode_tool_name(item.name, tools: tools),
         arguments: item.arguments,
       )
     end
@@ -243,8 +246,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)], model: String?) -> void
+  def execute_stream(params, yielder, tools:, model:)
     current_state = {
       text: nil,
       tool_info: {},
@@ -258,7 +261,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         case event.type
         when :"response.output_item.added"
           if event.item&.type == :function_call
-            handle_output_item_added_function_call(event, state: current_state, yielder: yielder)
+            handle_output_item_added_function_call(event, state: current_state, yielder: yielder, tools: tools)
           end
         when :"response.output_text.delta"
           handle_output_text_delta(event, state: current_state, yielder: yielder)
@@ -281,7 +284,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           end
         when :"response.completed", :"response.incomplete", :"response.failed"
           stream_completed = true
-          handle_response_finished(event, state: current_state, yielder: yielder)
+          handle_response_finished(event, state: current_state, yielder: yielder, model: model)
         end
       end
     ensure
@@ -297,10 +300,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_output_item_added_function_call(event, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, tools: Array[singleton(Riffer::Tool)]) -> void
+  def handle_output_item_added_function_call(event, state:, yielder:, tools:)
     state[:tool_info][event.item.id] = {
-      name: decode_tool_name(event.item.name, tools: @current_tools),
+      name: decode_tool_name(event.item.name, tools: tools),
       call_id: event.item.call_id,
     }
   end
@@ -345,8 +348,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_response_finished(event, state:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink, model: String?) -> void
+  def handle_response_finished(event, state:, yielder:, model:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text]) if state[:text]
 
     response = event.response
@@ -357,7 +360,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     usage = response.usage
     return unless usage
 
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage, model: model))
   end
 
   #--
