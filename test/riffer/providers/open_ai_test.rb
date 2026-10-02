@@ -887,6 +887,22 @@ describe Riffer::Providers::OpenAI do
         ]
       end
 
+      it "replays text and summary parts with no text as empty strings" do
+        reasoning = [
+          part(type: :summary, text: nil, id: "rs_1", format: "openai-v1"),
+          part(type: :text, text: nil, id: "rs_1", format: "openai-v1"),
+        ]
+
+        expect(convert(reasoning).first).must_equal(
+          {
+            type: "reasoning",
+            id: "rs_1",
+            summary: [{ type: "summary_text", text: "" }],
+            content: [{ type: "reasoning_text", text: "" }],
+          },
+        )
+      end
+
       it "places reasoning ahead of the function calls it produced" do
         tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
 

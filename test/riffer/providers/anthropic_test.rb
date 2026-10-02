@@ -1688,6 +1688,12 @@ describe Riffer::Providers::Anthropic do
         expect(convert(restored)[:content].first).must_equal({ type: "thinking", thinking: "Think", signature: "sig" })
       end
 
+      it "replays a text part with no text as an empty thinking string" do
+        reasoning = [part(type: :text, text: nil, signature: "sig", format: "anthropic-messages-v1")]
+
+        expect(convert(reasoning)[:content].first).must_equal({ type: "thinking", thinking: "", signature: "sig" })
+      end
+
       it "skips parts with no format or another adapter's format" do
         reasoning = [
           part(type: :text, text: "legacy"),
