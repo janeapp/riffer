@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.openai.gpt-6-luna/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the sum of
+        the prime numbers between 100 and 150? Reply with just the number."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - e582619f-0e5d-49d9-89c4-3349771c3766
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '151'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 02 Oct 2026 21:09:57 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1847'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7432ca5b-8414-4454-b94f-8b9ffa4ffb51
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":11067},"output":{"message":{"content":[{"reasoningContent":{"redactedContent":"cnNuX3JydTZCUUhnVWMvVldTNXZSSUFsSHdJRmVOa0JrSHE0ZzFaNHZsVVR1bkoxQmppa0x1Ujd1VFYrNWtUMmh1Nnp3ZUNOQUY4QUFRQVZZWGR6TFdOeWVYQjBieTF3ZFdKc2FXTXRhMlY1QUVSQmQyVk9UV1pXYkZsRGMwTk1OSE5uYkZZNU9HSk1aRzl1VEdoc056VTBTR1ZNWjJwUVJEWnpUbU12ZEVrMmNXZERXV1owZGxKa05FUlBVVm80YmpFMk0wRTlQUUFCQUJGaGQzTXRhMjF6TFdocFpYSmhjbU5vZVFBS1ltVnliUzF6ZEc5eVpRQmNndk8vZmNlQzFUL0Z0OFV6V3lIRkx0VGtCcW5pMWtSVDF4eGtJUVR5ZXhQUU8wUGVwUjhqUlEzelZZVGdtYTVPa0RZeEM5OTJUWlR1UUFlMUQ1K1VmZ3E2QzlkOFh3RWtIc0dFeTB2eFI1dUdZS1N4eFUzWU1IeWtwVjBDQUFBUUFMWThab1Q1Z3ltYlk1ZzhOeFZLeWJtWDdSa2hReDlyYWN1L1JHQXA1Q01qQlBPcTluNUVkdTllVmZET2JiL0Nvdi8vLy84QUFBQUJBQUFBQUFBQUFBQUFBQUFCQUFBQlpRdEtDUVNmSER1Z0tRN3phd1Q4SG9iUGhGNkFQMTdwQ09VQ0hhbWdEcFI1djlCWmJkbFpyYjBlWGY2ZVV4eDQzWGpDWW9ucGhxblNpZ2JMSkFrTnRVemdHeDM1UGhoVExTWDRpdGsvY1VYTUZ6c05LY2Z3bmswN3ZIOTY4YlU0ay9yK1UxOUlvMVZGTk51UG5oNHFkd0NlcWpxeU9XVDl5V1Q3aXVzdHlkWVc3WkhYQ3N6cGlZZUdQRjQ1OHdvbUR6TjdHZWxHS1I2K3JnVUx0MitzWGhCRWNLdEhPQ0dEOU9IMmNSWEpERFA5RHJtMEtJZ3VRcFpwdGluaVVXSkt1eVNjcU5RcnpvMzF1akFRTkJQTjJvRkpWM2JYVlFJNmsyMEJocFV5L1JpdTd3cW5PZ0NwTkdzMWhBcEhGT2srMVBYOVlXK1Y3VGdVcjlOOXo3dEtVNUV6ci92OWx3ekdHL0hVY3lpbmd2QmpNUFA1bS90K2dlUWIvaGtxTi9MMkc2NUx6d1lSdTBjR0JITDFJT0xnSHhxdk1KNFRtZ1h2bFk2Z0E3L3BMMGV4TXpNRkdHWUFjNEFCNHdjSjJScmFZNlorOWFsSEg1bDl6RjhFaTg2dlczU21yYklSTStpejRNTWhtczVMUFE1cFE1SXVmTlFBWnpCbEFqRUFxbWJSbmttMTdtRUpGcXlMVnBteHZGdUxFTFRmOFA2a0FNZjE3eVQ2d1hQdEdKL0hxaExUaHE0akdLcmVDSmxhQWpCSUZqNG1LQVB1eWl6QkJiNTBzRUNYeTBkN2U4NDRNT0pkK3p2MldEMW9wOHdiOGhYYWFRaFVxaXdHNWhSOGhMYz0="}},{"text":"1216"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":27,"outputTokens":82,"serverToolUsage":{},"totalTokens":109}}'
+  recorded_at: Fri, 02 Oct 2026 21:09:57 GMT
+recorded_with: VCR 6.4.0

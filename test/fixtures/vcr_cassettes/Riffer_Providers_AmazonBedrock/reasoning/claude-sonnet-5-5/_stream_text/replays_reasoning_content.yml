@@ -1,0 +1,90 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-sonnet-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the sum of
+        the prime numbers between 100 and 150? Reply with just the number."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 6ad72187-183e-416a-953f-d46c60266c96
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '151'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 02 Oct 2026 21:09:27 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 690ea661-38d8-4b97-adcf-e15f4c3fe363
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAqwAAAFLnsEE2CzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1QiLCJyb2xlIjoiYXNzaXN0YW50In16qcl8AAAAyQAAAFd0KJGUCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBIn0WdJuMAAAEKwAAAFe9rUc9CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJzaWduYXR1cmUiOiJDQVFTaWdVS0VnZ1NFQUVZQWpnQlFnaDBhR2x1YTJsdVp4SU1waFRSRnVvVUFqQjZrK2w4R2d4NjhKWXVmNW9MaGhDQ2VMNGlNQ2lWOFR3N0V3R0xMM1FMQ0JPeFNQbFN4Mzl0eCtyV2Yya2hMYTRFVTBkS1RkNGJKQTl3MHFqOFVDbjBab2NKdENxbEJMWXhkY3F1cVdmUkZvVHRhN0IrWTRGaVVnOTJMbjExMU5laDRDRUJwY3NhQVdubmtMWHFxbUNzMzdKS2pZVnZTR3R0S0JBcDlYb0Z5Y25aM2RzaG1qN0h3ZVR2eUw3RnBMcVd3NFZYYlpiMlV1VDluUTZ2WnlndEJSSkMxZFZDOVpVby9XTFZLcC83RWp5cHl0ZzRVZm9yaEVESEd1OURPUlFGT1JhWGNvVzhsbU9SeDBEZnVuM2p0RVJ5UjVWVmRXRkF0WkVML2M3MndUSThjaGxhUHUxNk5OSjQzUjV5YmFrN3dwUHpqS1JwZysvWW83WXdSVlVycThoNWJoWW1FRXdoMDVEbjBXUUNHczZ4cE9Vek83bnlKN2wrOHZYRER2cVR4OWx6M1BjUHdERlJGMG1teFpqMjVOdzg4V1Z4VUpJTVo2akgvZURYbHRPM2YzazQ4d0pLZ3BhNUlSaVMzR0ZDWHNKREYxczVIaFpGWDYwRys2ajFMNDlXaVcyT3VIcWpHeUFkUXZ5SjZ3dkFYVFJ5bFdZYlVqeWZnVlNwRGpTVHozbHV6MzRISWpHMExSTGxrbTM3VVoyYTd5VzUxR3p2VVlpQURHVFFINnJ4ZHJ0c2pPZFMzN0JZekFxV2huTGkzM0d0eUdjY1BCdWVXL0VYYzdMWW9xZ1pHMnB2c0VveDNacTZiZkM1Z0pEV1oxZklXbEszSDI2WTA5elp4RWl6amt1eGg0WjBVc3FSYmNGL3IxRmxhakEzOXZPS2hQeFBmV09JUlRHbk1MUzVUM3hHWFdWVFVSMS9ab3Iwc0NCalJVcll0eUk5SXZOY0lFNXo2Tk45Yit1NTVPNVZTaG5CVy9SbHo2ZHB3ckZRcHIyLzlsNXU0M0pwY3pkdHJZZXVDcU1ZVyszT1U3NlZyUlgvd0RUK0UweGREYmRXOTJOdStEbmZUc3ZjdVB2akk3TVplSkJya0xEVE9oZ0IifX0sInAiOiJhYmNkZWZnaGlqa2wifWqaPuIAAACKAAAAVhx8g5sLOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYmNkZWYifXbreQwAAADDAAAAVz6YiTULOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiMTIxNiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0wifR3wzv8AAACXAAAAVoQM0KgLOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzIn2BtcVlAAAAqwAAAFF+uRCMCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn1+GlN+AAAA2gAAAE43A9QGCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6OTY4fSwicCI6ImFiY2QiLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6MzYsIm91dHB1dFRva2VucyI6OTIsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjoxMjh9fbrTQpM=
+  recorded_at: Fri, 02 Oct 2026 21:09:27 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-sonnet-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the sum of
+        the prime numbers between 100 and 150? Reply with just the number."}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"","signature":"CAQSigUKEggSEAEYAjgBQgh0aGlua2luZxIMphTRFuoUAjB6k+l8Ggx68JYuf5oLhhCCeL4iMCiV8Tw7EwGLL3QLCBOxSPlSx39tx+rWf2khLa4EU0dKTd4bJA9w0qj8UCn0ZocJtCqlBLYxdcquqWfRFoTta7B+Y4FiUg92Ln111Neh4CEBpcsaAWnnkLXqqmCs37JKjYVvSGttKBAp9XoFycnZ3dshmj7HweTvyL7FpLqWw4VXbZb2UuT9nQ6vZygtBRJC1dVC9ZUo/WLVKp/7Ejypytg4UforhEDHGu9DORQFORaXcoW8lmORx0Dfun3jtERyR5VVdWFAtZEL/c72wTI8chlaPu16NNJ43R5ybak7wpPzjKRpg+/Yo7YwRVUrq8h5bhYmEEwh05Dn0WQCGs6xpOUzO7nyJ7l+8vXDDvqTx9lz3PcPwDFRF0mmxZj25Nw88WVxUJIMZ6jH/eDXltO3f3k48wJKgpa5IRiS3GFCXsJDF1s5HhZFX60G+6j1L49WiW2OuHqjGyAdQvyJ6wvAXTRylWYbUjyfgVSpDjSTz3luz34HIjG0LRLlkm37UZ2a7yW51GzvUYiADGTQH6rxdrtsjOdS37BYzAqWhnLi33GtyGccPBueW/EXc7LYoqgZG2pvsEox3Zq6bfC5gJDWZ1fIWlK3H26Y09zZxEizjkuxh4Z0UsqRbcF/r1FlajA39vOKhPxPfWOIRTGnMLS5T3xGXWVTUR1/Zor0sCBjRUrYtyI9IvNcIE5z6NN9b+u55O5VShnBW/Rlz6dpwrFQpr2/9l5u43JpczdtrYeuCqMYW+3OU76VrRX/wDT+E0xdDbdW92Nu+DnfTsvcuPvjI7MZeJBrkLDTOhgB"}}},{"text":"1216"}]},{"role":"user","content":[{"text":"Now
+        add 10. Reply with just the number."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 064af9d4-0180-4bf3-ab2f-8dc303563fe6
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '1221'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 02 Oct 2026 21:09:28 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b57125f2-47f7-4693-a079-3c44d8d09860
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAiQAAAFJcsT1SCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbCIsInJvbGUiOiJhc3Npc3RhbnQifXBfPHkAAAC+AAAAVz/arUsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiMTIyNiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHIn1mRFQGAAAApgAAAFYYTUGeCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSCJ9XtkDNQAAAJIAAABR0ojKews6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn2VHhmLAAAA6gAAAE6WImyACzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6NTIxfSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0IiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjE0Niwib3V0cHV0VG9rZW5zIjo0LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MTUwfX0radUM
+  recorded_at: Fri, 02 Oct 2026 21:09:28 GMT
+recorded_with: VCR 6.4.0

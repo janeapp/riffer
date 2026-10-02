@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-opus-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the sum of
+        the prime numbers between 100 and 150? Reply with just the number."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - c382c4ba-310a-497f-817d-707e777c5630
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '151'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 02 Oct 2026 21:09:32 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1269'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 49503392-d0bc-439f-b46d-ff41a09d31ff
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1889},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSkAUKEggSEAEYAjgBQgh0aGlua2luZxIMf2LRwja9OOvn1yiGGgymiLle5Bb7MsEO6LoiMIsMUSm5010L1xUq3o8N56igFCEUOrdOrChQft4X86QwOWawEBNk22siNRNSiZ+mCCqrBIn1k2F3kCEeU8lPa6fSAwXALF906Ht57h2EfOS86bhcF/PTTh8Q7o6nonN1B+Wyl3muBCUBCB/7DRPnaN4HzbyR3z1lIcVmi3GC/gWaiU3W0PlX+9kFuvQkSD0oA1b3GEl8Z9rCMNV3i3mmD6l+4GVDk3lTuRM6VtyOWU7xZyKyc56tOrHaYwoY9QjAHmxgwfBYcXNGvbQRgDovGqg/r7DXu9S9TSIF2TBfqfzSUqGHJbiuCFHQMHAWR/A00HFJazx/wpy73mytl7IgNty2Ahte/tY26q86ejbwfKP7PebIfoZQ8BS3pkMCTqRzPeEy29aIz/gzZLjl5XzkvJM2UGkAvpNkax8re5A0BKKKrfiLimdO51LWwNXfVMXq9DUXBya8lxrSTuE9Ph3s7eYSgePK8Mg4PTWhK1A3UBAdf1sGl0wiwY6lZk1HLi3M6bxlp2o+dV1jgUimJNlVt4gGJSXBeZ4K0B7AlJ+9fPZgh0V1zBBwJCOSfK4zj5pK6gzMsNm3V04YBjwBF6U6+Ad+L0IhWx68u38bpmHotfFo6L3reoXXOW3H0Dr3pLBMOYp37rq0bcW/UMGnB3wRtuyb4G5isVx1IuG1y1P5TnJlb49NJgJUXPCOk6WgzPaGG7kUwO7teseBOBOKTsUHGOwom8VUQRbmXW53Fhp6+EkoTJ4sC3m3J/Od8zaR6tdb2QppUof2Yn/qtHSPlTnmsQy00jaMqsbSwq+nJ/X/ZBgB","text":""}}},{"text":"1216"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":36,"outputTokens":101,"serverToolUsage":{},"totalTokens":137}}'
+  recorded_at: Fri, 02 Oct 2026 21:09:32 GMT
+recorded_with: VCR 6.4.0

@@ -1391,6 +1391,54 @@ describe Riffer::Providers::AmazonBedrock do
         end
       end
     end
+
+    {
+      "claude-opus-5-5" => ["us.anthropic.claude-opus-5-5", :text],
+      "claude-sonnet-5-5" => ["us.anthropic.claude-sonnet-5-5", :text],
+      "gpt-6-luna" => ["us.openai.gpt-6-luna", :encrypted],
+    }.each do |name, (model_id, reasoning_type)|
+      describe "with default thinking on #{name}" do
+        let(:model) { model_id }
+        # A question hard enough that adaptive thinking reasons before answering.
+        let(:prime_sum) { "What is the sum of the prime numbers between 100 and 150? Reply with just the number." }
+
+        it "captures reasoning from #generate_text" do
+          VCR.use_cassette(
+            "Riffer_Providers_AmazonBedrock/reasoning/#{name}/_generate_text/captures_reasoning_content",
+          ) do
+            result = provider.generate_text(prompt: prime_sum, model: model)
+
+            expect(result.reasoning.map(&:type).uniq).must_equal [reasoning_type]
+            expect(result.reasoning.map(&:format).uniq).must_equal [Riffer::Providers::AmazonBedrock::REASONING_FORMAT]
+            expect(result.reasoning.map { |part| part.signature || part.data }).wont_include nil
+            expect(result.content).must_include "1216"
+          end
+        end
+
+        it "sends turn one's streamed reasoning back and gets an answer" do
+          VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/#{name}/_stream_text/replays_reasoning_content") do
+            question = Riffer::Messages::User.new(prime_sum)
+
+            first = provider.stream_text(messages: [question], model: model).to_a
+            parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
+            answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
+
+            expect(parts.map(&:type).uniq).must_equal [reasoning_type]
+            expect(parts.map { |part| part.signature || part.data }).wont_include nil
+
+            history = [
+              question,
+              Riffer::Messages::Assistant.new(answer, reasoning: parts),
+              Riffer::Messages::User.new("Now add 10. Reply with just the number."),
+            ]
+            second = provider.stream_text(messages: history, model: model).to_a
+            text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+            expect(text_done.content).must_include "1226"
+          end
+        end
+      end
+    end
   end
 
   describe "usage" do
