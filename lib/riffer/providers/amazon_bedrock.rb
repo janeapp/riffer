@@ -480,7 +480,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     data = part.data
     return { reasoning_content: { redacted_content: Base64.strict_decode64(data) } } if data
 
-    { reasoning_content: { reasoning_text: { text: part.text, signature: part.signature }.compact } }
+    { reasoning_content: { reasoning_text: { text: part.text.to_s, signature: part.signature }.compact } }
   end
 
   #--

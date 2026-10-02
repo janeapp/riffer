@@ -1239,6 +1239,21 @@ describe Riffer::Providers::AmazonBedrock do
         expect(replayed).must_equal({ reasoning_content: { redacted_content: redacted_bytes } })
       end
 
+      # Signature-only reasoning blocks come back from lossy persistence with no text; the SDK's
+      # param validator rejects the request unless text is present.
+      it "replays a text part with no text as an empty string that passes SDK param validation" do
+        reasoning = [part(type: :text, text: nil, signature: "sig", format: "bedrock-converse-v1")]
+
+        block = convert(reasoning)[:content].first
+
+        expect(block).must_equal({ reasoning_content: { reasoning_text: { text: "", signature: "sig" } } })
+        shape = Aws::BedrockRuntime::Client.api.operation(:converse).input
+        Aws::ParamValidator.validate!(
+          shape,
+          { model_id: model, messages: [{ role: "assistant", content: [block] }] },
+        )
+      end
+
       # The SDK's stubbed client runs its own param validation and JSON
       # serialization, so this pins the wire shape Converse receives.
       it "round-trips captured reasoning through the SDK onto the next request body" do

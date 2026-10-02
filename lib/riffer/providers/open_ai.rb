@@ -446,8 +446,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Hash[Symbol, untyped]
   def convert_reasoning_item_to_openai_format(parts)
-    summary = parts.filter_map { |part| { type: "summary_text", text: part.text } if part.type == :summary }
-    content = parts.filter_map { |part| { type: "reasoning_text", text: part.text } if part.type == :text }
+    summary = parts.filter_map { |part| { type: "summary_text", text: part.text.to_s } if part.type == :summary }
+    content = parts.filter_map { |part| { type: "reasoning_text", text: part.text.to_s } if part.type == :text }
 
     {
       type: "reasoning",

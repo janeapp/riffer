@@ -440,7 +440,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def convert_reasoning_part_to_anthropic_format(part)
     return { type: "redacted_thinking", data: part.data } if part.type == :encrypted
 
-    { type: "thinking", thinking: part.text, signature: part.signature }
+    { type: "thinking", thinking: part.text.to_s, signature: part.signature }
   end
 
   #--
