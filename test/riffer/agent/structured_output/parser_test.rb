@@ -16,8 +16,8 @@ describe Riffer::Agent::StructuredOutput::Parser do
       expect(parse("[1, 2]")).must_be_nil
     end
 
-    it "recovers the first object from a top-level array" do
-      expect(parse(%([{"sentiment":"neutral"},{"sentiment":"positive"}]))).must_equal({ sentiment: "neutral" })
+    it "returns nil for a top-level array of objects" do
+      expect(parse(%([{"sentiment":"neutral"},{"sentiment":"positive"}]))).must_be_nil
     end
 
     it "recovers an object from a json code fence" do
@@ -54,34 +54,16 @@ describe Riffer::Agent::StructuredOutput::Parser do
       expect(parse(content)).must_equal({ note: 'a } and a { and a "quoted" }' })
     end
 
-    it "skips a balanced non-JSON brace span in prose before the object" do
-      content = 'Filling in the {template}: {"sentiment":"positive"}'
-
-      expect(parse(content)).must_equal({ sentiment: "positive" })
+    it "recovers an object surrounded by multibyte prose" do
+      expect(parse('Voilà : {"ville":"Montréal"} — merci')).must_equal({ ville: "Montréal" })
     end
 
-    it "skips an unmatched brace in prose before the object" do
-      content = 'Use { to open: {"sentiment":"positive"}'
-
-      expect(parse(content)).must_equal({ sentiment: "positive" })
+    it "returns nil when prose around the object contains braces" do
+      expect(parse('Filling in the {template}: {"sentiment":"positive"}')).must_be_nil
     end
 
-    it "recovers the first object when the reply contains several" do
-      content = 'Draft: {"sentiment":"neutral"} Final: {"sentiment":"positive"}'
-
-      expect(parse(content)).must_equal({ sentiment: "neutral" })
-    end
-
-    it "recovers an object surrounded by multibyte prose and braces" do
-      content = 'Voilà le {modèle} : {"ville":"Montréal"} — {fin}'
-
-      expect(parse(content)).must_equal({ ville: "Montréal" })
-    end
-
-    it "rejects many unmatched braces before long prose" do
-      content = ("{ " * 25) + ("lorem ipsum " * 8_000)
-
-      expect(parse(content)).must_be_nil
+    it "returns nil when the reply contains several objects" do
+      expect(parse('Draft: {"sentiment":"neutral"} Final: {"sentiment":"positive"}')).must_be_nil
     end
 
     it "returns nil when no object is present" do
@@ -94,13 +76,6 @@ describe Riffer::Agent::StructuredOutput::Parser do
 
     it "does not recover a nested object from a malformed outer object" do
       expect(parse('{"outer": {"sentiment":"positive"}, broken}')).must_be_nil
-    end
-
-    it "stops after a bounded number of candidates" do
-      strays = "{" * Riffer::Agent::StructuredOutput::Parser::MAX_CANDIDATES
-      content = "#{strays}{\"sentiment\":\"positive\"}"
-
-      expect(parse(content)).must_be_nil
     end
   end
 end

@@ -1,13 +1,6 @@
 # Generated from lib/riffer/agent/structured_output/parser.rb with RBS::Inline
 
 module Riffer::Agent::StructuredOutput::Parser
-  # Bounds CPU time on pathological content such as long runs of unmatched braces.
-  MAX_CANDIDATES: Integer
-
-  STRUCTURAL_CHAR: Regexp
-
-  STRING_TAIL: Regexp
-
   # --
   # : (String) -> Hash[Symbol, untyped]?
   def parse: (String) -> Hash[Symbol, untyped]?
@@ -17,14 +10,6 @@ module Riffer::Agent::StructuredOutput::Parser
   # --
   # : (String) -> Hash[Symbol, untyped]?
   def outermost_object: (String) -> Hash[Symbol, untyped]?
-
-  # --
-  # : (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
-  def recover: (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
-
-  # --
-  # : (String, Integer) -> Integer?
-  def closing_brace: (String, Integer) -> Integer?
 
   # --
   # : (String) -> Hash[Symbol, untyped]?
