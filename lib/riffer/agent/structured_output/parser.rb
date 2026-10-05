@@ -4,14 +4,10 @@
 require "json"
 require "strscan"
 
-# Without native constrained decoding, models often wrap a valid object in code
-# fences, prose, or markdown despite instructions, so a strict parse alone
-# rejects correct answers.
 module Riffer::Agent::StructuredOutput::Parser
   extend self
 
-  # Caps recovery on pathological content such as a long run of unmatched
-  # braces, where every candidate scans to the end of the string.
+  # Bounds CPU time on pathological content such as long runs of unmatched braces.
   MAX_CANDIDATES = 20 #: Integer
 
   STRUCTURAL_CHAR = /[{}"]/ #: Regexp
@@ -22,13 +18,12 @@ module Riffer::Agent::StructuredOutput::Parser
   def parse(content)
     JSON.parse(content, symbolize_names: true)
   rescue JSON::ParserError => e
+    # One native parse resolves a lone wrapped object without the slower scan.
     outermost_object(content) || recover(content) || raise(e)
   end
 
   private
 
-  # A single object wrapped in a fence, prose, or formatting is the common
-  # case, and this resolves it in one native parse before the slower scan.
   #--
   #: (String) -> Hash[Symbol, untyped]?
   def outermost_object(content)
@@ -42,6 +37,7 @@ module Riffer::Agent::StructuredOutput::Parser
   #--
   #: (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
   def recover(content, from = 0, attempts = MAX_CANDIDATES)
+    # Byte offsets, to line up with StringScanner#pos in closing_brace.
     start = content.byteindex("{", from)
     return if start.nil? || attempts.zero?
 
@@ -53,7 +49,6 @@ module Riffer::Agent::StructuredOutput::Parser
     parse_object(content.byteslice(start..stop).to_s) || recover(content, stop + 1, attempts - 1)
   end
 
-  # Offsets are in bytes to match StringScanner#pos.
   #--
   #: (String, Integer) -> Integer?
   def closing_brace(content, start)

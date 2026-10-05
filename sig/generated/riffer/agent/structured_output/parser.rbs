@@ -1,11 +1,7 @@
 # Generated from lib/riffer/agent/structured_output/parser.rb with RBS::Inline
 
-# Without native constrained decoding, models often wrap a valid object in code
-# fences, prose, or markdown despite instructions, so a strict parse alone
-# rejects correct answers.
 module Riffer::Agent::StructuredOutput::Parser
-  # Caps recovery on pathological content such as a long run of unmatched
-  # braces, where every candidate scans to the end of the string.
+  # Bounds CPU time on pathological content such as long runs of unmatched braces.
   MAX_CANDIDATES: Integer
 
   STRUCTURAL_CHAR: Regexp
@@ -18,8 +14,6 @@ module Riffer::Agent::StructuredOutput::Parser
 
   private
 
-  # A single object wrapped in a fence, prose, or formatting is the common
-  # case, and this resolves it in one native parse before the slower scan.
   # --
   # : (String) -> Hash[Symbol, untyped]?
   def outermost_object: (String) -> Hash[Symbol, untyped]?
@@ -28,7 +22,6 @@ module Riffer::Agent::StructuredOutput::Parser
   # : (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
   def recover: (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
 
-  # Offsets are in bytes to match StringScanner#pos.
   # --
   # : (String, Integer) -> Integer?
   def closing_brace: (String, Integer) -> Integer?
