@@ -81,6 +81,27 @@ describe Riffer::Agent::StructuredOutput do
       expect(result.failure?).must_equal true
     end
 
+    it "returns successful result for JSON wrapped in a code fence" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_score_params)
+      result = so.parse_and_validate("```json\n{\"sentiment\":\"positive\",\"score\":0.9}\n```")
+
+      expect(result.object).must_equal({ sentiment: "positive", score: 0.9 })
+    end
+
+    it "returns validation error for a recovered object that fails the schema" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_score_params)
+      result = so.parse_and_validate('Here you go: {"sentiment":"positive"}')
+
+      expect(result.error).must_match(/Validation error/)
+    end
+
+    it "returns JSON parse error for prose without an object" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_params)
+      result = so.parse_and_validate("The sentiment is positive.")
+
+      expect(result.error).must_match(/JSON parse error/)
+    end
+
     describe "with null optional fields" do
       let(:nested_params) do
         params = Riffer::Params.new

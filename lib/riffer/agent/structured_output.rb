@@ -21,7 +21,7 @@ class Riffer::Agent::StructuredOutput
   #--
   #: (String) -> Riffer::Agent::StructuredOutput::Result
   def parse_and_validate(json_string)
-    parsed = JSON.parse(json_string, symbolize_names: true)
+    parsed = Riffer::Agent::StructuredOutput::Parser.parse(json_string)
     validated = @params.validate(parsed)
     Result.new(object: validated)
   rescue JSON::ParserError => e

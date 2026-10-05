@@ -1,0 +1,5 @@
+# `Riffer::Agent::StructuredOutput::Parser` uses `extend self`; rbs-inline doesn't emit that,
+# so re-extend here to expose its instance methods as singleton methods.
+module Riffer::Agent::StructuredOutput::Parser
+  extend ::Riffer::Agent::StructuredOutput::Parser
+end
