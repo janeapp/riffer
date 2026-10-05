@@ -10,7 +10,7 @@ gems:
     remote: https://github.com/ruby/gem_rbs_collection.git
     repo_dir: gems
 - name: anthropic
-  version: 1.71.0
+  version: 1.76.0
   source:
     type: rubygems
 - name: ast
@@ -170,7 +170,7 @@ gems:
   source:
     type: stdlib
 - name: openai
-  version: 0.91.0
+  version: 0.97.0
   source:
     type: rubygems
 - name: openssl
