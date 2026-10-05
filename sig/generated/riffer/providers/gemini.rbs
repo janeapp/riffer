@@ -3,6 +3,8 @@
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN: Regexp
 
+  REASONING_BUDGETS: Hash[Symbol, Integer]
+
   FINISH_REASONS: Hash[String, Symbol]
 
   # --
@@ -26,6 +28,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (String, Symbol) -> Hash[Symbol, untyped]
+  def thinking_config: (String, Symbol) -> Hash[Symbol, untyped]
 
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

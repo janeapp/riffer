@@ -139,6 +139,14 @@ class Riffer::Providers::Base
   def yield_finish_reason: (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
 
   # --
+  # : (Hash[Symbol, untyped]) -> Symbol?
+  def reasoning_level: (Hash[Symbol, untyped]) -> Symbol?
+
+  # --
+  # : (String) -> bot
+  def raise_reasoning_conflict: (String) -> bot
+
+  # --
   # : (String) -> Hash[Symbol, untyped]?
   def parse_structured_output: (String) -> Hash[Symbol, untyped]?
 

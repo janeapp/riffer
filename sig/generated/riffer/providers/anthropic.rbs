@@ -10,6 +10,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # request.
   REASONING_FORMAT: String
 
+  DEFAULT_MAX_TOKENS: Integer
+
+  # Claude 4.5 and earlier have no adaptive thinking, so they get a token budget instead.
+  BUDGET_THINKING_MODEL_PATTERN: Regexp
+
+  REASONING_BUDGETS: Hash[Symbol, Integer]
+
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -35,6 +42,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped], String, Symbol, Hash[Symbol, untyped]) -> void
+  def apply_reasoning_level: (Hash[Symbol, untyped], String, Symbol, Hash[Symbol, untyped]) -> void
 
   # --
   # : (Hash[Symbol, untyped]) -> untyped

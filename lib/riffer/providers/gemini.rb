@@ -7,6 +7,8 @@ require "securerandom"
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
 
+  REASONING_BUDGETS = { low: 1024, medium: 8192, high: 24_576 }.freeze #: Hash[Symbol, Integer]
+
   FINISH_REASONS = {
     "STOP" => :stop,
     "MAX_TOKENS" => :length,
@@ -60,6 +62,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     partitioned = partition_messages(messages)
     tools = options[:tools]
     structured_output = options[:structured_output]
+    reasoning_level = reasoning_level(options)
 
     params = {
       model: model,
@@ -76,7 +79,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     # The Gemini Developer API has no request labels field and rejects unknown
     # body fields, so :tags reach observability only.
-    generation_config = options.except(:tools, :structured_output, :tags)
+    generation_config = options.except(:tools, :structured_output, :tags, :riffer_reasoning_level)
+
+    if reasoning_level
+      raise_reasoning_conflict("thinkingConfig:") if generation_config[:thinkingConfig]
+
+      generation_config[:thinkingConfig] = thinking_config(model.to_s, reasoning_level)
+    end
 
     if structured_output
       generation_config[:responseMimeType] = "application/json"
@@ -86,6 +95,17 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     params[:generationConfig] = generation_config unless generation_config.empty?
 
     params
+  end
+
+  #--
+  #: (String, Symbol) -> Hash[Symbol, untyped]
+  def thinking_config(model, level)
+    if model.start_with?("gemini-2.")
+      { thinkingBudget: level == :off ? 0 : REASONING_BUDGETS.fetch(level) }
+    else
+      # Gemini 3 cannot turn thinking off; minimal is its lowest level.
+      { thinkingLevel: level == :off ? "minimal" : level.to_s }
+    end
   end
 
   #--

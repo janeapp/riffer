@@ -627,6 +627,101 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::Gemini.new }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    def thinking_config_for(model, options)
+      provider.send(:build_request_params, messages, model, options)[:generationConfig][:thinkingConfig]
+    end
+
+    describe "on Gemini 2.x" do
+      it "maps :off to a zero budget" do
+        expect(thinking_config_for("gemini-2.5-flash", { riffer_reasoning_level: :off })).must_equal(
+          { thinkingBudget: 0 },
+        )
+      end
+
+      it "maps each level to its token budget" do
+        { low: 1024, medium: 8192, high: 24_576 }.each do |level, budget|
+          expect(thinking_config_for("gemini-2.5-pro", { riffer_reasoning_level: level })).must_equal(
+            { thinkingBudget: budget },
+          )
+        end
+      end
+    end
+
+    describe "on Gemini 3 and later" do
+      it "maps :off to the minimal level" do
+        expect(thinking_config_for("gemini-3-flash-preview", { riffer_reasoning_level: :off })).must_equal(
+          { thinkingLevel: "minimal" },
+        )
+      end
+
+      it "maps each level to its thinking level" do
+        %i[low medium high].each do |level|
+          expect(thinking_config_for("gemini-3-pro-preview", { riffer_reasoning_level: level })).must_equal(
+            { thinkingLevel: level.to_s },
+          )
+        end
+      end
+
+      it "treats an unknown model as Gemini 3" do
+        expect(thinking_config_for("gemini-flash-latest", { riffer_reasoning_level: :low })).must_equal(
+          { thinkingLevel: "low" },
+        )
+      end
+    end
+
+    it "keeps other generationConfig options" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-2.5-flash",
+        { riffer_reasoning_level: :low, temperature: 0.5 },
+      )
+
+      expect(params[:generationConfig]).must_equal({ temperature: 0.5, thinkingConfig: { thinkingBudget: 1024 } })
+    end
+
+    it "raises when model_options thinkingConfig is also set" do
+      error = expect do
+        thinking_config_for("gemini-2.5-flash", { riffer_reasoning_level: :low, thinkingConfig: { thinkingBudget: 0 } })
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "reasoning and model_options thinkingConfig: are both set; use one"
+    end
+
+    it "raises on an unknown level" do
+      expect { thinking_config_for("gemini-2.5-flash", { riffer_reasoning_level: :minimal }) }.must_raise(
+        Riffer::ArgumentError,
+      )
+    end
+
+    it "sends a thinking budget to a Gemini 2.5 live model" do
+      VCR.use_cassette("Riffer_Providers_Gemini/reasoning_level/gemini-2.5-flash-lite/low") do
+        result = provider.generate_text(
+          prompt: "What is 17 times 23? Reply with just the number.",
+          model: "gemini-2.5-flash-lite",
+          riffer_reasoning_level: :low,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    it "sends a thinking level to a Gemini 3 live model" do
+      VCR.use_cassette("Riffer_Providers_Gemini/reasoning_level/gemini-3-flash-preview/low") do
+        result = provider.generate_text(
+          prompt: "What is 17 times 23? Reply with just the number.",
+          model: "gemini-3-flash-preview",
+          riffer_reasoning_level: :low,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       stub_tool("GetWeather") do

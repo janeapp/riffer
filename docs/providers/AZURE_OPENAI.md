@@ -81,7 +81,7 @@ model_options max_tokens: 4096
 
 ### reasoning
 
-Enables extended thinking (for supported models):
+Enables extended thinking (for supported models). This is the native field, passed through; the [`reasoning`](#reasoning-level) agent setting does the same across providers:
 
 ```ruby
 model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
@@ -92,6 +92,17 @@ Reasoning is captured and replayed on later turns exactly as with the [OpenAI pr
 ### structured_output
 
 Structured JSON output works identically to the OpenAI provider.
+
+## Reasoning level
+
+The [`reasoning`](../CONFIGURATION.md#reasoning) agent setting maps the same way as on the [OpenAI provider](OPENAI.md#reasoning-level):
+
+| `reasoning`                  | Request field                                     |
+| ---------------------------- | ------------------------------------------------- |
+| `:off`                       | `reasoning: {effort: "none", summary: "auto"}`    |
+| `:low` / `:medium` / `:high` | `reasoning: {effort: "<level>", summary: "auto"}` |
+
+Riffer sends these fields whatever the deployment. If the model behind it doesn't support a value, the request fails with Azure's error. Setting both `reasoning` and `model_options reasoning:` raises `Riffer::ArgumentError`.
 
 ## Example
 

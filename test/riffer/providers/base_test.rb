@@ -442,6 +442,18 @@ describe Riffer::Providers::Base do
       expect(params).must_equal({ "gen_ai.request.temperature" => 0.5, "gen_ai.request.max_tokens" => 128 })
     end
 
+    it "stamps the reasoning level when one is set" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1", riffer_reasoning_level: :low)
+
+      expect(chat_span.attributes["riffer.request.reasoning_level"]).must_equal "low"
+    end
+
+    it "omits the reasoning level when none is set" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(chat_span.attributes).wont_include "riffer.request.reasoning_level"
+    end
+
     it "keeps unknown options off the span" do
       provider.generate_text(prompt: "Hello", model: "riffer-1", custom_option: "secret")
 

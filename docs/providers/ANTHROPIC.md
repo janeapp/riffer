@@ -79,10 +79,13 @@ model_options top_k: 250
 
 ### thinking
 
-Enable extended thinking (reasoning) for supported models. Pass the thinking configuration hash directly as Anthropic expects:
+Enable extended thinking (reasoning) for supported models. Pass the thinking configuration hash directly as Anthropic expects, or use the [`reasoning`](#reasoning-level) agent setting:
 
 ```ruby
-# Enable with budget tokens
+# Adaptive thinking (Claude 4.6 and later)
+model_options thinking: {type: "adaptive"}
+
+# Budget tokens (Claude 4.5 and earlier; Claude 4.7 and later reject it)
 model_options thinking: {type: "enabled", budget_tokens: 10000}
 ```
 
@@ -97,6 +100,22 @@ model_options web_search: true
 # With custom configuration
 model_options web_search: {max_uses: 3}
 ```
+
+## Reasoning level
+
+The [`reasoning`](../CONFIGURATION.md#reasoning) agent setting maps to Claude's thinking fields. Claude 3.x and Claude 4.0, 4.1, and 4.5 (Sonnet, Opus, Haiku) get a token budget; every other model gets adaptive thinking with an effort:
+
+| `reasoning` | Claude 4.5 and earlier                              | Later Claude and unknown models                                     |
+| ----------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| `:off`      | `thinking: {type: "disabled"}`                      | `thinking: {type: "disabled"}`                                      |
+| `:low`      | `thinking: {type: "enabled", budget_tokens: 1024}`  | `thinking: {type: "adaptive"}`, `output_config: {effort: "low"}`    |
+| `:medium`   | `thinking: {type: "enabled", budget_tokens: 8192}`  | `thinking: {type: "adaptive"}`, `output_config: {effort: "medium"}` |
+| `:high`     | `thinking: {type: "enabled", budget_tokens: 24576}` | `thinking: {type: "adaptive"}`, `output_config: {effort: "high"}`   |
+
+- With a token budget, `max_tokens` defaults to the budget plus 4096 instead of 4096. A `max_tokens` you set is kept.
+- The effort is merged into `output_config`, alongside the structured output `format` and any other `output_config` keys you set.
+
+Riffer sends these fields whatever the model. If the model doesn't support a value, the request fails with Anthropic's error. Setting `reasoning` together with `model_options thinking:`, or with `output_config: {effort:}` on an adaptive model, raises `Riffer::ArgumentError`.
 
 ## Example
 

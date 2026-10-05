@@ -23,6 +23,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # adapter, whose signatures Converse cannot verify, never reaches the request.
   REASONING_FORMAT = "bedrock-converse-v1" #: String
 
+  # Claude 4.5 and earlier have no adaptive thinking, so they get a token budget instead.
+  BUDGET_THINKING_MODEL_PATTERN = /claude-(?:3-|(?:sonnet|opus|haiku)-4(?:-[015])?(?:-\d{8})?(?![-.]?\d))/ #: Regexp
+
+  REASONING_BUDGETS = { low: 1024, medium: 8192, high: 24_576 }.freeze #: Hash[Symbol, Integer]
+
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(model = nil)
@@ -86,13 +91,16 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     structured_output = options[:structured_output]
     cache_control = options[:cache_control]
     tags = options[:tags] || {}
+    reasoning_level = reasoning_level(options)
 
     params = {
       model_id: model,
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
-      **options.except(:tools, :structured_output, :cache_control, :tags),
+      **options.except(:tools, :structured_output, :cache_control, :tags, :riffer_reasoning_level),
     } #: Hash[Symbol, untyped]
+
+    apply_reasoning_level(params, model.to_s, reasoning_level) if reasoning_level
 
     # Converse has no dedicated end-user field, so every tag (including the
     # reserved user_id) rides along in requestMetadata; a tag wins over a
@@ -124,6 +132,55 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     apply_cache_point(params, cache_control) if cache_control
 
     params
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], String, Symbol) -> void
+  def apply_reasoning_level(params, model, level)
+    fields = params[:additional_model_request_fields] || {}
+    effort = level == :off ? "none" : level.to_s
+
+    params[:additional_model_request_fields] =
+      if model.include?("amazon.nova")
+        reject_reasoning_field(fields, :reasoningConfig)
+        config = level == :off ? { type: "disabled" } : { type: "enabled", maxReasoningEffort: level.to_s }
+        fields.merge(reasoningConfig: config)
+      elsif model.include?("openai.gpt-oss")
+        reject_reasoning_field(fields, :reasoning_effort)
+        fields.merge(reasoning_effort: effort)
+      elsif model.include?("openai.")
+        reject_reasoning_field(fields, :reasoning)
+        fields.merge(reasoning: { effort: effort })
+      else
+        claude_reasoning_fields(params, fields, model, level)
+      end
+  end
+
+  # Anything unrecognized, including application inference profile ARNs that
+  # hide the model id, gets Claude's fields.
+  #--
+  #: (Hash[Symbol, untyped], Hash[Symbol, untyped], String, Symbol) -> Hash[Symbol, untyped]
+  def claude_reasoning_fields(params, fields, model, level)
+    reject_reasoning_field(fields, :thinking)
+    return fields.merge(thinking: { type: "disabled" }) if level == :off
+
+    if BUDGET_THINKING_MODEL_PATTERN.match?(model)
+      budget = REASONING_BUDGETS.fetch(level)
+      # The budget counts against max_tokens, so leave room for the answer; a caller max_tokens wins.
+      params[:inference_config] = { max_tokens: budget + 4096, **(params[:inference_config] || {}) }
+      return fields.merge(thinking: { type: "enabled", budget_tokens: budget })
+    end
+
+    output_config = fields[:output_config] || {}
+    raise_reasoning_conflict("additional_model_request_fields[:output_config][:effort]") if output_config[:effort]
+
+    fields.merge(thinking: { type: "adaptive" }, output_config: output_config.merge(effort: level.to_s))
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Symbol) -> void
+  def reject_reasoning_field(fields, key)
+    raise_reasoning_conflict("additional_model_request_fields[:#{key}]") if fields[key]
   end
 
   #--

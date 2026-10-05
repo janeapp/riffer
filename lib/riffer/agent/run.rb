@@ -354,6 +354,8 @@ module Riffer::Agent::Run
   def merged_model_options(agent, tags = {})
     opts = agent.config.model_options.dup
     opts[:structured_output] = agent.structured_output if agent.structured_output
+    reasoning = agent.config.reasoning
+    opts[:riffer_reasoning_level] = reasoning if reasoning
     # Providers extract :tags for native request metadata; it never reaches an
     # SDK call verbatim.
     opts[:tags] = tags unless tags.empty?

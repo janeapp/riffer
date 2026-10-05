@@ -45,6 +45,7 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
   model_options:     { temperature: 0.2 },
   max_steps:         8,                        # integer; -1 = unlimited (see below)
   structured_output: { type: "object", … },   # JSON Schema, or null
+  reasoning:         :low,                     # reasoning level, or null
   tools: [ { name:, description:, parameters_schema:, timeout: }, … ]
 }
 ```

@@ -1392,6 +1392,186 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::Anthropic.new }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    def params_for(model, options)
+      provider.send(:build_request_params, messages, model, options)
+    end
+
+    describe "budget-thinking model detection" do
+      budget_models = %w[
+        claude-3-7-sonnet-20250219
+        claude-3-5-haiku-20241022
+        claude-3-opus-20240229
+        claude-sonnet-4-20250514
+        claude-opus-4-20250514
+        claude-sonnet-4-0
+        claude-opus-4-0
+        claude-opus-4-1
+        claude-opus-4-1-20250805
+        claude-sonnet-4-5
+        claude-sonnet-4-5-20250929
+        claude-opus-4-5
+        claude-opus-4-5-20251101
+        claude-haiku-4-5
+        claude-haiku-4-5-20251001
+      ]
+      adaptive_models = %w[
+        claude-sonnet-4-6
+        claude-opus-4-6
+        claude-opus-4-7
+        claude-sonnet-4-6-20260115
+        claude-opus-5
+        claude-sonnet-5-5
+        claude-opus-5-5
+        claude-opus-4-10
+        some-future-model
+      ]
+
+      budget_models.each do |model|
+        it "treats #{model} as budget-only" do
+          expect(Riffer::Providers::Anthropic::BUDGET_THINKING_MODEL_PATTERN.match?(model)).must_equal true
+        end
+      end
+
+      adaptive_models.each do |model|
+        it "treats #{model} as adaptive" do
+          expect(Riffer::Providers::Anthropic::BUDGET_THINKING_MODEL_PATTERN.match?(model)).must_equal false
+        end
+      end
+    end
+
+    describe "on a budget-only model" do
+      let(:model) { "claude-haiku-4-5-20251001" }
+
+      it "maps :off to disabled thinking" do
+        params = params_for(model, { riffer_reasoning_level: :off })
+
+        expect(params[:thinking]).must_equal({ type: "disabled" })
+        expect(params[:max_tokens]).must_equal 4096
+      end
+
+      it "maps each level to its token budget" do
+        { low: 1024, medium: 8192, high: 24_576 }.each do |level, budget|
+          params = params_for(model, { riffer_reasoning_level: level })
+
+          expect(params[:thinking]).must_equal({ type: "enabled", budget_tokens: budget })
+          expect(params[:max_tokens]).must_equal budget + 4096
+        end
+      end
+
+      it "keeps a caller-set max_tokens" do
+        params = params_for(model, { riffer_reasoning_level: :high, max_tokens: 30_000 })
+
+        expect(params[:max_tokens]).must_equal 30_000
+      end
+
+      it "does not write an effort" do
+        expect(params_for(model, { riffer_reasoning_level: :low }).key?(:output_config)).must_equal false
+      end
+
+      it "allows a caller output_config effort" do
+        params = params_for(model, { riffer_reasoning_level: :low, output_config: { effort: "high" } })
+
+        expect(params[:output_config]).must_equal({ effort: "high" })
+      end
+    end
+
+    describe "on an adaptive model" do
+      let(:model) { "claude-sonnet-4-6" }
+
+      it "maps :off to disabled thinking" do
+        params = params_for(model, { riffer_reasoning_level: :off })
+
+        expect(params[:thinking]).must_equal({ type: "disabled" })
+        expect(params.key?(:output_config)).must_equal false
+      end
+
+      it "maps each level to adaptive thinking with an effort" do
+        %i[low medium high].each do |level|
+          params = params_for(model, { riffer_reasoning_level: level })
+
+          expect(params[:thinking]).must_equal({ type: "adaptive" })
+          expect(params[:output_config]).must_equal({ effort: level.to_s })
+          expect(params[:max_tokens]).must_equal 4096
+        end
+      end
+
+      it "merges the effort into a caller output_config" do
+        params = params_for(model, { riffer_reasoning_level: :low, output_config: { other: "kept" } })
+
+        expect(params[:output_config]).must_equal({ other: "kept", effort: "low" })
+      end
+
+      it "keeps the effort alongside a structured output format" do
+        schema = Riffer::Params.new
+        schema.required(:answer, String)
+        structured_output = Riffer::Agent::StructuredOutput.new(schema)
+        params = params_for(model, { riffer_reasoning_level: :medium, structured_output: structured_output })
+
+        expect(params[:output_config][:effort]).must_equal "medium"
+        expect(params[:output_config][:format][:type]).must_equal "json_schema"
+      end
+
+      it "raises when model_options output_config effort is also set" do
+        error = expect do
+          params_for(model, { riffer_reasoning_level: :low, output_config: { effort: "high" } })
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal "reasoning and model_options output_config[:effort] are both set; use one"
+      end
+    end
+
+    it "raises when model_options thinking is also set" do
+      error = expect do
+        params_for("claude-sonnet-4-6", { riffer_reasoning_level: :off, thinking: { type: "adaptive" } })
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "reasoning and model_options thinking: are both set; use one"
+    end
+
+    it "does not count max_tokens as a conflict" do
+      params = params_for("claude-sonnet-4-6", { riffer_reasoning_level: :low, max_tokens: 1000 })
+
+      expect(params[:max_tokens]).must_equal 1000
+    end
+
+    it "does not pass riffer_reasoning_level through" do
+      params = params_for("claude-sonnet-4-6", { riffer_reasoning_level: :low })
+
+      expect(params.key?(:riffer_reasoning_level)).must_equal false
+    end
+
+    it "raises on an unknown level" do
+      expect { params_for("claude-sonnet-4-6", { riffer_reasoning_level: :xhigh }) }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "sends a token budget to a budget-only live model" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/reasoning_level/claude-haiku-4-5/low") do
+        result = provider.generate_text(
+          prompt: "What is 17 times 23? Reply with just the number.",
+          model: "claude-haiku-4-5-20251001",
+          riffer_reasoning_level: :low,
+        )
+
+        expect(result.reasoning).wont_be_empty
+        expect(result.content).must_include "391"
+      end
+    end
+
+    it "sends adaptive thinking to an adaptive live model" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/reasoning_level/claude-sonnet-4-6/low") do
+        result = provider.generate_text(
+          prompt: "What is 17 times 23? Reply with just the number.",
+          model: "claude-sonnet-4-6",
+          riffer_reasoning_level: :low,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+  end
+
   describe "extended thinking" do
     describe "#generate_text with thinking" do
       it "returns an Assistant message with thinking enabled" do

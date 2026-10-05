@@ -190,6 +190,16 @@ describe Riffer::Providers::AzureOpenAI do
     end
   end
 
+  describe "reasoning level" do
+    it "inherits the OpenAI mapping" do
+      provider = Riffer::Providers::AzureOpenAI.new
+      messages = [Riffer::Messages::User.new("Hello")]
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", { riffer_reasoning_level: :off })
+
+      expect(params[:reasoning]).must_equal({ effort: "none", summary: "auto" })
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do

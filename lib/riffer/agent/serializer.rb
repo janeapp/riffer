@@ -27,6 +27,7 @@ module Riffer::Agent::Serializer
       model_options: config.model_options,
       max_steps: encode_max_steps(config.max_steps),
       structured_output: config.structured_output&.to_json_schema(strict: false),
+      reasoning: config.reasoning,
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
     }
   end
@@ -77,6 +78,7 @@ module Riffer::Agent::Serializer
       model_options: hash[:model_options] || {},
       structured_output: decode_structured_output(hash[:structured_output]),
       max_steps: decode_max_steps(hash),
+      reasoning: hash[:reasoning],
       tools_config: tools,
     } #: Hash[Symbol, untyped]
     # Config#tool_runtime= rejects nil.

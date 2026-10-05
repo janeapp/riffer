@@ -130,14 +130,27 @@ Loads tools from registered [MCP](MCP.md) servers by tag.
 
 ### model_options
 
-Passes options to each LLM request:
+Passes options to each LLM request, as-is, using the provider's own option names:
 
 ```ruby
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
-  model_options reasoning: 'medium', temperature: 0.7, web_search: true
+  model_options temperature: 0.7, web_search: true
 end
 ```
+
+### reasoning
+
+Sets how much the model thinks before it answers: `:off`, `:low`, `:medium`, or `:high` (a String works too). Each provider maps the level to its own request fields:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'anthropic/claude-sonnet-4-6'
+  reasoning :low
+end
+```
+
+Leave it unset to keep the model's default. Don't also set the same provider fields in `model_options`; that raises `Riffer::ArgumentError`. See [Configuration — reasoning](CONFIGURATION.md#reasoning) for the per-provider mapping.
 
 ### max_steps
 

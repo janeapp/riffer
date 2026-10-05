@@ -67,6 +67,42 @@ describe Riffer::Agent do
     end
   end
 
+  describe ".reasoning" do
+    it "sets the level" do
+      agent_class.reasoning(:low)
+
+      expect(agent_class.reasoning).must_equal :low
+    end
+
+    it "normalizes a String to a Symbol" do
+      agent_class.reasoning("high")
+
+      expect(agent_class.reasoning).must_equal :high
+    end
+
+    it "is unset by default" do
+      expect(agent_class.reasoning).must_be_nil
+    end
+
+    it "raises for an unknown level" do
+      error = expect { agent_class.reasoning(:max) }.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_equal "reasoning must be one of off, low, medium, high, got :max"
+    end
+
+    it "is inherited by a subclass" do
+      parent = stub_agent("ReasoningParentAgent") do
+        model "mock/riffer-1"
+        reasoning :medium
+      end
+      child = stub_agent("ReasoningChildAgent", base: parent) { reasoning :off }
+
+      expect(child.reasoning).must_equal :off
+      expect(parent.reasoning).must_equal :medium
+      expect(stub_agent("ReasoningOtherChildAgent", base: parent).reasoning).must_equal :medium
+    end
+  end
+
   describe "#initialize" do
     it "seeds the session with the configured instruction system message" do
       agent = agent_class.new
@@ -424,7 +460,7 @@ describe Riffer::Agent do
     # copy-or-exclude decision rather than being dropped from every subclass.
     it "accounts for every field on Config" do
       known = %i[
-        identifier model instructions model_options structured_output max_steps
+        identifier model instructions model_options structured_output max_steps reasoning
         tools_config mcp_configs tool_runtime skills_config guardrails
       ]
 

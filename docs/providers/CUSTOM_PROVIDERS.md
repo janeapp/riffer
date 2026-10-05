@@ -328,6 +328,23 @@ end
 
 Map tags to your service's native request field, or drop them, but don't pass `:tags` on to an SDK verbatim.
 
+## Reasoning Level
+
+When an agent sets [`reasoning`](../CONFIGURATION.md#reasoning), every call passes a `:riffer_reasoning_level` option: `:off`, `:low`, `:medium`, or `:high`. Map it to your service's reasoning field, or drop it, but don't pass it on to an SDK verbatim:
+
+```ruby
+def build_request_params(messages, model, options)
+  level = options[:riffer_reasoning_level]
+
+  {
+    messages: convert_messages(messages),
+    model: model,
+    reasoning_effort: level&.to_s,
+    **options.except(:tools, :tags, :riffer_reasoning_level),
+  }.compact
+end
+```
+
 ## Trace Provider Name
 
 LLM-call and agent-run spans stamp `gen_ai.provider.name` from the `semconv_provider_name` class method. The default is your snake_cased class name; override it when a [GenAI semconv well-known value](https://opentelemetry.io/docs/specs/semconv/gen-ai/) exists for your provider:

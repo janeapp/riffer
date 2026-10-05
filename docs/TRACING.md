@@ -142,6 +142,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | `gen_ai.request.presence_penalty`          | float    | When the caller set it                                                        |
 | `gen_ai.request.seed`                      | int      | When the caller set it                                                        |
 | `gen_ai.request.stop_sequences`            | string[] | When the caller set it                                                        |
+| `riffer.request.reasoning_level`           | string   | When the agent sets [`reasoning`](CONFIGURATION.md#reasoning)                 |
 | `gen_ai.usage.input_tokens`                | int      | When the provider reported usage                                              |
 | `gen_ai.usage.output_tokens`               | int      | When the provider reported usage                                              |
 | `gen_ai.usage.cache_read.input_tokens`     | int      | When the provider reported cache reads                                        |

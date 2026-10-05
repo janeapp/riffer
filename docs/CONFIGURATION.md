@@ -286,28 +286,62 @@ Override global configuration at the agent level:
 
 ### model_options
 
-Pass options to each LLM request:
+Pass options to each LLM request. They go to the provider as-is, so use the names that provider expects (see [Common Model Options](#common-model-options)):
 
 ```ruby
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
 
   # These options are sent with every generate/stream call
-  model_options temperature: 0.7, reasoning: 'medium'
+  model_options temperature: 0.7
 end
 ```
+
+### reasoning
+
+Set how much the model thinks before it answers, with one setting that works on every provider:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'anthropic/claude-sonnet-4-6'
+  reasoning :low # :off, :low, :medium, or :high
+end
+```
+
+A String (`'low'`) works too. Anything else raises `Riffer::ArgumentError`. Leave it unset to send nothing and keep the model's default.
+
+Each provider turns the level into its own request fields:
+
+| Provider                          | `:off`                                         | `:low` / `:medium` / `:high`                                            |
+| --------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
+| OpenAI, Azure OpenAI              | `reasoning: {effort: "none", summary: "auto"}` | `reasoning: {effort: "<level>", summary: "auto"}`                       |
+| OpenRouter                        | `reasoning: {effort: "none"}`                  | `reasoning: {effort: "<level>"}`                                        |
+| Anthropic, Claude 4.5 and earlier | `thinking: {type: "disabled"}`                 | `thinking: {type: "enabled", budget_tokens: 1024 / 8192 / 24576}`       |
+| Anthropic, later Claude           | `thinking: {type: "disabled"}`                 | `thinking: {type: "adaptive"}` and `output_config: {effort: "<level>"}` |
+| Gemini 2.x                        | `thinkingBudget: 0`                            | `thinkingBudget: 1024 / 8192 / 24576`                                   |
+| Gemini 3 and later                | `thinkingLevel: "minimal"`                     | `thinkingLevel: "<level>"`                                              |
+
+With a token budget, Anthropic also raises the default `max_tokens` to the budget plus 4096, unless you set `max_tokens` yourself. Amazon Bedrock picks fields by model family; see [Amazon Bedrock](providers/AMAZON_BEDROCK.md#reasoning-level).
+
+Riffer always sends these fields and doesn't check whether the model supports them. If a model rejects a level, you get the provider's error unchanged. Each provider page has the details.
+
+Set the level with `reasoning` or set the provider's own fields in `model_options`, not both. If `model_options` sets a field that `reasoning` would write, the request raises `Riffer::ArgumentError` (for example, `reasoning and model_options thinking: are both set; use one`). `max_tokens` never counts as a conflict.
+
+The level travels in the [serialized agent](SERIALIZATION.md) and is stamped on the `chat` span as `riffer.request.reasoning_level`.
 
 ## Common Model Options
 
 ### OpenAI
 
-| Option        | Description                                      |
-| ------------- | ------------------------------------------------ |
-| `temperature` | Sampling temperature (0.0-2.0)                   |
-| `max_tokens`  | Maximum tokens in response                       |
-| `top_p`       | Nucleus sampling parameter                       |
-| `reasoning`   | Reasoning effort level (`low`, `medium`, `high`) |
-| `web_search`  | Enable web search (`true` or config hash)        |
+`reasoning` here is OpenAI's own effort field, passed through as-is (Azure OpenAI and OpenRouter take it too). For a setting that works on every provider, use the [`reasoning`](#reasoning) agent setting instead.
+
+| Option        | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `temperature` | Sampling temperature (0.0-2.0)                    |
+| `max_tokens`  | Maximum tokens in response                        |
+| `top_p`       | Nucleus sampling parameter                        |
+| `reasoning`   | Native reasoning effort (`low`, `medium`, `high`) |
+| `web_search`  | Enable web search (`true` or config hash)         |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -334,15 +368,15 @@ end
 
 ### Anthropic
 
-| Option          | Description                                 |
-| --------------- | ------------------------------------------- |
-| `temperature`   | Sampling temperature                        |
-| `max_tokens`    | Maximum tokens in response                  |
-| `top_p`         | Nucleus sampling parameter                  |
-| `top_k`         | Top-k sampling parameter                    |
-| `thinking`      | Extended thinking config hash (Claude 3.7+) |
-| `output_config` | Output config hash (e.g. `effort`)          |
-| `web_search`    | Enable web search (`true` or config hash)   |
+| Option          | Description                               |
+| --------------- | ----------------------------------------- |
+| `temperature`   | Sampling temperature                      |
+| `max_tokens`    | Maximum tokens in response                |
+| `top_p`         | Nucleus sampling parameter                |
+| `top_k`         | Top-k sampling parameter                  |
+| `thinking`      | Extended thinking config hash             |
+| `output_config` | Output config hash (e.g. `effort`)        |
+| `web_search`    | Enable web search (`true` or config hash) |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -350,10 +384,16 @@ class MyAgent < Riffer::Agent
   model_options temperature: 0.7, max_tokens: 4096
 end
 
-# With extended thinking (Claude 3.7+)
+# With adaptive thinking (Claude 4.6 and later)
 class ReasoningAgent < Riffer::Agent
+  model 'anthropic/claude-sonnet-4-6'
+  model_options thinking: {type: "adaptive"}
+end
+
+# With a thinking budget (Claude 4.5 and earlier; Claude 4.7 and later reject budget_tokens)
+class BudgetReasoningAgent < Riffer::Agent
   model 'anthropic/claude-haiku-4-5-20251001'
-  model_options thinking: {type: "enabled", budget_tokens: 10000}
+  model_options thinking: {type: "enabled", budget_tokens: 10000}, max_tokens: 16000
 end
 
 # With an output effort level

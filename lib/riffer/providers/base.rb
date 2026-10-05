@@ -274,6 +274,9 @@ class Riffer::Providers::Base
       attributes[attribute] = value if value
     end
 
+    reasoning_level = options[:riffer_reasoning_level]
+    attributes["riffer.request.reasoning_level"] = reasoning_level.to_s if reasoning_level
+
     attributes.merge(tag_attributes(options[:tags] || {}))
   end
 
@@ -355,6 +358,25 @@ class Riffer::Providers::Base
       finish_reason: finish_reason.reason,
       raw_finish_reason: finish_reason.raw,
     )
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Symbol?
+  def reasoning_level(options)
+    value = options[:riffer_reasoning_level]
+    return nil if value.nil?
+
+    level = value.to_s.to_sym
+    levels = Riffer::Agent::Config::REASONING_LEVELS
+    return level if levels.include?(level)
+
+    raise Riffer::ArgumentError, "riffer_reasoning_level must be one of #{levels.join(', ')}, got #{value.inspect}"
+  end
+
+  #--
+  #: (String) -> bot
+  def raise_reasoning_conflict(field)
+    raise Riffer::ArgumentError, "reasoning and model_options #{field} are both set; use one"
   end
 
   #--

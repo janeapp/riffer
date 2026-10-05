@@ -74,7 +74,7 @@ model_options max_tokens: 4096
 
 ### reasoning
 
-Enables extended thinking (for supported models):
+Enables extended thinking (for supported models). This is the native field, passed through; the [`reasoning`](#reasoning-level) agent setting does the same across providers:
 
 ```ruby
 model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
@@ -115,6 +115,17 @@ model_options web_search: true
 # With custom configuration
 model_options web_search: {search_context_size: "medium"}
 ```
+
+## Reasoning level
+
+The [`reasoning`](../CONFIGURATION.md#reasoning) agent setting maps to the Responses API `reasoning` field:
+
+| `reasoning`                  | Request field                                     |
+| ---------------------------- | ------------------------------------------------- |
+| `:off`                       | `reasoning: {effort: "none", summary: "auto"}`    |
+| `:low` / `:medium` / `:high` | `reasoning: {effort: "<level>", summary: "auto"}` |
+
+Riffer sends these fields whatever the model. If the model doesn't support a value (for example, `effort: "none"` on a model older than gpt-5.1), the request fails with OpenAI's error. Setting both `reasoning` and `model_options reasoning:` raises `Riffer::ArgumentError`.
 
 ## Example
 

@@ -293,6 +293,40 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::OpenRouter.new }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    def params_for(options)
+      provider.send(:build_request_params, messages, "anthropic/claude-haiku-4.5", options)
+    end
+
+    it "maps :off to effort none" do
+      expect(params_for({ riffer_reasoning_level: :off })[:reasoning]).must_equal({ effort: "none" })
+    end
+
+    it "maps each level to its effort" do
+      %i[low medium high].each do |level|
+        expect(params_for({ riffer_reasoning_level: level })[:reasoning]).must_equal({ effort: level.to_s })
+      end
+    end
+
+    it "does not pass riffer_reasoning_level through" do
+      expect(params_for({ riffer_reasoning_level: :low }).key?(:riffer_reasoning_level)).must_equal false
+    end
+
+    it "raises when model_options reasoning is also set" do
+      error = expect do
+        params_for({ riffer_reasoning_level: :low, reasoning: { max_tokens: 2000 } })
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "reasoning and model_options reasoning: are both set; use one"
+    end
+
+    it "raises on an unknown level" do
+      expect { params_for({ riffer_reasoning_level: "max" }) }.must_raise(Riffer::ArgumentError)
+    end
+  end
+
   describe "tags" do
     let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }

@@ -175,6 +175,12 @@ describe Riffer::Providers::Mock do
       expect(provider.calls.last[:reasoning]).must_equal "high"
     end
 
+    it "drops riffer_reasoning_level" do
+      provider.generate_text(prompt: "Hello", riffer_reasoning_level: :low)
+
+      expect(provider.calls.last.key?(:riffer_reasoning_level)).must_equal false
+    end
+
     it "defaults the finish_reason to stop" do
       result = provider.generate_text(prompt: "Hello")
 

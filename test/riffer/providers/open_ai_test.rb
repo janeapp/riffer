@@ -997,6 +997,73 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    def params_for(options)
+      provider.send(:build_request_params, messages, "gpt-5-mini", options)
+    end
+
+    it "maps :off to effort none" do
+      expect(params_for({ riffer_reasoning_level: :off })[:reasoning]).must_equal({ effort: "none", summary: "auto" })
+    end
+
+    it "maps each level to its effort" do
+      %i[low medium high].each do |level|
+        expect(params_for({ riffer_reasoning_level: level })[:reasoning]).must_equal(
+          { effort: level.to_s, summary: "auto" },
+        )
+      end
+    end
+
+    it "accepts a String level" do
+      expect(params_for({ riffer_reasoning_level: "low" })[:reasoning]).must_equal({ effort: "low", summary: "auto" })
+    end
+
+    it "does not pass riffer_reasoning_level through" do
+      expect(params_for({ riffer_reasoning_level: :low }).key?(:riffer_reasoning_level)).must_equal false
+    end
+
+    it "raises when model_options reasoning is also set" do
+      error = expect { params_for({ riffer_reasoning_level: :low, reasoning: "high" }) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "reasoning and model_options reasoning: are both set; use one"
+    end
+
+    it "raises on an unknown level" do
+      error = expect { params_for({ riffer_reasoning_level: :minimal }) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "riffer_reasoning_level must be one of off, low, medium, high, got :minimal"
+    end
+
+    it "leaves model_options reasoning unchanged when no level is set" do
+      expect(params_for({ reasoning: "high" })[:reasoning]).must_equal({ effort: "high", summary: "auto" })
+    end
+
+    it "turns reasoning off on a live model" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/reasoning_level/off") do
+        result = provider.generate_text(
+          prompt: "What is 17 times 23? Reply with just the number.",
+          model: "gpt-5.1",
+          riffer_reasoning_level: :off,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    it "reasons at low effort on a live model" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/reasoning_level/low") do
+        result = provider.generate_text(
+          prompt: "What is 17 times 23? Reply with just the number.",
+          model: "gpt-5-mini",
+          riffer_reasoning_level: :low,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

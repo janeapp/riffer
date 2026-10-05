@@ -109,6 +109,25 @@ model_options cache_control: {type: "ephemeral", ttl: "1h"}
 
 Both checkpoints share the same `ttl`. Caching is opt-in: omit `cache_control` and no cachePoint is sent. A checkpoint is only honored once the content before it clears the model's minimum token count (see the per-model limits in the [AWS prompt caching guide](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html)) and is silently ignored below it, so short conversations may see no cache reads at first. On models that don't support `cachePoint`, the Converse request errors. Verify hits via `response.token_usage.cache_read_tokens`, which should grow with each step of an agent loop as the conversation accumulates.
 
+## Reasoning level
+
+The [`reasoning`](../CONFIGURATION.md#reasoning) agent setting writes into `additional_model_request_fields`. The fields depend on the model family, matched against the model id so `us.` and `global.` prefixes work. The first matching row wins:
+
+| Model id contains          | `:off`                                | `:low` / `:medium` / `:high`                                         |
+| -------------------------- | ------------------------------------- | -------------------------------------------------------------------- |
+| `amazon.nova`              | `reasoningConfig: {type: "disabled"}` | `reasoningConfig: {type: "enabled", maxReasoningEffort: "<level>"}`  |
+| `openai.gpt-oss`           | `reasoning_effort: "none"`            | `reasoning_effort: "<level>"`                                        |
+| `openai.`                  | `reasoning: {effort: "none"}`         | `reasoning: {effort: "<level>"}`                                     |
+| A Claude 4.5 or earlier id | `thinking: {type: "disabled"}`        | `thinking: {type: "enabled", budget_tokens: 1024 / 8192 / 24576}`    |
+| Anything else              | `thinking: {type: "disabled"}`        | `thinking: {type: "adaptive"}`, `output_config: {effort: "<level>"}` |
+
+- Claude 4.5 and earlier means Claude 3.x and Claude 4.0, 4.1, and 4.5 (Sonnet, Opus, Haiku), e.g. `anthropic.claude-sonnet-4-5-20250929-v1:0`.
+- With a token budget, `inference_config[:max_tokens]` defaults to the budget plus 4096. A `max_tokens` you set is kept.
+- An application inference profile ARN doesn't show the model, so it gets the "anything else" Claude fields. If the profile points at another family, set that family's fields in `model_options` instead.
+- The fields merge into any `additional_model_request_fields` you set. This `output_config` is Claude's request field; structured output uses the separate top-level Converse `output_config`.
+
+Riffer sends these fields whatever the model. If the model doesn't support a value, the request fails with Bedrock's error. Setting `reasoning` together with a field it would write (e.g. `additional_model_request_fields: {thinking: ...}`) raises `Riffer::ArgumentError`.
+
 ## Example
 
 ```ruby

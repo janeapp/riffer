@@ -60,10 +60,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     reasoning = options[:reasoning]
+    reasoning_level = reasoning_level(options)
     tools = options[:tools]
     structured_output = options[:structured_output]
     web_search = options[:web_search]
     tags = options[:tags] || {}
+
+    if reasoning_level
+      raise_reasoning_conflict("reasoning:") if reasoning
+      reasoning = reasoning_level == :off ? "none" : reasoning_level.to_s
+    end
 
     params = {
       input: convert_messages_to_openai_format(messages),
@@ -72,7 +78,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         effort: reasoning,
         summary: "auto",
       },
-      **options.except(:reasoning, :tools, :structured_output, :web_search, :tags),
+      **options.except(:reasoning, :riffer_reasoning_level, :tools, :structured_output, :web_search, :tags),
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?

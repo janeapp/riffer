@@ -79,7 +79,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     web_search = options[:web_search]
-    @calls << { messages: messages.map(&:to_h), model: model, **options.except(:web_search) }
+    @calls << { messages: messages.map(&:to_h), model: model, **options.except(:web_search, :riffer_reasoning_level) }
     response = next_response
     response[:web_search] = web_search if web_search
     { response: response }

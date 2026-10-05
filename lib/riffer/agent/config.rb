@@ -4,6 +4,8 @@
 class Riffer::Agent::Config
   DEFAULT_MAX_STEPS = 16 #: Integer
 
+  REASONING_LEVELS = %i[off low medium high].freeze #: Array[Symbol]
+
   # @rbs @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
 
   attr_reader :identifier #: String? # @dynamic identifier
@@ -12,6 +14,7 @@ class Riffer::Agent::Config
   attr_accessor :model_options #: Hash[Symbol, untyped] # @dynamic model_options, model_options=
   attr_reader :structured_output #: Riffer::Params? # @dynamic structured_output
   attr_accessor :max_steps #: Numeric? # @dynamic max_steps, max_steps=
+  attr_reader :reasoning #: Symbol? # @dynamic reasoning
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
   attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
@@ -25,6 +28,7 @@ class Riffer::Agent::Config
   #    ?model_options: Hash[Symbol, untyped],
   #    ?structured_output: Riffer::Params?,
   #    ?max_steps: Numeric?,
+  #    ?reasoning: (Symbol | String)?,
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?mcp_configs: Array[Hash[Symbol, untyped]],
   #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
@@ -38,6 +42,7 @@ class Riffer::Agent::Config
     model_options: {},
     structured_output: nil,
     max_steps: DEFAULT_MAX_STEPS,
+    reasoning: nil,
     tools_config: nil,
     mcp_configs: [],
     tool_runtime: nil,
@@ -54,6 +59,7 @@ class Riffer::Agent::Config
     self.model = model
     self.instructions = instructions
     self.structured_output = structured_output
+    self.reasoning = reasoning
     self.tool_runtime = tool_runtime if tool_runtime
   end
 
@@ -71,6 +77,17 @@ class Riffer::Agent::Config
     end
 
     @structured_output = value
+  end
+
+  #--
+  #: ((Symbol | String)?) -> Symbol?
+  def reasoning=(value)
+    level = value&.to_s&.to_sym
+    unless level.nil? || REASONING_LEVELS.include?(level)
+      raise Riffer::ArgumentError, "reasoning must be one of #{REASONING_LEVELS.join(', ')}, got #{value.inspect}"
+    end
+
+    @reasoning = level
   end
 
   #--

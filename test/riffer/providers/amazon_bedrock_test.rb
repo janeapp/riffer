@@ -1441,6 +1441,262 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+    let(:prompt) { "What is 17 times 23? Reply with just the number." }
+
+    def params_for(model, options)
+      provider.send(:build_request_params, messages, model, options)
+    end
+
+    def fields_for(model, options)
+      params_for(model, options)[:additional_model_request_fields]
+    end
+
+    describe "on Nova" do
+      let(:model) { "us.amazon.nova-2-lite-v1:0" }
+
+      it "maps :off to disabled reasoningConfig" do
+        expect(fields_for(model, { riffer_reasoning_level: :off })).must_equal(
+          { reasoningConfig: { type: "disabled" } },
+        )
+      end
+
+      it "maps each level to maxReasoningEffort" do
+        %i[low medium high].each do |level|
+          expect(fields_for(model, { riffer_reasoning_level: level })).must_equal(
+            { reasoningConfig: { type: "enabled", maxReasoningEffort: level.to_s } },
+          )
+        end
+      end
+
+      it "raises when model_options reasoningConfig is also set" do
+        error = expect do
+          params_for(
+            model,
+            { riffer_reasoning_level: :low, additional_model_request_fields: { reasoningConfig: { type: "enabled" } } },
+          )
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal(
+          "reasoning and model_options additional_model_request_fields[:reasoningConfig] are both set; use one",
+        )
+      end
+    end
+
+    describe "on gpt-oss" do
+      let(:model) { "openai.gpt-oss-120b-1:0" }
+
+      it "maps :off to a flat reasoning_effort of none" do
+        expect(fields_for(model, { riffer_reasoning_level: :off })).must_equal({ reasoning_effort: "none" })
+      end
+
+      it "maps each level to a flat reasoning_effort" do
+        %i[low medium high].each do |level|
+          expect(fields_for(model, { riffer_reasoning_level: level })).must_equal({ reasoning_effort: level.to_s })
+        end
+      end
+
+      it "raises when model_options reasoning_effort is also set" do
+        error = expect do
+          params_for(
+            model,
+            { riffer_reasoning_level: :low, additional_model_request_fields: { reasoning_effort: "high" } },
+          )
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal(
+          "reasoning and model_options additional_model_request_fields[:reasoning_effort] are both set; use one",
+        )
+      end
+    end
+
+    describe "on other OpenAI models" do
+      let(:model) { "us.openai.gpt-6-luna" }
+
+      it "maps :off to a nested effort of none" do
+        expect(fields_for(model, { riffer_reasoning_level: :off })).must_equal({ reasoning: { effort: "none" } })
+      end
+
+      it "maps each level to a nested effort" do
+        %i[low medium high].each do |level|
+          expect(fields_for(model, { riffer_reasoning_level: level })).must_equal({ reasoning: { effort: level.to_s } })
+        end
+      end
+
+      it "raises when model_options reasoning is also set" do
+        error = expect do
+          params_for(
+            model,
+            { riffer_reasoning_level: :low, additional_model_request_fields: { reasoning: { effort: "high" } } },
+          )
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal(
+          "reasoning and model_options additional_model_request_fields[:reasoning] are both set; use one",
+        )
+      end
+    end
+
+    describe "on a budget-only Claude" do
+      let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+
+      %w[
+        anthropic.claude-sonnet-4-5-20250929-v1:0
+        us.anthropic.claude-haiku-4-5-20251001-v1:0
+        anthropic.claude-3-7-sonnet-20250219-v1:0
+        global.anthropic.claude-sonnet-4-20250514-v1:0
+        us.anthropic.claude-opus-4-1-20250805-v1:0
+      ].each do |id|
+        it "detects #{id}" do
+          expect(Riffer::Providers::AmazonBedrock::BUDGET_THINKING_MODEL_PATTERN.match?(id)).must_equal true
+        end
+      end
+
+      it "maps :off to disabled thinking without touching max_tokens" do
+        params = params_for(model, { riffer_reasoning_level: :off })
+
+        expect(params[:additional_model_request_fields]).must_equal({ thinking: { type: "disabled" } })
+        expect(params.key?(:inference_config)).must_equal false
+      end
+
+      it "maps each level to its token budget and sizes max_tokens around it" do
+        { low: 1024, medium: 8192, high: 24_576 }.each do |level, budget|
+          params = params_for(model, { riffer_reasoning_level: level })
+
+          expect(params[:additional_model_request_fields]).must_equal(
+            { thinking: { type: "enabled", budget_tokens: budget } },
+          )
+          expect(params[:inference_config]).must_equal({ max_tokens: budget + 4096 })
+        end
+      end
+
+      it "merges max_tokens into a caller inference_config" do
+        params = params_for(model, { riffer_reasoning_level: :low, inference_config: { temperature: 1 } })
+
+        expect(params[:inference_config]).must_equal({ max_tokens: 5120, temperature: 1 })
+      end
+
+      it "keeps a caller-set max_tokens" do
+        params = params_for(model, { riffer_reasoning_level: :high, inference_config: { max_tokens: 30_000 } })
+
+        expect(params[:inference_config]).must_equal({ max_tokens: 30_000 })
+      end
+    end
+
+    describe "on an adaptive Claude" do
+      let(:model) { "us.anthropic.claude-sonnet-4-6" }
+
+      %w[
+        us.anthropic.claude-sonnet-4-6
+        us.anthropic.claude-opus-4-7
+        global.anthropic.claude-opus-5-5
+      ].each do |id|
+        it "does not treat #{id} as budget-only" do
+          expect(Riffer::Providers::AmazonBedrock::BUDGET_THINKING_MODEL_PATTERN.match?(id)).must_equal false
+        end
+      end
+
+      it "maps :off to disabled thinking" do
+        expect(fields_for(model, { riffer_reasoning_level: :off })).must_equal({ thinking: { type: "disabled" } })
+      end
+
+      it "maps each level to adaptive thinking with an effort" do
+        %i[low medium high].each do |level|
+          params = params_for(model, { riffer_reasoning_level: level })
+
+          expect(params[:additional_model_request_fields]).must_equal(
+            { thinking: { type: "adaptive" }, output_config: { effort: level.to_s } },
+          )
+          expect(params.key?(:inference_config)).must_equal false
+        end
+      end
+
+      it "gives an application inference profile ARN the adaptive fields" do
+        arn = "arn:aws:bedrock:us-east-1:123456789012:application-inference-profile/abc123"
+
+        expect(fields_for(arn, { riffer_reasoning_level: :low })).must_equal(
+          { thinking: { type: "adaptive" }, output_config: { effort: "low" } },
+        )
+      end
+
+      it "merges into caller additional_model_request_fields" do
+        fields = fields_for(
+          model,
+          {
+            riffer_reasoning_level: :high,
+            additional_model_request_fields: { anthropic_beta: ["x"], output_config: { other: "kept" } },
+          },
+        )
+
+        expect(fields).must_equal(
+          { anthropic_beta: ["x"], thinking: { type: "adaptive" }, output_config: { other: "kept", effort: "high" } },
+        )
+      end
+
+      it "keeps structured output in the top-level output_config" do
+        schema = Riffer::Params.new
+        schema.required(:answer, String)
+        structured_output = Riffer::Agent::StructuredOutput.new(schema)
+        params = params_for(model, { riffer_reasoning_level: :low, structured_output: structured_output })
+
+        expect(params[:output_config].keys).must_equal [:text_format]
+        expect(params[:additional_model_request_fields][:output_config]).must_equal({ effort: "low" })
+      end
+
+      it "raises when model_options thinking is also set" do
+        error = expect do
+          params_for(
+            model,
+            { riffer_reasoning_level: :off, additional_model_request_fields: { thinking: { type: "adaptive" } } },
+          )
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal(
+          "reasoning and model_options additional_model_request_fields[:thinking] are both set; use one",
+        )
+      end
+
+      it "raises when model_options output_config effort is also set" do
+        error = expect do
+          params_for(
+            model,
+            { riffer_reasoning_level: :low, additional_model_request_fields: { output_config: { effort: "high" } } },
+          )
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal(
+          "reasoning and model_options additional_model_request_fields[:output_config][:effort] are both set; use one",
+        )
+      end
+    end
+
+    it "does not pass riffer_reasoning_level through" do
+      params = params_for("us.anthropic.claude-sonnet-4-6", { riffer_reasoning_level: :low })
+
+      expect(params.key?(:riffer_reasoning_level)).must_equal false
+    end
+
+    it "raises on an unknown level" do
+      expect { params_for("us.anthropic.claude-sonnet-4-6", { riffer_reasoning_level: :max }) }.must_raise(
+        Riffer::ArgumentError,
+      )
+    end
+
+    {
+      "claude-haiku-4-5/low" => ["us.anthropic.claude-haiku-4-5-20251001-v1:0", :low],
+      "claude-sonnet-4-6/low" => ["us.anthropic.claude-sonnet-4-6", :low],
+      "nova-2-lite/low" => ["us.amazon.nova-2-lite-v1:0", :low],
+      "gpt-6-luna/low" => ["us.openai.gpt-6-luna", :low],
+      "gpt-6-luna/high" => ["us.openai.gpt-6-luna", :high],
+      "gpt-oss-120b/low" => ["openai.gpt-oss-120b-1:0", :low],
+    }.each do |name, (model_id, level)|
+      it "sends the #{name} reasoning fields to a live model" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/#{name}") do
+          result = provider.generate_text(prompt: prompt, model: model_id, riffer_reasoning_level: level)
+
+          expect(result.content).must_include "391"
+        end
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

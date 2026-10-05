@@ -21,6 +21,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # request.
   REASONING_FORMAT = "anthropic-messages-v1" #: String
 
+  DEFAULT_MAX_TOKENS = 4096 #: Integer
+
+  # Claude 4.5 and earlier have no adaptive thinking, so they get a token budget instead.
+  BUDGET_THINKING_MODEL_PATTERN = /claude-(?:3-|(?:sonnet|opus|haiku)-4(?:-[015])?(?:-\d{8})?(?![-.]?\d))/ #: Regexp
+
+  REASONING_BUDGETS = { low: 1024, medium: 8192, high: 24_576 }.freeze #: Hash[Symbol, Integer]
+
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(_model = nil)
@@ -64,15 +71,18 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     structured_output = options[:structured_output]
     web_search = options[:web_search]
     tags = options[:tags] || {}
+    reasoning_level = reasoning_level(options)
 
-    max_tokens = options.fetch(:max_tokens, 4096)
+    max_tokens = options.fetch(:max_tokens, DEFAULT_MAX_TOKENS)
 
     params = {
       model: model,
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
-      **options.except(:tools, :max_tokens, :structured_output, :web_search, :tags),
+      **options.except(:tools, :max_tokens, :structured_output, :web_search, :tags, :riffer_reasoning_level),
     } #: Hash[Symbol, untyped]
+
+    apply_reasoning_level(params, model.to_s, reasoning_level, options) if reasoning_level
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
 
@@ -106,6 +116,26 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     params[:tools] = anthropic_tools unless anthropic_tools.empty?
 
     params
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], String, Symbol, Hash[Symbol, untyped]) -> void
+  def apply_reasoning_level(params, model, level, options)
+    raise_reasoning_conflict("thinking:") if options[:thinking]
+
+    if level == :off
+      params[:thinking] = { type: "disabled" }
+    elsif BUDGET_THINKING_MODEL_PATTERN.match?(model)
+      budget = REASONING_BUDGETS.fetch(level)
+      params[:thinking] = { type: "enabled", budget_tokens: budget }
+      # The budget counts against max_tokens, so the default must leave room for the answer.
+      params[:max_tokens] = budget + DEFAULT_MAX_TOKENS unless options.key?(:max_tokens)
+    else
+      raise_reasoning_conflict("output_config[:effort]") if options.dig(:output_config, :effort)
+
+      params[:thinking] = { type: "adaptive" }
+      params[:output_config] = { **(params[:output_config] || {}), effort: level.to_s }
+    end
   end
 
   #--

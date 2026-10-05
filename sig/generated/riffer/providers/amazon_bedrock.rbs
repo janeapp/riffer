@@ -10,6 +10,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # adapter, whose signatures Converse cannot verify, never reaches the request.
   REASONING_FORMAT: String
 
+  # Claude 4.5 and earlier have no adaptive thinking, so they get a token budget instead.
+  BUDGET_THINKING_MODEL_PATTERN: Regexp
+
+  REASONING_BUDGETS: Hash[Symbol, Integer]
+
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -39,6 +44,20 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped], String, Symbol) -> void
+  def apply_reasoning_level: (Hash[Symbol, untyped], String, Symbol) -> void
+
+  # Anything unrecognized, including application inference profile ARNs that
+  # hide the model id, gets Claude's fields.
+  # --
+  # : (Hash[Symbol, untyped], Hash[Symbol, untyped], String, Symbol) -> Hash[Symbol, untyped]
+  def claude_reasoning_fields: (Hash[Symbol, untyped], Hash[Symbol, untyped], String, Symbol) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped], Symbol) -> void
+  def reject_reasoning_field: (Hash[Symbol, untyped], Symbol) -> void
 
   # --
   # : (Hash[Symbol, untyped], untyped) -> void

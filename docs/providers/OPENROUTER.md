@@ -66,7 +66,7 @@ model_options temperature: 0.5, max_tokens: 2048
 
 ### reasoning
 
-For reasoning models (DeepSeek R1, OpenAI o-series via OpenRouter, etc.):
+For reasoning models (DeepSeek R1, OpenAI o-series via OpenRouter, etc.). This is the native field, passed through; the [`reasoning`](#reasoning-level) agent setting does the same across providers:
 
 ```ruby
 model_options reasoning: 'high'  # 'low' | 'medium' | 'high'
@@ -108,6 +108,17 @@ Prompt transforms applied by OpenRouter (e.g. middle-out auto-truncation):
 ```ruby
 model_options transforms: ['middle-out']
 ```
+
+## Reasoning level
+
+The [`reasoning`](../CONFIGURATION.md#reasoning) agent setting maps to OpenRouter's `reasoning` field:
+
+| `reasoning`                  | Request field                    |
+| ---------------------------- | -------------------------------- |
+| `:off`                       | `reasoning: {effort: "none"}`    |
+| `:low` / `:medium` / `:high` | `reasoning: {effort: "<level>"}` |
+
+OpenRouter translates the effort for the model it routes to. If that model or OpenRouter doesn't support a value, the request fails with OpenRouter's error. Setting both `reasoning` and `model_options reasoning:` raises `Riffer::ArgumentError`; use `model_options reasoning:` alone when you need a hash such as `{max_tokens: 5000}`.
 
 ## Example
 

@@ -80,6 +80,21 @@ Nucleus sampling:
 model_options topP: 0.9
 ```
 
+## Reasoning level
+
+The [`reasoning`](../CONFIGURATION.md#reasoning) agent setting maps to `generationConfig.thinkingConfig`. Models whose name starts with `gemini-2.` get a token budget; every other model gets a thinking level:
+
+| `reasoning` | Gemini 2.x              | Gemini 3 and later         |
+| ----------- | ----------------------- | -------------------------- |
+| `:off`      | `thinkingBudget: 0`     | `thinkingLevel: "minimal"` |
+| `:low`      | `thinkingBudget: 1024`  | `thinkingLevel: "low"`     |
+| `:medium`   | `thinkingBudget: 8192`  | `thinkingLevel: "medium"`  |
+| `:high`     | `thinkingBudget: 24576` | `thinkingLevel: "high"`    |
+
+Gemini 3 can't turn thinking off, so `:off` sends `minimal`, its lowest level. Google says `minimal` doesn't guarantee that the model won't think.
+
+Riffer sends these fields whatever the model. If the model doesn't support a value (for example, a model that can't disable thinking getting `thinkingBudget: 0`), the request fails with Gemini's error. Setting both `reasoning` and `model_options thinkingConfig:` raises `Riffer::ArgumentError`.
+
 ## Usage
 
 ### Basic Generation
