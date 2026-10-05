@@ -16,10 +16,8 @@ module Riffer::Agent::StructuredOutput::Parser
   #--
   #: (String) -> untyped
   def parse(content)
-    JSON.parse(content, symbolize_names: true)
-  rescue JSON::ParserError => e
     # One native parse resolves a lone wrapped object without the slower scan.
-    outermost_object(content) || recover(content) || raise(e)
+    parse_json(content) || outermost_object(content) || recover(content)
   end
 
   private
@@ -31,7 +29,7 @@ module Riffer::Agent::StructuredOutput::Parser
     stop = content.rindex("}")
     return unless start && stop
 
-    parse_object(content[start..stop].to_s)
+    parse_json(content[start..stop].to_s)
   end
 
   #--
@@ -46,7 +44,7 @@ module Riffer::Agent::StructuredOutput::Parser
 
     # Resume after the whole span so a malformed object never yields one of
     # its nested objects.
-    parse_object(content.byteslice(start..stop).to_s) || recover(content, stop + 1, attempts - 1)
+    parse_json(content.byteslice(start..stop).to_s) || recover(content, stop + 1, attempts - 1)
   end
 
   #--
@@ -70,9 +68,9 @@ module Riffer::Agent::StructuredOutput::Parser
   end
 
   #--
-  #: (String) -> Hash[Symbol, untyped]?
-  def parse_object(span)
-    JSON.parse(span, symbolize_names: true)
+  #: (String) -> untyped
+  def parse_json(json)
+    JSON.parse(json, symbolize_names: true)
   rescue JSON::ParserError
     nil
   end

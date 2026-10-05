@@ -27,6 +27,6 @@ module Riffer::Agent::StructuredOutput::Parser
   def closing_brace: (String, Integer) -> Integer?
 
   # --
-  # : (String) -> Hash[Symbol, untyped]?
-  def parse_object: (String) -> Hash[Symbol, untyped]?
+  # : (String) -> untyped
+  def parse_json: (String) -> untyped
 end

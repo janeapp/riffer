@@ -77,29 +77,26 @@ describe Riffer::Agent::StructuredOutput::Parser do
     it "rejects many unmatched braces before long prose" do
       content = ("{ " * 25) + ("lorem ipsum " * 8_000)
 
-      expect { parse(content) }.must_raise JSON::ParserError
+      expect(parse(content)).must_be_nil
     end
 
-    it "raises the strict parse error when no object is present" do
-      error = expect { parse("I could not determine the sentiment.") }.must_raise JSON::ParserError
-      strict_error = expect { JSON.parse("I could not determine the sentiment.") }.must_raise JSON::ParserError
-
-      expect(error.message).must_equal strict_error.message
+    it "returns nil when no object is present" do
+      expect(parse("I could not determine the sentiment.")).must_be_nil
     end
 
-    it "raises when the only object is malformed" do
-      expect { parse('Here: {"sentiment":"positive",}') }.must_raise JSON::ParserError
+    it "returns nil when the only object is malformed" do
+      expect(parse('Here: {"sentiment":"positive",}')).must_be_nil
     end
 
     it "does not recover a nested object from a malformed outer object" do
-      expect { parse('{"outer": {"sentiment":"positive"}, broken}') }.must_raise JSON::ParserError
+      expect(parse('{"outer": {"sentiment":"positive"}, broken}')).must_be_nil
     end
 
     it "stops after a bounded number of candidates" do
       strays = "{" * Riffer::Agent::StructuredOutput::Parser::MAX_CANDIDATES
       content = "#{strays}{\"sentiment\":\"positive\"}"
 
-      expect { parse(content) }.must_raise JSON::ParserError
+      expect(parse(content)).must_be_nil
     end
   end
 end
