@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 gemspec
 
-gem "anthropic", "~> 1.71.0"
+gem "anthropic", "~> 1.76.0"
 gem "async", "~> 2.46"
 gem "aws-sdk-bedrockruntime", "~> 1.85"
 gem "dotenv"
@@ -12,9 +12,9 @@ gem "guard"
 gem "guard-shell"
 gem "io-event", "< 1.23"
 gem "irb"
-gem "mcp", "~> 1.5"
+gem "mcp", "~> 1.6"
 gem "minitest", "~> 6.0"
-gem "openai", "~> 0.91.0"
+gem "openai", "~> 0.97.0"
 gem "rake", "~> 13.0"
 gem "rbs-inline", "~> 0.12"
 gem "rubocop", require: false
