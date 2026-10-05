@@ -40,7 +40,7 @@ class Riffer::Evals::Judge
   end
 
   #--
-  #: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
+  #: (instructions: String, input: String, output: String, ?ground_truth: (String | Hash[Symbol, untyped])?) -> Hash[Symbol, untyped]
   def evaluate(instructions:, input:, output:, ground_truth: nil)
     system_message = build_system_message(instructions)
     user_message = build_user_message(input: input, output: output, ground_truth: ground_truth)
@@ -72,13 +72,19 @@ class Riffer::Evals::Judge
   end
 
   #--
-  #: (input: String, output: String, ?ground_truth: String?) -> String
+  #: (input: String, output: String, ?ground_truth: (String | Hash[Symbol, untyped])?) -> String
   def build_user_message(input:, output:, ground_truth: nil)
     parts = [] #: Array[String]
     parts << "## Input\n\n#{input}"
     parts << "## Output\n\n#{output}"
-    parts << "## Ground Truth\n\n#{ground_truth}" if ground_truth
+    parts << "## Ground Truth\n\n#{format_ground_truth(ground_truth)}" if ground_truth
     parts.join("\n\n")
+  end
+
+  #--
+  #: (String | Hash[Symbol, untyped]) -> String
+  def format_ground_truth(ground_truth)
+    ground_truth.is_a?(Hash) ? JSON.pretty_generate(ground_truth) : ground_truth
   end
 
   #--

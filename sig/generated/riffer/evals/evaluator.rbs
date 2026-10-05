@@ -34,8 +34,8 @@ class Riffer::Evals::Evaluator
   private def self.derived_identifier: () -> String
 
   # --
-  # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
-  def evaluate: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
+  # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: (String | Hash[Symbol, untyped])?, ?messages: Array[Riffer::Messages::Base], ?outcome: Riffer::Agent::Outcome?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  def evaluate: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: (String | Hash[Symbol, untyped])?, ?messages: Array[Riffer::Messages::Base], ?outcome: Riffer::Agent::Outcome?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
 
   private
 

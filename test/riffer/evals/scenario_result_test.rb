@@ -151,6 +151,44 @@ describe Riffer::Evals::ScenarioResult do
     end
   end
 
+  describe "run details" do
+    it "defaults outcome, structured output, latency and error to nil" do
+      scenario = Riffer::Evals::ScenarioResult.new(input: "test", output: "test", ground_truth: nil, results: [])
+
+      expect([scenario.outcome, scenario.structured_output, scenario.latency, scenario.error]).must_equal [nil] * 4
+    end
+
+    it "includes run details in the hash representation" do
+      scenario = Riffer::Evals::ScenarioResult.new(
+        input: "test",
+        output: '{"sentiment":"positive"}',
+        ground_truth: { sentiment: "positive" },
+        results: [],
+        outcome: Riffer::Agent::Outcome.new(reason: :completed),
+        structured_output: { sentiment: "positive" },
+        latency: 1.5,
+      )
+
+      hash = scenario.to_h
+
+      expect(hash[:outcome]).must_equal({ reason: :completed, detail: nil })
+      expect(hash[:structured_output]).must_equal({ sentiment: "positive" })
+      expect(hash[:latency]).must_equal 1.5
+    end
+
+    it "serializes the error class and message" do
+      scenario = Riffer::Evals::ScenarioResult.new(
+        input: "test",
+        output: nil,
+        ground_truth: nil,
+        results: [],
+        error: Riffer::Error.new("provider rejected the request"),
+      )
+
+      expect(scenario.to_h[:error]).must_equal({ class: "Riffer::Error", message: "provider rejected the request" })
+    end
+  end
+
   describe "#to_h" do
     it "returns a hash representation" do
       scenario = Riffer::Evals::ScenarioResult.new(

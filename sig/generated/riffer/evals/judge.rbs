@@ -22,8 +22,8 @@ class Riffer::Evals::Judge
   def initialize: (model: String, ?tags: Hash[String, String]) -> void
 
   # --
-  # : (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
-  def evaluate: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
+  # : (instructions: String, input: String, output: String, ?ground_truth: (String | Hash[Symbol, untyped])?) -> Hash[Symbol, untyped]
+  def evaluate: (instructions: String, input: String, output: String, ?ground_truth: (String | Hash[Symbol, untyped])?) -> Hash[Symbol, untyped]
 
   private
 
@@ -32,8 +32,12 @@ class Riffer::Evals::Judge
   def build_system_message: (String) -> String
 
   # --
-  # : (input: String, output: String, ?ground_truth: String?) -> String
-  def build_user_message: (input: String, output: String, ?ground_truth: String?) -> String
+  # : (input: String, output: String, ?ground_truth: (String | Hash[Symbol, untyped])?) -> String
+  def build_user_message: (input: String, output: String, ?ground_truth: (String | Hash[Symbol, untyped])?) -> String
+
+  # --
+  # : (String | Hash[Symbol, untyped]) -> String
+  def format_ground_truth: (String | Hash[Symbol, untyped]) -> String
 
   # --
   # : () -> Riffer::Providers::Base

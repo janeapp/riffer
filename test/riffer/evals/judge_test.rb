@@ -96,5 +96,18 @@ describe Riffer::Evals::Judge do
 
       expect(result).must_equal({ score: 0.9, reason: "Matches ground truth.", token_usage: nil })
     end
+
+    it "formats structured ground truth as JSON" do
+      judge = Riffer::Evals::Judge.new(model: "mock/eval-model")
+
+      message = judge.send(
+        :build_user_message,
+        input: "Classify",
+        output: "{}",
+        ground_truth: { sentiment: "positive" },
+      )
+
+      expect(message).must_include JSON.pretty_generate({ sentiment: "positive" })
+    end
   end
 end

@@ -3,9 +3,10 @@
 class Riffer::Evals::ScenarioResult
   attr_reader input: String
 
-  attr_reader output: String
+  # Nil when the agent raised.
+  attr_reader output: String?
 
-  attr_reader ground_truth: String?
+  attr_reader ground_truth: (String | Hash[Symbol, untyped])?
 
   attr_reader results: Array[Riffer::Evals::Result]
 
@@ -13,9 +14,18 @@ class Riffer::Evals::ScenarioResult
 
   attr_reader token_usage: Riffer::Providers::TokenUsage?
 
+  attr_reader outcome: Riffer::Agent::Outcome?
+
+  attr_reader structured_output: Hash[Symbol, untyped]?
+
+  # Seconds spent in the agent's generate call, excluding evaluators.
+  attr_reader latency: Float?
+
+  attr_reader error: StandardError?
+
   # --
-  # : (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?) -> void
-  def initialize: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?) -> void
+  # : (input: String, output: String?, ground_truth: (String | Hash[Symbol, untyped])?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?, ?outcome: Riffer::Agent::Outcome?, ?structured_output: Hash[Symbol, untyped]?, ?latency: Float?, ?error: StandardError?) -> void
+  def initialize: (input: String, output: String?, ground_truth: (String | Hash[Symbol, untyped])?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?, ?outcome: Riffer::Agent::Outcome?, ?structured_output: Hash[Symbol, untyped]?, ?latency: Float?, ?error: StandardError?) -> void
 
   # --
   # : () -> Hash[singleton(Riffer::Evals::Evaluator), Float]

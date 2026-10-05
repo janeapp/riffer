@@ -59,8 +59,8 @@ class Riffer::Evals::Evaluator
   end
 
   #--
-  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
-  def evaluate(input:, output:, ground_truth: nil, messages: [])
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: (String | Hash[Symbol, untyped])?, ?messages: Array[Riffer::Messages::Base], ?outcome: Riffer::Agent::Outcome?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  def evaluate(input:, output:, ground_truth: nil, messages: [], outcome: nil, structured_output: nil)
     instr = self.class.instructions
     raise NotImplementedError, "#{self.class} must set instructions or implement #evaluate" unless instr
 

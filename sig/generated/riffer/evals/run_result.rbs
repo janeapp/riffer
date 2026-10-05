@@ -12,6 +12,10 @@ class Riffer::Evals::RunResult
   def scores: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
 
   # --
+  # : () -> Array[Riffer::Evals::ScenarioResult]
+  def errored_scenario_results: () -> Array[Riffer::Evals::ScenarioResult]
+
+  # --
   # : () -> Riffer::Providers::TokenUsage?
   def token_usage: () -> Riffer::Providers::TokenUsage?
 

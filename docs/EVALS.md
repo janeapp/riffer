@@ -103,16 +103,47 @@ result = Riffer::Evals::EvaluatorRunner.run(
 
 Per-scenario `context` overrides the top-level value. Scenarios without their own `context` inherit the top-level value.
 
+### Structured Ground Truth
+
+`ground_truth` can be a String or a Hash of expected fields, which suits agents that use [`structured_output`](AGENTS.md#structured_output):
+
+```ruby
+result = Riffer::Evals::EvaluatorRunner.run(
+  agent: SentimentAgent,
+  scenarios: [
+    { input: "I love it", ground_truth: { sentiment: "positive" } }
+  ],
+  evaluators: [SentimentMatchEvaluator]
+)
+```
+
+The runner passes the Hash to evaluators unchanged. When an LLM-as-judge evaluator forwards it to the judge, the judge renders it as pretty-printed JSON.
+
+### Failing Scenarios
+
+If `agent.generate` raises for a scenario (for example, a provider rejects the request), the runner records the exception on that scenario's result and moves on to the next scenario instead of aborting the run. For an errored scenario:
+
+- `error` holds the exception, and `output`, `outcome`, `structured_output` and `token_usage` are `nil`
+- no evaluators run, so `results` and `scores` are empty
+- `latency` still records how long the failed call took
+
+Because errored scenarios have no scores, they don't count toward `RunResult#scores` — a run where every scenario errored has empty scores. Check `result.errored_scenario_results` to catch failures (see the [CI example](#example-ci-integration)). Exceptions raised by evaluators themselves are not caught.
+
+### Latency
+
+Each scenario result records `latency`: the seconds spent in `agent.generate`, measured with a monotonic clock. Evaluator time is excluded. Pass `clock:` (a callable returning seconds as a Float) to substitute the clock, e.g. in tests.
+
 ### RunResult
 
 The runner returns a `Riffer::Evals::RunResult`:
 
 ```ruby
-result.scores                  # => { EvaluatorClass => avg_score } across all scenarios
-result.scenario_results        # => Array of ScenarioResult objects
-result.token_usage             # => TokenUsage the agent under test spent, summed across scenarios (nil if none reported)
-result.evaluator_token_usage   # => TokenUsage the judges spent, summed across scenarios (nil if no judge ran)
-result.to_h                    # => Hash representation
+result.scores                   # => { EvaluatorClass => avg_score } across scenarios that did not error
+result.scenario_results         # => Array of ScenarioResult objects
+result.errored_scenario_results # => ScenarioResults whose agent call raised
+result.token_usage              # => TokenUsage the agent under test spent, summed across scenarios (nil if none reported)
+result.evaluator_token_usage    # => TokenUsage the judges spent, summed across scenarios (nil if no judge ran)
+result.to_h                     # => Hash representation
 ```
 
 ### ScenarioResult
@@ -122,8 +153,12 @@ Each scenario produces a `Riffer::Evals::ScenarioResult`:
 ```ruby
 scenario = result.scenario_results.first
 scenario.input                  # => "What is the capital of France?"
-scenario.output                 # => "The capital of France is Paris."
-scenario.ground_truth           # => "Paris"
+scenario.output                 # => "The capital of France is Paris." (nil if the agent raised)
+scenario.ground_truth           # => "Paris" (String or Hash)
+scenario.outcome                # => Riffer::Agent::Outcome describing how the run ended (nil if the agent raised)
+scenario.structured_output      # => validated structured output Hash (nil when absent or invalid)
+scenario.latency                # => seconds spent in agent.generate
+scenario.error                  # => exception raised by agent.generate (nil on success)
 scenario.scores                 # => { EvaluatorClass => score } for this scenario
 scenario.results                # => Array of Result objects
 scenario.messages               # => Array of Message objects (system, user, assistant, tool)
@@ -175,6 +210,19 @@ end
 
 The judge receives `input`, `output`, and optionally `ground_truth` alongside your instructions. No manual prompt composition needed.
 
+### Evaluator Inputs
+
+The runner calls `evaluate` with these keyword arguments:
+
+- `input` - The scenario input
+- `output` - The response `content` string
+- `ground_truth` - The scenario's ground truth (String, Hash, or `nil`)
+- `messages` - The full message history of the run
+- `outcome` - The run's `Riffer::Agent::Outcome`, e.g. `outcome.reason` is `:completed`, `:invalid_structured_output`, `:length` or `:max_steps`
+- `structured_output` - The validated structured output Hash riffer accepted (`nil` when the agent has no schema or validation failed)
+
+The runner only passes the keywords your `evaluate` declares (or all of them if it takes `**kwargs`), so evaluators that omit `outcome:` or `structured_output:` keep working.
+
 ### Using Custom Evaluators
 
 Pass your custom evaluator class to the runner:
@@ -198,7 +246,7 @@ Class methods:
 
 Instance methods:
 
-- `evaluate(input:, output:, ground_truth:, messages:)` - Override for custom logic; default calls judge with `instructions`
+- `evaluate(input:, output:, ground_truth:, messages:, outcome:, structured_output:)` - Override for custom logic; default calls judge with `instructions`. Declare only the keywords you use
 - `judge` - Returns a Judge instance for LLM-as-judge calls. Its calls carry the [default tags](AGENTS.md#default-tags) `kind: "judge"` and `agent: <identifier>`
 - `result(score:, reason:, metadata:, token_usage:)` - Helper to build Result objects
 
@@ -254,6 +302,23 @@ class LengthEvaluator < Riffer::Evals::Evaluator
 end
 ```
 
+### Structured Output Evaluators
+
+Combine `outcome`, `structured_output` and a Hash `ground_truth` to check structured responses without re-parsing `content`:
+
+```ruby
+class SentimentMatchEvaluator < Riffer::Evals::Evaluator
+  def evaluate(input:, output:, ground_truth: nil, outcome: nil, structured_output: nil)
+    unless outcome&.success?
+      return result(score: 0.0, reason: "Run ended with #{outcome&.reason}: #{outcome&.detail}")
+    end
+
+    matched = ground_truth.all? { |field, expected| structured_output[field] == expected }
+    result(score: matched ? 1.0 : 0.0, reason: matched ? "All fields match" : "Fields differ")
+  end
+end
+```
+
 ## Example: CI Integration
 
 ```ruby
@@ -280,6 +345,8 @@ class SupportAgentEvalTest < Minitest::Test
       ],
       evaluators: [AnswerRelevancyEvaluator]
     )
+
+    assert_empty result.errored_scenario_results.map { |s| s.error.message }
 
     result.scores.each do |evaluator, score|
       assert score >= 0.85, "#{evaluator.name} scored #{score}, expected >= 0.85"

@@ -1,9 +1,13 @@
 # Generated from lib/riffer/evals/evaluator_runner.rb with RBS::Inline
 
 module Riffer::Evals::EvaluatorRunner
+  MONOTONIC_CLOCK: ^() -> Float
+
+  KEYWORD_PARAMETER_TYPES: Array[Symbol]
+
   # --
-  # : (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-  def run: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  # : (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?, ?clock: ^() -> Float) -> Riffer::Evals::RunResult
+  def run: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?, ?clock: ^() -> Float) -> Riffer::Evals::RunResult
 
   private
 
@@ -16,6 +20,18 @@ module Riffer::Evals::EvaluatorRunner
   def validate_evaluators!: (Array[singleton(Riffer::Evals::Evaluator)]) -> void
 
   # --
-  # : (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
-  def run_scenario: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
+  # : (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], context: Hash[Symbol, untyped]?, clock: ^() -> Float) -> Riffer::Evals::ScenarioResult
+  def run_scenario: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], context: Hash[Symbol, untyped]?, clock: ^() -> Float) -> Riffer::Evals::ScenarioResult
+
+  # A failed generation is that scenario's result, so one provider error
+  # cannot abort the remaining scenarios.
+  # --
+  # : (singleton(Riffer::Agent), String, context: Hash[Symbol, untyped]?) -> (Riffer::Agent::Response | StandardError)
+  def generate: (singleton(Riffer::Agent), String, context: Hash[Symbol, untyped]?) -> (Riffer::Agent::Response | StandardError)
+
+  # Evaluators declare only the keywords they use; passing an undeclared one
+  # would raise ArgumentError.
+  # --
+  # : (Array[untyped], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def accepted_args: (Array[untyped], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 end

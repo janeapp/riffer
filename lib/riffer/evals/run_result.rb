@@ -32,6 +32,12 @@ class Riffer::Evals::RunResult
   end
 
   #--
+  #: () -> Array[Riffer::Evals::ScenarioResult]
+  def errored_scenario_results
+    scenario_results.select(&:error)
+  end
+
+  #--
   #: () -> Riffer::Providers::TokenUsage?
   def token_usage
     scenario_results.filter_map(&:token_usage).reduce(:+)

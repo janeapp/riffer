@@ -69,6 +69,30 @@ describe Riffer::Evals::RunResult do
     end
   end
 
+  describe "errored scenarios" do
+    let(:errored_scenario) do
+      Riffer::Evals::ScenarioResult.new(
+        input: "What is Go?",
+        output: nil,
+        ground_truth: nil,
+        results: [],
+        error: Riffer::Error.new("provider rejected the request"),
+      )
+    end
+
+    it "lists errored scenario results" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, errored_scenario])
+
+      expect(run_result.errored_scenario_results).must_equal [errored_scenario]
+    end
+
+    it "excludes errored scenarios from average scores" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, errored_scenario])
+
+      expect(run_result.scores[evaluator_class]).must_equal 0.9
+    end
+  end
+
   describe "#evaluator_token_usage" do
     it "sums evaluator usage across scenarios" do
       scenario_with_usage = Riffer::Evals::ScenarioResult.new(
