@@ -14,9 +14,9 @@ module Riffer::Agent::StructuredOutput::Parser
   STRING_TAIL = /(?:[^"\\]++|\\.)*+"/m #: Regexp
 
   #--
-  #: (String) -> untyped
+  #: (String) -> Hash[Symbol, untyped]?
   def parse(content)
-    parse_json(content) || outermost_object(content) || recover(content)
+    parse_object(content) || outermost_object(content) || recover(content)
   end
 
   private
@@ -28,7 +28,7 @@ module Riffer::Agent::StructuredOutput::Parser
     stop = content.rindex("}")
     return unless start && stop
 
-    parse_json(content[start..stop].to_s)
+    parse_object(content[start..stop].to_s)
   end
 
   #--
@@ -43,7 +43,7 @@ module Riffer::Agent::StructuredOutput::Parser
 
     # Resume after the whole span so a malformed object never yields one of
     # its nested objects.
-    parse_json(content.byteslice(start..stop).to_s) || recover(content, stop + 1, attempts - 1)
+    parse_object(content.byteslice(start..stop).to_s) || recover(content, stop + 1, attempts - 1)
   end
 
   #--
@@ -67,9 +67,10 @@ module Riffer::Agent::StructuredOutput::Parser
   end
 
   #--
-  #: (String) -> untyped
-  def parse_json(json)
-    JSON.parse(json, symbolize_names: true)
+  #: (String) -> Hash[Symbol, untyped]?
+  def parse_object(json)
+    parsed = JSON.parse(json, symbolize_names: true)
+    parsed if parsed.is_a?(Hash)
   rescue JSON::ParserError
     nil
   end

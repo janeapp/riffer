@@ -95,6 +95,13 @@ describe Riffer::Agent::StructuredOutput do
       expect(result.error).must_match(/Validation error/)
     end
 
+    it "returns JSON parse error for JSON that is not an object" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_params)
+      result = so.parse_and_validate("[1, 2]")
+
+      expect(result.error).must_match(/JSON parse error/)
+    end
+
     it "returns JSON parse error for prose without an object" do
       so = Riffer::Agent::StructuredOutput.new(sentiment_params)
       result = so.parse_and_validate("The sentiment is positive.")

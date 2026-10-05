@@ -9,8 +9,8 @@ module Riffer::Agent::StructuredOutput::Parser
   STRING_TAIL: Regexp
 
   # --
-  # : (String) -> untyped
-  def parse: (String) -> untyped
+  # : (String) -> Hash[Symbol, untyped]?
+  def parse: (String) -> Hash[Symbol, untyped]?
 
   private
 
@@ -27,6 +27,6 @@ module Riffer::Agent::StructuredOutput::Parser
   def closing_brace: (String, Integer) -> Integer?
 
   # --
-  # : (String) -> untyped
-  def parse_json: (String) -> untyped
+  # : (String) -> Hash[Symbol, untyped]?
+  def parse_object: (String) -> Hash[Symbol, untyped]?
 end

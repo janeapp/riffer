@@ -12,8 +12,12 @@ describe Riffer::Agent::StructuredOutput::Parser do
       expect(parse('{"sentiment":"positive"}')).must_equal({ sentiment: "positive" })
     end
 
-    it "returns non-object JSON as parsed" do
-      expect(parse("[1, 2]")).must_equal [1, 2]
+    it "returns nil for JSON that is not an object" do
+      expect(parse("[1, 2]")).must_be_nil
+    end
+
+    it "recovers the first object from a top-level array" do
+      expect(parse(%([{"sentiment":"neutral"},{"sentiment":"positive"}]))).must_equal({ sentiment: "neutral" })
     end
 
     it "recovers an object from a json code fence" do
