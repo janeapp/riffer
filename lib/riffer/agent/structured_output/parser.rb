@@ -16,7 +16,6 @@ module Riffer::Agent::StructuredOutput::Parser
   #--
   #: (String) -> untyped
   def parse(content)
-    # One native parse resolves a lone wrapped object without the slower scan.
     parse_json(content) || outermost_object(content) || recover(content)
   end
 
