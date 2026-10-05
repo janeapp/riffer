@@ -351,7 +351,7 @@ end
 
 ### response.structured_output
 
-When structured output is configured, the LLM response is parsed as JSON and validated against the schema. The validated result is available as `response.structured_output`:
+When structured output is configured, the LLM response is parsed as JSON and validated against the schema. A JSON object wrapped in a code fence, prose, or formatting is recovered (see [Agents — structured_output](AGENTS.md#structured_output)). The validated result is available as `response.structured_output`:
 
 ```ruby
 response = SentimentAgent.generate('Analyze: "I love this!"')

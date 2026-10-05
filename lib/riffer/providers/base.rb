@@ -360,9 +360,7 @@ class Riffer::Providers::Base
   #--
   #: (String) -> Hash[Symbol, untyped]?
   def parse_structured_output(content)
-    JSON.parse(content, symbolize_names: true)
-  rescue JSON::ParserError
-    nil
+    Riffer::Agent::StructuredOutput::Parser.parse(content)
   end
 
   #--

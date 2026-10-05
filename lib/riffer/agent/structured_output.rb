@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-require "json"
-
 class Riffer::Agent::StructuredOutput
   attr_reader :params #: Riffer::Params # @dynamic params
 
@@ -21,11 +19,11 @@ class Riffer::Agent::StructuredOutput
   #--
   #: (String) -> Riffer::Agent::StructuredOutput::Result
   def parse_and_validate(json_string)
-    parsed = JSON.parse(json_string, symbolize_names: true)
+    parsed = Riffer::Agent::StructuredOutput::Parser.parse(json_string)
+    return Result.new(error: "JSON parse error: no JSON object found in the response") if parsed.nil?
+
     validated = @params.validate(parsed)
     Result.new(object: validated)
-  rescue JSON::ParserError => e
-    Result.new(error: "JSON parse error: #{e.message}")
   rescue Riffer::ValidationError => e
     Result.new(error: "Validation error: #{e.message}")
   end

@@ -1,0 +1,17 @@
+# Generated from lib/riffer/agent/structured_output/parser.rb with RBS::Inline
+
+module Riffer::Agent::StructuredOutput::Parser
+  # --
+  # : (String) -> Hash[Symbol, untyped]?
+  def parse: (String) -> Hash[Symbol, untyped]?
+
+  private
+
+  # --
+  # : (String) -> Hash[Symbol, untyped]?
+  def outermost_object: (String) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (String) -> Hash[Symbol, untyped]?
+  def parse_object: (String) -> Hash[Symbol, untyped]?
+end

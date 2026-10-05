@@ -168,7 +168,9 @@ end
 
 The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
 
-When the response is not valid JSON or does not satisfy the schema, `response.structured_output` is `nil`, `response.outcome.reason` is `:invalid_structured_output`, and `response.outcome.detail` carries the parse or validation message:
+If the response is not valid JSON on its own, Riffer recovers a JSON object wrapped in a code fence (```` ```json ````), surrounded by prose (`Here is the data: {...}`), or wrapped in formatting (`**{...}**`). It parses the span from the first `{` to the last `}`, so a reply whose surrounding text contains other braces, or that holds more than one object, is still rejected; `response.content` keeps the raw text.
+
+When the response contains no well-formed JSON object or does not satisfy the schema, `response.structured_output` is `nil`, `response.outcome.reason` is `:invalid_structured_output`, and `response.outcome.detail` carries the parse or validation message:
 
 ```ruby
 response = SentimentAgent.generate('Analyze: "I love this!"')

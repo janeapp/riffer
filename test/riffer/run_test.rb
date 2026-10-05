@@ -247,6 +247,16 @@ describe Riffer::Agent::Run do
       expect(result.structured_output).must_equal({ a: 1 })
     end
 
+    it "is :completed when the structured output is wrapped in a code fence" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response("```json\n{\"a\": 1}\n```")
+      result = agent.generate("Go")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:completed, nil]
+      expect(result.structured_output).must_equal({ a: 1 })
+      expect(agent.session.messages.last.structured_output).must_equal({ a: 1 })
+    end
+
     it "is :invalid_structured_output with the validation error when a required key is missing" do
       agent = schema_agent_class.new
       agent.provider.stub_response('{"b": 1}')
