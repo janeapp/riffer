@@ -8,16 +8,27 @@ module Riffer::Agent::StructuredOutput::Parser
   # braces, where every candidate scans to the end of the string.
   MAX_CANDIDATES: Integer
 
+  STRUCTURAL_CHAR: Regexp
+
+  STRING_TAIL: Regexp
+
   # --
   # : (String) -> untyped
   def parse: (String) -> untyped
 
   private
 
+  # A single object wrapped in a fence, prose, or formatting is the common
+  # case, and this resolves it in one native parse before the slower scan.
+  # --
+  # : (String) -> Hash[Symbol, untyped]?
+  def outermost_object: (String) -> Hash[Symbol, untyped]?
+
   # --
   # : (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
   def recover: (String, ?Integer, ?Integer) -> Hash[Symbol, untyped]?
 
+  # Offsets are in bytes to match StringScanner#pos.
   # --
   # : (String, Integer) -> Integer?
   def closing_brace: (String, Integer) -> Integer?

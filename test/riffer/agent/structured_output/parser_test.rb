@@ -62,6 +62,24 @@ describe Riffer::Agent::StructuredOutput::Parser do
       expect(parse(content)).must_equal({ sentiment: "positive" })
     end
 
+    it "recovers the first object when the reply contains several" do
+      content = 'Draft: {"sentiment":"neutral"} Final: {"sentiment":"positive"}'
+
+      expect(parse(content)).must_equal({ sentiment: "neutral" })
+    end
+
+    it "recovers an object surrounded by multibyte prose and braces" do
+      content = 'Voilà le {modèle} : {"ville":"Montréal"} — {fin}'
+
+      expect(parse(content)).must_equal({ ville: "Montréal" })
+    end
+
+    it "rejects many unmatched braces before long prose" do
+      content = ("{ " * 25) + ("lorem ipsum " * 8_000)
+
+      expect { parse(content) }.must_raise JSON::ParserError
+    end
+
     it "raises the strict parse error when no object is present" do
       error = expect { parse("I could not determine the sentiment.") }.must_raise JSON::ParserError
       strict_error = expect { JSON.parse("I could not determine the sentiment.") }.must_raise JSON::ParserError
