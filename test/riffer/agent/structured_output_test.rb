@@ -16,6 +16,26 @@ describe Riffer::Agent::StructuredOutput do
     params
   end
 
+  describe "#prompted?" do
+    it "is false by default" do
+      expect(Riffer::Agent::StructuredOutput.new(sentiment_params).prompted?).must_equal false
+    end
+
+    it "is true for the prompted strategy" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_params, strategy: :prompted)
+
+      expect(so.prompted?).must_equal true
+    end
+  end
+
+  describe "#prompt_instructions" do
+    it "embeds the JSON schema" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_params, strategy: :prompted)
+
+      expect(so.prompt_instructions).must_include JSON.generate(so.json_schema)
+    end
+  end
+
   describe "#initialize" do
     it "accepts a Params instance" do
       so = Riffer::Agent::StructuredOutput.new(sentiment_params)

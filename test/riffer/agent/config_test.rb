@@ -26,6 +26,10 @@ describe Riffer::Agent::Config do
       expect(config.structured_output).must_be_nil
     end
 
+    it "starts with structured_output_strategy :native" do
+      expect(config.structured_output_strategy).must_equal :native
+    end
+
     it "starts with max_steps == Riffer::Agent::Config::DEFAULT_MAX_STEPS" do
       expect(config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
     end
@@ -87,6 +91,33 @@ describe Riffer::Agent::Config do
       config = Riffer::Agent::Config.new
       error = expect { config.structured_output = { sentiment: String } }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/structured_output must be a Riffer::Params/)
+    end
+  end
+
+  describe "#structured_output_strategy=" do
+    it "accepts :prompted" do
+      config = Riffer::Agent::Config.new
+      config.structured_output_strategy = :prompted
+
+      expect(config.structured_output_strategy).must_equal :prompted
+    end
+
+    it "is carried by a copy" do
+      config = Riffer::Agent::Config.new(structured_output_strategy: :prompted)
+
+      expect(config.dup.structured_output_strategy).must_equal :prompted
+    end
+
+    it "raises on an unknown strategy" do
+      config = Riffer::Agent::Config.new
+      error = expect { config.structured_output_strategy = :tool }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/structured_output_strategy must be one of/)
+    end
+
+    it "raises on a String strategy" do
+      config = Riffer::Agent::Config.new
+
+      expect { config.structured_output_strategy = "prompted" }.must_raise(Riffer::ArgumentError)
     end
   end
 
@@ -308,6 +339,7 @@ describe Riffer::Agent::Config do
         model: "mock/riffer-1",
         instructions: "You are populated.",
         model_options: { thinking: { budget_tokens: 100 }, stop: ["halt"] },
+        structured_output_strategy: :prompted,
         max_steps: 4,
         tools_config: [Riffer::Tool],
         tool_runtime: Riffer::Tools::Runtime::Inline,

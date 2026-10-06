@@ -424,7 +424,7 @@ describe Riffer::Agent do
     # copy-or-exclude decision rather than being dropped from every subclass.
     it "accounts for every field on Config" do
       known = %i[
-        identifier model instructions model_options structured_output max_steps
+        identifier model instructions model_options structured_output structured_output_strategy max_steps
         tools_config mcp_configs tool_runtime skills_config guardrails
       ]
 
@@ -516,6 +516,41 @@ describe Riffer::Agent do
 
       expect(klass.structured_output).must_be_instance_of Riffer::Params
       expect(klass.structured_output.parameters.size).must_equal 2
+    end
+
+    it "defaults to the native strategy" do
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        structured_output { required :sentiment, String }
+      end
+
+      expect(klass.new.structured_output.prompted?).must_equal false
+    end
+
+    it "stores the strategy: keyword" do
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        structured_output(strategy: :prompted) { required :sentiment, String }
+      end
+
+      expect(klass.config.structured_output_strategy).must_equal :prompted
+      expect(klass.new.structured_output.prompted?).must_equal true
+    end
+
+    it "raises on an unknown strategy" do
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
+
+      expect { klass.structured_output(strategy: :magic) }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "is inherited by subclasses" do
+      parent = stub_agent("PromptedParentAgent") do
+        model "mock/riffer-1"
+        structured_output(strategy: :prompted) { required :sentiment, String }
+      end
+      child = stub_agent("PromptedChildAgent", base: parent)
+
+      expect(child.config.structured_output_strategy).must_equal :prompted
     end
   end
 

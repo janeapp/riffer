@@ -183,6 +183,29 @@ else
 end
 ```
 
+#### Structured output strategy (experimental)
+
+By default Riffer sends the schema through each provider's native structured-output field. Some models reject that field, accept it without enforcing it, or behave differently with it enabled (for example, skipping tool calls). For those, opt the agent into the **experimental** prompted strategy:
+
+```ruby
+class SentimentAgent < Riffer::Agent
+  model 'amazon_bedrock/my-model'
+  instructions 'Analyze the sentiment of the given text.'
+  structured_output strategy: :prompted do
+    required :sentiment, String, description: "positive, negative, or neutral"
+  end
+end
+```
+
+With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction carrying the JSON Schema is appended to the system instructions on every request of the run (it is not stored in `session.messages`), and the reply is parsed and validated exactly as above: `response.content` is the reply text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
+
+| Strategy            | Behavior                                                        |
+| ------------------- | --------------------------------------------------------------- |
+| `:native` (default) | Schema sent through the provider's structured-output field      |
+| `:prompted`         | Schema sent in the system prompt; experimental, may change      |
+
+Riffer does not pick a strategy per model — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a `Riffer::Params` instance: `structured_output params, strategy: :prompted`.
+
 #### Nested Objects
 
 Use `Hash` with a block to define nested object schemas:

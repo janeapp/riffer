@@ -65,6 +65,14 @@ describe Riffer::Agent::Serializer do
       expect(dict[:structured_output][:properties]["score"][:default]).must_equal 0.0
     end
 
+    it "carries the structured output strategy" do
+      klass = build_agent_class do
+        structured_output(strategy: :prompted) { required :answer, String }
+      end
+
+      expect(klass.new.to_h[:structured_output_strategy]).must_equal :prompted
+    end
+
     it "emits nil structured output when none is configured" do
       expect(build_agent_class.new.to_h[:structured_output]).must_be_nil
     end
@@ -128,6 +136,24 @@ describe Riffer::Agent::Serializer do
       result = agent.structured_output.parse_and_validate('{"answer":"yes"}')
 
       expect(result.object).must_equal({ answer: "yes", score: 0.0 })
+    end
+
+    it "round-trips the prompted structured output strategy through JSON" do
+      klass = build_agent_class do
+        structured_output(strategy: :prompted) { required :answer, String }
+      end
+      wire = JSON.parse(klass.new.to_json, symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(agent.config.structured_output_strategy).must_equal :prompted
+      expect(agent.structured_output.prompted?).must_equal true
+    end
+
+    it "decodes a hash without a strategy as native" do
+      klass = build_agent_class { structured_output { required :answer, String } }
+      dict = klass.new.to_h.except(:structured_output_strategy)
+
+      expect(Riffer::Agent.from_h(dict).structured_output.prompted?).must_equal false
     end
 
     it "ignores unrecognized keys" do

@@ -38,8 +38,8 @@ class Riffer::Providers::Base
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
-    messages = merge_consecutive_messages(messages)
-    params = build_request_params(messages, model, options)
+    messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
+    params = build_request_params(messages, model, request_options(options))
 
     in_chat_span(model, messages, options) do |span|
       response = execute_generate(params)
@@ -76,8 +76,8 @@ class Riffer::Providers::Base
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
-    messages = merge_consecutive_messages(messages)
-    params = build_request_params(messages, model, options)
+    messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
+    params = build_request_params(messages, model, request_options(options))
 
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
     # context is empty — capture here so the chat span parents to the caller's
@@ -369,6 +369,26 @@ class Riffer::Providers::Base
     return {} if arguments.empty?
 
     JSON.parse(arguments)
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Base], Riffer::Agent::StructuredOutput?) -> Array[Riffer::Messages::Base]
+  def with_structured_output_prompt(messages, structured_output)
+    return messages unless structured_output&.prompted?
+
+    # After the leading system messages, so merge_consecutive_messages folds it into the system prompt.
+    leading_system = messages.take_while { |m| m.is_a?(Riffer::Messages::System) }
+    [
+      *leading_system,
+      Riffer::Messages::System.new(structured_output.prompt_instructions),
+      *messages.drop(leading_system.length),
+    ]
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def request_options(options)
+    options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 
   #--

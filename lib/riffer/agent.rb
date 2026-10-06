@@ -53,13 +53,14 @@ class Riffer::Agent
   end
 
   #--
-  #: (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
-  def self.structured_output(params = nil, &block)
+  #: (?Riffer::Params?, ?strategy: Symbol?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def self.structured_output(params = nil, strategy: nil, &block)
     if block
       params = Riffer::Params.new
       params.instance_eval(&block)
     end
     config.structured_output = params if params
+    config.structured_output_strategy = strategy if strategy
     config.structured_output
   end
 
@@ -328,7 +329,7 @@ class Riffer::Agent
   #: () -> Riffer::Agent::StructuredOutput?
   def resolve_structured_output
     params = @config.structured_output
-    params ? Riffer::Agent::StructuredOutput.new(params) : nil
+    params ? Riffer::Agent::StructuredOutput.new(params, strategy: @config.structured_output_strategy) : nil
   end
 
   #--

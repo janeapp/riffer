@@ -222,6 +222,115 @@ describe Riffer::Agent::Run do
     end
   end
 
+  describe "#generate with the prompted structured_output strategy" do
+    let(:prompted_agent_class) do
+      stub_agent("Agent") do
+        model "mock/riffer-1"
+        instructions "You are a sentiment analyzer."
+        structured_output strategy: :prompted do
+          required :sentiment, String
+        end
+      end
+    end
+
+    let(:schema_instructions) { prompted_agent_class.new.structured_output.prompt_instructions }
+
+    it "does not send the native structured_output field to the provider" do
+      agent = prompted_agent_class.new
+      agent.provider.stub_response('{"sentiment":"positive"}')
+      agent.generate("Analyze")
+
+      expect(agent.provider.calls.last.key?(:structured_output)).must_equal false
+    end
+
+    it "appends the schema to the system instructions" do
+      agent = prompted_agent_class.new
+      agent.provider.stub_response('{"sentiment":"positive"}')
+      agent.generate("Analyze")
+
+      system_message = agent.provider.calls.last[:messages].first
+
+      expect(system_message[:role]).must_equal :system
+      expect(system_message[:content]).must_equal "You are a sentiment analyzer.\n\n#{schema_instructions}"
+    end
+
+    it "sends the schema as the first message when there are no instructions" do
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        structured_output(strategy: :prompted) { required :sentiment, String }
+      end
+      agent = klass.new
+      agent.provider.stub_response('{"sentiment":"positive"}')
+      agent.generate("Analyze")
+
+      expect(agent.provider.calls.last[:messages].first).must_equal(
+        { role: :system, content: agent.structured_output.prompt_instructions },
+      )
+    end
+
+    it "sends the schema on every step of a tool loop" do
+      tc = stub_tool("PromptedLookupTool") do
+        description "Test tool"
+        def call(context:)
+          text("done")
+        end
+      end
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        uses_tools [tc]
+        structured_output(strategy: :prompted) { required :sentiment, String }
+      end
+      agent = klass.new
+      agent.provider.stub_response("", tool_calls: [{ name: "prompted_lookup_tool", arguments: "{}" }])
+      agent.provider.stub_response('{"sentiment":"positive"}')
+      agent.generate("Analyze")
+
+      schema_counts = agent.provider.calls.map do |call|
+        call[:messages].count { |m| m[:content] == agent.structured_output.prompt_instructions }
+      end
+
+      expect(schema_counts).must_equal [1, 1]
+    end
+
+    it "keeps the schema out of the session history" do
+      agent = prompted_agent_class.new
+      agent.provider.stub_response('{"sentiment":"positive"}')
+      result = agent.generate("Analyze")
+
+      expect(result.messages.map(&:content)).wont_include schema_instructions
+      expect(agent.session.messages.first.content).must_equal "You are a sentiment analyzer."
+    end
+
+    it "returns the validated object with the JSON text as content" do
+      agent = prompted_agent_class.new
+      agent.provider.stub_response("```json\n{\"sentiment\":\"positive\"}\n```")
+      result = agent.generate("Analyze")
+
+      expect([result.outcome.reason, result.structured_output]).must_equal [:completed, { sentiment: "positive" }]
+      expect(result.content).must_equal "```json\n{\"sentiment\":\"positive\"}\n```"
+      expect(agent.session.messages.last.structured_output).must_equal({ sentiment: "positive" })
+    end
+
+    it "is :invalid_structured_output when the reply fails validation" do
+      agent = prompted_agent_class.new
+      agent.provider.stub_response('{"mood":"positive"}')
+      result = agent.generate("Analyze")
+
+      expect(result.structured_output).must_be_nil
+      expect(result.outcome.reason).must_equal :invalid_structured_output
+      expect(result.outcome.detail).must_include "sentiment is required"
+    end
+
+    it "is :invalid_structured_output when the reply has no JSON" do
+      agent = prompted_agent_class.new
+      agent.provider.stub_response("I think it is positive.")
+      result = agent.generate("Analyze")
+
+      expect(result.outcome.reason).must_equal :invalid_structured_output
+      expect(agent.session.messages.last.structured_output?).must_equal false
+    end
+  end
+
   describe "#generate outcome" do
     let(:schema_agent_class) do
       stub_agent("Agent") do

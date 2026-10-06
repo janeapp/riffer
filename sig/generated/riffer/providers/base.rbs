@@ -147,6 +147,14 @@ class Riffer::Providers::Base
   def parse_tool_arguments: (String) -> Hash[String, untyped]
 
   # --
+  # : (Array[Riffer::Messages::Base], Riffer::Agent::StructuredOutput?) -> Array[Riffer::Messages::Base]
+  def with_structured_output_prompt: (Array[Riffer::Messages::Base], Riffer::Agent::StructuredOutput?) -> Array[Riffer::Messages::Base]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def request_options: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
   # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def merge_consecutive_messages: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
 
