@@ -150,8 +150,6 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-The budget applies per run, counted from the last user message in the session: each new user message (`generate('...')` / `stream('...')`) starts a fresh budget, however many assistant messages earlier turns left in the history. Calling `generate` or `stream` without a prompt adds no user message, so resuming an interrupted tool loop that way continues the same budget. See [Agent Loop — Max Steps Limit](AGENT_LOOP.md#max-steps-limit).
-
 ### structured_output
 
 Configures the agent to return structured JSON responses conforming to a schema. Accepts a `Riffer::Params` instance or a block DSL:
