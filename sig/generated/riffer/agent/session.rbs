@@ -58,6 +58,10 @@ class Riffer::Agent::Session
   def steps: () -> Integer
 
   # --
+  # : () -> Integer
+  def steps_since_last_user_message: () -> Integer
+
+  # --
   # : () -> Riffer::Messages::Assistant?
   def final_assistant_message: () -> Riffer::Messages::Assistant?
 

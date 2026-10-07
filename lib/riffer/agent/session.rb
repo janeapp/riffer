@@ -144,6 +144,13 @@ class Riffer::Agent::Session
   end
 
   #--
+  #: () -> Integer
+  def steps_since_last_user_message
+    since_last_user = @messages.reverse_each.take_while { |m| !m.is_a?(Riffer::Messages::User) }
+    since_last_user.count { |m| m.is_a?(Riffer::Messages::Assistant) }
+  end
+
+  #--
   #: () -> Riffer::Messages::Assistant?
   def final_assistant_message
     # TODO: Replace with rfind when minimum Ruby is 4.0+

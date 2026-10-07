@@ -72,12 +72,12 @@ response = agent.generate('Approved, continue')  # continues where it left off
 
 ### Max Steps Limit
 
-The `max_steps` class method caps the number of LLM call steps in the tool-use loop. When the step count reaches the limit, the loop interrupts automatically with reason `:max_steps`.
+The `max_steps` class method caps the number of LLM call steps in the tool-use loop of a single run. Steps are counted from the last user message in the session, so each new user message starts a fresh budget — prior turns' assistant messages in the history do not count against it. When the step count reaches the limit, the loop interrupts automatically with reason `:max_steps`.
 
 - **When to use:** Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.
 - **Response:** `response.outcome.reason` is `:max_steps`.
 - **Streaming:** Yields an `Interrupt` event with `reason: :max_steps`.
-- **Resumable:** Yes. Call `generate('Continue')` or `stream('Continue')` on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Resumable:** Yes. Call `generate('Continue')` or `stream('Continue')` on the same agent instance to resume with a fresh budget, or call `generate` / `stream` with no prompt to resume against the remaining budget. For cross-process resume, pass persisted messages as an array to a new agent; the same rule applies. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 class MyAgent < Riffer::Agent

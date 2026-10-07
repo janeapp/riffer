@@ -488,6 +488,27 @@ describe Riffer::Agent::Session do
     end
   end
 
+  describe "#steps_since_last_user_message" do
+    it "is zero when the last message is a user message" do
+      s = Riffer::Agent::Session.new(messages: [user, plain_assistant, Riffer::Messages::User.new("again")])
+
+      expect(s.steps_since_last_user_message).must_equal 0
+    end
+
+    it "counts only assistant messages after the last user message" do
+      follow_up = Riffer::Messages::User.new("again")
+      s = Riffer::Agent::Session.new(messages: [user, plain_assistant, follow_up, tool_assistant, tool_msg])
+
+      expect(s.steps_since_last_user_message).must_equal 1
+    end
+
+    it "counts every assistant message when there is no user message" do
+      s = Riffer::Agent::Session.new(messages: [plain_assistant, tool_assistant, tool_msg])
+
+      expect(s.steps_since_last_user_message).must_equal 2
+    end
+  end
+
   describe "#final_assistant_message" do
     it "returns nil when there are no assistant messages" do
       s = Riffer::Agent::Session.new(messages: [user])
