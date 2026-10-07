@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.51.0](https://github.com/janeapp/riffer/compare/riffer/v0.50.1...riffer/v0.51.0) (2026-10-07)
+
+
+### Features
+
+* **structured_output:** recover objects wrapped in code fences or prose ([#473](https://github.com/janeapp/riffer/issues/473)) ([59a6d40](https://github.com/janeapp/riffer/commit/59a6d40b08b9f18fcb4ebac24598925f94a9acea))
+
+
+### Bug Fixes
+
+* **agent:** apply the max_steps cap per run, not per conversation ([#478](https://github.com/janeapp/riffer/issues/478)) ([4948e6b](https://github.com/janeapp/riffer/commit/4948e6b9769df084bed8c8a29862067560f800bc))
+
 ## [0.50.1](https://github.com/janeapp/riffer/compare/riffer/v0.50.0...riffer/v0.50.1) (2026-10-02)
 
 
