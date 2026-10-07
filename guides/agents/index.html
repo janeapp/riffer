@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.50.1</span>
+            <span class="version">v0.51.0</span>
           </div>
         </nav>
       </div>
@@ -352,7 +352,9 @@
 
 <p>The LLM response is automatically parsed and validated against the schema. Access the result via <code>response.structured_output</code>.</p>
 
-<p>When the response is not valid JSON or does not satisfy the schema, <code>response.structured_output</code> is <code>nil</code>, <code>response.outcome.reason</code> is <code>:invalid_structured_output</code>, and <code>response.outcome.detail</code> carries the parse or validation message:</p>
+<p>If the response is not valid JSON on its own, Riffer recovers a JSON object wrapped in a code fence (<code>```json</code>), surrounded by prose (<code>Here is the data: {...}</code>), or wrapped in formatting (<code>**{...}**</code>). It parses the span from the first <code>{</code> to the last <code>}</code>, so a reply whose surrounding text contains other braces, or that holds more than one object, is still rejected; <code>response.content</code> keeps the raw text.</p>
+
+<p>When the response contains no well-formed JSON object or does not satisfy the schema, <code>response.structured_output</code> is <code>nil</code>, <code>response.outcome.reason</code> is <code>:invalid_structured_output</code>, and <code>response.outcome.detail</code> carries the parse or validation message:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="no">SentimentAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Analyze: "I love this!"'</span><span class="p">)</span>
 

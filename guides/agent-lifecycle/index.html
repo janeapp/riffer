@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.50.1</span>
+            <span class="version">v0.51.0</span>
           </div>
         </nav>
       </div>
@@ -617,7 +617,7 @@
 
 <h3 id="responsestructured_output">response.structured_output</h3>
 
-<p>When structured output is configured, the LLM response is parsed as JSON and validated against the schema. The validated result is available as <code>response.structured_output</code>:</p>
+<p>When structured output is configured, the LLM response is parsed as JSON and validated against the schema. A JSON object wrapped in a code fence, prose, or formatting is recovered (see <a href="/guides/agents/#structured_output">Agents — structured_output</a>). The validated result is available as <code>response.structured_output</code>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="no">SentimentAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Analyze: "I love this!"'</span><span class="p">)</span>
 <span class="n">response</span><span class="p">.</span><span class="nf">content</span>            <span class="c1"># =&gt; raw JSON string from the LLM</span>
