@@ -78,8 +78,12 @@ class Riffer::Params
         next
       end
 
+      value = Riffer::Params::Recovery.call(param, value)
+
       unless param.valid_type?(value)
-        errors << "#{param.name} must be a #{param.type_name}"
+        # Names the type received as well as the one expected: a model handed only the
+        # expected type has nothing to correct, and repeats the same mistake.
+        errors << "#{param.name}: expected #{param.type_name}, got #{json_type_name(value)}"
         next
       end
 
@@ -224,6 +228,23 @@ class Riffer::Params
       end
 
       coerce_value(item_type, item)
+    end
+  end
+
+  # The JSON Schema type name for a received value, so an error can describe what arrived
+  # in the same vocabulary the schema used to ask for it.
+  #--
+  #: (untyped) -> String
+  def json_type_name(value)
+    case value
+    when nil then "null"
+    when true, false then "boolean"
+    when Integer then "integer"
+    when Numeric then "number"
+    when String then "string"
+    when Array then "array"
+    when Hash then "object"
+    else value.class.name.to_s.downcase
     end
   end
 
