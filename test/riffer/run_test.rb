@@ -2689,7 +2689,7 @@ describe Riffer::Agent::Run do
       end
     end
 
-    describe "auto-derived step offset" do
+    describe "per-run step budget" do
       let(:tool_class) do
         stub_tool("ResumeStepTool") do
           description "Simple tool"
@@ -2699,7 +2699,50 @@ describe Riffer::Agent::Run do
         end
       end
 
-      it "enforces max_steps across sessions" do
+      it "gives a new user message the full budget despite many prior assistant messages" do
+        tc = tool_class
+        custom_agent_class = stub_agent("CustomAgent") do
+          model "mock/riffer-1"
+          max_steps 3
+          uses_tools [tc]
+        end
+
+        history = (1..5).flat_map do |turn|
+          [Riffer::Messages::User.new("Question #{turn}"), Riffer::Messages::Assistant.new("Answer #{turn}")]
+        end
+        agent = custom_agent_class.new(session: Riffer::Agent::Session.new(messages: history))
+        provider = agent.provider
+        2.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
+        provider.stub_response("Final answer")
+
+        result = agent.generate("Question 6")
+
+        expect([result.outcome.reason, provider.calls.length]).must_equal [:completed, 3]
+      end
+
+      it "gives generate('Continue') a fresh budget after a :max_steps interrupt" do
+        tc = tool_class
+        custom_agent_class = stub_agent("CustomAgent") do
+          model "mock/riffer-1"
+          max_steps 2
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.provider
+        2.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
+
+        expect(agent.generate("Do stuff").outcome.reason).must_equal :max_steps
+
+        provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }])
+        provider.stub_response("Final answer")
+
+        result = agent.generate("Continue")
+
+        expect([result.outcome.reason, provider.calls.length]).must_equal [:completed, 4]
+      end
+
+      it "counts a resume without a new user message against the same budget" do
         tc = tool_class
         custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
@@ -2709,7 +2752,7 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        3.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
+        4.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
 
         interrupted_once = false
         agent.session.on_message do |msg|
@@ -2719,16 +2762,14 @@ describe Riffer::Agent::Run do
           end
         end
 
-        result = agent.generate("Do stuff")
+        expect(agent.generate("Do stuff").outcome.reason).must_equal :interrupted
 
-        expect(result.outcome.reason).must_equal :interrupted
+        result = agent.generate
 
-        result = agent.generate("Continue")
-
-        expect(result.outcome.reason).must_equal :max_steps
+        expect([result.outcome.reason, provider.calls.length]).must_equal [:max_steps, 3]
       end
 
-      it "enforces max_steps on cross-process resume via message counting" do
+      it "counts a cross-process resume without a new user message against the same budget" do
         tc = tool_class
         custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
@@ -2742,17 +2783,15 @@ describe Riffer::Agent::Run do
             Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
             Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
             Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
-            Riffer::Messages::User.new("Continue"),
           ],
         )
         agent = custom_agent_class.new(session: seeded)
         provider = agent.provider
-        # Only 1 more step fits before max_steps (3 prior + 1 = 4)
-        provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }])
+        2.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
 
         result = agent.generate
 
-        expect(result.outcome.reason).must_equal :max_steps
+        expect([result.outcome.reason, provider.calls.length]).must_equal [:max_steps, 1]
       end
     end
 
@@ -3023,7 +3062,7 @@ describe Riffer::Agent::Run do
       ]
     end
 
-    it "enforces max_steps across continuations" do
+    it "resets the max_steps budget for each continuation" do
       tc = stub_tool("ContinuationStepTool") do
         description "Simple tool"
         def call(context:)
@@ -3041,6 +3080,7 @@ describe Riffer::Agent::Run do
       agent = custom_agent_class.new
       provider = agent.provider
       3.times { provider.stub_response("", tool_calls: [{ name: "continuation_step_tool", arguments: "{}" }]) }
+      provider.stub_response("Final answer")
 
       interrupted_once = false
       agent.session.on_message do |msg|
@@ -3056,7 +3096,7 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Continue")
 
-      expect(result.outcome.reason).must_equal :max_steps
+      expect([result.outcome.reason, provider.calls.length]).must_equal [:completed, 4]
     end
 
     it "continues conversation with stream" do

@@ -68,7 +68,7 @@ module Riffer::Agent::Run
     end
 
     begin
-      step = agent.session.steps
+      step = agent.session.steps_since_last_user_message
 
       reason = catch(:riffer_interrupt) do
         execute_pending_tool_calls(agent, tags)
