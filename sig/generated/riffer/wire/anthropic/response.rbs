@@ -1,0 +1,45 @@
+# Generated from lib/riffer/wire/anthropic/response.rb with RBS::Inline
+
+# Reads a Messages API response body: the JSON hash, symbol keys.
+class Riffer::Wire::Anthropic::Response
+  @body: Hash[Symbol, untyped]
+
+  @tools: Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def self.reasoning_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # +tools+ are the request's tools, used to map wire tool names back to
+  # riffer tool names.
+  # --
+  # : (Hash[Symbol, untyped], ?tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (Hash[Symbol, untyped], ?tools: Array[singleton(Riffer::Tool)]) -> void
+
+  # --
+  # : () -> String
+  def content: () -> String
+
+  # --
+  # : () -> Array[Riffer::Messages::Assistant::ToolCall]
+  def tool_calls: () -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : () -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def reasoning: () -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # Unpriced; pricing is the provider's concern.
+  # --
+  # : () -> Riffer::Providers::TokenUsage?
+  def token_usage: () -> Riffer::Providers::TokenUsage?
+
+  # --
+  # : () -> Riffer::Providers::FinishReason?
+  def finish_reason: () -> Riffer::Providers::FinishReason?
+
+  private
+
+  # --
+  # : () -> Array[Hash[Symbol, untyped]]
+  def blocks: () -> Array[Hash[Symbol, untyped]]
+end

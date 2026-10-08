@@ -31,11 +31,6 @@ module Riffer::Wire::Anthropic::Request
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 
-  # Mirrors Riffer::Providers::Base#encode_tool_name, which is private to providers.
-  # --
-  # : (String) -> String
-  def encode_tool_name: (String) -> String
-
   # --
   # : (String) -> Hash[String, untyped]
   def parse_tool_arguments: (String) -> Hash[String, untyped]
