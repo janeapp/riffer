@@ -1,8 +1,19 @@
 # Generated from lib/riffer/wire/anthropic.rb with RBS::Inline
 
 module Riffer::Wire::Anthropic
+  FINISH_REASONS: Hash[String, Symbol]
+
   # Only parts carrying this tag are replayed, so reasoning captured by another
   # adapter, whose signatures the Messages API may not accept, never reaches the
   # request.
   REASONING_FORMAT: String
+
+  # Mirrors Riffer::Providers::Base#encode_tool_name, which is private to providers.
+  # --
+  # : (String) -> String
+  def self.encode_tool_name: (String) -> String
+
+  # --
+  # : (String, tools: Array[singleton(Riffer::Tool)]) -> String
+  def self.decode_tool_name: (String, tools: Array[singleton(Riffer::Tool)]) -> String
 end

@@ -113,7 +113,7 @@ module Riffer::Wire::Anthropic::Request
       content << {
         type: "tool_use",
         id: tc.call_id,
-        name: encode_tool_name(tc.name),
+        name: Riffer::Wire::Anthropic.encode_tool_name(tc.name),
         input: parse_tool_arguments(tc.arguments),
       }
     end
@@ -147,17 +147,10 @@ module Riffer::Wire::Anthropic::Request
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool(tool)
     {
-      name: encode_tool_name(tool.name),
+      name: Riffer::Wire::Anthropic.encode_tool_name(tool.name),
       description: tool.description,
       input_schema: tool.parameters_schema(strict: true),
     }
-  end
-
-  # Mirrors Riffer::Providers::Base#encode_tool_name, which is private to providers.
-  #--
-  #: (String) -> String
-  def encode_tool_name(name)
-    name.gsub("/", Riffer::Providers::Base::WIRE_SEPARATOR)
   end
 
   #--

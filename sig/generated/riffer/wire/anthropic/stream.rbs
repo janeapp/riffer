@@ -1,0 +1,73 @@
+# Generated from lib/riffer/wire/anthropic/stream.rb with RBS::Inline
+
+# Turns decoded Messages API stream events (JSON hashes, symbol keys) into
+# riffer stream events, accumulating the final message as it goes. Finish
+# reason and token usage are left to the caller, read from #finish!, so it can
+# price the usage.
+class Riffer::Wire::Anthropic::Stream
+  @completed: bool
+
+  @web_search_query: String?
+
+  @text: String?
+
+  @partial_json: Hash[Integer, String]
+
+  @message: Hash[Symbol, untyped]
+
+  @tools: Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (?tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (?tools: Array[singleton(Riffer::Tool)]) -> void
+
+  # Raises Riffer::Error on a stream +error+ event.
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # Raises Riffer::IncompleteStreamError when the stream ended without
+  # +message_stop+.
+  # --
+  # : () -> Riffer::Wire::Anthropic::Response
+  def finish!: () -> Riffer::Wire::Anthropic::Response
+
+  private
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def start_message: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def start_block: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def apply_delta: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def stop_block: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def apply_message_delta: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Riffer::Providers::_EventSink) -> void
+  def stop_message: (Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def raise_stream_error: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Integer) -> Hash[String, untyped]
+  def parse_input: (Integer) -> Hash[String, untyped]
+
+  # An error result carries an object, not a list, as its content.
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
+  def web_search_sources: (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
+end
