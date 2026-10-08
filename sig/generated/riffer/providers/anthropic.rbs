@@ -1,13 +1,8 @@
 # Generated from lib/riffer/providers/anthropic.rb with RBS::Inline
 
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
-  WEB_SEARCH_TOOL_TYPE: String
-
   FINISH_REASONS: Hash[String, Symbol]
 
-  # Only parts carrying this tag are replayed, so reasoning captured by another
-  # adapter, whose signatures the Messages API may not accept, never reaches the
-  # request.
   REASONING_FORMAT: String
 
   # --
@@ -113,24 +108,4 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # --
   # : (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
   def handle_message_stop: (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
-
-  # --
-  # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
-  def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
-
-  # --
-  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-  def convert_assistant_to_anthropic_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-
-  # --
-  # : (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
-  def convert_reasoning_part_to_anthropic_format: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
-
-  # --
-  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_anthropic_format: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
-
-  # --
-  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
-  def convert_tool_to_anthropic_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

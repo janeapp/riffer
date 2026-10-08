@@ -1,0 +1,202 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"A
+        bat and a ball cost 1.10 in total. The bat costs 1.00 more than the ball.
+        What is 17 times the ball price plus 23 times the bat price? Reply with just
+        the number."}],"max_tokens":4096,"thinking":{"type":"adaptive","display":"summarized"},"output_config":{"effort":"high"},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - aiplatform.googleapis.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Cache-Control:
+      - no-cache
+      Date:
+      - Thu, 08 Oct 2026 22:19:51 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - 202c75b6-9225-4a03-a87c-a20e2818eb2b
+      Request-Id:
+      - req_vrtx_011CfqYiYNT3iCSPsbrYiehL
+      X-Accel-Buffering:
+      - 'no'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011CfqYiYQgqwadwtbdirCRd","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":70,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5}}      }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Solving the classic puz"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"zle g"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ives ball ="}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" 0.05,"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" bat = 1.05,"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" so 17 bal"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ls c"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ost 0.85 and "}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"23 bats cost 24"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":".15, totaling 25"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":".00 which"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" checks out."}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSxgQKEggSEAIYAjgBQgh0aGlua2luZxIMb3FE3Y8iaHTUgreDGgyYuWV7H9U13Jgc3eQiMGHmcQgVUo3M4kGZhxXEWX0MYNhHjXtImd8bShte4kM8SL9HmCnwQQDxhjlJWbEsvCrhAwHw41bayjKIkN6cJhoXQlIcFw9cgPFUyTEnSEJuKSlMH5ISLX3p9pBN9RytDaTkHoCfktAjOU4cZEkXiczffj1uGjimGdNIp+UCPcpiWMo3jmoiDx0bmwOKuhhmT/D8ogRCijZzTdrIswkzL5I2H3f/4W9xMpiualcf7b7CNMtjSd5xXQ5CCr5rnJ5fibMcEw5FO87TBbmsHykzYOwAwULpjBvks0B2qj5QFpTFoEOzaNRhg4k9PBEsA8ZlFqdz6lkn80IIsgSay24lzDm63TwxZYbir6piZoCSVv/9juGePPTN95JdGrKXn0puwPCx+yUsqxPRQUfDyqsAkfUQm9B+cYBISfFHeBUO/nVuafcIez9mrRG1eYMRfSVdJgvfWARimm+e1+D3pJnTehohyyF/XncgB0cZ4QGGxii/ITgexND38NtYEcfqNKMl5I1EFhyhhvynTi6X8gaYyjGiJ5s0rMK6ovZ6i5PCG6OQQIYnbBkwczjV7YgtJz+b2kvCRlXHyc0BmggvK4QyIx6k5RF1V/qZy6EQqhFvPANpyemloQ1HXNycvkd9TLBWgrlhVxN8A9ZuKolgYes6VEtCo8T4rF5e7pRcimlLIeJdFueg/UAYUUjMXM3/EZCA3ST8pnkYAQ=="}       }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0    }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"25"}       }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1        }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":70,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":105,"output_tokens_details":{"thinking_tokens":102}}        }
+
+        event: message_stop
+        data: {"type":"message_stop"           }
+
+  recorded_at: Thu, 08 Oct 2026 22:19:53 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"A
+        bat and a ball cost 1.10 in total. The bat costs 1.00 more than the ball.
+        What is 17 times the ball price plus 23 times the bat price? Reply with just
+        the number."},{"role":"assistant","content":[{"type":"thinking","thinking":"Solving
+        the classic puzzle gives ball = 0.05, bat = 1.05, so 17 balls cost 0.85 and
+        23 bats cost 24.15, totaling 25.00 which checks out.\n\n","signature":"CAQSxgQKEggSEAIYAjgBQgh0aGlua2luZxIMb3FE3Y8iaHTUgreDGgyYuWV7H9U13Jgc3eQiMGHmcQgVUo3M4kGZhxXEWX0MYNhHjXtImd8bShte4kM8SL9HmCnwQQDxhjlJWbEsvCrhAwHw41bayjKIkN6cJhoXQlIcFw9cgPFUyTEnSEJuKSlMH5ISLX3p9pBN9RytDaTkHoCfktAjOU4cZEkXiczffj1uGjimGdNIp+UCPcpiWMo3jmoiDx0bmwOKuhhmT/D8ogRCijZzTdrIswkzL5I2H3f/4W9xMpiualcf7b7CNMtjSd5xXQ5CCr5rnJ5fibMcEw5FO87TBbmsHykzYOwAwULpjBvks0B2qj5QFpTFoEOzaNRhg4k9PBEsA8ZlFqdz6lkn80IIsgSay24lzDm63TwxZYbir6piZoCSVv/9juGePPTN95JdGrKXn0puwPCx+yUsqxPRQUfDyqsAkfUQm9B+cYBISfFHeBUO/nVuafcIez9mrRG1eYMRfSVdJgvfWARimm+e1+D3pJnTehohyyF/XncgB0cZ4QGGxii/ITgexND38NtYEcfqNKMl5I1EFhyhhvynTi6X8gaYyjGiJ5s0rMK6ovZ6i5PCG6OQQIYnbBkwczjV7YgtJz+b2kvCRlXHyc0BmggvK4QyIx6k5RF1V/qZy6EQqhFvPANpyemloQ1HXNycvkd9TLBWgrlhVxN8A9ZuKolgYes6VEtCo8T4rF5e7pRcimlLIeJdFueg/UAYUUjMXM3/EZCA3ST8pnkYAQ=="},{"type":"text","text":"25"}]},{"role":"user","content":"Now
+        add 10. Reply with just the number."}],"max_tokens":4096,"thinking":{"type":"adaptive","display":"summarized"},"output_config":{"effort":"high"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - aiplatform.googleapis.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 08 Oct 2026 22:19:54 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Request-Id:
+      - req_vrtx_011CfqYiiokdQ848928NCayv
+      Internal-Weighted-Total-Tokens:
+      - '208'
+      Pinnacle-Error-Category:
+      - no_error
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Output-Tokens:
+      - '3'
+      Content-Type:
+      - application/json
+      Internal-Input-Tokens:
+      - '193'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CfqYiiqjb22zkGk7fsLBk","type":"message","role":"assistant","content":[{"type":"text","text":"35"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":193,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Thu, 08 Oct 2026 22:19:54 GMT
+recorded_with: VCR 6.4.0
+...

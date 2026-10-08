@@ -447,13 +447,14 @@ A tag you pass with the same key wins. The default tags count towards the provid
 | OpenRouter            | `metadata` (all tags)         | Also mapped to `user`                   |
 | Anthropic             | `metadata.user_id` **only**   | The only tag forwarded                  |
 | Gemini                | _(none — observability only)_ | Tag only; no request field              |
-| Google Cloud          | _(none — observability only)_ | Tag only; not yet sent as `labels`      |
+| Google Cloud (Claude) | `metadata.user_id` **only**   | The only tag forwarded                  |
+| Google Cloud (Gemini) | _(none — observability only)_ | Tag only; not yet sent as `labels`      |
 
 If `model_options` already sets the native field (`metadata` or `request_metadata`), the tags are merged into it; a tag wins on a shared key.
 
 **Anthropic silently drops non-`user_id` tags.** The Messages API has no free-form request-metadata field — only `metadata.user_id`. So for Anthropic, `user_id` is forwarded as `metadata: {user_id: …}` and **every other tag is dropped from the request** (it still appears on spans). This is intentional.
 
-**Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only. Native request labels (`labels`, lowercase `[a-z0-9_-]`, ≤63 chars each) are a Vertex AI feature; the Google Cloud provider does not send them yet, so its tags are observability-only too.
+**Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only. Native request labels (`labels`, lowercase `[a-z0-9_-]`, ≤63 chars each) are a Vertex AI feature; the Google Cloud provider does not send them yet, so its tags are observability-only for Gemini models too. Claude models on Google Cloud follow the Anthropic rule above.
 
 ### Provider limits (not enforced)
 

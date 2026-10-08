@@ -178,6 +178,15 @@ describe Riffer::Providers::GoogleCloud::Client do
 
       expect { client.post_stream(stream_path, {}) { |_c| } }.must_raise Riffer::Error
     end
+
+    it "raises Riffer::Error with the API message when the error body is a JSON array" do
+      claude_path = "publishers/anthropic/models/claude-haiku-4-5@20251001:streamRawPredict"
+      stub_request(:post, "https://aiplatform.googleapis.com/v1/projects/my-project/locations/global/#{claude_path}").
+        to_return(status: 401, body: '[{"error":{"code":401,"message":"bad token"}}]')
+      error = expect { client.post_stream(claude_path, {}) { |_c| } }.must_raise Riffer::Error
+
+      expect(error.message).must_equal "Google Cloud API error (401): bad token"
+    end
   end
 
   describe "concurrent token refresh" do

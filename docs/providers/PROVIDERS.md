@@ -27,6 +27,7 @@ class MyAgent < Riffer::Agent
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
   model 'gemini/gemini-2.5-flash-lite'                                # Gemini
   model 'google_cloud/gemini-2.5-flash'                               # Google Cloud (Vertex AI)
+  model 'google_cloud/claude-sonnet-4-5@20250929'                     # Google Cloud (Vertex AI)
   model 'openrouter/anthropic/claude-sonnet-4.6'                      # OpenRouter
   model 'mock/any'                                                    # Mock provider
 end
@@ -204,5 +205,5 @@ Riffer::Providers::Repository.find(:mock)
 - [Mock](MOCK_PROVIDER.md) - Mock provider for testing
 - [Custom Providers](CUSTOM_PROVIDERS.md) - Creating your own provider
 - [Gemini](GEMINI.md) - Gemini models via Google GenAI API
-- [Google Cloud](GOOGLE_CLOUD.md) - Gemini models on Vertex AI
+- [Google Cloud](GOOGLE_CLOUD.md) - Gemini and Claude models on Vertex AI
 - [OpenRouter](OPENROUTER.md) - Unified gateway across many vendors

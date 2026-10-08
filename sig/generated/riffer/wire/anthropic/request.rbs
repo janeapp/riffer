@@ -1,0 +1,37 @@
+# Generated from lib/riffer/wire/anthropic/request.rb with RBS::Inline
+
+module Riffer::Wire::Anthropic::Request
+  WEB_SEARCH_TOOL_TYPE: String
+
+  # The Messages API body without +model+, which some transports carry in the
+  # URL instead.
+  # --
+  # : (Array[Riffer::Messages::Base], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build: (Array[Riffer::Messages::Base], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  private
+
+  # --
+  # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+  def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def convert_assistant: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+
+  # --
+  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+
+  # --
+  # : (String) -> Hash[String, untyped]
+  def parse_tool_arguments: (String) -> Hash[String, untyped]
+end

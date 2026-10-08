@@ -1090,9 +1090,9 @@ describe Riffer::Providers::Anthropic do
         end
       end
 
-      provider = Riffer::Providers::Anthropic.new
-      format = provider.send(:convert_tool_to_anthropic_format, tool)
-      schema = format[:input_schema]
+      messages = [Riffer::Messages::User.new("Hello")]
+      params = Riffer::Providers::Anthropic.new.send(:build_request_params, messages, "claude", { tools: [tool] })
+      schema = params[:tools].first[:input_schema]
 
       expect(schema[:required]).must_include "age"
       expect(schema[:properties]["age"][:type]).must_equal %w[integer null]
@@ -1522,7 +1522,7 @@ describe Riffer::Providers::Anthropic do
 
     def convert(reasoning, content: "42", tool_calls: [])
       assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
-      provider.send(:convert_assistant_to_anthropic_format, assistant)
+      provider.send(:build_request_params, [Riffer::Messages::User.new("Hi"), assistant], model, {})[:messages].last
     end
 
     describe "capturing thinking blocks" do

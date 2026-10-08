@@ -1,6 +1,6 @@
 # Google Cloud Provider
 
-The Google Cloud provider connects to models hosted on Vertex AI (now the Gemini Enterprise Agent Platform), authenticating with Google Cloud credentials instead of an API key. It currently serves Gemini models.
+The Google Cloud provider connects to models hosted on Vertex AI (now the Gemini Enterprise Agent Platform), authenticating with Google Cloud credentials instead of an API key. One provider serves both Gemini and Claude models; the model name picks the API.
 
 ## Installation
 
@@ -132,9 +132,10 @@ Use Vertex AI model IDs in the `google_cloud/model` format:
 model 'google_cloud/gemini-2.5-flash'
 model 'google_cloud/gemini-2.5-flash-lite'
 model 'google_cloud/gemini-2.5-pro'
+model 'google_cloud/claude-sonnet-4-5@20250929'
 ```
 
-Model IDs may carry an `@version` suffix.
+Model IDs starting with `claude-` go to Claude on Vertex AI; every other ID goes to Gemini. Model IDs may carry an `@version` suffix, as Vertex AI's dated Claude snapshots do.
 
 ## Gemini Models
 
@@ -152,9 +153,38 @@ puts response.content
 
 Files are sent inline as base64 (images and documents). A `FilePart.from_url` source works too: riffer downloads and base64-encodes it before sending, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
 
+## Claude Models
+
+Claude models use Vertex AI's Anthropic endpoints (`rawPredict` and `streamRawPredict`), which take the Anthropic Messages API body. Riffer builds the same body as the [Anthropic provider](ANTHROPIC.md), so the same [model options](ANTHROPIC.md#model-options) apply (`max_tokens`, defaulting to `4096`, `temperature`, `thinking`, `web_search`, ...), with `anthropic_version: "vertex-2023-10-16"` in place of the model name, which Vertex AI takes from the URL. Enable each Claude model for your project in the Vertex AI Model Garden before calling it.
+
+```ruby
+response = provider.generate_text(
+  prompt: "Hello!",
+  model: "claude-haiku-5-5",
+  thinking: { type: "adaptive", display: "summarized" },
+  output_config: { effort: "high" },
+  max_tokens: 4096
+)
+```
+
+Vertex AI model ids may carry an `@version` suffix (e.g. `claude-haiku-4-5@20251001`); use the id Model Garden shows. Which `thinking` shape a model accepts depends on the model — see [Anthropic → Model Options](ANTHROPIC.md#model-options).
+
+Claude models on Google Cloud behave as they do on the Anthropic provider:
+
+- **Extended thinking** - reasoning is captured as [reasoning parts](../MESSAGES.md#reasoning) tagged `format: "anthropic-messages-v1"` and replayed on the next turn, as described in [Anthropic → Reasoning Replay](ANTHROPIC.md#reasoning-replay)
+- **Web search** - `web_search: true` (or a hash of options) adds the `web_search_20250305` server tool, the version Vertex AI supports, and streams `WebSearchStatus` / `WebSearchDone` events
+- **Structured output** - sent as a strict `output_config.format` JSON schema
+- **Skills** - rendered with the XML skills adapter
+- **Tags** - only the reserved `user_id` tag is sent, as `metadata.user_id`
+- **Incomplete streams** - a stream that ends without a `message_stop` event raises `Riffer::IncompleteStreamError`
+
+Files are sent inline as base64, as for Gemini models.
+
+Web search and structured output are partner-model features that an organization policy can disable. If a request fails with a `constraints/vertexai.allowedPartnerModelFeatures` violation, an organization policy administrator must allow `publishers/anthropic/models/MODEL:web_search` or `:structured_outputs` (or `publishers/anthropic` for every feature) — see [Control access to Model Garden models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/control-model-access).
+
 ## Limitations
 
-- **Tags stay off the request** - per-call [tags](../AGENTS.md#per-call-tags) reach spans only; they are not yet sent as Vertex AI request `labels`
+- **Tags stay off Gemini requests** - per-call [tags](../AGENTS.md#per-call-tags) reach spans only; they are not yet sent as Vertex AI request `labels`
 - **No `gs://` file references** - files are always sent inline
-- **No web search** - Google Search grounding is not exposed
+- **No Google Search grounding** - Gemini models have no web search tool here
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side

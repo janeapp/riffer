@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - aiplatform.googleapis.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Request-Id:
+      - req_vrtx_011CfqYdM2SagXPzYKBA6WAd
+      Internal-Weighted-Total-Tokens:
+      - '649'
+      Stream-Reported-Http-Code:
+      - '200'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Input-Tokens:
+      - '394'
+      Date:
+      - Thu, 08 Oct 2026 22:18:41 GMT
+      Content-Type:
+      - application/json
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '51'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CfqYdM4fmjNrkSg7vyeXf","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Hwx2Ru8dUenGDEzXWUDQWg","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":51,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Thu, 08 Oct 2026 22:18:41 GMT
+recorded_with: VCR 6.4.0
