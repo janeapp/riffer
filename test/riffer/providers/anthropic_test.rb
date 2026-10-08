@@ -1329,6 +1329,14 @@ describe Riffer::Providers::Anthropic do
       expect(request[:output_config][:effort]).must_equal "low"
     end
 
+    it "turns thinking off on a live model" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/reasoning_level/claude-sonnet-4-6/off") do
+        result = provider.generate_text(prompt: prompt, model: "claude-sonnet-4-6", riffer_reasoning_level: :off)
+
+        expect(result.content).must_include "391"
+      end
+    end
+
     it "reasons at low effort on a live adaptive model" do
       VCR.use_cassette("Riffer_Providers_Anthropic/reasoning_level/claude-sonnet-4-6/low") do
         result = provider.generate_text(prompt: prompt, model: "claude-sonnet-4-6", riffer_reasoning_level: :low)
