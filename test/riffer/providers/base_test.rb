@@ -118,6 +118,44 @@ describe Riffer::Providers::Base do
     end
   end
 
+  describe "prompted structured output" do
+    let(:provider) { Riffer::Providers::Mock.new }
+    let(:structured_output) do
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
+    end
+
+    it "sends the schema in the system prompt instead of the native field" do
+      provider.stub_response('{"sentiment":"positive"}')
+      provider.generate_text(system: "Be terse.", prompt: "Analyze", structured_output: structured_output)
+
+      call = provider.calls.last
+
+      expect(call.key?(:structured_output)).must_equal false
+      expect(call[:messages].first).must_equal(
+        { role: :system, content: "Be terse.\n\n#{structured_output.prompt_instructions}" },
+      )
+    end
+
+    it "parses the reply onto the message" do
+      provider.stub_response('{"sentiment":"positive"}')
+      result = provider.generate_text(prompt: "Analyze", structured_output: structured_output)
+
+      expect(result.structured_output).must_equal({ sentiment: "positive" })
+    end
+
+    it "sends the schema in the system prompt when streaming" do
+      provider.stub_response('{"sentiment":"positive"}')
+      provider.stream_text(prompt: "Analyze", structured_output: structured_output).to_a
+
+      call = provider.calls.last
+
+      expect(call.key?(:structured_output)).must_equal false
+      expect(call[:messages].first).must_equal({ role: :system, content: structured_output.prompt_instructions })
+    end
+  end
+
   describe "file attachment resolution" do
     before do
       @original_allow_downloads = Riffer.config.files.allow_downloads

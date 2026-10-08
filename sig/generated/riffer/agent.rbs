@@ -32,8 +32,8 @@ class Riffer::Agent
   def self.model_options: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
 
   # --
-  # : (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
-  def self.structured_output: (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  # : (?Riffer::Params?, ?strategy: Symbol?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def self.structured_output: (?Riffer::Params?, ?strategy: Symbol?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
   # --
   # : (*Numeric?) -> Numeric?

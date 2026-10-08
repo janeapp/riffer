@@ -45,6 +45,7 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
   model_options:     { temperature: 0.2 },
   max_steps:         8,                        # integer; -1 = unlimited (see below)
   structured_output: { type: "object", … },   # JSON Schema, or null
+  structured_output_strategy: :native,        # :native or :prompted ("native"/"prompted" over JSON)
   tools: [ { name:, description:, parameters_schema:, timeout: }, … ]
 }
 ```
@@ -56,6 +57,8 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
 ### Structured output
 
 Structured output crosses as **provider-neutral JSON Schema** (`Riffer::Params#to_json_schema`), never a provider-rendered schema. `from_h` rebuilds a validating `Riffer::Params` via `Riffer::Params.from_json_schema`, so the rebuilt agent both constrains the model and can `parse_and_validate` responses — rendering provider-correct bytes at call time, the same way an in-code agent does.
+
+`structured_output_strategy` carries the [strategy](AGENTS.md#structured-output-strategy-experimental) the agent was configured with, so a `:prompted` agent rebuilds as `:prompted`. A hash without the key decodes as `:native`.
 
 ## Reconstructing tools
 

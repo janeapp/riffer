@@ -3,6 +3,8 @@
 class Riffer::Agent::Config
   DEFAULT_MAX_STEPS: Integer
 
+  STRUCTURED_OUTPUT_STRATEGIES: Array[Symbol]
+
   @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
 
   attr_reader identifier: String?
@@ -14,6 +16,8 @@ class Riffer::Agent::Config
   attr_accessor model_options: Hash[Symbol, untyped]
 
   attr_reader structured_output: Riffer::Params?
+
+  attr_reader structured_output_strategy: Symbol
 
   attr_accessor max_steps: Numeric?
 
@@ -32,6 +36,7 @@ class Riffer::Agent::Config
   #     ?instructions: (String | Proc)?,
   #     ?model_options: Hash[Symbol, untyped],
   #     ?structured_output: Riffer::Params?,
+  #     ?structured_output_strategy: Symbol,
   #     ?max_steps: Numeric?,
   #     ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #     ?mcp_configs: Array[Hash[Symbol, untyped]],
@@ -39,7 +44,7 @@ class Riffer::Agent::Config
   #     ?skills_config: Riffer::Skills::Config?,
   #     ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
   #   ) -> void
-  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
 
   # --
   # : (untyped) -> String?
@@ -48,6 +53,10 @@ class Riffer::Agent::Config
   # --
   # : (Riffer::Params?) -> Riffer::Params?
   def structured_output=: (Riffer::Params?) -> Riffer::Params?
+
+  # --
+  # : (Symbol) -> Symbol
+  def structured_output_strategy=: (Symbol) -> Symbol
 
   # --
   # : () -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)

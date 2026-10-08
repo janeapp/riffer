@@ -3,6 +3,7 @@
 
 class Riffer::Agent::Config
   DEFAULT_MAX_STEPS = 16 #: Integer
+  STRUCTURED_OUTPUT_STRATEGIES = %i[native prompted].freeze #: Array[Symbol]
 
   # @rbs @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
 
@@ -11,6 +12,7 @@ class Riffer::Agent::Config
   attr_reader :instructions #: (String | Proc)? # @dynamic instructions
   attr_accessor :model_options #: Hash[Symbol, untyped] # @dynamic model_options, model_options=
   attr_reader :structured_output #: Riffer::Params? # @dynamic structured_output
+  attr_reader :structured_output_strategy #: Symbol # @dynamic structured_output_strategy
   attr_accessor :max_steps #: Numeric? # @dynamic max_steps, max_steps=
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
@@ -24,6 +26,7 @@ class Riffer::Agent::Config
   #    ?instructions: (String | Proc)?,
   #    ?model_options: Hash[Symbol, untyped],
   #    ?structured_output: Riffer::Params?,
+  #    ?structured_output_strategy: Symbol,
   #    ?max_steps: Numeric?,
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?mcp_configs: Array[Hash[Symbol, untyped]],
@@ -37,6 +40,7 @@ class Riffer::Agent::Config
     instructions: nil,
     model_options: {},
     structured_output: nil,
+    structured_output_strategy: :native,
     max_steps: DEFAULT_MAX_STEPS,
     tools_config: nil,
     mcp_configs: [],
@@ -54,6 +58,7 @@ class Riffer::Agent::Config
     self.model = model
     self.instructions = instructions
     self.structured_output = structured_output
+    self.structured_output_strategy = structured_output_strategy
     self.tool_runtime = tool_runtime if tool_runtime
   end
 
@@ -71,6 +76,17 @@ class Riffer::Agent::Config
     end
 
     @structured_output = value
+  end
+
+  #--
+  #: (Symbol) -> Symbol
+  def structured_output_strategy=(value)
+    unless STRUCTURED_OUTPUT_STRATEGIES.include?(value)
+      raise Riffer::ArgumentError,
+            "structured_output_strategy must be one of #{STRUCTURED_OUTPUT_STRATEGIES.inspect}, got #{value.inspect}"
+    end
+
+    @structured_output_strategy = value
   end
 
   #--
