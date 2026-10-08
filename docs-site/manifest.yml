@@ -88,6 +88,9 @@ groups:
       - source: providers/GEMINI.md
         slug: providers/gemini
         description: Google Gemini models
+      - source: providers/GOOGLE_CLOUD.md
+        slug: providers/google-cloud
+        description: Gemini models on Vertex AI
       - source: providers/OPENROUTER.md
         slug: providers/openrouter
         description: Hundreds of models, one API
