@@ -57,6 +57,12 @@ class Riffer::Params
   # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
 
+  # The JSON Schema type name for a received value, so an error can describe what arrived
+  # in the same vocabulary the schema used to ask for it.
+  # --
+  # : (untyped) -> String
+  def json_type_name: (untyped) -> String
+
   # --
   # : (Module, untyped) -> untyped
   def coerce_value: (Module, untyped) -> untyped

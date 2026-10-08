@@ -117,6 +117,10 @@ Options:
 
 A `Float` param accepts a whole number too, since JSON Schema's `number` covers integers — a model returning `120` for a `Float` is valid, and the validated value is coerced to `120.0`. `Integer` stays strict: `1.0` is rejected, matching JSON Schema's `integer`.
 
+An `Array` param also accepts a JSON-encoded array, for the same reason: a model that writes `"[{\"id\":1}]"` instead of `[{"id":1}]` sent the right data in the wrong container, and the tool should not care which it chose. The decoded value is validated normally, so a decoded item with a missing or wrong-typed field still fails. Only a value that decodes to an array is recovered — a payload that decodes to an object, prose, or a truncated fragment is left alone and rejected, since the intent there is ambiguous.
+
+A rejected value reports both the expected and the received type, e.g. `parts: expected array, got string`, so a model has something to correct.
+
 ### Nested Parameters
 
 Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
