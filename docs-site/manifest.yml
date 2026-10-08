@@ -90,7 +90,7 @@ groups:
         description: Google Gemini models
       - source: providers/GOOGLE_CLOUD.md
         slug: providers/google-cloud
-        description: Gemini models on Vertex AI
+        description: Gemini and Claude on Vertex AI
       - source: providers/OPENROUTER.md
         slug: providers/openrouter
         description: Hundreds of models, one API
