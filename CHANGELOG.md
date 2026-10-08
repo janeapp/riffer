@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.52.0](https://github.com/janeapp/riffer/compare/riffer/v0.51.0...riffer/v0.52.0) (2026-10-08)
+
+
+### Features
+
+* **structured_output:** add experimental prompted strategy ([#477](https://github.com/janeapp/riffer/issues/477)) ([f517fe1](https://github.com/janeapp/riffer/commit/f517fe19788fe34167515998a7ac2870605b2228))
+
 ## [0.51.0](https://github.com/janeapp/riffer/compare/riffer/v0.50.1...riffer/v0.51.0) (2026-10-07)
 
 
