@@ -1,0 +1,8 @@
+# Generated from lib/riffer/wire/anthropic.rb with RBS::Inline
+
+module Riffer::Wire::Anthropic
+  # Only parts carrying this tag are replayed, so reasoning captured by another
+  # adapter, whose signatures the Messages API may not accept, never reaches the
+  # request.
+  REASONING_FORMAT: String
+end
