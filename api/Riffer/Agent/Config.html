@@ -500,6 +500,8 @@
 
         <li ><a href="#method-i-structured_output-3D">structured_output=</a></li>
 
+        <li ><a href="#method-i-structured_output_strategy-3D">structured_output_strategy=</a></li>
+
         <li ><a href="#method-i-tool_runtime">tool_runtime</a></li>
 
         <li ><a href="#method-i-tool_runtime-3D">tool_runtime=</a></li>
@@ -579,6 +581,14 @@
       <dl>
 
         <dt id="DEFAULT_MAX_STEPS">DEFAULT_MAX_STEPS</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="STRUCTURED_OUTPUT_STRATEGIES">STRUCTURED_OUTPUT_STRATEGIES</dt>
 
         <dd>
 
@@ -741,6 +751,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-structured_output_strategy" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-structured_output_strategy" title="Link to this attribute">
+            <span class="method-name">structured_output_strategy</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        
+
+        </div>
+      </div>
+
       <div id="attribute-i-tools_config" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-tools_config" title="Link to this attribute">
@@ -776,7 +802,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">( identifier: nil, model: nil, instructions: nil, model_options: {}, structured_output: nil, max_steps: DEFAULT_MAX_STEPS, tools_config: nil, mcp_configs: [], tool_runtime: nil, skills_config: nil, guardrails: { before: [], after: [] } )</span>
+                <span class="method-args">( identifier: nil, model: nil, instructions: nil, model_options: {}, structured_output: nil, structured_output_strategy: :native, max_steps: DEFAULT_MAX_STEPS, tools_config: nil, mcp_configs: [], tool_runtime: nil, skills_config: nil, guardrails: { before: [], after: [] } )</span>
               </a>
             </div>
 
@@ -789,13 +815,14 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 34</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
   <span class="ruby-value">identifier:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">instructions:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">model_options:</span> {},
   <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>,
+  <span class="ruby-value">structured_output_strategy:</span> <span class="ruby-value">:native</span>,
   <span class="ruby-value">max_steps:</span> <span class="ruby-constant">DEFAULT_MAX_STEPS</span>,
   <span class="ruby-value">tools_config:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">mcp_configs:</span> [],
@@ -813,6 +840,7 @@
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">model</span> = <span class="ruby-identifier">model</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instructions</span> = <span class="ruby-identifier">instructions</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">structured_output</span> = <span class="ruby-identifier">structured_output</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">structured_output_strategy</span> = <span class="ruby-identifier">structured_output_strategy</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">tool_runtime</span> = <span class="ruby-identifier">tool_runtime</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">tool_runtime</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -867,7 +895,7 @@
             </details>
           </div>
           <div class="method-source-code" id="add_guardrail-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 121</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 137</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">klass:</span>, <span class="ruby-value">options:</span> {})
   <span class="ruby-identifier">valid_phases</span> = [<span class="ruby-operator">*</span><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Guardrails</span><span class="ruby-operator">::</span><span class="ruby-constant">PHASES</span>, <span class="ruby-value">:around</span>]
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid guardrail phase: #{phase}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid_phases</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">phase</span>)
@@ -925,7 +953,7 @@
             </details>
           </div>
           <div class="method-source-code" id="add_mcp-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 113</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_mcp</span>(<span class="ruby-identifier">tag</span>, <span class="ruby-value">progressive:</span> <span class="ruby-keyword">true</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;progressive must be a boolean&quot;</span> <span class="ruby-keyword">unless</span> [<span class="ruby-keyword">true</span>, <span class="ruby-keyword">false</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">progressive</span>)
 
@@ -969,7 +997,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrails_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 143</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 159</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
   <span class="ruby-ivar">@guardrails</span>[<span class="ruby-identifier">phase</span>] <span class="ruby-operator">||</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -1011,7 +1039,7 @@
             </details>
           </div>
           <div class="method-source-code" id="identifier-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 62</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identifier=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>&amp;.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1053,7 +1081,7 @@
             </details>
           </div>
           <div class="method-source-code" id="instructions-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 106</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 122</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">instructions=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-identifier">validate_string_or_proc!</span>(<span class="ruby-identifier">value</span>, <span class="ruby-string">&quot;instructions&quot;</span>)
   <span class="ruby-ivar">@instructions</span> = <span class="ruby-identifier">value</span>
@@ -1096,7 +1124,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 99</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 115</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">model=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-identifier">validate_string_or_proc!</span>(<span class="ruby-identifier">value</span>, <span class="ruby-string">&quot;model&quot;</span>)
   <span class="ruby-ivar">@model</span> = <span class="ruby-identifier">value</span>
@@ -1139,13 +1167,60 @@
             </details>
           </div>
           <div class="method-source-code" id="structured_output-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 73</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">structured_output=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;structured_output must be a Riffer::Params&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-ivar">@structured_output</span> = <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-structured_output_strategy-3D" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-structured_output_strategy-3D" title="Link to this method">
+                <span class="method-name">structured_output_strategy=</span>
+                <span class="method-args">(value)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="structured_output_strategy-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">structured_output_strategy=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">STRUCTURED_OUTPUT_STRATEGIES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>,
+          <span class="ruby-node">&quot;structured_output_strategy must be one of #{STRUCTURED_OUTPUT_STRATEGIES.inspect}, got #{value.inspect}&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@structured_output_strategy</span> = <span class="ruby-identifier">value</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1185,7 +1260,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tool_runtime-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 78</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 94</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tool_runtime</span>
   <span class="ruby-comment"># Resolved here rather than at construction so a copy can tell an inherited</span>
   <span class="ruby-comment"># runtime from a defaulted one.</span>
@@ -1229,7 +1304,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tool_runtime-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 86</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/config.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tool_runtime=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-identifier">valid</span> = (<span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Runtime</span>) <span class="ruby-operator">||</span>
           <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Runtime</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Proc</span>)

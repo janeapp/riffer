@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.51.0</span>
+            <span class="version">v0.52.0</span>
           </div>
         </nav>
       </div>
@@ -238,6 +238,7 @@
   <span class="ss">model_options:     </span><span class="p">{</span> <span class="ss">temperature: </span><span class="mf">0.2</span> <span class="p">},</span>
   <span class="ss">max_steps:         </span><span class="mi">8</span><span class="p">,</span>                        <span class="c1"># integer; -1 = unlimited (see below)</span>
   <span class="ss">structured_output: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"object"</span><span class="p">,</span> <span class="err">…</span> <span class="p">},</span>   <span class="c1"># JSON Schema, or null</span>
+  <span class="ss">structured_output_strategy: :native</span><span class="p">,</span>        <span class="c1"># :native or :prompted ("native"/"prompted" over JSON)</span>
   <span class="ss">tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -249,6 +250,8 @@
 <h3 id="structured-output">Structured output</h3>
 
 <p>Structured output crosses as <strong>provider-neutral JSON Schema</strong> (<code>Riffer::Params#to_json_schema</code>), never a provider-rendered schema. <code>from_h</code> rebuilds a validating <code>Riffer::Params</code> via <code>Riffer::Params.from_json_schema</code>, so the rebuilt agent both constrains the model and can <code>parse_and_validate</code> responses — rendering provider-correct bytes at call time, the same way an in-code agent does.</p>
+
+<p><code>structured_output_strategy</code> carries the <a href="/guides/agents/#structured-output-strategy-experimental">strategy</a> the agent was configured with, so a <code>:prompted</code> agent rebuilds as <code>:prompted</code>. A hash without the key decodes as <code>:native</code>.</p>
 
 <h2 id="reconstructing-tools">Reconstructing tools</h2>
 
