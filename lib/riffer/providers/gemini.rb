@@ -172,53 +172,44 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     body = params.except(:model)
 
     full_text = +""
-    buffer = +""
     raw_finish_reason = nil #: String?
     saw_function_call = false
+    decoder = Riffer::Wire::SSE.new
 
-    process_chunk = lambda do |chunk|
-      buffer << chunk
+    process_data = lambda do |data|
+      return if data.empty?
 
-      while (match = buffer.match(/\r?\n\r?\n/))
-        match_end = match.end(0) #: Integer
-        frame = buffer.slice!(0, match_end).to_s.strip
-        next unless frame.start_with?("data: ")
+      parsed = JSON.parse(data, symbolize_names: true)
+      parts = parsed.dig(:candidates, 0, :content, :parts)
 
-        json_str = frame.delete_prefix("data: ").strip
-        next if json_str.empty?
-
-        parsed = JSON.parse(json_str, symbolize_names: true)
-        parts = parsed.dig(:candidates, 0, :content, :parts)
-
-        parts&.each do |part|
-          if part[:text]
-            full_text << part[:text]
-            yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
-          elsif part[:functionCall]
-            fc = part[:functionCall]
-            saw_function_call = true
-            call_id = "gemini_call_#{SecureRandom.hex(12)}"
-            arguments = encode_tool_arguments(fc[:args])
-            yielder << Riffer::StreamEvents::ToolCallDone.new(
-              item_id: call_id,
-              call_id: call_id,
-              name: fc[:name],
-              arguments: arguments,
-            )
-          end
+      parts&.each do |part|
+        if part[:text]
+          full_text << part[:text]
+          yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
+        elsif part[:functionCall]
+          fc = part[:functionCall]
+          saw_function_call = true
+          call_id = "gemini_call_#{SecureRandom.hex(12)}"
+          arguments = encode_tool_arguments(fc[:args])
+          yielder << Riffer::StreamEvents::ToolCallDone.new(
+            item_id: call_id,
+            call_id: call_id,
+            name: fc[:name],
+            arguments: arguments,
+          )
         end
+      end
 
-        raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
+      raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
 
-        usage = parsed[:usageMetadata]
-        if usage && usage[:candidatesTokenCount]
-          yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
-        end
+      usage = parsed[:usageMetadata]
+      if usage && usage[:candidatesTokenCount]
+        yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
       end
     end
 
     path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
-    client.post_stream(path, body) { |chunk| process_chunk.call(chunk) }
+    client.post_stream(path, body) { |chunk| decoder.feed(chunk) { |data, _event| process_data.call(data) } }
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
