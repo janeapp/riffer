@@ -1,0 +1,7 @@
+# Narrows the private `client` to riffer's Vertex transport, mirroring the
+# SDK-typed narrowings alongside it.
+class Riffer::Providers::GoogleCloud
+  private
+
+  def client: () -> Riffer::Providers::GoogleCloud::Client
+end

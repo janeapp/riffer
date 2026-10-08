@@ -11,6 +11,8 @@ class Riffer::Config
 
   attr_reader gemini: Riffer::Config::Gemini
 
+  attr_reader google_cloud: Riffer::Config::GoogleCloud
+
   attr_reader openai: Riffer::Config::OpenAI
 
   attr_reader openrouter: Riffer::Config::OpenRouter
