@@ -5,6 +5,8 @@ class Riffer::Agent::Config
   DEFAULT_MAX_STEPS = 16 #: Integer
   STRUCTURED_OUTPUT_STRATEGIES = %i[native prompted].freeze #: Array[Symbol]
 
+  REASONING_LEVELS = %i[off low medium high xhigh max].freeze #: Array[Symbol]
+
   # @rbs @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
 
   attr_reader :identifier #: String? # @dynamic identifier
@@ -14,6 +16,7 @@ class Riffer::Agent::Config
   attr_reader :structured_output #: Riffer::Params? # @dynamic structured_output
   attr_reader :structured_output_strategy #: Symbol # @dynamic structured_output_strategy
   attr_accessor :max_steps #: Numeric? # @dynamic max_steps, max_steps=
+  attr_reader :reasoning #: Symbol? # @dynamic reasoning
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
   attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
@@ -28,6 +31,7 @@ class Riffer::Agent::Config
   #    ?structured_output: Riffer::Params?,
   #    ?structured_output_strategy: Symbol,
   #    ?max_steps: Numeric?,
+  #    ?reasoning: (Symbol | String)?,
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?mcp_configs: Array[Hash[Symbol, untyped]],
   #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
@@ -42,6 +46,7 @@ class Riffer::Agent::Config
     structured_output: nil,
     structured_output_strategy: :native,
     max_steps: DEFAULT_MAX_STEPS,
+    reasoning: nil,
     tools_config: nil,
     mcp_configs: [],
     tool_runtime: nil,
@@ -59,6 +64,7 @@ class Riffer::Agent::Config
     self.instructions = instructions
     self.structured_output = structured_output
     self.structured_output_strategy = structured_output_strategy
+    self.reasoning = reasoning
     self.tool_runtime = tool_runtime if tool_runtime
   end
 
@@ -87,6 +93,17 @@ class Riffer::Agent::Config
     end
 
     @structured_output_strategy = value
+  end
+
+  #--
+  #: ((Symbol | String)?) -> Symbol?
+  def reasoning=(value)
+    level = value&.to_s&.to_sym
+    unless level.nil? || REASONING_LEVELS.include?(level)
+      raise Riffer::ArgumentError, "reasoning must be one of #{REASONING_LEVELS.join(', ')}, got #{value.inspect}"
+    end
+
+    @reasoning = level
   end
 
   #--

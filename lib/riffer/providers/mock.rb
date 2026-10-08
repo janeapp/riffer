@@ -75,6 +75,13 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     }
   end
 
+  # Never raises, so test suites can set +reasoning+ without catalog entries.
+  #--
+  #: (Symbol) -> Hash[Symbol, untyped]
+  def default_reasoning_options(_level)
+    {}
+  end
+
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)

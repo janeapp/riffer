@@ -1004,6 +1004,20 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::OpenRouter.new }
+
+    it "maps :off to effort none" do
+      expect(provider.send(:default_reasoning_options, :off)).must_equal({ reasoning: "none" })
+    end
+
+    it "passes every other level through as the effort" do
+      %i[low medium high xhigh max].each do |level|
+        expect(provider.send(:default_reasoning_options, level)).must_equal({ reasoning: level.to_s })
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text" do
       it "includes token usage in the response" do

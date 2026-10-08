@@ -80,6 +80,16 @@ Nucleus sampling:
 model_options topP: 0.9
 ```
 
+### thinkingConfig
+
+Controls thinking, passed through as Gemini expects:
+
+```ruby
+model_options thinkingConfig: {thinkingLevel: "low"}
+```
+
+The agent-level [`reasoning`](../AGENTS.md#reasoning) setting writes `thinkingConfig: {thinkingLevel: "<level>"}` by default, including `"off"` for `:off`, which Gemini rejects. Gemini 2.5 models take `thinkingBudget` instead; map them in a [catalog](../CATALOG.md#reasoning) entry.
+
 ## Usage
 
 ### Basic Generation

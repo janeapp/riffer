@@ -5,6 +5,8 @@ class Riffer::Agent::Config
 
   STRUCTURED_OUTPUT_STRATEGIES: Array[Symbol]
 
+  REASONING_LEVELS: Array[Symbol]
+
   @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
 
   attr_reader identifier: String?
@@ -20,6 +22,8 @@ class Riffer::Agent::Config
   attr_reader structured_output_strategy: Symbol
 
   attr_accessor max_steps: Numeric?
+
+  attr_reader reasoning: Symbol?
 
   attr_accessor tools_config: (Array[singleton(Riffer::Tool)] | Proc)?
 
@@ -38,13 +42,14 @@ class Riffer::Agent::Config
   #     ?structured_output: Riffer::Params?,
   #     ?structured_output_strategy: Symbol,
   #     ?max_steps: Numeric?,
+  #     ?reasoning: (Symbol | String)?,
   #     ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #     ?mcp_configs: Array[Hash[Symbol, untyped]],
   #     ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #     ?skills_config: Riffer::Skills::Config?,
   #     ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
   #   ) -> void
-  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?reasoning: (Symbol | String)?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
 
   # --
   # : (untyped) -> String?
@@ -57,6 +62,10 @@ class Riffer::Agent::Config
   # --
   # : (Symbol) -> Symbol
   def structured_output_strategy=: (Symbol) -> Symbol
+
+  # --
+  # : ((Symbol | String)?) -> Symbol?
+  def reasoning=: ((Symbol | String)?) -> Symbol?
 
   # --
   # : () -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)

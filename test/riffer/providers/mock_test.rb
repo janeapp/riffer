@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "tmpdir"
 
 describe Riffer::Providers::Mock do
   let(:provider) { Riffer::Providers::Mock.new }
@@ -490,54 +491,87 @@ describe Riffer::Providers::Mock do
   end
 
   describe "pricing" do
-    before { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
-    after { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
+    before do
+      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      @dir = Dir.mktmpdir
+    end
 
-    it "attaches cost to token usage when the model is priced" do
-      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
+    after do
+      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      FileUtils.remove_entry(@dir)
+    end
+
+    let(:usage) { Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000) }
+
+    def use_catalog(models)
+      path = File.join(@dir, "models.json")
+      File.write(path, JSON.generate({ version: 1, models: models }))
+      Riffer.configure { |config| config.catalog_files = [path] }
+    end
+
+    def generate_cost
       provider = Riffer::Providers::Mock.new
-      provider.stub_response(
-        "hi",
-        token_usage: Riffer::Providers::TokenUsage.new(
-          input_tokens: 1_000_000,
-          output_tokens: 1_000_000,
-        ),
-      )
-      message = provider.generate_text(prompt: "x", model: "riffer-1")
+      provider.stub_response("hi", token_usage: usage)
+      provider.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
+    end
 
-      expect(message.token_usage.cost).must_equal 18.0
+    def set_legacy_pricing(**rates)
+      warned = Riffer::Config::Pricing.instance_variable_get(:@warned)
+      Riffer::Config::Pricing.instance_variable_set(:@warned, true)
+      Riffer.config.pricing.set("mock/riffer-1", **rates)
+    ensure
+      Riffer::Config::Pricing.instance_variable_set(:@warned, warned)
+    end
+
+    it "attaches cost to token usage when the catalog prices the model" do
+      use_catalog({ "mock/riffer-1" => { "pricing" => { "input" => 3.0, "output" => 15.0 } } })
+
+      expect(generate_cost).must_equal 18.0
+    end
+
+    it "prices a model through a catalog alias" do
+      entry = { "aliases" => ["mock/riffer-1"], "pricing" => { "input" => 1, "output" => 2 } }
+      use_catalog({ "openai/gpt-5.1" => entry })
+
+      expect(generate_cost).must_equal 3.0
     end
 
     it "leaves cost nil when the model is unpriced" do
-      provider = Riffer::Providers::Mock.new
-      provider.stub_response(
-        "hi",
-        token_usage: Riffer::Providers::TokenUsage.new(
-          input_tokens: 1_000_000,
-          output_tokens: 1_000_000,
-        ),
-      )
-      message = provider.generate_text(prompt: "x", model: "riffer-1")
+      expect(generate_cost).must_be_nil
+    end
 
-      expect(message.token_usage.cost).must_be_nil
+    it "falls back to the deprecated config.pricing" do
+      set_legacy_pricing(input: 3.0, output: 15.0)
+
+      expect(generate_cost).must_equal 18.0
+    end
+
+    it "prefers catalog pricing over config.pricing" do
+      use_catalog({ "mock/riffer-1" => { "pricing" => { "input" => 1.0, "output" => 1.0 } } })
+      set_legacy_pricing(input: 3.0, output: 15.0)
+
+      expect(generate_cost).must_equal 2.0
     end
 
     it "carries cost on the streamed TokenUsageDone event" do
-      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
+      use_catalog({ "mock/riffer-1" => { "pricing" => { "input" => 3.0, "output" => 15.0 } } })
       provider = Riffer::Providers::Mock.new
-      provider.stub_response(
-        "hi",
-        token_usage: Riffer::Providers::TokenUsage.new(
-          input_tokens: 1_000_000,
-          output_tokens: 1_000_000,
-        ),
-      )
+      provider.stub_response("hi", token_usage: usage)
       events = provider.stream_text(prompt: "x", model: "riffer-1").to_a
       usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 
       expect(usage_done.token_usage.cost).must_equal 18.0
     end
   end
+
+  describe "reasoning level" do
+    it "sends no extra options for any level" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1", riffer_reasoning_level: :high)
+
+      expect(provider.calls.last.except(:messages, :model)).must_equal({})
+    end
+  end
+
   describe "reasoning" do
     let(:part) { { type: :text, text: "Let me think", format: "mock-v1" } }
 

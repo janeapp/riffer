@@ -189,6 +189,8 @@ end
 
 The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.md#reasoning), whether you call `generate` or `stream`. Read it with `response.reasoning`, or as plain text with `reasoning_text` on the message. Bedrock sometimes redacts part of Claude's reasoning. Those parts are stored and sent back like any other, but they have no readable text, so `reasoning_text` leaves them out.
 
+The agent-level [`reasoning`](../AGENTS.md#reasoning) setting defaults to Claude's fields inside `additional_model_request_fields`: adaptive thinking at the level's effort, and `thinking: {type: "disabled"}` for `:off`. Other model families (Nova, OpenAI) and Claude 4.5 and earlier need a [catalog](../CATALOG.md#reasoning) entry with their own fields.
+
 ### Reasoning Replay
 
 Riffer sends the reasoning back to Bedrock on every later turn. How much of it Claude uses depends on the model; some only use the reasoning from the current tool-calling turn. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier reasoning back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.

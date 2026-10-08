@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "tmpdir"
 
 describe Riffer::Config do
   describe "#initialize" do
@@ -98,6 +99,42 @@ describe Riffer::Config do
       config = Riffer::Config.new
 
       expect { config.message_id_strategy = nil }.must_raise Riffer::ArgumentError
+    end
+  end
+
+  describe "catalog_files" do
+    it "defaults to an empty list and an empty catalog" do
+      config = Riffer::Config.new
+
+      expect(config.catalog_files).must_equal []
+      expect(config.catalog.empty?).must_equal true
+    end
+
+    it "stores Pathnames as Strings" do
+      config = Riffer::Config.new
+      config.catalog_files = [Pathname.new("config/riffer/models.json")]
+
+      expect(config.catalog_files).must_equal ["config/riffer/models.json"]
+    end
+
+    it "raises when not an Array of paths" do
+      config = Riffer::Config.new
+
+      expect { config.catalog_files = "config/riffer/models.json" }.must_raise Riffer::ArgumentError
+      expect { config.catalog_files = [1] }.must_raise Riffer::ArgumentError
+    end
+
+    it "drops the built catalog when the files change" do
+      Dir.mktmpdir do |dir|
+        path = File.join(dir, "models.json")
+        models = { "openai/gpt-5.1" => { pricing: { input: 1, output: 2 } } }
+        File.write(path, JSON.generate({ version: 1, models: models }))
+        config = Riffer::Config.new
+        config.catalog
+        config.catalog_files = [path]
+
+        expect(config.catalog.rates_for("openai/gpt-5.1")).wont_be_nil
+      end
     end
   end
 end

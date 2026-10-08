@@ -91,7 +91,7 @@ tool_call.to_h             # => {call_id: "call_123", name: "weather_tool", argu
 
 The cache buckets are subsets of `input_tokens`, never additions to it — summing `input_tokens + cache_read_tokens` double-counts. `total_tokens` (input + output) matches the totals providers report on their dashboards.
 
-- `cost` — the computed cost of the call, set when pricing is configured for the model in use (see [Configuration → Pricing](CONFIGURATION.md#pricing)); `nil` when the model is unpriced. It's for observability, not billing. Run-level usage sums per-call costs through `TokenUsage#+`, so `response.token_usage.cost` is the total spend across the run — but the sum is `nil` if any call in the run used an unpriced model, rather than silently under-reporting.
+- `cost` — the computed cost of the call, set when a [catalog](CATALOG.md#pricing) prices the model in use; `nil` when the model is unpriced. It's for observability, not billing. Run-level usage sums per-call costs through `TokenUsage#+`, so `response.token_usage.cost` is the total spend across the run — but the sum is `nil` if any call in the run used an unpriced model, rather than silently under-reporting.
 
 #### Finish Reasons
 

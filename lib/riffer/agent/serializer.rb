@@ -28,6 +28,7 @@ module Riffer::Agent::Serializer
       max_steps: encode_max_steps(config.max_steps),
       structured_output: config.structured_output&.to_json_schema(strict: false),
       structured_output_strategy: config.structured_output_strategy,
+      reasoning: config.reasoning,
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
     }
   end
@@ -79,6 +80,7 @@ module Riffer::Agent::Serializer
       structured_output: decode_structured_output(hash[:structured_output]),
       structured_output_strategy: (hash[:structured_output_strategy] || :native).to_sym,
       max_steps: decode_max_steps(hash),
+      reasoning: hash[:reasoning],
       tools_config: tools,
     } #: Hash[Symbol, untyped]
     # Config#tool_runtime= rejects nil.

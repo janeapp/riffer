@@ -30,6 +30,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def build_client: () -> untyped
 
   # --
+  # : (Symbol) -> Hash[Symbol, untyped]
+  def default_reasoning_options: (Symbol) -> Hash[Symbol, untyped]
+
+  # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 

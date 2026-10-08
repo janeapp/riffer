@@ -36,6 +36,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : () -> untyped
   def build_client: () -> untyped
 
+  # Claude's fields, since application inference profile ARNs hide the model
+  # family; other families need a catalog entry.
+  # --
+  # : (Symbol) -> Hash[Symbol, untyped]
+  def default_reasoning_options: (Symbol) -> Hash[Symbol, untyped]
+
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

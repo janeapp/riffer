@@ -815,6 +815,40 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::Gemini.new }
+    let(:prompt) { "What is 17 times 23? Reply with just the number." }
+
+    it "passes every level through as the thinking level" do
+      Riffer::Agent::Config::REASONING_LEVELS.each do |level|
+        expect(provider.send(:default_reasoning_options, level)).must_equal(
+          { thinkingConfig: { thinkingLevel: level.to_s } },
+        )
+      end
+    end
+
+    it "reasons at a thinking level on a live model" do
+      VCR.use_cassette("Riffer_Providers_Gemini/reasoning_level/gemini-3-flash-preview/low") do
+        result = provider.generate_text(prompt: prompt, model: "gemini-3-flash-preview", riffer_reasoning_level: :low)
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    describe "with a catalog entry" do
+      before { Riffer.config.catalog_files = [REASONING_CATALOG_PATH] }
+      after { Riffer.config.catalog_files = [] }
+
+      it "reasons with a thinking budget on a live model" do
+        VCR.use_cassette("Riffer_Providers_Gemini/reasoning_level/gemini-2_5-flash-lite/low") do
+          result = provider.generate_text(prompt: prompt, model: "gemini-2.5-flash-lite", riffer_reasoning_level: :low)
+
+          expect(result.content).must_include "391"
+        end
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

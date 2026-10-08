@@ -2,6 +2,7 @@
 
 require "test_helper"
 require "json"
+require "tmpdir"
 
 class BaseTestNamedProvider < Riffer::Providers::Base
 end
@@ -23,6 +24,22 @@ class ChatTracingSilentStreamProvider < Riffer::Providers::Mock
   private
 
   def execute_stream(params, yielder); end
+end
+
+class NoDefaultReasoningProvider < Riffer::Providers::Mock
+  private
+
+  def default_reasoning_options(_level)
+    nil
+  end
+end
+
+class DefaultReasoningProvider < Riffer::Providers::Mock
+  private
+
+  def default_reasoning_options(level)
+    { reasoning: { effort: level.to_s, source: "default" } }
+  end
 end
 
 class RawFinishReasonProvider < Riffer::Providers::Mock
@@ -396,6 +413,12 @@ describe Riffer::Providers::Base do
       expect(chat_span.kind).must_equal :client
     end
 
+    it "stamps the reasoning level" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1", riffer_reasoning_level: :low)
+
+      expect(chat_span.attributes["riffer.request.reasoning_level"]).must_equal "low"
+    end
+
     it "sets the request attributes" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
       attributes = chat_span.attributes.slice("gen_ai.operation.name", "gen_ai.provider.name", "gen_ai.request.model")
@@ -645,6 +668,120 @@ describe Riffer::Providers::Base do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
 
       expect(@exporter.finished_spans).must_be_empty
+    end
+  end
+
+  describe "reasoning" do
+    before do
+      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      @dir = Dir.mktmpdir
+      Riffer::Providers::Repository.register(:no_default_reasoning) { NoDefaultReasoningProvider }
+      Riffer::Providers::Repository.register(:default_reasoning) { DefaultReasoningProvider }
+    end
+
+    after do
+      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      FileUtils.remove_entry(@dir)
+      Riffer::Providers::Repository.unregister(:no_default_reasoning)
+      Riffer::Providers::Repository.unregister(:default_reasoning)
+    end
+
+    let(:default_fragment) { { reasoning: { effort: "high", source: "default" } } }
+
+    def use_catalog(models)
+      path = File.join(@dir, "models.json")
+      File.write(path, JSON.generate({ version: 1, models: models }))
+      Riffer.configure { |config| config.catalog_files = [path] }
+    end
+
+    def sent_options(provider, model: "riffer-1", **options)
+      provider.generate_text(prompt: "Hello", model: model, **options)
+      provider.calls.last.except(:messages, :model)
+    end
+
+    it "uses the provider default when the catalog has no entry" do
+      expect(sent_options(DefaultReasoningProvider.new, riffer_reasoning_level: :high)).must_equal default_fragment
+    end
+
+    it "prefers the catalog fragment over the provider default" do
+      fragment = { "reasoning" => { "budget" => 24_576 } }
+      use_catalog({ "default_reasoning/riffer-1" => { "reasoning" => { "high" => fragment } } })
+
+      expect(sent_options(DefaultReasoningProvider.new, riffer_reasoning_level: :high)).
+        must_equal({ reasoning: { budget: 24_576 } })
+    end
+
+    it "falls back to the provider default for a level the entry does not define" do
+      use_catalog({ "default_reasoning/riffer-1" => { "reasoning" => { "low" => { "reasoning" => "catalog" } } } })
+
+      expect(sent_options(DefaultReasoningProvider.new, riffer_reasoning_level: :high)).must_equal default_fragment
+    end
+
+    it "resolves the catalog entry through an alias" do
+      entry = { "aliases" => ["default_reasoning/prod"], "reasoning" => { "low" => { "reasoning" => "aliased" } } }
+      use_catalog({ "openai/gpt-5.1" => entry })
+      options = sent_options(DefaultReasoningProvider.new, model: "prod", riffer_reasoning_level: :low)
+
+      expect(options).must_equal({ reasoning: "aliased" })
+    end
+
+    it "deep-merges caller options over the fragment" do
+      fragment = { "output_config" => { "effort" => "low" }, "max_tokens" => 5120 }
+      use_catalog({ "default_reasoning/riffer-1" => { "reasoning" => { "low" => fragment } } })
+      options = sent_options(
+        DefaultReasoningProvider.new,
+        riffer_reasoning_level: :low,
+        output_config: { format: "json" },
+        max_tokens: 8000,
+      )
+
+      expect(options).must_equal({ output_config: { effort: "low", format: "json" }, max_tokens: 8000 })
+    end
+
+    it "lets a caller value replace a fragment value at the same key" do
+      options = sent_options(DefaultReasoningProvider.new, riffer_reasoning_level: :low, reasoning: "none")
+
+      expect(options).must_equal({ reasoning: "none" })
+    end
+
+    it "accepts the level as a String" do
+      options = sent_options(DefaultReasoningProvider.new, riffer_reasoning_level: "high")
+
+      expect(options).must_equal default_fragment
+    end
+
+    it "raises when neither the catalog nor the provider maps the level" do
+      error = expect { sent_options(NoDefaultReasoningProvider.new, riffer_reasoning_level: :low) }.
+        must_raise Riffer::ArgumentError
+
+      expect(error.message).must_equal(
+        "No reasoning mapping for no_default_reasoning/riffer-1 at level :low. " \
+        "Add one in a catalog file (see docs/CATALOG.md).",
+      )
+    end
+
+    it "uses the catalog when the provider has no default" do
+      use_catalog({ "no_default_reasoning/riffer-1" => { "reasoning" => { "off" => { "thinking" => false } } } })
+
+      expect(sent_options(NoDefaultReasoningProvider.new, riffer_reasoning_level: :off)).must_equal({ thinking: false })
+    end
+
+    it "raises on an unknown level" do
+      error = expect { sent_options(DefaultReasoningProvider.new, riffer_reasoning_level: :minimal) }.
+        must_raise Riffer::ArgumentError
+
+      expect(error.message).must_match(/\Ariffer_reasoning_level must be one of off, low, medium, high, xhigh, max/)
+    end
+
+    it "applies the fragment to stream_text" do
+      provider = DefaultReasoningProvider.new
+      provider.stream_text(prompt: "Hello", model: "riffer-1", riffer_reasoning_level: :high).to_a
+
+      expect(provider.calls.last[:reasoning]).must_equal default_fragment[:reasoning]
+    end
+
+    it "leaves options untouched without a level" do
+      expect(sent_options(DefaultReasoningProvider.new, temperature: 0.2)).must_equal({ temperature: 0.2 })
     end
   end
 end

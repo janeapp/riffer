@@ -45,6 +45,9 @@ groups:
       - source: CONFIGURATION.md
         slug: configuration
         description: Framework configuration
+      - source: CATALOG.md
+        slug: catalog
+        description: Reasoning mappings and pricing per model
       - source: EVALS.md
         slug: evals
         description: Evaluating agent quality

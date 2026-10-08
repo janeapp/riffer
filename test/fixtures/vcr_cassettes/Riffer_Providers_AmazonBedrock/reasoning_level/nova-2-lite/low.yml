@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.amazon.nova-2-lite-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[],"additionalModelRequestFields":{"reasoningConfig":{"type":"enabled","maxReasoningEffort":"low"}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - aef297b7-28fb-4722-80f6-661db8cade1e
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '211'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 05 Oct 2026 21:53:57 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '271'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - '085b1b12-e6d2-447a-950e-a7aee9f8f5ed'
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1655},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"text":"[REDACTED]."}}},{"text":"391"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":110,"outputTokens":240,"serverToolUsage":{},"totalTokens":350}}'
+  recorded_at: Mon, 05 Oct 2026 21:53:57 GMT
+recorded_with: VCR 6.4.0
