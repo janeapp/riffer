@@ -1,0 +1,97 @@
+# Generated from lib/riffer/providers/google_cloud/client.rb with RBS::Inline
+
+# <tt>Riffer.config.google_cloud.client</tt> accepts any object implementing +post+ and +post_stream+
+# with these contracts; this class is the default, not a required base. Paths are relative to
+# the client's <tt>v1/projects/{project_id}/locations/{location}</tt> resource.
+class Riffer::Providers::GoogleCloud::Client
+  self.@application_default_credentials: untyped
+
+  @proxy_port: Integer?
+
+  @proxy_address: String?
+
+  @write_timeout: Integer?
+
+  @read_timeout: Integer
+
+  @open_timeout: Integer
+
+  @base_url: String
+
+  @credentials: untyped
+
+  @location: String
+
+  @project_id: String
+
+  SCOPE: String
+
+  DEFAULT_OPEN_TIMEOUT: Integer
+
+  DEFAULT_READ_TIMEOUT: Integer
+
+  # Both are interpolated into the endpoint's host or path.
+  VALID_PROJECT_ID_PATTERN: Regexp
+
+  VALID_LOCATION_PATTERN: Regexp
+
+  # googleauth's metadata-server lookups (GCE, Cloud Run, GKE) go through a
+  # process-wide google-cloud-env cache that detects reentrancy by Thread, so
+  # two fibers inside it at once raise ThreadError. Every googleauth call that
+  # can reach it holds this lock; Ruby's Mutex is fiber-aware, so waiters yield
+  # to the scheduler instead of blocking the thread.
+  AUTH_LOCK: Thread::Mutex
+
+  # Memoized process-wide so every client shares one token cache.
+  # --
+  # : () -> untyped
+  def self.application_default_credentials: () -> untyped
+
+  # --
+  # : (location: String) -> String
+  def self.base_url_for: (location: String) -> String
+
+  # +credentials+ is a googleauth credentials object (anything responding to
+  # +apply!+); +nil+ resolves Application Default Credentials.
+  # --
+  # : (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
+  def initialize: (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
+
+  # Raises Riffer::Error on a non-success status.
+  # --
+  # : (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def post: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # Raises Riffer::Error on a non-success status.
+  # --
+  # : (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+  def post_stream: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+
+  private
+
+  # --
+  # : (String, Regexp, String) -> void
+  def validate!: (String, Regexp, String) -> void
+
+  # --
+  # : (String) -> URI::Generic
+  def resource_uri: (String) -> URI::Generic
+
+  # googleauth's +apply!+ refreshes only a missing or near-expiry token, so
+  # fibers queued behind a refresh reuse its result.
+  # --
+  # : () -> String
+  def authorization: () -> String
+
+  # --
+  # : (URI::Generic, Hash[Symbol, untyped]) -> Net::HTTP::Post
+  def build_request: (URI::Generic, Hash[Symbol, untyped]) -> Net::HTTP::Post
+
+  # --
+  # : [R] (URI::Generic) { (Net::HTTP) -> R } -> R
+  def start_http: [R] (URI::Generic) { (Net::HTTP) -> R } -> R
+
+  # --
+  # : (Net::HTTPResponse) -> void
+  def handle_api_error!: (Net::HTTPResponse) -> void
+end

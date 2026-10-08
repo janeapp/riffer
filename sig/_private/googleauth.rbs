@@ -1,0 +1,7 @@
+# The `googleauth` stubs in gem_rbs_collection omit the ADC entry point.
+# Loaded only for riffer's own Steep run.
+module Google
+  module Auth
+    def self.get_application_default: (?untyped scope, ?Hash[untyped, untyped] options) -> untyped
+  end
+end
