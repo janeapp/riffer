@@ -170,6 +170,8 @@ class Riffer::Providers::GoogleCloud::Client
     rescue JSON::ParserError
       { message: response.body }
     end
+    # streamRawPredict wraps its error object in a JSON array.
+    parsed = parsed.first if parsed.is_a?(Array) && parsed.first.is_a?(Hash)
     error_message = parsed.dig(:error, :message) || parsed[:message] || response.body
     raise Riffer::Error, "Google Cloud API error (#{response.code}): #{error_message}"
   end
