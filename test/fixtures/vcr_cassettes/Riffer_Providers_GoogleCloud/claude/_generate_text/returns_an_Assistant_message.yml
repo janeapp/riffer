@@ -1,0 +1,68 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"Say
+        hello"}],"max_tokens":4096,"system":[{"type":"text","text":"Be concise"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - aiplatform.googleapis.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Request-Id:
+      - req_vrtx_011CfqYdcsS1qoTcXLnmKw2T
+      Date:
+      - Thu, 08 Oct 2026 22:18:44 GMT
+      Internal-Output-Tokens:
+      - '6'
+      Internal-Weighted-Total-Tokens:
+      - '47'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Input-Tokens:
+      - '17'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CfqYdctBN3DFwvQPpBmCj","type":"message","role":"assistant","content":[{"type":"text","text":"Hello!"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":17,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Thu, 08 Oct 2026 22:18:45 GMT
+recorded_with: VCR 6.4.0
