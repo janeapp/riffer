@@ -997,6 +997,37 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    let(:prompt) { "What is 17 times 23? Reply with just the number." }
+
+    it "maps :off to effort none" do
+      expect(provider.send(:default_reasoning_options, :off)).must_equal({ reasoning: "none" })
+    end
+
+    it "passes every other level through as the effort" do
+      %i[low medium high xhigh max].each do |level|
+        expect(provider.send(:default_reasoning_options, level)).must_equal({ reasoning: level.to_s })
+      end
+    end
+
+    it "turns reasoning off on a live model" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/reasoning_level/off") do
+        result = provider.generate_text(prompt: prompt, model: "gpt-5.1", riffer_reasoning_level: :off)
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    it "reasons at low effort on a live model" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/reasoning_level/low") do
+        result = provider.generate_text(prompt: prompt, model: "gpt-5-mini", riffer_reasoning_level: :low)
+
+        expect(result.content).must_include "391"
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

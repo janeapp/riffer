@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[],"inferenceConfig":{"maxTokens":5120},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - b0016aa9-660c-47a2-aec3-b2a8f0153585
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '235'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 05 Oct 2026 21:54:01 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '882'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7f71d640-e6ac-4cb0-87d1-b2ba2a93417e
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTAzMX0sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InJlYXNvbmluZ0NvbnRlbnQiOnsicmVhc29uaW5nVGV4dCI6eyJzaWduYXR1cmUiOiJFclFDQ29RQkNCSVFBUmdDS2tBZTB6TWNSUlpLcFhxUnN0WDBiQUVwTStLUzZMbkp6UlZsQjBLcjJ3bEVnczl4Q1JZL3VTTHNOS1JJeE9BWjZJbkZDdjlBTDYzaDFGQUVHK3gwemtBOU1obGpiR0YxWkdVdGFHRnBhM1V0TkMwMUxUSXdNalV4TURBeE9BQkNDSFJvYVc1cmFXNW5XZ3cwTnpRMk5qZzBNakEzTlRLb0FmbTRrTllHRWd6NFFKaUYxQ3BYYkRYRWtiZ2FETUExSjdnUTdPYkYzSDkrY1NJd1RBMmtFZ3A4TnlxcXRISCt4aWcxeVJzZDVraVJsVDZIVytsNVphZGxDWGY5b2U4eXlTZzBIOEN0QXZIRHNXZ3FLbDEyTkZvNXVCWHJNWkZiV3JpdEhUcmg0THBqZ0NKSjJlZUdoYkc5c3ZmTTd4MHgxY2tCL1hTZXBUN0lDeGRvWnV3S0s1MkRyKzN6RzVjMlAyZ21pSTU0OHgxVE1QcEVpQ3ExZHVXQ0loV2NNOVF0VUxiQjJ5VFI4WTlTdVZnWUFRPT0iLCJ0ZXh0IjoiMTcgdGltZXMgMjMuXG5cbjE3IMOXIDIzID0gMTcgw5cgKDIwICsgMykgPSAxNyDDlyAyMCArIDE3IMOXIDMgPSAzNDAgKyA1MSA9IDM5MSJ9fX0seyJ0ZXh0IjoiMzkxIn1dLCJyb2xlIjoiYXNzaXN0YW50In19LCJzdG9wUmVhc29uIjoiZW5kX3R1cm4iLCJ1c2FnZSI6eyJjYWNoZVJlYWRJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlUmVhZElucHV0VG9rZW5zIjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbnMiOjAsImlucHV0VG9rZW5zIjo1MSwib3V0cHV0VG9rZW5zIjo2NCwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjExNX19
+  recorded_at: Mon, 05 Oct 2026 21:54:01 GMT
+recorded_with: VCR 6.4.0

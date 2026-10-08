@@ -142,6 +142,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | `gen_ai.request.presence_penalty`          | float    | When the caller set it                                                        |
 | `gen_ai.request.seed`                      | int      | When the caller set it                                                        |
 | `gen_ai.request.stop_sequences`            | string[] | When the caller set it                                                        |
+| `riffer.request.reasoning_level`           | string   | When the agent sets [`reasoning`](AGENTS.md#reasoning)                        |
 | `gen_ai.usage.input_tokens`                | int      | When the provider reported usage                                              |
 | `gen_ai.usage.output_tokens`               | int      | When the provider reported usage                                              |
 | `gen_ai.usage.cache_read.input_tokens`     | int      | When the provider reported cache reads                                        |
@@ -252,7 +253,7 @@ Riffer normalizes this across providers, so the number may differ from a provide
 
 ### Cost
 
-`riffer.cost` is the modeled cost of one call (on a `chat` span) or a whole run (on the `invoke_agent` span). It lives in Riffer's own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats `gen_ai.*` for it. The attribute appears only when you have configured pricing for the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no `riffer.cost`. See [Configuration — Pricing](CONFIGURATION.md#pricing) for the rates.
+`riffer.cost` is the modeled cost of one call (on a `chat` span) or a whole run (on the `invoke_agent` span). It lives in Riffer's own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats `gen_ai.*` for it. The attribute appears only when a [catalog](CATALOG.md#pricing) prices the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no `riffer.cost`.
 
 The value is **unitless on the wire** — Riffer attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a `riffer.cost` of `0.0123` means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.
 

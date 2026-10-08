@@ -64,6 +64,8 @@ agent.session.messages.last.reasoning_text  # => "The user wants the answer."
 
 When streaming, each part is emitted as a `ReasoningDelta` (only when it carries `text`) followed by a `ReasoningDone` carrying the part, ahead of the text events.
 
+An agent's [`reasoning`](../AGENTS.md#reasoning) level needs no catalog entry on the mock provider: it maps every level to no params, so `calls` show only your `model_options` unless a [catalog](../CATALOG.md) entry under `mock/...` maps the level.
+
 ## Queueing Multiple Responses
 
 Responses are consumed in order:

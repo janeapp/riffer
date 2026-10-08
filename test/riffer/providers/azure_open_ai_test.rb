@@ -287,6 +287,14 @@ describe Riffer::Providers::AzureOpenAI do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::AzureOpenAI.new }
+
+    it "inherits the OpenAI mapping" do
+      expect(provider.send(:default_reasoning_options, :off)).must_equal({ reasoning: "none" })
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

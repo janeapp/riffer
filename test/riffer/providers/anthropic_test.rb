@@ -1301,6 +1301,60 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::Anthropic.new }
+    let(:prompt) { "What is 17 times 23? Reply with just the number." }
+
+    it "maps :off to disabled thinking" do
+      expect(provider.send(:default_reasoning_options, :off)).must_equal({ thinking: { type: "disabled" } })
+    end
+
+    it "maps every other level to adaptive thinking at that effort" do
+      %i[low medium high xhigh max].each do |level|
+        expect(provider.send(:default_reasoning_options, level)).must_equal(
+          { thinking: { type: "adaptive" }, output_config: { effort: level.to_s } },
+        )
+      end
+    end
+
+    it "keeps the effort next to a structured output format" do
+      params = Riffer::Params.new
+      params.required(:answer, String)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
+      options = { riffer_reasoning_level: :low, structured_output: structured_output }
+      merged = provider.send(:apply_reasoning, "claude-sonnet-4-6", options).except(:riffer_reasoning_level)
+      request = provider.send(:build_request_params, [Riffer::Messages::User.new("Hello")], "claude-sonnet-4-6", merged)
+
+      expect(request[:output_config].keys).must_equal %i[effort format]
+      expect(request[:output_config][:effort]).must_equal "low"
+    end
+
+    it "reasons at low effort on a live adaptive model" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/reasoning_level/claude-sonnet-4-6/low") do
+        result = provider.generate_text(prompt: prompt, model: "claude-sonnet-4-6", riffer_reasoning_level: :low)
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    describe "with a catalog entry" do
+      before { Riffer.config.catalog_files = [REASONING_CATALOG_PATH] }
+      after { Riffer.config.catalog_files = [] }
+
+      it "reasons on a live budget model" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/reasoning_level/claude-haiku-4-5/low") do
+          result = provider.generate_text(
+            prompt: prompt,
+            model: "claude-haiku-4-5-20251001",
+            riffer_reasoning_level: :low,
+          )
+
+          expect(result.content).must_include "391"
+        end
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

@@ -1,7 +1,13 @@
 # Generated from lib/riffer/config/pricing.rb with RBS::Inline
 
+# @deprecated Set pricing in a catalog file instead (see docs/CATALOG.md).
+# A catalog entry's pricing wins over rates registered here.
 class Riffer::Config::Pricing
-  @rates: Hash[String, Riffer::Config::Pricing::Rates]
+  DEPRECATION_MESSAGE: String
+
+  @rates: Hash[String, Riffer::Catalog::Rates]
+
+  self.@warned: bool
 
   # --
   # : () -> void
@@ -12,20 +18,15 @@ class Riffer::Config::Pricing
   def set: (String | Array[String], input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
 
   # --
-  # : (String) -> Riffer::Config::Pricing::Rates?
-  def rates_for: (String) -> Riffer::Config::Pricing::Rates?
+  # : (String) -> Riffer::Catalog::Rates?
+  def rates_for: (String) -> Riffer::Catalog::Rates?
 
   # --
   # : () -> bool
   def empty?: () -> bool
 
-  private
-
+  # Once per process, so a boot that sets many models logs one line.
   # --
-  # : (untyped, String) -> Float
-  def coerce_rate: (untyped, String) -> Float
-
-  # --
-  # : (untyped, String) -> Float?
-  def coerce_optional_rate: (untyped, String) -> Float?
+  # : () -> void
+  def self.warn_deprecated: () -> void
 end

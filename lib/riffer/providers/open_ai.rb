@@ -57,6 +57,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
+  #: (Symbol) -> Hash[Symbol, untyped]
+  def default_reasoning_options(level)
+    { reasoning: level == :off ? "none" : level.to_s }
+  end
+
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     reasoning = options[:reasoning]

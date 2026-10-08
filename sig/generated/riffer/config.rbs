@@ -3,6 +3,8 @@
 class Riffer::Config
   VALID_MESSAGE_ID_STRATEGIES: untyped
 
+  @catalog: Riffer::Catalog?
+
   attr_reader amazon_bedrock: Riffer::Config::AmazonBedrock
 
   attr_reader anthropic: Riffer::Config::Anthropic
@@ -31,7 +33,22 @@ class Riffer::Config
 
   attr_reader files: Riffer::Config::Files
 
+  # @deprecated Use +catalog_files+.
   attr_reader pricing: Riffer::Config::Pricing
+
+  attr_reader catalog_files: Array[String]
+
+  # --
+  # : (Array[untyped]) -> void
+  def catalog_files=: (Array[untyped]) -> void
+
+  # --
+  # : () -> Riffer::Catalog
+  def catalog: () -> Riffer::Catalog
+
+  # --
+  # : () -> Riffer::Catalog
+  def reload_catalog: () -> Riffer::Catalog
 
   # When not +:none+, seeded messages passed to +Riffer::Agent#generate+ must
   # carry their own +id+.

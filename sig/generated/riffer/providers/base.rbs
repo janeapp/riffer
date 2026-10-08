@@ -76,8 +76,28 @@ class Riffer::Providers::Base
   def apply_pricing: (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
 
   # --
-  # : () -> Riffer::Config::Pricing::Rates?
-  def pricing_rates: () -> Riffer::Config::Pricing::Rates?
+  # : () -> Riffer::Catalog::Rates?
+  def pricing_rates: () -> Riffer::Catalog::Rates?
+
+  # --
+  # : (String) -> String?
+  def catalog_key: (String) -> String?
+
+  # A catalog fragment beats the provider default per level; the caller's
+  # options are merged over either, so +model_options+ always wins.
+  # --
+  # : (String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def apply_reasoning: (String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # Maps a level onto the provider's own reasoning params when the catalog has
+  # no entry; +nil+ means riffer raises before the request.
+  # --
+  # : (Symbol) -> Hash[Symbol, untyped]?
+  def default_reasoning_options: (Symbol) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (Hash[Symbol, untyped], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def deep_merge: (Hash[Symbol, untyped], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
   # : (untyped) -> Riffer::Providers::FinishReason?

@@ -139,6 +139,21 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+### reasoning
+
+Sets how much the model thinks before it answers: `:off`, `:low`, `:medium`, `:high`, `:xhigh`, or `:max` (a String works too). Anything else raises `Riffer::ArgumentError`. Leave it unset to send nothing and keep the model's default.
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'anthropic/claude-sonnet-4-6'
+  reasoning :low
+end
+```
+
+Riffer turns the level into the provider's own params. It uses the model's [catalog](CATALOG.md#reasoning) entry when one defines the level, and otherwise the provider's default, which sends the level name as the provider's effort value (for example `output_config: { effort: "low" }` with adaptive thinking on Anthropic). Riffer doesn't check whether the model supports the level; a model that rejects it returns the provider's error.
+
+`model_options` are deep-merged over those params, so they override single fields rather than whole blocks. For example, `model_options max_tokens: 8000` keeps the catalog's thinking budget and replaces only its `max_tokens`.
+
 ### max_steps
 
 Sets the maximum number of LLM call steps in the tool-use loop. When the limit is reached, the loop interrupts with reason `:max_steps`. Defaults to `16`. Set to `nil` (`max_steps nil`) for unlimited steps:

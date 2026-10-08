@@ -1,0 +1,206 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is 17 times 23? Reply with
+        just the number."}],"model":"gpt-5-mini","reasoning":{"effort":"low","summary":"auto"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '155'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 05 Oct 2026 21:48:34 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a45fa1912e9fdf03-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '1765'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999943'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_3bca19351d664b369afddb172d7fc2bc
+      Set-Cookie:
+      - __cf_bm=QPY18pDn4NnIarh8tPbWnMzSLJbU.f83ohyY3CJxXqM-1791236912.8293886-1.0.1.1-zYkI1IhO_7YyDqx4IhQjEAxrSHDvwy4Z1tYPu0HuPp3FOlyNsEyjd4F_ymCqJ3sLcQYVyngeQDYb15B8UPqTtgpBD9WTrrxgO0LU5uDGwt.n9KhCRnc0HPmlwG7iAHKz;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        05 Oct 2026 22:18:34 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_046b04eb4b560d7d016ac41b31065887d0b691dd916a287411",
+          "object": "response",
+          "created_at": 1791236913,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1791236914,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini-2025-08-07",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_046b04eb4b560d7d016ac41b3184f087d0a0643a84021e7f0f",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABqxBsyESfyHUebwCw4KypvbVZssW68verSteA9-PtWPvyiSndDaApe3EmKwgFk3rHLTs_cxmSWblftMebq-qXQND-fV5YkEqE6oRhLSSGKWQ07zmGXhlSILicbJij255LLKWkkKoATS1mCL35hgNEd6ELpTnmN40jNzrkTPgfPPIqFKJcv3UQyddIq-t9hwml-iavkmmbva6qji2pE2fdPaqK3ol6PA-r2RJ-CgmoCYvGZmzVkQu49orYZO_VSF2V7Ixa5i-L1l53KRmuzk_oTcoknXakXwPW1VfKbATSJoV-R-CzWVqHHKNso7yejNYRq1uodcQIV9u_mZjdsFJGkfeatTwscUArQyZDzv9ybcL2WqA0d1d858URjdEKKPrM3kHzU-s0FtUcucNDpz3s3_6rH1ykaCR23itEZl2jDkx4z791bn2MASEaZyxTJMgO6zg-ttCKE9qOQhdRgCqi_XfJc2tT_9BWqx5JN4BS1H44TghNzGQhqw8xtnP12tbUT3pmXeHbnRzpzNW_--KAL3AU61UEu9lVSVUrpy_oMV9ZZBEkJmERUmhPvfdNM23kh3YeADjxCrW-edZtsT01DwfNOX6wRu5m5mihrdhjp8nhnwO805d1C1ArwJLzxzSHkRqiJKQ0PQLLko_3oRYe9jpwE15EtKdIXOCAvVtaHH-zMcJb5ZYJRMIQM6fgprOK_ET4IAM_7M6wni9p2N4NDAxqpSj5GQsGLMTMNSMfGr4vadZX5n5xK146RVwPIZSSm58gGLUqEmdRFDNm17WFrcneyszxomkd2CUQ3_kRydtB80_UYdoaY92IvqffFlhbsz9mMyEMRmrFT8loKcQB28_Z-2kKsYOnA4c73HO58-HCfNHW1M7Z78XPSrqWmvjPr6EfX0TJ6LNlz9Zfa0DXptv7Ow4o_9_0-K-kpoimJmEsA6LmAw2rUEQF0B18JnxbgHLM5i2pamfW6gluDOLV61_oByV02FqWn5AnbrdtnpYVJ_SOOyxwhTKmgRYHgzZJKhhZlPLF-0n7GuEwYbqABfYYP0DpKx6HI9u-B-WJcIOddkcpu59HC0Jp_3pjlSGvl7FZASiOuEpDsAoTpilocNQVOQ33OyUYSwMo-eB4ZxnTglBRDjLiOnmdY2zDLNgTcUe3DTwQMF3UloFSOfc_aQjrsGkUPzNM22iv-FzCwbQx-ozIIrfppJmppI1rFpYLu-p_alv-tSjdNisc7DhnACCyPSS9UIBHMNqAOhza7kWfyFYgFOkFWJuExLrumTCGq-vhl",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Calculating multiplication**\n\nI'm working through the computation for 17 times 23. I can break it down into two parts: first multiplying 17 by 20, which gives me 340, and then 17 times 3, resulting in 51. Adding those two results together, I find the total: 340 plus 51 equals 391. So, the final answer is just the number 391."
+                }
+              ]
+            },
+            {
+              "id": "msg_046b04eb4b560d7d016ac41b32b15887d086bdde18f40be49e",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "391"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "low",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 20,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 36,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 56
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Mon, 05 Oct 2026 21:48:34 GMT
+recorded_with: VCR 6.4.0

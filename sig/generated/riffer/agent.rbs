@@ -40,6 +40,10 @@ class Riffer::Agent
   def self.max_steps: (*Numeric?) -> Numeric?
 
   # --
+  # : (?(Symbol | String)?) -> Symbol?
+  def self.reasoning: (?(Symbol | String)?) -> Symbol?
+
+  # --
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 

@@ -1,6 +1,6 @@
-# Generated from lib/riffer/config/pricing/rates.rb with RBS::Inline
+# Generated from lib/riffer/catalog/rates.rb with RBS::Inline
 
-class Riffer::Config::Pricing::Rates
+class Riffer::Catalog::Rates
   attr_reader input: Float
 
   attr_reader output: Float
@@ -8,6 +8,14 @@ class Riffer::Config::Pricing::Rates
   attr_reader cache_read: Float?
 
   attr_reader cache_write: Float?
+
+  # --
+  # : (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> Riffer::Catalog::Rates
+  def self.build: (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> Riffer::Catalog::Rates
+
+  # --
+  # : (untyped, String) -> Float
+  def self.coerce_rate: (untyped, String) -> Float
 
   # --
   # : (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void

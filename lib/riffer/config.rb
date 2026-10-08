@@ -4,6 +4,8 @@
 class Riffer::Config
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
 
+  # @rbs @catalog: Riffer::Catalog?
+
   attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock # @dynamic amazon_bedrock
 
   attr_reader :anthropic #: Riffer::Config::Anthropic # @dynamic anthropic
@@ -41,7 +43,32 @@ class Riffer::Config
 
   attr_reader :files #: Riffer::Config::Files # @dynamic files
 
+  # @deprecated Use +catalog_files+.
   attr_reader :pricing #: Riffer::Config::Pricing # @dynamic pricing
+
+  attr_reader :catalog_files #: Array[String] # @dynamic catalog_files
+
+  #--
+  #: (Array[untyped]) -> void
+  def catalog_files=(paths)
+    valid = paths.is_a?(Array) && paths.all? { |path| path.is_a?(String) || path.respond_to?(:to_path) }
+    raise Riffer::ArgumentError, "catalog_files must be an Array of file paths" unless valid
+
+    @catalog_files = paths.map(&:to_s).freeze
+    @catalog = nil
+  end
+
+  #--
+  #: () -> Riffer::Catalog
+  def catalog
+    @catalog ||= Riffer::Catalog.load(@catalog_files)
+  end
+
+  #--
+  #: () -> Riffer::Catalog
+  def reload_catalog
+    @catalog = Riffer::Catalog.load(@catalog_files)
+  end
 
   # When not +:none+, seeded messages passed to +Riffer::Agent#generate+ must
   # carry their own +id+.
@@ -73,6 +100,8 @@ class Riffer::Config
     @tracing = Tracing.new
     @files = Files.new
     @pricing = Pricing.new
+    no_files = [] #: Array[String]
+    @catalog_files = no_files.freeze
     @message_id_strategy = :none
   end
 end

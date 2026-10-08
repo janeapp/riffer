@@ -170,6 +170,8 @@ class ReasoningAgent < Riffer::Agent
 end
 ```
 
+The agent-level [`reasoning`](../AGENTS.md#reasoning) setting defaults to adaptive thinking at the level's effort (`thinking: {type: "adaptive"}, output_config: {effort: "low"}`), and `:off` sends `thinking: {type: "disabled"}`. Claude 4.5 and earlier need a `budget_tokens` mapping in a [catalog](../CATALOG.md#reasoning) entry instead.
+
 When streaming with extended thinking enabled, you'll receive `ReasoningDelta` events containing the model's thought process, followed by a `ReasoningDone` event when thinking completes:
 
 ```ruby

@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "models": {
+    "anthropic/claude-haiku-4-5-20251001": {
+      "reasoning": {
+        "low": { "thinking": { "type": "enabled", "budget_tokens": 1024 }, "max_tokens": 5120 }
+      }
+    },
+    "gemini/gemini-2.5-flash-lite": {
+      "reasoning": {
+        "low": { "thinkingConfig": { "thinkingBudget": 1024 } }
+      }
+    },
+    "amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0": {
+      "reasoning": {
+        "low": {
+          "additional_model_request_fields": { "thinking": { "type": "enabled", "budget_tokens": 1024 } },
+          "inference_config": { "max_tokens": 5120 }
+        }
+      }
+    },
+    "amazon_bedrock/us.amazon.nova-2-lite-v1:0": {
+      "reasoning": {
+        "low": { "additional_model_request_fields": { "reasoningConfig": { "type": "enabled", "maxReasoningEffort": "low" } } }
+      }
+    },
+    "amazon_bedrock/us.openai.gpt-6-luna": {
+      "reasoning": {
+        "low": { "additional_model_request_fields": { "reasoning": { "effort": "low" } } },
+        "high": { "additional_model_request_fields": { "reasoning": { "effort": "high" } } }
+      }
+    },
+    "amazon_bedrock/openai.gpt-oss-120b-1:0": {
+      "reasoning": {
+        "low": { "additional_model_request_fields": { "reasoning_effort": "low" } }
+      }
+    }
+  }
+}

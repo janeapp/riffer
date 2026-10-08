@@ -224,39 +224,38 @@ Every download in step 3 or 4 is gated by `allow_downloads`; with it `false` (th
 
 A file that fails resolution raises a `Riffer::FileError` subclass — `Riffer::FileUnsupportedError`, `Riffer::FileDownloadsDisabledError`, `Riffer::TooManyFilesError`, `Riffer::FileChecksumMismatchError`, `Riffer::FileTooLargeError`, `Riffer::FileDownloadError`, or `Riffer::FileEncodingError` — so callers can `rescue Riffer::FileError` for any attachment problem, or a specific subclass to handle one case.
 
-### Pricing
+### Model Catalog
 
-Configure per-model token prices and riffer computes the cost of each LLM call onto its [`TokenUsage`](MESSAGES.md#token-usage-semantics). Riffer ships **no** price table — so an unconfigured model simply carries no cost (`token_usage.cost` is `nil`).
+List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, calls carry no cost and `reasoning` uses each provider's default mapping.
 
 ```ruby
 Riffer.configure do |config|
-  # Rates are per million tokens, keyed by the same "provider/model" id you give the agent.
-  config.pricing.set("anthropic/claude-sonnet-4-6", input: 3.0, output: 15.0, cache_read: 0.30, cache_write: 3.75)
-  config.pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
-
-  # Pass an array to share one set of rates across a model family:
-  config.pricing.set(["openai/gpt-4", "openai/gpt-4-0613"], input: 30.0, output: 60.0)
+  config.catalog_files = ["config/riffer/models.json"]
 end
 ```
 
-| Argument       | Description                                                                                                                                                                        |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `models`       | A `provider/model` id (e.g. `"openai/gpt-4"`) — the same string you pass to `model` — or an array of ids that share one set of rates. No alias matching; raises on a malformed id. |
-| `input:`       | Price per **million** input tokens. Required. Applies to the uncached portion of `input_tokens`.                                                                                   |
-| `output:`      | Price per **million** output tokens. Required.                                                                                                                                     |
-| `cache_read:`  | Price per million cache-read tokens. Optional — when omitted, cache reads bill at the `input:` rate.                                                                               |
-| `cache_write:` | Price per million cache-write tokens. Optional — when omitted, cache writes bill at the `input:` rate.                                                                             |
+| Option          | Description                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `catalog_files` | Array of paths (Strings or Pathnames), loaded in order; later files override earlier ones. Built at the end of `Riffer.configure`. |
 
-Because the cache buckets are subsets of `input_tokens`, the cost formula subtracts them before applying the input rate:
+See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and validation.
 
-```text
-cost = (input − cache_read − cache_write) × input_rate
-     + cache_read  × cache_read_rate
-     + cache_write × cache_write_rate
-     + output      × output_rate
+### Pricing (deprecated)
+
+`config.pricing` is deprecated and will be removed in a future release. Move rates into a [catalog file](CATALOG.md#pricing); the first `set` call prints a deprecation warning. Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.
+
+```ruby
+# before
+Riffer.configure do |config|
+  config.pricing.set("anthropic/claude-sonnet-4-6", input: 3.0, output: 15.0)
+end
 ```
 
-(all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing — it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
+```json
+{ "version": 1, "models": { "anthropic/claude-sonnet-4-6": { "pricing": { "input": 3.0, "output": 15.0 } } } }
+```
+
+`set` takes a `provider/model` id or an array of ids, plus `input:`, `output:`, and optional `cache_read:` and `cache_write:` rates per million tokens. The rates and cost formula are the same as [catalog pricing](CATALOG.md#pricing).
 
 ### Message ID Strategy
 
@@ -296,6 +295,19 @@ class MyAgent < Riffer::Agent
   model_options temperature: 0.7, reasoning: 'medium'
 end
 ```
+
+### reasoning
+
+Set how much the model thinks before it answers, with one setting that works on every provider:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'anthropic/claude-sonnet-4-6'
+  reasoning :low # :off, :low, :medium, :high, :xhigh, or :max
+end
+```
+
+Riffer maps the level to the provider's own params, from a [catalog](CATALOG.md#reasoning) entry or the provider's default. `model_options` are deep-merged over those params and win. See [Agents — reasoning](AGENTS.md#reasoning).
 
 ## Common Model Options
 

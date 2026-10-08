@@ -55,6 +55,7 @@ module Riffer
   # : () -> Riffer::Config
   def config: () -> Riffer::Config
 
+  # Builds the catalog after the block, so a bad catalog file fails boot.
   # --
   # : () ?{ (Riffer::Config) -> void } -> void
   def configure: () ?{ (Riffer::Config) -> void } -> void

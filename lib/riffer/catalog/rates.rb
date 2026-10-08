@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-class Riffer::Config::Pricing::Rates
+class Riffer::Catalog::Rates
   attr_reader :input #: Float # @dynamic input
 
   attr_reader :output #: Float # @dynamic output
@@ -9,6 +9,31 @@ class Riffer::Config::Pricing::Rates
   attr_reader :cache_read #: Float? # @dynamic cache_read
 
   attr_reader :cache_write #: Float? # @dynamic cache_write
+
+  #--
+  #: (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> Riffer::Catalog::Rates
+  def self.build(input:, output:, cache_read: nil, cache_write: nil)
+    new(
+      input: coerce_rate(input, "input"),
+      output: coerce_rate(output, "output"),
+      cache_read: cache_read.nil? ? nil : coerce_rate(cache_read, "cache_read"),
+      cache_write: cache_write.nil? ? nil : coerce_rate(cache_write, "cache_write"),
+    )
+  end
+
+  #--
+  #: (untyped, String) -> Float
+  def self.coerce_rate(value, attribute)
+    number = value
+    float = value.is_a?(Numeric) ? number.to_f : nil #: Float?
+    unless float&.finite? && float >= 0
+      raise Riffer::ArgumentError,
+            "#{attribute} rate must be a non-negative number, got #{value.inspect}"
+    end
+
+    float
+  end
+  private_class_method :coerce_rate
 
   #--
   #: (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
