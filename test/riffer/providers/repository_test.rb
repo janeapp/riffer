@@ -36,6 +36,10 @@ describe Riffer::Providers::Repository do
       expect(Riffer::Providers::Repository.find("openrouter")).must_equal Riffer::Providers::OpenRouter
     end
 
+    it "returns the GoogleCloud provider class for :google_cloud symbol" do
+      expect(Riffer::Providers::Repository.find(:google_cloud)).must_equal Riffer::Providers::GoogleCloud
+    end
+
     it "returns the Mock provider class for :mock symbol" do
       expect(Riffer::Providers::Repository.find(:mock)).must_equal Riffer::Providers::Mock
     end

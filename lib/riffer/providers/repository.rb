@@ -12,6 +12,7 @@ module Riffer::Providers::Repository
     anthropic: -> { Riffer::Providers::Anthropic },
     azure_openai: -> { Riffer::Providers::AzureOpenAI },
     gemini: -> { Riffer::Providers::Gemini },
+    google_cloud: -> { Riffer::Providers::GoogleCloud },
     openai: -> { Riffer::Providers::OpenAI },
     openrouter: -> { Riffer::Providers::OpenRouter },
     mock: -> { Riffer::Providers::Mock },

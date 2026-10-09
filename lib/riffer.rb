@@ -8,6 +8,7 @@ loader.inflector.inflect(
   "open_ai" => "OpenAI",
   "azure_open_ai" => "AzureOpenAI",
   "open_router" => "OpenRouter",
+  "sse" => "SSE",
 )
 # Test-framework wiring a consumer requires by hand; neither file defines the
 # constant its path implies, and both reference framework constants riffer

@@ -266,7 +266,7 @@ When enabled, content is serialized as GenAI-semconv JSON strings. File attachme
 
 ## Provider names
 
-`gen_ai.provider.name` carries a GenAI-semconv well-known value where one exists: `openai`, `anthropic`, `aws.bedrock`, `azure.ai.openai`, `gcp.gemini`, `openrouter`. A custom provider that doesn't override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.
+`gen_ai.provider.name` carries a GenAI-semconv well-known value where one exists: `openai`, `anthropic`, `aws.bedrock`, `azure.ai.openai`, `gcp.gemini`, `gcp.vertex_ai`, `openrouter`. A custom provider that doesn't override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.
 
 ## Stability
 

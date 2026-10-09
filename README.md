@@ -113,6 +113,7 @@ Create a `.env` file in the project root (it is gitignored):
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 AWS_BEDROCK_API_TOKEN=...
+GOOGLE_CLOUD_PROJECT=my-project
 ```
 
 The test helper loads this file automatically via `dotenv`. Then run the specific tests that need new cassettes:
@@ -121,7 +122,11 @@ The test helper loads this file automatically via `dotenv`. Then run the specifi
 bundle exec ruby -Itest test/riffer/providers/open_ai_test.rb
 bundle exec ruby -Itest test/riffer/providers/anthropic_test.rb
 bundle exec ruby -Itest test/riffer/providers/amazon_bedrock_test.rb
+GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
+  bundle exec ruby -Itest test/riffer/providers/google_cloud_test.rb
 ```
+
+Google Cloud tests take a short-lived access token rather than a key, so pass it on the command line instead of storing it in `.env`.
 
 VCR records the HTTP interactions to `test/fixtures/vcr_cassettes/` on the first run. Subsequent runs replay from the cassettes without hitting the API. API keys are automatically filtered from recorded cassettes.
 

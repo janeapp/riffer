@@ -1,0 +1,28 @@
+# Generated from lib/riffer/config/google_cloud.rb with RBS::Inline
+
+class Riffer::Config::GoogleCloud
+  attr_reader project_id: String?
+
+  # The default +"global"+ endpoint routes requests to any region, so it
+  # carries no data-residency guarantee.
+  attr_reader location: String
+
+  # A googleauth credentials object; +nil+ resolves Application Default
+  # Credentials.
+  attr_accessor credentials: untyped
+
+  attr_accessor client: untyped
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def project_id=: (untyped) -> void
+
+  # +nil+ restores the +"global"+ default.
+  # --
+  # : (untyped) -> void
+  def location=: (untyped) -> void
+end

@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-2.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]},{"role":"model","parts":[{"text":"Hello!"}]},{"role":"user","parts":[{"text":"How
+        are you?"}]}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - aiplatform.googleapis.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Thu, 08 Oct 2026 20:53:49 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "I am a large language model, trained by Google. I don't have feelings or emotions, so I don't experience \"how are you\" in the same way a human does.\n\nHowever, I am functioning correctly and ready to assist you! How can I help you today?"
+                  }
+                ]
+              },
+              "finishReason": "STOP",
+              "avgLogprobs": -0.181597127752789
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8,
+            "candidatesTokenCount": 59,
+            "totalTokenCount": 67,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 59
+              }
+            ]
+          },
+          "modelVersion": "gemini-2.5-flash-lite",
+          "createTime": "2026-10-08T20:53:48.449497Z",
+          "responseId": "3ALIatm3G5uUq8YPwayJoAQ"
+        }
+  recorded_at: Thu, 08 Oct 2026 20:53:49 GMT
+recorded_with: VCR 6.4.0

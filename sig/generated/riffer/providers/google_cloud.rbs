@@ -1,0 +1,31 @@
+# Generated from lib/riffer/providers/google_cloud.rb with RBS::Inline
+
+# Vertex AI (Gemini Enterprise Agent Platform). Gemini models share the
+# Gemini Developer API's request and response bodies, so this inherits the
+# Gemini provider's conversion and only swaps the transport and resource paths.
+class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
+  # Vertex model ids may carry an +@version+ suffix.
+  VALID_MODEL_PATTERN: Regexp
+
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
+  private
+
+  # --
+  # : () -> untyped
+  def global_client: () -> untyped
+
+  # --
+  # : () -> untyped
+  def build_client: () -> untyped
+
+  # --
+  # : (String, String) -> String
+  def api_path: (String, String) -> String
+
+  # --
+  # : (String) -> void
+  def validate_model!: (String) -> void
+end
