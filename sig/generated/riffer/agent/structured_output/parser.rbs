@@ -5,8 +5,6 @@ module Riffer::Agent::StructuredOutput::Parser
   # : (String) -> Hash[Symbol, untyped]?
   def parse: (String) -> Hash[Symbol, untyped]?
 
-  # Returns the JSON text that parsed, without any surrounding fence or prose,
-  # alongside the parsed object.
   # --
   # : (String) -> [String, Hash[Symbol, untyped]]?
   def extract: (String) -> [ String, Hash[Symbol, untyped] ]?

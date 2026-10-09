@@ -12,8 +12,6 @@ module Riffer::Agent::StructuredOutput::Parser
     extract(content)&.last
   end
 
-  # Returns the JSON text that parsed, without any surrounding fence or prose,
-  # alongside the parsed object.
   #--
   #: (String) -> [String, Hash[Symbol, untyped]]?
   def extract(content)

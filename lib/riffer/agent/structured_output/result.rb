@@ -5,7 +5,6 @@ class Riffer::Agent::StructuredOutput::Result
   attr_reader :object #: Hash[Symbol, untyped]? # @dynamic object
   attr_reader :error #: String? # @dynamic error
 
-  # The JSON text the object was parsed from, without any surrounding fence or prose.
   attr_reader :json #: String? # @dynamic json
 
   #--
