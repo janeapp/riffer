@@ -82,6 +82,8 @@ model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
 
 When reasoning is enabled, you'll receive `ReasoningDelta` and `ReasoningDone` events during streaming.
 
+The agent-level [`reasoning`](../AGENTS.md#reasoning) setting writes this same option by default: `reasoning :low` sends `reasoning: 'low'`, and `:off` sends `'none'`. A [catalog](../CATALOG.md#reasoning) entry can map a level differently.
+
 #### Reasoning Replay
 
 Each `reasoning` item in a Responses API output becomes [reasoning parts](../MESSAGES.md#reasoning) on the assistant message, on both `generate_text` and `stream_text`, all tagged `format: "openai-v1"` and carrying the item's `id`:

@@ -39,6 +39,7 @@ class Riffer::Providers::Base
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
+    options = apply_reasoning(model, options)
     params = build_request_params(messages, model, request_options(options))
 
     in_chat_span(model, messages, options) do |span|
@@ -77,6 +78,7 @@ class Riffer::Providers::Base
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
+    options = apply_reasoning(model, options)
     params = build_request_params(messages, model, request_options(options))
 
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
@@ -188,18 +190,64 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: () -> Riffer::Config::Pricing::Rates?
+  #: () -> Riffer::Catalog::Rates?
   def pricing_rates
     model = @current_model
     return nil unless model
 
-    pricing = Riffer.config.pricing
-    return nil if pricing.empty?
-
-    key = Riffer::Providers::Repository.key_for(self.class)
+    key = catalog_key(model)
     return nil unless key
 
-    pricing.rates_for("#{key}/#{model}")
+    Riffer.config.catalog.rates_for(key) || Riffer.config.pricing.rates_for(key)
+  end
+
+  #--
+  #: (String) -> String?
+  def catalog_key(model)
+    provider_key = Riffer::Providers::Repository.key_for(self.class)
+    "#{provider_key}/#{model}" if provider_key
+  end
+
+  # A catalog fragment beats the provider default per level; the caller's
+  # options are merged over either, so +model_options+ always wins.
+  #--
+  #: (String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def apply_reasoning(model, options)
+    value = options[:riffer_reasoning_level]
+    return options if value.nil?
+
+    level = value.to_s.to_sym
+    levels = Riffer::Agent::Config::REASONING_LEVELS
+    unless levels.include?(level)
+      raise Riffer::ArgumentError, "riffer_reasoning_level must be one of #{levels.join(', ')}, got #{value.inspect}"
+    end
+
+    key = model && catalog_key(model)
+    fragment = (key && Riffer.config.catalog.reasoning_options(key, level)) || default_reasoning_options(level)
+    unless fragment
+      raise Riffer::ArgumentError,
+            "No reasoning mapping for #{key || model.inspect} at level #{level.inspect}. " \
+            "Add one in a catalog file (see docs/CATALOG.md)."
+    end
+
+    # A copy, since catalog fragments are frozen and providers may edit nested params.
+    deep_merge(Riffer::Helpers::DeepDup.call(fragment), options.merge(riffer_reasoning_level: level))
+  end
+
+  # Maps a level onto the provider's own reasoning params when the catalog has
+  # no entry; +nil+ means riffer raises before the request.
+  #--
+  #: (Symbol) -> Hash[Symbol, untyped]?
+  def default_reasoning_options(_level)
+    nil
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def deep_merge(base, override)
+    base.merge(override) do |_key, base_value, override_value|
+      base_value.is_a?(Hash) && override_value.is_a?(Hash) ? deep_merge(base_value, override_value) : override_value
+    end
   end
 
   #--
@@ -273,6 +321,9 @@ class Riffer::Providers::Base
       value = options[key]
       attributes[attribute] = value if value
     end
+
+    reasoning_level = options[:riffer_reasoning_level]
+    attributes["riffer.request.reasoning_level"] = reasoning_level.to_s if reasoning_level
 
     attributes.merge(tag_attributes(options[:tags] || {}))
   end
@@ -388,6 +439,7 @@ class Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def request_options(options)
+    options = options.except(:riffer_reasoning_level)
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 

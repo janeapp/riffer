@@ -80,6 +80,8 @@ model_options reasoning: {effort: 'medium', max_tokens: 5000}
 
 Streaming yields `Riffer::StreamEvents::ReasoningDelta` and `ReasoningDone` events when the model returns reasoning content.
 
+The agent-level [`reasoning`](../AGENTS.md#reasoning) setting writes this same option by default: `reasoning :low` sends `reasoning: 'low'`, and `:off` sends `'none'`. A [catalog](../CATALOG.md#reasoning) entry can map a level differently.
+
 ### provider (routing preferences)
 
 Pin which upstream provider OpenRouter should use, set allow/deny lists, or prefer a sort order:

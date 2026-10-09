@@ -78,6 +78,20 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  # Claude's fields, since application inference profile ARNs hide the model
+  # family; other families need a catalog entry.
+  #--
+  #: (Symbol) -> Hash[Symbol, untyped]
+  def default_reasoning_options(level)
+    fields =
+      if level == :off
+        { thinking: { type: "disabled" } }
+      else
+        { thinking: { type: "adaptive" }, output_config: { effort: level.to_s } }
+      end
+    { additional_model_request_fields: fields }
+  end
+
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)

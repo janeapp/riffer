@@ -1441,6 +1441,70 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "reasoning level" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
+    let(:prompt) { "What is 17 times 23? Reply with just the number." }
+
+    it "maps :off to Claude's disabled thinking" do
+      expect(provider.send(:default_reasoning_options, :off)).must_equal(
+        { additional_model_request_fields: { thinking: { type: "disabled" } } },
+      )
+    end
+
+    it "maps every other level to Claude's adaptive thinking at that effort" do
+      %i[low medium high xhigh max].each do |level|
+        fields = { thinking: { type: "adaptive" }, output_config: { effort: level.to_s } }
+
+        expect(provider.send(:default_reasoning_options, level)).must_equal({ additional_model_request_fields: fields })
+      end
+    end
+
+    it "turns thinking off on a live Claude model" do
+      VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/claude-sonnet-4-6/off") do
+        result = provider.generate_text(
+          prompt: prompt,
+          model: "us.anthropic.claude-sonnet-4-6",
+          riffer_reasoning_level: :off,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    it "reasons at low effort on a live Claude model" do
+      VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/claude-sonnet-4-6/low") do
+        result = provider.generate_text(
+          prompt: prompt,
+          model: "us.anthropic.claude-sonnet-4-6",
+          riffer_reasoning_level: :low,
+        )
+
+        expect(result.content).must_include "391"
+      end
+    end
+
+    describe "with a catalog entry" do
+      before { Riffer.config.catalog_files = [REASONING_CATALOG_PATH] }
+      after { Riffer.config.catalog_files = [] }
+
+      {
+        "claude-haiku-4-5/low" => ["us.anthropic.claude-haiku-4-5-20251001-v1:0", :low],
+        "nova-2-lite/low" => ["us.amazon.nova-2-lite-v1:0", :low],
+        "gpt-6-luna/low" => ["us.openai.gpt-6-luna", :low],
+        "gpt-6-luna/high" => ["us.openai.gpt-6-luna", :high],
+        "gpt-oss-120b/low" => ["openai.gpt-oss-120b-1:0", :low],
+      }.each do |name, (model_id, level)|
+        it "sends the #{name} reasoning fields to a live model" do
+          VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/#{name}") do
+            result = provider.generate_text(prompt: prompt, model: model_id, riffer_reasoning_level: level)
+
+            expect(result.content).must_include "391"
+          end
+        end
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do

@@ -87,6 +87,16 @@ describe Riffer::Agent::Serializer do
       expect(descriptor[:timeout]).must_equal 10
     end
 
+    it "carries the reasoning level on the wire" do
+      dict = build_agent_class { reasoning :high }.new.to_h
+
+      expect(dict[:reasoning]).must_equal :high
+    end
+
+    it "emits nil reasoning when none is configured" do
+      expect(build_agent_class.new.to_h[:reasoning]).must_be_nil
+    end
+
     it "encodes unlimited max_steps as -1 on the wire" do
       klass = build_agent_class { max_steps nil }
 
@@ -123,6 +133,21 @@ describe Riffer::Agent::Serializer do
       agent = Riffer::Agent.from_h(wire, context: nil)
 
       expect(agent.tools.map(&:name)).must_equal ["serializer_weather_tool"]
+    end
+
+    it "round-trips the reasoning level through JSON" do
+      dict = build_agent_class { reasoning :medium }.new.to_h
+      wire = JSON.parse(JSON.generate(dict), symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(wire[:reasoning]).must_equal "medium"
+      expect(agent.config.reasoning).must_equal :medium
+    end
+
+    it "leaves reasoning unset when the hash has none" do
+      dict = build_agent_class.new.to_h.except(:reasoning)
+
+      expect(Riffer::Agent.from_h(dict, context: nil).config.reasoning).must_be_nil
     end
 
     it "reconstructs a validating structured output" do

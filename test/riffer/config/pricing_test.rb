@@ -3,6 +3,23 @@
 require "test_helper"
 
 describe Riffer::Config::Pricing do
+  before do
+    @warned = Riffer::Config::Pricing.instance_variable_get(:@warned)
+    Riffer::Config::Pricing.instance_variable_set(:@warned, true)
+  end
+
+  after { Riffer::Config::Pricing.instance_variable_set(:@warned, @warned) }
+
+  describe "deprecation" do
+    it "warns once per process on the first set" do
+      Riffer::Config::Pricing.instance_variable_set(:@warned, false)
+      pricing = Riffer::Config::Pricing.new
+
+      expect { pricing.set("openai/gpt-4", input: 30.0, output: 60.0) }.must_output(nil, /config.pricing is deprecated/)
+      expect { pricing.set("openai/gpt-5", input: 30.0, output: 60.0) }.must_output(nil, "")
+    end
+  end
+
   describe "#empty?" do
     it "is true before any rates are registered" do
       expect(Riffer::Config::Pricing.new.empty?).must_equal true
@@ -94,55 +111,6 @@ describe Riffer::Config::Pricing do
   describe "#rates_for" do
     it "returns nil for an unregistered model" do
       expect(Riffer::Config::Pricing.new.rates_for("openai/gpt-4")).must_be_nil
-    end
-  end
-end
-
-describe Riffer::Config::Pricing::Rates do
-  describe "#cost_for" do
-    it "prices input and output at the per-million rates" do
-      rates = Riffer::Config::Pricing::Rates.new(input: 3.0, output: 15.0)
-      cost = rates.cost_for(input_tokens: 2_000_000, output_tokens: 1_000_000)
-
-      expect(cost).must_equal 21.0
-    end
-
-    it "subtracts the cache subsets and prices them at their own rates" do
-      rates = Riffer::Config::Pricing::Rates.new(input: 3.0, output: 15.0, cache_read: 1.0, cache_write: 5.0)
-      cost = rates.cost_for(
-        input_tokens: 4_000_000,
-        output_tokens: 0,
-        cache_read_tokens: 1_000_000,
-        cache_write_tokens: 1_000_000,
-      )
-
-      expect(cost).must_equal 12.0
-    end
-
-    it "bills cache tokens at the input rate when no cache rate is set" do
-      rates = Riffer::Config::Pricing::Rates.new(input: 3.0, output: 15.0)
-      cost = rates.cost_for(input_tokens: 2_000_000, output_tokens: 0, cache_read_tokens: 1_000_000)
-
-      expect(cost).must_equal 6.0
-    end
-
-    it "treats nil cache buckets as zero" do
-      rates = Riffer::Config::Pricing::Rates.new(input: 3.0, output: 15.0)
-      cost = rates.cost_for(input_tokens: 1_000_000, output_tokens: 1_000_000)
-
-      expect(cost).must_equal 18.0
-    end
-
-    it "clamps the uncached portion at zero rather than going negative" do
-      rates = Riffer::Config::Pricing::Rates.new(input: 4.0, output: 15.0, cache_read: 1.0, cache_write: 1.0)
-      cost = rates.cost_for(
-        input_tokens: 2_000_000,
-        output_tokens: 0,
-        cache_read_tokens: 1_500_000,
-        cache_write_tokens: 1_500_000,
-      )
-
-      expect(cost).must_equal 3.0
     end
   end
 end

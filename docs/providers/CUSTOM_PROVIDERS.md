@@ -157,7 +157,7 @@ Register your provider under an identifier.
 Riffer::Providers::Repository.register(:my_provider) { Riffer::Providers::MyProvider }
 ```
 
-The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Both `find` and `key_for` (used for pricing and observability keys) honor the registration. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
+The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Both `find` and `key_for` (used for [catalog](../CATALOG.md) keys) honor the registration. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
 
 Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.
 
@@ -307,6 +307,20 @@ yielder << Riffer::StreamEvents::ReasoningDone.new(part)
 ```
 
 If your adapter surfaces reasoning text but cannot yet replay it, call `yield_reasoning_done(yielder, text)` instead. It wraps the text in a `:text` part with no `format`, which persists for display and is skipped on replay.
+
+## Reasoning Level
+
+When an agent sets [`reasoning`](../AGENTS.md#reasoning), riffer resolves the level to `model_options` params before calling `build_request_params`, so your provider receives ordinary options and never sees the level itself. It uses the model's [catalog](../CATALOG.md#reasoning) entry under your registration key first, then your provider's default. Override the private `default_reasoning_options` to supply one:
+
+```ruby
+private
+
+def default_reasoning_options(level)
+  { reasoning_effort: level.to_s }
+end
+```
+
+The base class returns `nil`, which makes riffer raise `Riffer::ArgumentError` for any level the catalog doesn't map.
 
 ## Tags
 
