@@ -3,8 +3,6 @@
 
 require "json"
 
-# Reasoning mappings and pricing keyed by exact +provider/model+ id, loaded
-# from JSON files. See docs/CATALOG.md.
 class Riffer::Catalog
   SUPPORTED_VERSIONS = [1].freeze #: Array[Integer]
 
@@ -91,7 +89,8 @@ class Riffer::Catalog
       fail_load!(path, "unsupported version #{data['version'].inspect}; supported: #{SUPPORTED_VERSIONS.inspect}")
     end
 
-    models = data["models"] || {}
+    no_models = {} #: Hash[String, untyped]
+    models = data.fetch("models", no_models)
     fail_load!(path, "models must be an object") unless models.is_a?(Hash)
 
     claimed = {} #: Hash[String, String]
@@ -148,7 +147,7 @@ class Riffer::Catalog
     fail_load!(path, "#{key}: pricing is missing #{missing.inspect}") unless missing.empty?
 
     begin
-      Riffer::Catalog::Rates.build(
+      Riffer::Catalog::Rates.new(
         input: raw["input"],
         output: raw["output"],
         cache_read: raw["cache_read"],

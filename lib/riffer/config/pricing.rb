@@ -26,7 +26,7 @@ class Riffer::Config::Pricing
 
     ids.each { |id| Riffer::Helpers::Validate.model_id(id, attribute: "pricing model id") }
 
-    rates = Riffer::Catalog::Rates.build(input: input, output: output, cache_read: cache_read, cache_write: cache_write)
+    rates = Riffer::Catalog::Rates.new(input: input, output: output, cache_read: cache_read, cache_write: cache_write)
     ids.each { |id| @rates[id] = rates }
   end
 

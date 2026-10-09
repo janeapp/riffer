@@ -5,25 +5,25 @@ require "test_helper"
 describe Riffer::Catalog::Rates do
   describe ".build" do
     it "coerces integer rates to floats" do
-      rates = Riffer::Catalog::Rates.build(input: 3, output: 15, cache_read: 1)
+      rates = Riffer::Catalog::Rates.new(input: 3, output: 15, cache_read: 1)
 
       expect([rates.input, rates.output, rates.cache_read, rates.cache_write]).must_equal [3.0, 15.0, 1.0, nil]
     end
 
     it "raises on a negative rate" do
-      error = expect { Riffer::Catalog::Rates.build(input: -1, output: 15) }.must_raise Riffer::ArgumentError
+      error = expect { Riffer::Catalog::Rates.new(input: -1, output: 15) }.must_raise Riffer::ArgumentError
 
       expect(error.message).must_equal "input rate must be a non-negative number, got -1"
     end
 
     it "raises on a non-numeric optional rate" do
-      error = expect { Riffer::Catalog::Rates.build(input: 1, output: 15, cache_write: "2") }.must_raise Riffer::ArgumentError
+      error = expect { Riffer::Catalog::Rates.new(input: 1, output: 15, cache_write: "2") }.must_raise Riffer::ArgumentError
 
       expect(error.message).must_equal 'cache_write rate must be a non-negative number, got "2"'
     end
 
     it "raises on an infinite rate" do
-      expect { Riffer::Catalog::Rates.build(input: Float::INFINITY, output: 15) }.must_raise Riffer::ArgumentError
+      expect { Riffer::Catalog::Rates.new(input: Float::INFINITY, output: 15) }.must_raise Riffer::ArgumentError
     end
   end
 

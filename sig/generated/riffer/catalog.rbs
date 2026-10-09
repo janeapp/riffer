@@ -1,7 +1,5 @@
 # Generated from lib/riffer/catalog.rb with RBS::Inline
 
-# Reasoning mappings and pricing keyed by exact +provider/model+ id, loaded
-# from JSON files. See docs/CATALOG.md.
 class Riffer::Catalog
   SUPPORTED_VERSIONS: Array[Integer]
 

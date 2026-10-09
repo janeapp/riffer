@@ -40,7 +40,7 @@ class Riffer::Providers::Base
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
     options = apply_reasoning(model, options)
-    params = build_request_params(messages, model, request_options(options).except(:riffer_reasoning_level))
+    params = build_request_params(messages, model, request_options(options))
 
     in_chat_span(model, messages, options) do |span|
       response = execute_generate(params)
@@ -79,7 +79,7 @@ class Riffer::Providers::Base
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
     options = apply_reasoning(model, options)
-    params = build_request_params(messages, model, request_options(options).except(:riffer_reasoning_level))
+    params = build_request_params(messages, model, request_options(options))
 
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
     # context is empty — capture here so the chat span parents to the caller's
@@ -439,6 +439,7 @@ class Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def request_options(options)
+    options = options.except(:riffer_reasoning_level)
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 
