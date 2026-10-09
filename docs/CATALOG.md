@@ -5,7 +5,7 @@ The model catalog holds per-model data that riffer can't derive from the model n
 Riffer ships no catalog. Without one:
 
 - `reasoning` still works through each provider's default mapping (see [Provider defaults](#provider-defaults)).
-- Calls carry no cost (`token_usage.cost` is `nil`).
+- Calls carry no cost (`token_usage.cost` is `nil`), unless the deprecated [`config.pricing`](CONFIGURATION.md#pricing-deprecated) prices the model.
 
 ## Loading catalog files
 

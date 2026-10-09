@@ -10,18 +10,16 @@ class Riffer::Catalog::Rates
   attr_reader cache_write: Float?
 
   # --
-  # : (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> Riffer::Catalog::Rates
-  def self.build: (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> Riffer::Catalog::Rates
-
-  # --
-  # : (untyped, String) -> Float
-  def self.coerce_rate: (untyped, String) -> Float
-
-  # --
-  # : (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
-  def initialize: (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
+  # : (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> void
+  def initialize: (input: untyped, output: untyped, ?cache_read: untyped, ?cache_write: untyped) -> void
 
   # --
   # : (input_tokens: Integer, output_tokens: Integer, ?cache_read_tokens: Integer?, ?cache_write_tokens: Integer?) -> Float
   def cost_for: (input_tokens: Integer, output_tokens: Integer, ?cache_read_tokens: Integer?, ?cache_write_tokens: Integer?) -> Float
+
+  private
+
+  # --
+  # : (untyped, String) -> Float
+  def coerce_rate: (untyped, String) -> Float
 end

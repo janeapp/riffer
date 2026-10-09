@@ -226,7 +226,7 @@ A file that fails resolution raises a `Riffer::FileError` subclass — `Riffer::
 
 ### Model Catalog
 
-List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, calls carry no cost and `reasoning` uses each provider's default mapping.
+List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, `reasoning` uses each provider's default mapping, and calls carry no cost unless the deprecated [`config.pricing`](#pricing-deprecated) prices the model.
 
 ```ruby
 Riffer.configure do |config|

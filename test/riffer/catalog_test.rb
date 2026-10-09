@@ -181,6 +181,12 @@ describe Riffer::Catalog do
       expect(load_error(path)).must_equal "#{path}: models must be an object"
     end
 
+    it "raises when models is null" do
+      path = write_file("null_models.json", { version: 1, models: nil })
+
+      expect(load_error(path)).must_equal "#{path}: models must be an object"
+    end
+
     it "raises on a model key without a provider" do
       path = write_catalog("a.json", { "gpt-5.1" => {} })
 
