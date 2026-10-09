@@ -739,11 +739,11 @@
           <div class="method-source-code" id="parse_and_validate-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/structured_output.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_and_validate</span>(<span class="ruby-identifier">json_string</span>)
-  <span class="ruby-identifier">parsed</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">StructuredOutput</span><span class="ruby-operator">::</span><span class="ruby-constant">Parser</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">json_string</span>)
+  <span class="ruby-identifier">json</span>, <span class="ruby-identifier">parsed</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">StructuredOutput</span><span class="ruby-operator">::</span><span class="ruby-constant">Parser</span>.<span class="ruby-identifier">extract</span>(<span class="ruby-identifier">json_string</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">error:</span> <span class="ruby-string">&quot;JSON parse error: no JSON object found in the response&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-identifier">validated</span> = <span class="ruby-ivar">@params</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">parsed</span>)
-  <span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">object:</span> <span class="ruby-identifier">validated</span>)
+  <span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">object:</span> <span class="ruby-identifier">validated</span>, <span class="ruby-value">json:</span> <span class="ruby-identifier">json</span>)
 <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ValidationError</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
   <span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">error:</span> <span class="ruby-node">&quot;Validation error: #{e.message}&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
