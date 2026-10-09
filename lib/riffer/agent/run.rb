@@ -207,7 +207,7 @@ module Riffer::Agent::Run
     result = agent.structured_output && structured_output_result(agent, message)
     build_response(
       agent,
-      message&.content || "",
+      result&.json || message&.content || "",
       outcome: final_outcome(message, result, interrupted: interrupted, interrupt_reason: interrupt_reason),
       modifications: all_modifications,
       reasoning: message&.reasoning || [],

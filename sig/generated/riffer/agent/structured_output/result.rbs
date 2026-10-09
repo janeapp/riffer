@@ -5,9 +5,11 @@ class Riffer::Agent::StructuredOutput::Result
 
   attr_reader error: String?
 
+  attr_reader json: String?
+
   # --
-  # : (?object: Hash[Symbol, untyped]?, ?error: String?) -> void
-  def initialize: (?object: Hash[Symbol, untyped]?, ?error: String?) -> void
+  # : (?object: Hash[Symbol, untyped]?, ?error: String?, ?json: String?) -> void
+  def initialize: (?object: Hash[Symbol, untyped]?, ?error: String?, ?json: String?) -> void
 
   # --
   # : () -> bool

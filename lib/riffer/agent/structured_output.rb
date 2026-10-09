@@ -38,11 +38,11 @@ class Riffer::Agent::StructuredOutput
   #--
   #: (String) -> Riffer::Agent::StructuredOutput::Result
   def parse_and_validate(json_string)
-    parsed = Riffer::Agent::StructuredOutput::Parser.parse(json_string)
+    json, parsed = Riffer::Agent::StructuredOutput::Parser.extract(json_string)
     return Result.new(error: "JSON parse error: no JSON object found in the response") if parsed.nil?
 
     validated = @params.validate(parsed)
-    Result.new(object: validated)
+    Result.new(object: validated, json: json)
   rescue Riffer::ValidationError => e
     Result.new(error: "Validation error: #{e.message}")
   end

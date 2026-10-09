@@ -307,7 +307,7 @@ describe Riffer::Agent::Run do
       result = agent.generate("Analyze")
 
       expect([result.outcome.reason, result.structured_output]).must_equal [:completed, { sentiment: "positive" }]
-      expect(result.content).must_equal "```json\n{\"sentiment\":\"positive\"}\n```"
+      expect(result.content).must_equal '{"sentiment":"positive"}'
       expect(agent.session.messages.last.structured_output).must_equal({ sentiment: "positive" })
     end
 
@@ -364,6 +364,23 @@ describe Riffer::Agent::Run do
       expect([result.outcome.reason, result.outcome.detail]).must_equal [:completed, nil]
       expect(result.structured_output).must_equal({ a: 1 })
       expect(agent.session.messages.last.structured_output).must_equal({ a: 1 })
+    end
+
+    it "returns the JSON without its code fence as content and keeps the raw reply in the session" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response("```json\n{\"a\": 1}\n```")
+      result = agent.generate("Go")
+
+      expect(result.content).must_equal '{"a": 1}'
+      expect(agent.session.messages.last.content).must_equal "```json\n{\"a\": 1}\n```"
+    end
+
+    it "keeps the raw reply as content when a recovered object fails the schema" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response('Here you go: {"b": 1}')
+      result = agent.generate("Go")
+
+      expect(result.content).must_equal 'Here you go: {"b": 1}'
     end
 
     it "is :invalid_structured_output with the validation error when a required key is missing" do

@@ -9,19 +9,30 @@ module Riffer::Agent::StructuredOutput::Parser
   #--
   #: (String) -> Hash[Symbol, untyped]?
   def parse(content)
-    parse_object(content) || outermost_object(content)
+    extract(content)&.last
+  end
+
+  #--
+  #: (String) -> [String, Hash[Symbol, untyped]]?
+  def extract(content)
+    parsed = parse_object(content)
+    return [content, parsed] if parsed
+
+    outermost_object(content)
   end
 
   private
 
   #--
-  #: (String) -> Hash[Symbol, untyped]?
+  #: (String) -> [String, Hash[Symbol, untyped]]?
   def outermost_object(content)
     start = content.index("{")
     stop = content.rindex("}")
     return unless start && stop
 
-    parse_object(content[start..stop].to_s)
+    json = content[start..stop].to_s
+    parsed = parse_object(json)
+    [json, parsed] if parsed
   end
 
   #--
