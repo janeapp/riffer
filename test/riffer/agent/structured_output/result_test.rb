@@ -58,4 +58,21 @@ describe Riffer::Agent::StructuredOutput::Result do
       expect(result.error).must_be_nil
     end
   end
+
+  describe "#json" do
+    it "returns the JSON text the object was parsed from" do
+      result = Riffer::Agent::StructuredOutput::Result.new(
+        object: { sentiment: "positive" },
+        json: '{"sentiment":"positive"}',
+      )
+
+      expect(result.json).must_equal '{"sentiment":"positive"}'
+    end
+
+    it "returns nil on failure" do
+      result = Riffer::Agent::StructuredOutput::Result.new(error: "something went wrong")
+
+      expect(result.json).must_be_nil
+    end
+  end
 end

@@ -78,4 +78,30 @@ describe Riffer::Agent::StructuredOutput::Parser do
       expect(parse('{"outer": {"sentiment":"positive"}, broken}')).must_be_nil
     end
   end
+
+  describe ".extract" do
+    def extract(content)
+      Riffer::Agent::StructuredOutput::Parser.extract(content)
+    end
+
+    it "returns plain JSON unchanged alongside the object" do
+      expect(extract('{"sentiment":"positive"}')).must_equal ['{"sentiment":"positive"}', { sentiment: "positive" }]
+    end
+
+    it "returns the JSON text without a surrounding code fence" do
+      content = "```json\n{\"sentiment\":\"positive\"}\n```"
+
+      expect(extract(content)).must_equal ['{"sentiment":"positive"}', { sentiment: "positive" }]
+    end
+
+    it "returns the JSON text without surrounding prose" do
+      content = 'Here is the data: {"sentiment":"positive"} Let me know.'
+
+      expect(extract(content)).must_equal ['{"sentiment":"positive"}', { sentiment: "positive" }]
+    end
+
+    it "returns nil when no object is present" do
+      expect(extract("I could not determine the sentiment.")).must_be_nil
+    end
+  end
 end

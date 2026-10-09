@@ -205,9 +205,11 @@ module Riffer::Agent::Run
   def final_response(agent, all_modifications, interrupted: false, interrupt_reason: nil, **extra)
     message = agent.session.final_assistant_message
     result = agent.structured_output && structured_output_result(agent, message)
+    # A validated reply returns the JSON without any fence or prose around it, so
+    # content matches structured_output; the session message keeps the raw text.
     build_response(
       agent,
-      message&.content || "",
+      result&.json || message&.content || "",
       outcome: final_outcome(message, result, interrupted: interrupted, interrupt_reason: interrupt_reason),
       modifications: all_modifications,
       reasoning: message&.reasoning || [],

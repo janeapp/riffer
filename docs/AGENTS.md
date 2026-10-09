@@ -168,7 +168,7 @@ end
 
 The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
 
-If the response is not valid JSON on its own, Riffer recovers a JSON object wrapped in a code fence (```` ```json ````), surrounded by prose (`Here is the data: {...}`), or wrapped in formatting (`**{...}**`). It parses the span from the first `{` to the last `}`, so a reply whose surrounding text contains other braces, or that holds more than one object, is still rejected; `response.content` keeps the raw text.
+If the response is not valid JSON on its own, Riffer recovers a JSON object wrapped in a code fence (```` ```json ````), surrounded by prose (`Here is the data: {...}`), or wrapped in formatting (`**{...}**`). It parses the span from the first `{` to the last `}`, so a reply whose surrounding text contains other braces, or that holds more than one object, is still rejected. When the recovered object validates, `response.content` holds only the extracted JSON text, without the fence or prose; the assistant message in `response.messages` keeps the raw reply. A reply that fails parsing or validation leaves the raw text in `response.content`.
 
 When the response contains no well-formed JSON object or does not satisfy the schema, `response.structured_output` is `nil`, `response.outcome.reason` is `:invalid_structured_output`, and `response.outcome.detail` carries the parse or validation message:
 
@@ -197,7 +197,7 @@ class SentimentAgent < Riffer::Agent
 end
 ```
 
-With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction carrying the JSON Schema is appended to the system instructions on every request of the run (it is not stored in `session.messages`), and the reply is parsed and validated exactly as above: `response.content` is the reply text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
+With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction carrying the JSON Schema is appended to the system instructions on every request of the run (it is not stored in `session.messages`), and the reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
 
 | Strategy            | Behavior                                                        |
 | ------------------- | --------------------------------------------------------------- |

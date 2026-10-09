@@ -108,6 +108,20 @@ describe Riffer::Agent::StructuredOutput do
       expect(result.object).must_equal({ sentiment: "positive", score: 0.9 })
     end
 
+    it "returns the JSON text without a surrounding code fence" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_score_params)
+      result = so.parse_and_validate("```json\n{\"sentiment\":\"positive\",\"score\":0.9}\n```")
+
+      expect(result.json).must_equal '{"sentiment":"positive","score":0.9}'
+    end
+
+    it "returns no JSON text when validation fails" do
+      so = Riffer::Agent::StructuredOutput.new(sentiment_score_params)
+      result = so.parse_and_validate('Here you go: {"sentiment":"positive"}')
+
+      expect(result.json).must_be_nil
+    end
+
     it "returns validation error for a recovered object that fails the schema" do
       so = Riffer::Agent::StructuredOutput.new(sentiment_score_params)
       result = so.parse_and_validate('Here you go: {"sentiment":"positive"}')
