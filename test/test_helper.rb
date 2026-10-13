@@ -54,6 +54,7 @@ VCR.configure do |config|
 end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
+REASONING_CATALOG_PATH = File.expand_path("fixtures/catalogs/reasoning.json", __dir__)
 
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }

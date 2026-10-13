@@ -1,0 +1,77 @@
+# Generated from lib/riffer/catalog.rb with RBS::Inline
+
+class Riffer::Catalog
+  SUPPORTED_VERSIONS: Array[Integer]
+
+  FILE_KEYS: Array[String]
+
+  ENTRY_KEYS: Array[String]
+
+  PRICING_KEYS: Array[String]
+
+  @aliases: Hash[String, String]
+
+  @models: Hash[String, Hash[Symbol, untyped]]
+
+  # --
+  # : (Array[String]) -> Riffer::Catalog
+  def self.load: (Array[String]) -> Riffer::Catalog
+
+  # --
+  # : (models: Hash[String, Hash[Symbol, untyped]], aliases: Hash[String, String]) -> void
+  def initialize: (models: Hash[String, Hash[Symbol, untyped]], aliases: Hash[String, String]) -> void
+
+  # --
+  # : (String, Symbol) -> Hash[Symbol, untyped]?
+  def reasoning_options: (String, Symbol) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (String) -> Riffer::Catalog::Rates?
+  def rates_for: (String) -> Riffer::Catalog::Rates?
+
+  # --
+  # : () -> bool
+  def empty?: () -> bool
+
+  # --
+  # : (String) -> Hash[String, Hash[Symbol, untyped]]
+  def self.parse_file: (String) -> Hash[String, Hash[Symbol, untyped]]
+
+  # --
+  # : (String, String, untyped) -> Hash[Symbol, untyped]
+  def self.parse_entry: (String, String, untyped) -> Hash[Symbol, untyped]
+
+  # --
+  # : (String, String, untyped) -> Array[String]
+  def self.parse_aliases: (String, String, untyped) -> Array[String]
+
+  # --
+  # : (String, String, untyped) -> Riffer::Catalog::Rates
+  def self.parse_pricing: (String, String, untyped) -> Riffer::Catalog::Rates
+
+  # --
+  # : (String, String, untyped) -> Hash[Symbol, Hash[Symbol, untyped]]
+  def self.parse_reasoning: (String, String, untyped) -> Hash[Symbol, Hash[Symbol, untyped]]
+
+  # --
+  # : (String, untyped, String) -> void
+  def self.validate_model_key!: (String, untyped, String) -> void
+
+  # --
+  # : (untyped) -> untyped
+  def self.symbolize_keys: (untyped) -> untyped
+
+  # --
+  # : (String, String) -> bot
+  def self.fail_load!: (String, String) -> bot
+
+  private
+
+  # --
+  # : (String) -> Hash[Symbol, untyped]?
+  def entry: (String) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (untyped) -> untyped
+  def deep_freeze: (untyped) -> untyped
+end

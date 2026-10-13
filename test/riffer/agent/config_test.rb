@@ -34,6 +34,10 @@ describe Riffer::Agent::Config do
       expect(config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
     end
 
+    it "starts with reasoning nil" do
+      expect(config.reasoning).must_be_nil
+    end
+
     it "starts with tools_config nil" do
       expect(config.tools_config).must_be_nil
     end
@@ -121,6 +125,44 @@ describe Riffer::Agent::Config do
     end
   end
 
+  describe "#reasoning=" do
+    it "accepts each level as a Symbol" do
+      config = Riffer::Agent::Config.new
+
+      Riffer::Agent::Config::REASONING_LEVELS.each do |level|
+        config.reasoning = level
+
+        expect(config.reasoning).must_equal level
+      end
+    end
+
+    it "normalizes a String to a Symbol" do
+      config = Riffer::Agent::Config.new
+      config.reasoning = "medium"
+
+      expect(config.reasoning).must_equal :medium
+    end
+
+    it "accepts nil to unset" do
+      config = Riffer::Agent::Config.new(reasoning: :low)
+      config.reasoning = nil
+
+      expect(config.reasoning).must_be_nil
+    end
+
+    it "raises on an unknown level" do
+      config = Riffer::Agent::Config.new
+      error = expect { config.reasoning = "minimal" }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal 'reasoning must be one of off, low, medium, high, xhigh, max, got "minimal"'
+    end
+
+    it "raises on a non-String, non-Symbol value" do
+      config = Riffer::Agent::Config.new
+      error = expect { config.reasoning = 1024 }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/reasoning must be one of/)
+    end
+  end
+
   describe "#model=" do
     it "accepts a non-empty String" do
       config = Riffer::Agent::Config.new
@@ -183,6 +225,15 @@ describe Riffer::Agent::Config do
     it "raises when model: kwarg is a non-String non-Proc" do
       error = expect { Riffer::Agent::Config.new(model: 123) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/model must be a String/)
+    end
+
+    it "normalizes the reasoning: kwarg" do
+      expect(Riffer::Agent::Config.new(reasoning: "off").reasoning).must_equal :off
+    end
+
+    it "raises when reasoning: kwarg is unknown" do
+      error = expect { Riffer::Agent::Config.new(reasoning: :extreme) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/reasoning must be one of/)
     end
 
     it "raises when instructions: kwarg is empty" do

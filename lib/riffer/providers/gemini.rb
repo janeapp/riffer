@@ -55,6 +55,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
+  #: (Symbol) -> Hash[Symbol, untyped]
+  def default_reasoning_options(level)
+    { thinkingConfig: { thinkingLevel: level.to_s } }
+  end
+
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     partitioned = partition_messages(messages)

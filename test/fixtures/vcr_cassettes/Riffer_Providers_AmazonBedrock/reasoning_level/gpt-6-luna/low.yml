@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.openai.gpt-6-luna/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[],"additionalModelRequestFields":{"reasoning":{"effort":"low"}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - d675b0c9-6d61-467f-af8e-99153b661a1f
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '176'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 05 Oct 2026 21:54:00 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1620'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - feb01c72-13ab-4e22-9346-aa549f30bd0a
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1538},"output":{"message":{"content":[{"reasoningContent":{"redactedContent":"cnNuX3JydTZCUUhnVWMvVldTNXZSSUFsSHdJRmVGZlFQOGxkS2VtanZhVzZvMEZibG1wVkdFSXpMUFVzUTBMZitRM3RxRm9mQUY4QUFRQVZZWGR6TFdOeWVYQjBieTF3ZFdKc2FXTXRhMlY1QUVSQk5XVndNVWxOUlVOU1lYQjFiVWRKYlV0UGNIVmthWEZ1WjFKUFJ6Wm1jRFppVmpOeFowaHBjaXRSWjBjeFNUTkNNMnBDWm1WMU5HUXJaRFpHTkZoUVNtYzlQUUFCQUJGaGQzTXRhMjF6TFdocFpYSmhjbU5vZVFBS1ltVnliUzF6ZEc5eVpRQmNjUnJRR21pUXZMZE5laTdwcklrZ1JHMStpdWowNXVVeDd1b3Z6UVR5ZXhQUU8wUGVwUjhqUlEzelZZUUZuUEZ4c043S0k0M2YrQlY1Z21UckhwRVgrYjQxS1I5RmlmUG02c2RTU1drUFBxVnFVTWNGdE85UHRDeGQ3VFVDQUFBUUFOR3Qyd1F3L1lySDEzdEJBMFBIOVdpOXA4UGgyS09teG0rSFBudW1jMENlUXdKekRFYWhpNlpIL0xEUWpocmh4di8vLy84QUFBQUJBQUFBQUFBQUFBQUFBQUFCQUFBQTZDSTBlODhyOVo3MFkrMzM1aGNDQ1VSWnZGSDQ3ZnhzeVo4TklUMUl2dVpXaFBwKzhLMVMyeEkrTWkzY2Q4SEk4ZGJKNnNWVis1TGRnRkZPVm0xNVBDWHJDT3czQlp2Rkt2ZFA1NE5TdThzTFZhUEtGVTgvRTBvMGNPZUpsdE84em0wcndiN1lJeTEyYmZJaGhjaGV0MXhFaitYcGh1K1k5OEJLSktta3V2QnRNaXVlek9YaUdYL2UxaUs5NFhPR1czM1JRY0xoTTJnK3dIY3dOVFVpVkxZeC8zcFFDUjRncFdaQzgwcGx2Y1FRbTR0NjN5YjJrT2pjbDFIR2YvMlE2cHNvK3hOMFkxbHR3MVBXK0x2SkZwdXBpK0FBREFwYlRMVlBrS1d3dHE0eGVYZ0Rtam1ZRTB3cTZwUVlsL2dSa0d5NEEvaWlmNm5BQUdjd1pRSXhBT2NwbGNJbStIRnhaN2VSM0hMY1A3QlA1UG9rdVVoWGd5MXhmKzNBa2F0N29QQ2l0Y0MyTVlPR2c0dzdhVmY4K1FJd1pCdjdGajRRUXBKbit6YnFtd3dFUDNWYWRiUW4rMWw4QTBTY0RrNXdRa2hySFUvRG5JYXQyVkZteGVoS1daWlQ="}},{"text":"391"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":20,"outputTokens":18,"serverToolUsage":{},"totalTokens":38}}'
+  recorded_at: Mon, 05 Oct 2026 21:54:00 GMT
+recorded_with: VCR 6.4.0

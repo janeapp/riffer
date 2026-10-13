@@ -1802,6 +1802,39 @@ describe Riffer::Agent::Run do
       end
     end
 
+    describe "with reasoning" do
+      it "threads the level to the provider as riffer_reasoning_level" do
+        agent = stub_agent do
+          identifier "reasoning-agent"
+          model "mock/riffer-1"
+          reasoning "low"
+        end.new
+
+        options = Riffer::Agent::Run.send(:merged_model_options, agent)
+
+        expect(options[:riffer_reasoning_level]).must_equal :low
+      end
+
+      it "keeps model_options alongside the level" do
+        agent = stub_agent do
+          identifier "reasoning-options-agent"
+          model "mock/riffer-1"
+          model_options temperature: 0.2
+          reasoning :off
+        end.new
+
+        options = Riffer::Agent::Run.send(:merged_model_options, agent)
+
+        expect(options).must_equal({ temperature: 0.2, riffer_reasoning_level: :off })
+      end
+
+      it "omits riffer_reasoning_level when unset" do
+        options = Riffer::Agent::Run.send(:merged_model_options, agent_class.new)
+
+        expect(options.key?(:riffer_reasoning_level)).must_equal false
+      end
+    end
+
     describe "with max_steps" do
       let(:tool_class) do
         stub_tool("MaxStepsTool") do

@@ -46,6 +46,7 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
   max_steps:         8,                        # integer; -1 = unlimited (see below)
   structured_output: { type: "object", … },   # JSON Schema, or null
   structured_output_strategy: :native,        # :native or :prompted ("native"/"prompted" over JSON)
+  reasoning:         :low,                     # reasoning level, or null
   tools: [ { name:, description:, parameters_schema:, timeout: }, … ]
 }
 ```

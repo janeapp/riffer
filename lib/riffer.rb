@@ -62,10 +62,12 @@ module Riffer
     @config ||= Config.new
   end
 
+  # Builds the catalog after the block, so a bad catalog file fails boot.
   #--
   #: () ?{ (Riffer::Config) -> void } -> void
   def configure(&)
     yield config if block_given?
+    config.reload_catalog
   end
 
   #--

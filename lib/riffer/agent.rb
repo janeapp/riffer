@@ -74,6 +74,13 @@ class Riffer::Agent
   end
 
   #--
+  #: (?(Symbol | String)?) -> Symbol?
+  def self.reasoning(value = nil)
+    config.reasoning = value if value
+    config.reasoning
+  end
+
+  #--
   #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools(value = nil)
     value.nil? ? config.tools_config : (config.tools_config = value)
