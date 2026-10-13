@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -324,6 +329,20 @@
   <span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span><span class="p">,</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">web_search: </span><span class="kp">true</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h3 id="reasoning">reasoning</h3>
+
+<p>Sets how much the model thinks before it answers: <code>:off</code>, <code>:low</code>, <code>:medium</code>, <code>:high</code>, <code>:xhigh</code>, or <code>:max</code> (a String works too). Anything else raises <code>Riffer::ArgumentError</code>. Leave it unset to send nothing and keep the model’s default.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-sonnet-4-6'</span>
+  <span class="n">reasoning</span> <span class="ss">:low</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Riffer turns the level into the provider’s own params. It uses the model’s <a href="/guides/catalog/#reasoning">catalog</a> entry when one defines the level, and otherwise the provider’s default, which sends the level name as the provider’s effort value (for example <code>output_config: { effort: "low" }</code> with adaptive thinking on Anthropic). Riffer doesn’t check whether the model supports the level; a model that rejects it returns the provider’s error.</p>
+
+<p><code>model_options</code> are deep-merged over those params, so they override single fields rather than whole blocks. For example, <code>model_options max_tokens: 8000</code> keeps the catalog’s thinking budget and replaces only its <code>max_tokens</code>.</p>
 
 <h3 id="max_steps">max_steps</h3>
 

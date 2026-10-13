@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -380,6 +385,8 @@
 </code></pre></div></div>
 
 <p>The reasoning is kept on the assistant message as <a href="/guides/messages/#reasoning">reasoning parts</a>, whether you call <code>generate</code> or <code>stream</code>. Read it with <code>response.reasoning</code>, or as plain text with <code>reasoning_text</code> on the message. Bedrock sometimes redacts part of Claude’s reasoning. Those parts are stored and sent back like any other, but they have no readable text, so <code>reasoning_text</code> leaves them out.</p>
+
+<p>The agent-level <a href="/guides/agents/#reasoning"><code>reasoning</code></a> setting defaults to Claude’s fields inside <code>additional_model_request_fields</code>: adaptive thinking at the level’s effort, and <code>thinking: {type: "disabled"}</code> for <code>:off</code>. Other model families (Nova, OpenAI) and Claude 4.5 and earlier need a <a href="/guides/catalog/#reasoning">catalog</a> entry with their own fields.</p>
 
 <h3 id="reasoning-replay">Reasoning Replay</h3>
 

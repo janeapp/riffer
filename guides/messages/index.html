@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -288,7 +293,7 @@
 <p>The cache buckets are subsets of <code>input_tokens</code>, never additions to it — summing <code>input_tokens + cache_read_tokens</code> double-counts. <code>total_tokens</code> (input + output) matches the totals providers report on their dashboards.</p>
 
 <ul>
-  <li><code>cost</code> — the computed cost of the call, set when pricing is configured for the model in use (see <a href="/guides/configuration/#pricing">Configuration → Pricing</a>); <code>nil</code> when the model is unpriced. It’s for observability, not billing. Run-level usage sums per-call costs through <code>TokenUsage#+</code>, so <code>response.token_usage.cost</code> is the total spend across the run — but the sum is <code>nil</code> if any call in the run used an unpriced model, rather than silently under-reporting.</li>
+  <li><code>cost</code> — the computed cost of the call, set when a <a href="/guides/catalog/#pricing">catalog</a> or the deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> prices the model in use; <code>nil</code> when the model is unpriced. It’s for observability, not billing. Run-level usage sums per-call costs through <code>TokenUsage#+</code>, so <code>response.token_usage.cost</code> is the total spend across the run — but the sum is <code>nil</code> if any call in the run used an unpriced model, rather than silently under-reporting.</li>
 </ul>
 
 <h4 id="finish-reasons">Finish Reasons</h4>

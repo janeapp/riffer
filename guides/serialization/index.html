@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/" class="active" aria-current="page"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -182,7 +187,7 @@
 
       <main>
         <article>
-          <p class="kicker"><span class="chapter">Going further · 16</span></p>
+          <p class="kicker"><span class="chapter">Going further · 17</span></p>
           <h1>Serialization</h1>
           <nav class="toc" aria-label="On this page">
             <span class="toc-label">On this page</span>
@@ -239,6 +244,7 @@
   <span class="ss">max_steps:         </span><span class="mi">8</span><span class="p">,</span>                        <span class="c1"># integer; -1 = unlimited (see below)</span>
   <span class="ss">structured_output: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"object"</span><span class="p">,</span> <span class="err">…</span> <span class="p">},</span>   <span class="c1"># JSON Schema, or null</span>
   <span class="ss">structured_output_strategy: :native</span><span class="p">,</span>        <span class="c1"># :native or :prompted ("native"/"prompted" over JSON)</span>
+  <span class="ss">reasoning:         :low</span><span class="p">,</span>                     <span class="c1"># reasoning level, or null</span>
   <span class="ss">tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div></div>

@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Model Catalog — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.53.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/catalog/" class="active" aria-current="page"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">12</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/testing/"
+                  ><span class="num">13</span> Testing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">14</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">15</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">16</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">17</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">18</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 11</span></p>
+          <h1>Model Catalog</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#loading-catalog-files">Loading catalog files</a></li>
+              <li><a href="#file-format">File format</a></li>
+              <li><a href="#reasoning">Reasoning</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#layering-files">Layering files</a></li>
+              <li><a href="#validation">Validation</a></li>
+            </ul>
+          </nav>
+          
+<p>The model catalog holds per-model data that riffer can’t derive from the model name: how a <a href="/guides/agents/#reasoning"><code>reasoning</code></a> level maps to request params, and what the model costs. It lives in JSON files you list in your configuration, so a new model or a price change is a data edit, not a riffer release.</p>
+
+<p>Riffer ships no catalog. Without one:</p>
+
+<ul>
+  <li><code>reasoning</code> still works through each provider’s default mapping (see <a href="#provider-defaults">Provider defaults</a>).</li>
+  <li>Calls carry no cost (<code>token_usage.cost</code> is <code>nil</code>), unless the deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> prices the model.</li>
+</ul>
+
+<h2 id="loading-catalog-files">Loading catalog files</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">catalog_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"config/riffer/models.json"</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code>catalog_files</code> takes an Array of paths (Strings or Pathnames). Files load in the order listed.</li>
+  <li><code>Riffer.configure</code> builds the catalog at the end of the block, so a missing file or invalid data raises <code>Riffer::ArgumentError</code> at boot.</li>
+  <li>Calling <code>configure</code> again rebuilds the catalog from scratch.</li>
+  <li>Files load at boot only. There is no API to add entries at runtime. The built catalog is frozen.</li>
+</ul>
+
+<h2 id="file-format">File format</h2>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"models"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"anthropic/claude-haiku-4-5-20251001"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"aliases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"anthropic/claude-haiku-4-5"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"pricing"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"cache_read"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"cache_write"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.25</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"reasoning"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"off"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"thinking"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"disabled"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"thinking"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"enabled"</span><span class="p">,</span><span class="w"> </span><span class="nl">"budget_tokens"</span><span class="p">:</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"max_tokens"</span><span class="p">:</span><span class="w"> </span><span class="mi">5120</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"thinking"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"enabled"</span><span class="p">,</span><span class="w"> </span><span class="nl">"budget_tokens"</span><span class="p">:</span><span class="w"> </span><span class="mi">24576</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"max_tokens"</span><span class="p">:</span><span class="w"> </span><span class="mi">28672</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"gemini/gemini-2.5-flash"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"reasoning"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"off"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"thinkingConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"thinkingBudget"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"thinkingConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"thinkingBudget"</span><span class="p">:</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"amazon_bedrock/us.amazon.nova-2-lite-v1:0"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"reasoning"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"additional_model_request_fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"reasoningConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"enabled"</span><span class="p">,</span><span class="w">
+              </span><span class="nl">"maxReasoningEffort"</span><span class="p">:</span><span class="w"> </span><span class="s2">"low"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>version</code></td>
+      <td>Required. The file format version. Only <code>1</code> is supported.</td>
+    </tr>
+    <tr>
+      <td><code>models</code></td>
+      <td>An object keyed by exact <code>provider/model</code> id: the same string you give an agent’s <code>model</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Each model entry can have any of these keys:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>aliases</code></td>
+      <td>Other <code>provider/model</code> ids that share this entry, pricing included. An alias may name a different provider, e.g. <code>"azure_openai/my-gpt-prod"</code> on an OpenAI entry.</td>
+    </tr>
+    <tr>
+      <td><code>pricing</code></td>
+      <td>Per-million-token rates. See <a href="#pricing">Pricing</a>.</td>
+    </tr>
+    <tr>
+      <td><code>reasoning</code></td>
+      <td>An object keyed by level (<code>off</code>, <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>). Each value is a <code>model_options</code> fragment. See <a href="#reasoning">Reasoning</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="lookup">Lookup</h3>
+
+<p>A model id matches an entry by its exact key first, then by an alias. There are no patterns, families, or fallback entries.</p>
+
+<p>The provider part of the key is the provider’s <a href="/guides/providers/custom/#registering-your-provider">repository</a> identifier, so a custom provider registered as <code>:my_provider</code> reads entries under <code>my_provider/...</code>.</p>
+
+<h2 id="reasoning">Reasoning</h2>
+
+<p>A reasoning fragment is written exactly as you would write it in <code>model_options</code>, using the provider’s own param names. Bedrock fragments spell out <code>additional_model_request_fields</code> and <code>inference_config</code> themselves.</p>
+
+<p>When an agent sets <code>reasoning</code>, riffer picks the params for that level in this order:</p>
+
+<ol>
+  <li>The catalog entry’s fragment for the level (by exact key, then alias).</li>
+  <li>The provider’s default mapping, when the entry is missing or doesn’t define the level.</li>
+  <li>If the provider has no default either, riffer raises <code>Riffer::ArgumentError</code> before the request:
+<code>No reasoning mapping for my_provider/my-model at level :low. Add one in a catalog file (see docs/CATALOG.md).</code></li>
+</ol>
+
+<p>Riffer doesn’t check whether a model supports a level. If the model rejects the params, you get the provider’s error unchanged.</p>
+
+<h3 id="provider-defaults">Provider defaults</h3>
+
+<p>The defaults send the level name as the provider’s effort value:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th><code>:off</code></th>
+      <th>Other levels</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenAI, Azure OpenAI</td>
+      <td><code>reasoning: "none"</code></td>
+      <td><code>reasoning: "&lt;level&gt;"</code></td>
+    </tr>
+    <tr>
+      <td>OpenRouter</td>
+      <td><code>reasoning: "none"</code></td>
+      <td><code>reasoning: "&lt;level&gt;"</code></td>
+    </tr>
+    <tr>
+      <td>Anthropic</td>
+      <td><code>thinking: { type: "disabled" }</code></td>
+      <td><code>thinking: { type: "adaptive" }, output_config: { effort: "&lt;level&gt;" }</code></td>
+    </tr>
+    <tr>
+      <td>Amazon Bedrock</td>
+      <td><code>additional_model_request_fields: { thinking: { type: "disabled" } }</code></td>
+      <td><code>additional_model_request_fields: { thinking: { type: "adaptive" }, output_config: { effort: "&lt;level&gt;" } }</code></td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td><code>thinkingConfig: { thinkingLevel: "off" }</code></td>
+      <td><code>thinkingConfig: { thinkingLevel: "&lt;level&gt;" }</code></td>
+    </tr>
+    <tr>
+      <td>Mock</td>
+      <td>nothing</td>
+      <td>nothing</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Add a catalog entry for models that need different params, for example:</p>
+
+<ul>
+  <li>Claude 4.5 and earlier, which take a <code>budget_tokens</code> thinking budget instead of adaptive thinking.</li>
+  <li>Gemini 2.5, which takes <code>thinkingBudget</code>.</li>
+  <li>Non-Claude models on Amazon Bedrock (Nova, OpenAI), which use their own fields.</li>
+</ul>
+
+<p>A <a href="/guides/providers/custom/#reasoning-level">custom provider</a> can supply its own default.</p>
+
+<h3 id="merging-with-model_options">Merging with model_options</h3>
+
+<p>The agent’s <code>model_options</code> always win. Riffer deep-merges them over the fragment: nested objects merge key by key, and any other value (including arrays) replaces the fragment’s. So you can override one field without repeating the rest:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SummaryAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"anthropic/claude-haiku-4-5-20251001"</span>
+  <span class="n">reasoning</span> <span class="ss">:low</span>
+  <span class="n">model_options</span> <span class="ss">max_tokens: </span><span class="mi">8000</span> <span class="c1"># keeps the catalog's thinking budget, replaces its max_tokens</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Riffer doesn’t check the merged result. If a partial override makes the request invalid, the provider rejects it.</p>
+
+<h2 id="pricing">Pricing</h2>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"pricing"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="mf">15.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cache_read"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cache_write"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.75</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>input</code></td>
+      <td>Required. Price per <strong>million</strong> input tokens. Applies to the uncached portion of <code>input_tokens</code>.</td>
+    </tr>
+    <tr>
+      <td><code>output</code></td>
+      <td>Required. Price per <strong>million</strong> output tokens.</td>
+    </tr>
+    <tr>
+      <td><code>cache_read</code></td>
+      <td>Price per million cache-read tokens. When omitted, cache reads bill at the <code>input</code> rate.</td>
+    </tr>
+    <tr>
+      <td><code>cache_write</code></td>
+      <td>Price per million cache-write tokens. When omitted, cache writes bill at the <code>input</code> rate.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Because the cache buckets are subsets of <code>input_tokens</code>, the cost formula subtracts them before applying the input rate:</p>
+
+<pre><code class="language-text">cost = (input − cache_read − cache_write) × input_rate
+     + cache_read  × cache_read_rate
+     + cache_write × cache_write_rate
+     + output      × output_rate
+</code></pre>
+
+<p>(all rates ÷ 1,000,000; an unset cache rate falls back to <code>input_rate</code>.) Cost is for observability, not billing: it’s a <code>Float</code>, and sub-cent rounding can accumulate over a long run. See <a href="/guides/messages/#token-usage-semantics">Messages → Token Usage Semantics</a> for how cost surfaces and aggregates.</p>
+
+<p>A model with no catalog pricing carries no cost. The deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> is still read as a fallback; catalog pricing wins when both price a model.</p>
+
+<h2 id="layering-files">Layering files</h2>
+
+<p>Later files override earlier ones, so you can keep shared data in one file and local overrides in another:</p>
+
+<ul>
+  <li>For an entry with the same key, a later file replaces whole sections (<code>pricing</code>, <code>reasoning</code>) and leaves the others alone.</li>
+  <li><code>aliases</code> arrays are combined, so a later file can add aliases without repeating earlier ones.</li>
+  <li>If a later file lists an alias an earlier file gave to a different entry, the later file wins.</li>
+</ul>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"models"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"anthropic/claude-haiku-4-5-20251001"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"pricing"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span><span class="w"> </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="mf">4.0</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"openai/gpt-5.1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"aliases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"azure_openai/my-gpt-prod"</span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Listed after the first example, this file replaces Haiku’s pricing but keeps its reasoning, and routes an Azure deployment to the <code>openai/gpt-5.1</code> entry.</p>
+
+<h2 id="validation">Validation</h2>
+
+<p>Loading raises <code>Riffer::ArgumentError</code>, naming the file and the model key, when:</p>
+
+<ul>
+  <li>The file is missing or isn’t valid JSON, or <code>version</code> is missing or unsupported.</li>
+  <li>The file has keys other than <code>version</code> and <code>models</code>, or an entry has keys other than <code>aliases</code>, <code>pricing</code>, and <code>reasoning</code>.</li>
+  <li>A model key or alias isn’t in <code>provider/model</code> form, or <code>aliases</code> isn’t an array of strings.</li>
+  <li><code>pricing</code> is missing <code>input</code> or <code>output</code>, has unknown keys, or has a rate that isn’t a non-negative number.</li>
+  <li>A reasoning level isn’t one of <code>off</code>, <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>, or its value isn’t an object.</li>
+  <li>Two entries in the same file list the same alias.</li>
+  <li>After all files are layered, an alias is also a model key.</li>
+</ul>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/configuration/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Configuration</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/evals/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Evals</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

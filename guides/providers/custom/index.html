@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -197,6 +202,7 @@
               <li><a href="#token-usage-semantics">Token Usage Semantics</a></li>
               <li><a href="#finish-reasons">Finish Reasons</a></li>
               <li><a href="#reasoning">Reasoning</a></li>
+              <li><a href="#reasoning-level">Reasoning Level</a></li>
               <li><a href="#tags">Tags</a></li>
               <li><a href="#trace-provider-name">Trace Provider Name</a></li>
               <li><a href="#error-handling">Error Handling</a></li>
@@ -360,7 +366,7 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">:my_provider</span><span class="p">)</span> <span class="p">{</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">MyProvider</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<p>The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. <code>openai</code>) through your own backend. Both <code>find</code> and <code>key_for</code> (used for pricing and observability keys) honor the registration. Remove one with <code>Riffer::Providers::Repository.unregister(:my_provider)</code>.</p>
+<p>The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. <code>openai</code>) through your own backend. Both <code>find</code> and <code>key_for</code> (used for <a href="/guides/catalog/">catalog</a> keys) honor the registration. Remove one with <code>Riffer::Providers::Repository.unregister(:my_provider)</code>.</p>
 
 <p>Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.</p>
 
@@ -503,6 +509,19 @@
 </code></pre></div></div>
 
 <p>If your adapter surfaces reasoning text but cannot yet replay it, call <code>yield_reasoning_done(yielder, text)</code> instead. It wraps the text in a <code>:text</code> part with no <code>format</code>, which persists for display and is skipped on replay.</p>
+
+<h2 id="reasoning-level">Reasoning Level</h2>
+
+<p>When an agent sets <a href="/guides/agents/#reasoning"><code>reasoning</code></a>, riffer resolves the level to <code>model_options</code> params before calling <code>build_request_params</code>, so your provider receives ordinary options and never sees the level itself. It uses the model’s <a href="/guides/catalog/#reasoning">catalog</a> entry under your registration key first, then your provider’s default. Override the private <code>default_reasoning_options</code> to supply one:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">private</span>
+
+<span class="k">def</span> <span class="nf">default_reasoning_options</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+  <span class="p">{</span> <span class="ss">reasoning_effort: </span><span class="n">level</span><span class="p">.</span><span class="nf">to_s</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The base class returns <code>nil</code>, which makes riffer raise <code>Riffer::ArgumentError</code> for any level the catalog doesn’t map.</p>
 
 <h2 id="tags">Tags</h2>
 

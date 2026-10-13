@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -356,6 +361,8 @@
   <span class="n">model_options</span> <span class="ss">thinking: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"enabled"</span><span class="p">,</span> <span class="ss">budget_tokens: </span><span class="mi">10000</span><span class="p">}</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>The agent-level <a href="/guides/agents/#reasoning"><code>reasoning</code></a> setting defaults to adaptive thinking at the level’s effort (<code>thinking: {type: "adaptive"}, output_config: {effort: "low"}</code>), and <code>:off</code> sends <code>thinking: {type: "disabled"}</code>. Claude 4.5 and earlier need a <code>budget_tokens</code> mapping in a <a href="/guides/catalog/#reasoning">catalog</a> entry instead.</p>
 
 <p>When streaming with extended thinking enabled, you’ll receive <code>ReasoningDelta</code> events containing the model’s thought process, followed by a <code>ReasoningDone</code> event when thinking completes:</p>
 

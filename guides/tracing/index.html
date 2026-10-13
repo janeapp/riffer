@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/" class="active" aria-current="page"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -182,7 +187,7 @@
 
       <main>
         <article>
-          <p class="kicker"><span class="chapter">Going further · 17</span></p>
+          <p class="kicker"><span class="chapter">Going further · 18</span></p>
           <h1>Tracing</h1>
           <nav class="toc" aria-label="On this page">
             <span class="toc-label">On this page</span>
@@ -473,6 +478,11 @@
       <td>When the caller set it</td>
     </tr>
     <tr>
+      <td><code>riffer.request.reasoning_level</code></td>
+      <td>string</td>
+      <td>When the agent sets <a href="/guides/agents/#reasoning"><code>reasoning</code></a></td>
+    </tr>
+    <tr>
       <td><code>gen_ai.usage.input_tokens</code></td>
       <td>int</td>
       <td>When the provider reported usage</td>
@@ -694,7 +704,7 @@ cache_read.input_tokens      =  800   → 800 of the 1000 were cache hits
 
 <h3 id="cost">Cost</h3>
 
-<p><code>riffer.cost</code> is the modeled cost of one call (on a <code>chat</code> span) or a whole run (on the <code>invoke_agent</code> span). It lives in Riffer’s own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats <code>gen_ai.*</code> for it. The attribute appears only when you have configured pricing for the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no <code>riffer.cost</code>. See <a href="/guides/configuration/#pricing">Configuration — Pricing</a> for the rates.</p>
+<p><code>riffer.cost</code> is the modeled cost of one call (on a <code>chat</code> span) or a whole run (on the <code>invoke_agent</code> span). It lives in Riffer’s own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats <code>gen_ai.*</code> for it. The attribute appears only when a <a href="/guides/catalog/#pricing">catalog</a> or the deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> prices the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no <code>riffer.cost</code>.</p>
 
 <p>The value is <strong>unitless on the wire</strong> — Riffer attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a <code>riffer.cost</code> of <code>0.0123</code> means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.</p>
 

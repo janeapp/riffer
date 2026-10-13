@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.52.1</span>
+            <span class="version">v0.53.0</span>
           </div>
         </nav>
       </div>
@@ -93,38 +93,43 @@
                 >
               </li>
               <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
                 <a href="/guides/evals/"
-                  ><span class="num">11</span> Evals</a
+                  ><span class="num">12</span> Evals</a
                 >
               </li>
               <li>
                 <a href="/guides/testing/"
-                  ><span class="num">12</span> Testing</a
+                  ><span class="num">13</span> Testing</a
                 >
               </li>
               <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">13</span> Guardrails</a
+                  ><span class="num">14</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">14</span> Skills</a
+                  ><span class="num">15</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">15</span> MCP</a
+                  ><span class="num">16</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">16</span> Serialization</a
+                  ><span class="num">17</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">17</span> Tracing</a
+                  ><span class="num">18</span> Tracing</a
                 >
               </li>
             </ul>
@@ -521,60 +526,46 @@
 
 <p>A file that fails resolution raises a <code>Riffer::FileError</code> subclass — <code>Riffer::FileUnsupportedError</code>, <code>Riffer::FileDownloadsDisabledError</code>, <code>Riffer::TooManyFilesError</code>, <code>Riffer::FileChecksumMismatchError</code>, <code>Riffer::FileTooLargeError</code>, <code>Riffer::FileDownloadError</code>, or <code>Riffer::FileEncodingError</code> — so callers can <code>rescue Riffer::FileError</code> for any attachment problem, or a specific subclass to handle one case.</p>
 
-<h3 id="pricing">Pricing</h3>
+<h3 id="model-catalog">Model Catalog</h3>
 
-<p>Configure per-model token prices and riffer computes the cost of each LLM call onto its <a href="/guides/messages/#token-usage-semantics"><code>TokenUsage</code></a>. Riffer ships <strong>no</strong> price table — so an unconfigured model simply carries no cost (<code>token_usage.cost</code> is <code>nil</code>).</p>
+<p>List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, <code>reasoning</code> uses each provider’s default mapping, and calls carry no cost unless the deprecated <a href="#pricing-deprecated"><code>config.pricing</code></a> prices the model.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="c1"># Rates are per million tokens, keyed by the same "provider/model" id you give the agent.</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"anthropic/claude-sonnet-4-6"</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">3.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">15.0</span><span class="p">,</span> <span class="ss">cache_read: </span><span class="mf">0.30</span><span class="p">,</span> <span class="ss">cache_write: </span><span class="mf">3.75</span><span class="p">)</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"openai/gpt-4"</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">30.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">60.0</span><span class="p">)</span>
-
-  <span class="c1"># Pass an array to share one set of rates across a model family:</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">([</span><span class="s2">"openai/gpt-4"</span><span class="p">,</span> <span class="s2">"openai/gpt-4-0613"</span><span class="p">],</span> <span class="ss">input: </span><span class="mf">30.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">60.0</span><span class="p">)</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">catalog_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"config/riffer/models.json"</span><span class="p">]</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
 <table>
   <thead>
     <tr>
-      <th>Argument</th>
+      <th>Option</th>
       <th>Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><code>models</code></td>
-      <td>A <code>provider/model</code> id (e.g. <code>"openai/gpt-4"</code>) — the same string you pass to <code>model</code> — or an array of ids that share one set of rates. No alias matching; raises on a malformed id.</td>
-    </tr>
-    <tr>
-      <td><code>input:</code></td>
-      <td>Price per <strong>million</strong> input tokens. Required. Applies to the uncached portion of <code>input_tokens</code>.</td>
-    </tr>
-    <tr>
-      <td><code>output:</code></td>
-      <td>Price per <strong>million</strong> output tokens. Required.</td>
-    </tr>
-    <tr>
-      <td><code>cache_read:</code></td>
-      <td>Price per million cache-read tokens. Optional — when omitted, cache reads bill at the <code>input:</code> rate.</td>
-    </tr>
-    <tr>
-      <td><code>cache_write:</code></td>
-      <td>Price per million cache-write tokens. Optional — when omitted, cache writes bill at the <code>input:</code> rate.</td>
+      <td><code>catalog_files</code></td>
+      <td>Array of paths (Strings or Pathnames), loaded in order; later files override earlier ones. Built at the end of <code>Riffer.configure</code>.</td>
     </tr>
   </tbody>
 </table>
 
-<p>Because the cache buckets are subsets of <code>input_tokens</code>, the cost formula subtracts them before applying the input rate:</p>
+<p>See <a href="/guides/catalog/">Model Catalog</a> for the file format, lookup, layering, and validation.</p>
 
-<pre><code class="language-text">cost = (input − cache_read − cache_write) × input_rate
-     + cache_read  × cache_read_rate
-     + cache_write × cache_write_rate
-     + output      × output_rate
-</code></pre>
+<h3 id="pricing-deprecated">Pricing (deprecated)</h3>
 
-<p>(all rates ÷ 1,000,000; an unset cache rate falls back to <code>input_rate</code>.) Cost is for observability, not billing — it’s a <code>Float</code>, and sub-cent rounding can accumulate over a long run. See <a href="/guides/messages/#token-usage-semantics">Messages → Token Usage Semantics</a> for how cost surfaces and aggregates.</p>
+<p><code>config.pricing</code> is deprecated and will be removed in a future release. Move rates into a <a href="/guides/catalog/#pricing">catalog file</a>; the first <code>set</code> call prints a deprecation warning. Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># before</span>
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"anthropic/claude-sonnet-4-6"</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">3.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">15.0</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"models"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"anthropic/claude-sonnet-4-6"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"pricing"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="mf">15.0</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code>set</code> takes a <code>provider/model</code> id or an array of ids, plus <code>input:</code>, <code>output:</code>, and optional <code>cache_read:</code> and <code>cache_write:</code> rates per million tokens. The rates and cost formula are the same as <a href="/guides/catalog/#pricing">catalog pricing</a>.</p>
 
 <h3 id="message-id-strategy">Message ID Strategy</h3>
 
@@ -629,6 +620,18 @@
   <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h3 id="reasoning">reasoning</h3>
+
+<p>Set how much the model thinks before it answers, with one setting that works on every provider:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-sonnet-4-6'</span>
+  <span class="n">reasoning</span> <span class="ss">:low</span> <span class="c1"># :off, :low, :medium, :high, :xhigh, or :max</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Riffer maps the level to the provider’s own params, from a <a href="/guides/catalog/#reasoning">catalog</a> entry or the provider’s default. <code>model_options</code> are deep-merged over those params and win. See <a href="/guides/agents/#reasoning">Agents — reasoning</a>.</p>
 
 <h2 id="common-model-options">Common Model Options</h2>
 
@@ -834,10 +837,10 @@
               ><span class="name">Stream Events</span></span
             ></a
           >
-          <a class="doc next" href="/guides/evals/"
+          <a class="doc next" href="/guides/catalog/"
             ><span
               ><span class="desc">Next</span
-              ><span class="name">Evals</span></span
+              ><span class="name">Model Catalog</span></span
             ><span class="go">→</span></a
           >
         </nav>
