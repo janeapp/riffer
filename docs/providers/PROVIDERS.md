@@ -11,6 +11,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
 | Gemini         | `gemini`         | None                     |
+| Google Cloud   | `google_cloud`   | `googleauth`             |
 | OpenRouter     | `openrouter`     | `openai`                 |
 | Mock           | `mock`           | None                     |
 
@@ -25,6 +26,7 @@ class MyAgent < Riffer::Agent
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
   model 'gemini/gemini-2.5-flash-lite'                                # Gemini
+  model 'google_cloud/gemini-2.5-flash'                               # Google Cloud (Vertex AI)
   model 'openrouter/anthropic/claude-sonnet-4.6'                      # OpenRouter
   model 'mock/any'                                                    # Mock provider
 end
@@ -41,6 +43,7 @@ Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes
 | Anthropic      | `config.anthropic.api_key`                                        |
 | Amazon Bedrock | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
 | Gemini         | `config.gemini.api_key`                                           |
+| Google Cloud   | `config.google_cloud.project_id`, `.location`, `.credentials`     |
 | OpenRouter     | `config.openrouter.api_key`                                       |
 
 Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
@@ -182,6 +185,9 @@ Riffer::Providers::Repository.find(:anthropic)
 Riffer::Providers::Repository.find(:gemini)
 # => Riffer::Providers::Gemini
 
+Riffer::Providers::Repository.find(:google_cloud)
+# => Riffer::Providers::GoogleCloud
+
 Riffer::Providers::Repository.find(:openrouter)
 # => Riffer::Providers::OpenRouter
 
@@ -198,4 +204,5 @@ Riffer::Providers::Repository.find(:mock)
 - [Mock](MOCK_PROVIDER.md) - Mock provider for testing
 - [Custom Providers](CUSTOM_PROVIDERS.md) - Creating your own provider
 - [Gemini](GEMINI.md) - Gemini models via Google GenAI API
+- [Google Cloud](GOOGLE_CLOUD.md) - Gemini models on Vertex AI
 - [OpenRouter](OPENROUTER.md) - Unified gateway across many vendors

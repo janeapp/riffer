@@ -1,0 +1,25 @@
+# Generated from lib/riffer/wire/sse.rb with RBS::Inline
+
+class Riffer::Wire::SSE
+  @buffer: String
+
+  @data: Array[String]
+
+  @event: String?
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # An event is dispatched only once its terminating blank line arrives, so a
+  # trailing partial event stays buffered.
+  # --
+  # : (String) { (String, String?) -> void } -> void
+  def feed: (String) { (String, String?) -> void } -> void
+
+  private
+
+  # --
+  # : (String) { (String, String?) -> void } -> void
+  def process_line: (String) { (String, String?) -> void } -> void
+end

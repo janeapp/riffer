@@ -14,6 +14,8 @@ class Riffer::Config
 
   attr_reader :gemini #: Riffer::Config::Gemini # @dynamic gemini
 
+  attr_reader :google_cloud #: Riffer::Config::GoogleCloud # @dynamic google_cloud
+
   attr_reader :openai #: Riffer::Config::OpenAI # @dynamic openai
 
   attr_reader :openrouter #: Riffer::Config::OpenRouter # @dynamic openrouter
@@ -91,6 +93,7 @@ class Riffer::Config
     @anthropic = Anthropic.new
     @azure_openai = AzureOpenAI.new
     @gemini = Gemini.new
+    @google_cloud = GoogleCloud.new
     @openai = OpenAI.new
     @openrouter = OpenRouter.new
     @evals = Evals.new

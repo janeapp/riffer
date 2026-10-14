@@ -18,7 +18,7 @@ end
 
 Providers take no constructor arguments — these settings are the only way to give a provider its credentials.
 
-Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
+Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key`, `google_cloud.project_id` / `.location`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
 
 ## Accessing Configuration
 
@@ -59,14 +59,15 @@ end
 
 Every provider accepts a client instance or a `Proc` returning one:
 
-| Provider       | Setting                        | Default client built from credentials                         |
-| -------------- | ------------------------------ | ------------------------------------------------------------- |
-| OpenAI         | `config.openai.client`         | `OpenAI::Client`                                              |
-| Azure OpenAI   | `config.azure_openai.client`   | `OpenAI::Client` (with the Azure endpoint as `base_url`)      |
-| Anthropic      | `config.anthropic.client`      | `Anthropic::Client`                                           |
-| Amazon Bedrock | `config.amazon_bedrock.client` | `Aws::BedrockRuntime::Client`                                 |
-| Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below) |
-| OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)          |
+| Provider       | Setting                        | Default client built from credentials                              |
+| -------------- | ------------------------------ | ------------------------------------------------------------------ |
+| OpenAI         | `config.openai.client`         | `OpenAI::Client`                                                   |
+| Azure OpenAI   | `config.azure_openai.client`   | `OpenAI::Client` (with the Azure endpoint as `base_url`)           |
+| Anthropic      | `config.anthropic.client`      | `Anthropic::Client`                                                |
+| Amazon Bedrock | `config.amazon_bedrock.client` | `Aws::BedrockRuntime::Client`                                      |
+| Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below)      |
+| Google Cloud   | `config.google_cloud.client`   | `Riffer::Providers::GoogleCloud::Client` (riffer-owned, see below) |
+| OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)               |
 
 A `Proc` takes **no arguments** and is resolved on **every LLM call**, never cached by riffer — memoize inside the Proc when construction is expensive. This makes the Proc the right tool for:
 
@@ -98,6 +99,8 @@ A credential you leave unset in riffer is omitted from the default client rather
 Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
 
 The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
+
+The Google Cloud provider ships its own Vertex AI transport too: `Riffer::Providers::GoogleCloud::Client` is bound to one `project_id` and `location` and authenticates with `config.google_cloud.credentials`, or Application Default Credentials when unset. The default `"global"` location has no data-residency guarantee; see [Google Cloud → Locations and Data Residency](providers/GOOGLE_CLOUD.md#locations-and-data-residency) for pinning a location and for reaching several locations from one process.
 
 ### MCP (Model Context Protocol)
 
