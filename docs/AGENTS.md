@@ -306,7 +306,7 @@ end
 
 The schema sends the field as `anyOf`, with one object per variant. An answer must match one variant completely: every required field of that variant, and no field from outside it. Variants are tried in order and the first match is returned. When none match, the error lists each variant's problems: `result must match one of the variants: variant 1 (street is required, city is required), variant 2 (error_code is required, error_message is required)`.
 
-An optional `AnyOf` field can also be `null`. `AnyOf` can only be used on a field, not as the whole structured output, because OpenAI rejects `anyOf` at the root of a schema.
+An optional `AnyOf` field can also be `null`.
 
 #### Limitations
 

@@ -1122,6 +1122,30 @@ describe Riffer::Params do
       )
     end
 
+    it "rejects keys no variant defines" do
+      error = expect { params.validate({ result: { name: "Rule", extra: 1 } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "result must match one of the variants: " \
+        "variant 1 (extra is not allowed), variant 2 (error_code is required)",
+      )
+    end
+
+    it "validates an AnyOf inside an array of objects with dot-path errors" do
+      params = Riffer::Params.new
+      params.required(:items, Array) do
+        required :result, Riffer::Params::AnyOf do
+          variant { required :name, String }
+          variant { required :error_code, String }
+        end
+      end
+
+      error = expect { params.validate({ items: [{ result: {} }] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "items[0].result must match one of the variants: " \
+        "variant 1 (name is required), variant 2 (error_code is required)",
+      )
+    end
+
     it "does not let an earlier variant swallow a later one's keys" do
       params = Riffer::Params.new
       params.required(:result, Riffer::Params::AnyOf) do

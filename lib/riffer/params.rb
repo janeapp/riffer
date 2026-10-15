@@ -214,8 +214,8 @@ class Riffer::Params
     variant_errors = [] #: Array[String]
     variants.each.with_index(1) do |variant, number|
       validated = variant.validate(value)
-      # Each variant is sent with additionalProperties: false, so a key only
-      # another variant defines rules this one out.
+      # Each variant is sent with additionalProperties: false, so a key
+      # outside this variant rules it out.
       unknown = value.keys - validated.keys
       return validated if unknown.empty?
 

@@ -103,16 +103,16 @@ Options:
 
 ### Supported Types
 
-| Ruby Type                  | JSON Schema Type |
-| -------------------------- | ---------------- |
-| `String`                   | `string`         |
-| `Integer`                  | `integer`        |
-| `Float`                    | `number`         |
-| `Riffer::Params::Boolean`  | `boolean`        |
-| `TrueClass` / `FalseClass` | `boolean`        |
-| `Array`                    | `array`          |
-| `Hash`                     | `object`         |
-| `Riffer::Params::AnyOf`    | `anyOf`          |
+| Ruby Type                  | JSON Schema Type   |
+| -------------------------- | ------------------ |
+| `String`                   | `string`           |
+| `Integer`                  | `integer`          |
+| `Float`                    | `number`           |
+| `Riffer::Params::Boolean`  | `boolean`          |
+| `TrueClass` / `FalseClass` | `boolean`          |
+| `Array`                    | `array`            |
+| `Hash`                     | `object`           |
+| `Riffer::Params::AnyOf`    | `anyOf` of objects |
 
 `Riffer::Params::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
 
