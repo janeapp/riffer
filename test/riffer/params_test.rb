@@ -1157,6 +1157,38 @@ describe Riffer::Params do
         must_equal({ result: { error_code: "unsupported" } })
     end
 
+    it "does not let an earlier variant swallow a later one's nested keys" do
+      params = Riffer::Params.new
+      params.required(:result, Riffer::Params::AnyOf) do
+        variant { required(:payload, Hash) { required :kind, String } }
+        variant do
+          required(:payload, Hash) do
+            required :kind, String
+            required :detail, String
+          end
+        end
+      end
+
+      expect(params.validate({ result: { payload: { kind: "x", detail: "d" } } })).
+        must_equal({ result: { payload: { kind: "x", detail: "d" } } })
+    end
+
+    it "rejects undeclared keys inside arrays of objects with their path" do
+      params = Riffer::Params.new
+      params.required(:result, Riffer::Params::AnyOf) do
+        variant { required(:rows, Array) { required :id, Integer } }
+        variant { required :error_code, String }
+      end
+
+      error = expect do
+        params.validate({ result: { rows: [{ id: 1 }, { id: 2, extra: 3 }] } })
+      end.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "result must match one of the variants: " \
+        "variant 1 (rows[1].extra is not allowed), variant 2 (error_code is required)",
+      )
+    end
+
     it "rejects a value where every field is null" do
       error = expect do
         params.validate({ result: { name: nil, note: nil, error_code: nil } })

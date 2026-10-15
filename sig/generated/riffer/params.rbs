@@ -61,6 +61,12 @@ class Riffer::Params
   # : (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
   def validate_any_of: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
 
+  # Validation drops keys a Params doesn't declare, at any depth, so they are
+  # the keys in the input that are missing from the output.
+  # --
+  # : (untyped, untyped, ?String?) -> Array[String]
+  def undeclared_keys: (untyped, untyped, ?String?) -> Array[String]
+
   # --
   # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]

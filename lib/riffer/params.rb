@@ -214,12 +214,12 @@ class Riffer::Params
     variant_errors = [] #: Array[String]
     variants.each.with_index(1) do |variant, number|
       validated = variant.validate(value)
-      # Each variant is sent with additionalProperties: false, so a key
-      # outside this variant rules it out.
-      unknown = value.keys - validated.keys
+      # Each variant's schema sets additionalProperties: false on every object
+      # it declares, so a key outside this variant rules it out.
+      unknown = undeclared_keys(value, validated)
       return validated if unknown.empty?
 
-      variant_errors << "variant #{number} (#{unknown.map { |key| "#{key} is not allowed" }.join(', ')})"
+      variant_errors << "variant #{number} (#{unknown.map { |path| "#{path} is not allowed" }.join(', ')})"
     rescue Riffer::ValidationError => e
       # Enclosing params split errors on "; " to prefix their path, so one
       # variant's errors must not contain it.
@@ -228,6 +228,24 @@ class Riffer::Params
 
     errors << "#{param.name} must match one of the variants: #{variant_errors.join(', ')}"
     value
+  end
+
+  # Validation drops keys a Params doesn't declare, at any depth, so they are
+  # the keys in the input that are missing from the output.
+  #--
+  #: (untyped, untyped, ?String?) -> Array[String]
+  def undeclared_keys(value, validated, path = nil)
+    case value
+    when Hash
+      value.flat_map do |key, child|
+        key_path = [path, key].compact.join(".")
+        validated.key?(key) ? undeclared_keys(child, validated[key], key_path) : [key_path]
+      end
+    when Array
+      value.each_with_index.flat_map { |item, i| undeclared_keys(item, validated[i], "#{path}[#{i}]") }
+    else
+      []
+    end
   end
 
   #--
