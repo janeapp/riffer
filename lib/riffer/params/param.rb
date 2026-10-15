@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
+require "json"
+
 class Riffer::Params::Param
   TYPE_MAPPINGS = {
     String => "string",
@@ -67,7 +69,7 @@ class Riffer::Params::Param
   def self.resolve_variants(branches)
     # Strict schemas add a null branch to optional fields; nullability comes from +required+.
     variants = branches.reject { |branch| branch[:type] == "null" }.map do |branch|
-      raise Riffer::ArgumentError, "Unsupported anyOf branch: #{branch.inspect}" unless branch[:type] == "object"
+      raise Riffer::ArgumentError, "Unsupported anyOf branch: #{branch.to_json}" unless branch[:type] == "object"
 
       Riffer::Params.from_json_schema(branch)
     end

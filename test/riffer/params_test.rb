@@ -884,7 +884,7 @@ describe Riffer::Params do
           },
         )
       end.must_raise Riffer::ArgumentError
-      expect(error.message).must_equal 'Unsupported anyOf branch: {type: "string"}'
+      expect(error.message).must_equal 'Unsupported anyOf branch: {"type":"string"}'
     end
 
     it "raises on the nullable enum shape strict schemas emit" do
@@ -898,7 +898,7 @@ describe Riffer::Params do
           },
         )
       end.must_raise Riffer::ArgumentError
-      expect(error.message).must_equal 'Unsupported anyOf branch: {type: "string", enum: ["c", "f"]}'
+      expect(error.message).must_equal 'Unsupported anyOf branch: {"type":"string","enum":["c","f"]}'
     end
 
     it "raises on an anyOf with fewer than two object branches" do
