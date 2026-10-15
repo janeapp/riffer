@@ -143,16 +143,57 @@ describe Riffer::Providers::Base do
       Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
     end
 
-    it "sends the schema in the system prompt instead of the native field" do
+    let(:instructions) { structured_output.prompt_instructions }
+
+    it "appends the schema to the user message instead of the native field" do
       provider.stub_response('{"sentiment":"positive"}')
-      provider.generate_text(system: "Be terse.", prompt: "Analyze", structured_output: structured_output)
+      provider.generate_text(prompt: "Analyze", structured_output: structured_output)
 
       call = provider.calls.last
 
       expect(call.key?(:structured_output)).must_equal false
-      expect(call[:messages].first).must_equal(
-        { role: :system, content: "Be terse.\n\n#{structured_output.prompt_instructions}" },
-      )
+      expect(call[:messages]).must_equal [{ role: :user, content: "Analyze\n\n#{instructions}" }]
+    end
+
+    it "leaves the system prompt untouched" do
+      provider.stub_response('{"sentiment":"positive"}')
+      provider.generate_text(system: "Be terse.", prompt: "Analyze", structured_output: structured_output)
+
+      expect(provider.calls.last[:messages].first).must_equal({ role: :system, content: "Be terse." })
+    end
+
+    it "appends the schema once to every user message, after merging consecutive ones" do
+      provider.stub_response('{"sentiment":"positive"}')
+      messages = [
+        Riffer::Messages::User.new("First"),
+        Riffer::Messages::User.new("Second"),
+        Riffer::Messages::Assistant.new("Noted."),
+        Riffer::Messages::User.new("Third"),
+      ]
+      provider.generate_text(messages: messages, structured_output: structured_output)
+
+      expect(provider.calls.last[:messages].map { |m| m[:content] }).must_equal [
+        "First\n\nSecond\n\n#{instructions}",
+        "Noted.",
+        "Third\n\n#{instructions}",
+      ]
+    end
+
+    it "keeps the user message's id and files" do
+      provider.stub_response('{"sentiment":"positive"}')
+      file = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: "YQ==")
+      message = Riffer::Messages::User.new("Analyze", id: "msg-1", files: [file])
+      provider.generate_text(messages: [message], structured_output: structured_output)
+
+      expect(provider.calls.last[:messages].first.slice(:id, :files)).must_equal({ id: "msg-1", files: [file.to_h] })
+    end
+
+    it "does not modify the caller's messages" do
+      provider.stub_response('{"sentiment":"positive"}')
+      message = Riffer::Messages::User.new("Analyze")
+      provider.generate_text(messages: [message], structured_output: structured_output)
+
+      expect(message.content).must_equal "Analyze"
     end
 
     it "parses the reply onto the message" do
@@ -162,14 +203,25 @@ describe Riffer::Providers::Base do
       expect(result.structured_output).must_equal({ sentiment: "positive" })
     end
 
-    it "sends the schema in the system prompt when streaming" do
+    it "appends the schema to the user message when streaming" do
       provider.stub_response('{"sentiment":"positive"}')
       provider.stream_text(prompt: "Analyze", structured_output: structured_output).to_a
 
       call = provider.calls.last
 
       expect(call.key?(:structured_output)).must_equal false
-      expect(call[:messages].first).must_equal({ role: :system, content: structured_output.prompt_instructions })
+      expect(call[:messages]).must_equal [{ role: :user, content: "Analyze\n\n#{instructions}" }]
+    end
+
+    it "leaves messages alone under the native strategy" do
+      native = Riffer::Agent::StructuredOutput.new(structured_output.params)
+      provider.stub_response('{"sentiment":"positive"}')
+      provider.generate_text(system: "Be terse.", prompt: "Analyze", structured_output: native)
+
+      call = provider.calls.last
+
+      expect(call[:structured_output]).must_equal native
+      expect(call[:messages].map { |m| m[:content] }).must_equal ["Be terse.", "Analyze"]
     end
   end
 

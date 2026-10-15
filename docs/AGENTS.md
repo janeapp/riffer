@@ -212,12 +212,12 @@ class SentimentAgent < Riffer::Agent
 end
 ```
 
-With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction carrying the JSON Schema is appended to the system instructions on every request of the run (it is not stored in `session.messages`), and the reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
+With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in `session.messages`, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (`"<string>"`, enum values as `"a | b"`), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
 
 | Strategy            | Behavior                                                        |
 | ------------------- | --------------------------------------------------------------- |
 | `:native` (default) | Schema sent through the provider's structured-output field      |
-| `:prompted`         | Schema sent in the system prompt; experimental, may change      |
+| `:prompted`         | Schema appended to each user message; experimental, may change  |
 
 Riffer does not pick a strategy per model — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a `Riffer::Params` instance: `structured_output params, strategy: :prompted`.
 

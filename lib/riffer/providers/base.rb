@@ -38,7 +38,7 @@ class Riffer::Providers::Base
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
-    messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
+    messages = with_structured_output_prompt(merge_consecutive_messages(messages), options[:structured_output])
     options = apply_reasoning(model, options)
     params = build_request_params(messages, model, request_options(options))
 
@@ -77,7 +77,7 @@ class Riffer::Providers::Base
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
-    messages = merge_consecutive_messages(with_structured_output_prompt(messages, options[:structured_output]))
+    messages = with_structured_output_prompt(merge_consecutive_messages(messages), options[:structured_output])
     options = apply_reasoning(model, options)
     params = build_request_params(messages, model, request_options(options))
 
@@ -427,13 +427,13 @@ class Riffer::Providers::Base
   def with_structured_output_prompt(messages, structured_output)
     return messages unless structured_output&.prompted?
 
-    # After the leading system messages, so merge_consecutive_messages folds it into the system prompt.
-    leading_system = messages.take_while { |m| m.is_a?(Riffer::Messages::System) }
-    [
-      *leading_system,
-      Riffer::Messages::System.new(structured_output.prompt_instructions),
-      *messages.drop(leading_system.length),
-    ]
+    # Models follow the schema more reliably at the end of each user turn than in the system prompt.
+    instructions = structured_output.prompt_instructions
+    messages.map do |message|
+      next message unless message.is_a?(Riffer::Messages::User)
+
+      Riffer::Messages::User.new("#{message.content}\n\n#{instructions}", id: message.id, files: message.files)
+    end
   end
 
   #--

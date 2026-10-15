@@ -25,4 +25,10 @@ class Riffer::Agent::StructuredOutput
   # --
   # : (String) -> Riffer::Agent::StructuredOutput::Result
   def parse_and_validate: (String) -> Riffer::Agent::StructuredOutput::Result
+
+  private
+
+  # --
+  # : (Hash[Symbol, untyped]) -> untyped
+  def placeholder: (Hash[Symbol, untyped]) -> untyped
 end
