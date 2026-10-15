@@ -40,10 +40,13 @@ class Riffer::Params::Param
 
   attr_reader :nested_params #: Riffer::Params? # @dynamic nested_params
 
+  attr_reader :variants #: Array[Riffer::Params]? # @dynamic variants
+
   #--
   #: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema(name, schema, required:)
-    ruby_type = json_type_to_ruby(schema[:type])
+    variants = resolve_variants(schema[:anyOf]) if schema.key?(:anyOf)
+    ruby_type = variants ? Riffer::Params::AnyOf : json_type_to_ruby(schema[:type])
     item_type, nested = resolve_nesting(ruby_type, schema)
 
     new(
@@ -55,8 +58,24 @@ class Riffer::Params::Param
       default: schema[:default],
       item_type: item_type,
       nested_params: nested,
+      variants: variants,
     )
   end
+
+  #--
+  #: (Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params]
+  def self.resolve_variants(branches)
+    # Strict schemas add a null branch to optional fields; nullability comes from +required+.
+    variants = branches.reject { |branch| branch[:type] == "null" }.map do |branch|
+      raise Riffer::ArgumentError, "Unsupported anyOf branch: #{branch.inspect}" unless branch[:type] == "object"
+
+      Riffer::Params.from_json_schema(branch)
+    end
+    raise Riffer::ArgumentError, "anyOf requires at least two object branches" if variants.size < 2
+
+    variants
+  end
+  private_class_method :resolve_variants
 
   #--
   #: (Module, Hash[Symbol, untyped]) -> [Module?, Riffer::Params?]
@@ -81,8 +100,13 @@ class Riffer::Params::Param
   private_class_method :json_type_to_ruby
 
   #--
-  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?) -> void
-  def initialize(name:, type:, required:, description: nil, enum: nil, default: nil, item_type: nil, nested_params: nil)
+  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  def initialize(name:, type:, required:, description: nil, enum: nil, default: nil, item_type: nil, nested_params: nil,
+                 variants: nil)
+    if type == Riffer::Params::AnyOf && variants.nil?
+      raise Riffer::ArgumentError, "#{name}: an AnyOf param requires variants"
+    end
+
     @name = name.to_sym
     @type = type
     @required = required
@@ -91,6 +115,7 @@ class Riffer::Params::Param
     @default = default
     @item_type = item_type
     @nested_params = nested_params
+    @variants = variants
   end
 
   #--
@@ -102,6 +127,8 @@ class Riffer::Params::Param
       [true, false].include?(value)
     elsif type == Float
       value.is_a?(Numeric)
+    elsif type == Riffer::Params::AnyOf
+      value.is_a?(Hash)
     else
       value.is_a?(type)
     end
@@ -110,6 +137,8 @@ class Riffer::Params::Param
   #--
   #: () -> String
   def type_name
+    return "object" if type == Riffer::Params::AnyOf
+
     TYPE_MAPPINGS[type] || type.to_s.downcase
   end
 
@@ -119,6 +148,14 @@ class Riffer::Params::Param
     validate_strict_shape! if strict
     # Nullable so strict providers can distinguish absent from present.
     nullable = strict && !required
+
+    if type == Riffer::Params::AnyOf && variants
+      schema = { anyOf: variants.map { |variant| variant.to_json_schema(strict: strict) } } #: Hash[Symbol, untyped]
+      schema[:anyOf] << { type: "null" } if nullable
+      schema[:description] = description if description
+      schema[:default] = default unless strict || default.nil?
+      return schema
+    end
 
     # Providers like Anthropic reject a nullable type union combined with enum.
     if nullable && enum
@@ -160,6 +197,7 @@ class Riffer::Params::Param
   def initialize_copy(source)
     super
     @nested_params = source.nested_params&.dup
+    @variants = source.variants&.map(&:dup)
     @enum = Riffer::Helpers::DeepDup.call(source.enum)
     @default = Riffer::Helpers::DeepDup.call(source.default)
   end

@@ -822,6 +822,128 @@ describe Riffer::Params do
 
       expect(rebuilt.validate({ answer: "yes" })).must_equal({ answer: "yes", score: 0.0 })
     end
+
+    it "reconstructs anyOf as an AnyOf param with one variant per branch" do
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: {
+            "result" => {
+              anyOf: [
+                { type: "object", properties: { "name" => { type: "string" } }, required: ["name"] },
+                { type: "object", properties: { "error_code" => { type: "string" } }, required: ["error_code"] },
+              ],
+            },
+          },
+          required: ["result"],
+          additionalProperties: false,
+        },
+      )
+      param = params.parameters.first
+
+      expect(param.type).must_equal Riffer::Params::AnyOf
+      expect(param.variants.map { |variant| variant.parameters.map(&:name) }).must_equal [%i[name], %i[error_code]]
+    end
+
+    it "ignores the null branch strict schemas add to an optional anyOf" do
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: {
+            "result" => {
+              anyOf: [
+                { type: "object", properties: { "name" => { type: "string" } }, required: ["name"] },
+                { type: "object", properties: { "error_code" => { type: "string" } }, required: ["error_code"] },
+                { type: "null" },
+              ],
+            },
+          },
+          required: [],
+          additionalProperties: false,
+        },
+      )
+
+      expect(params.parameters.first.variants.length).must_equal 2
+    end
+
+    it "raises on an anyOf branch that is not an object" do
+      error = expect do
+        Riffer::Params.from_json_schema(
+          {
+            type: "object",
+            properties: {
+              "result" => {
+                anyOf: [
+                  { type: "object", properties: { "name" => { type: "string" } }, required: ["name"] },
+                  { type: "string" },
+                ],
+              },
+            },
+            required: ["result"],
+            additionalProperties: false,
+          },
+        )
+      end.must_raise Riffer::ArgumentError
+      expect(error.message).must_equal 'Unsupported anyOf branch: {type: "string"}'
+    end
+
+    it "raises on the nullable enum shape strict schemas emit" do
+      error = expect do
+        Riffer::Params.from_json_schema(
+          {
+            type: "object",
+            properties: { "unit" => { anyOf: [{ type: "string", enum: %w[c f] }, { type: "null" }] } },
+            required: ["unit"],
+            additionalProperties: false,
+          },
+        )
+      end.must_raise Riffer::ArgumentError
+      expect(error.message).must_equal 'Unsupported anyOf branch: {type: "string", enum: ["c", "f"]}'
+    end
+
+    it "raises on an anyOf with fewer than two object branches" do
+      error = expect do
+        Riffer::Params.from_json_schema(
+          {
+            type: "object",
+            properties: {
+              "result" => {
+                anyOf: [
+                  { type: "object", properties: { "name" => { type: "string" } }, required: ["name"] },
+                  { type: "null" },
+                ],
+              },
+            },
+            required: [],
+            additionalProperties: false,
+          },
+        )
+      end.must_raise Riffer::ArgumentError
+      expect(error.message).must_equal "anyOf requires at least two object branches"
+    end
+
+    it "round-trips an AnyOf param losslessly with to_json_schema(strict: false)" do
+      params = Riffer::Params.new
+      params.optional(:result, Riffer::Params::AnyOf, description: "A rule or an error") do
+        variant do
+          required :name, String
+          optional :tags, Array, of: String
+        end
+        variant do
+          required :error_code, String, enum: %w[non_english unsupported]
+          required :details, Hash do
+            required :message, String
+          end
+        end
+      end
+      schema = params.to_json_schema(strict: false)
+      wire = JSON.parse(JSON.generate(schema), symbolize_names: true)
+
+      rebuilt = Riffer::Params.from_json_schema(wire)
+
+      expect(rebuilt.to_json_schema(strict: false)).must_equal schema
+      expect(rebuilt.to_json_schema(strict: true)).must_equal params.to_json_schema(strict: true)
+    end
   end
   describe "#dup" do
     it "holds no collection in common with the original, at any depth" do
@@ -856,6 +978,222 @@ describe Riffer::Params do
 
       expect(original.dup.to_json_schema(strict: false)).
         must_equal original.to_json_schema(strict: false)
+    end
+  end
+
+  describe "AnyOf" do
+    let(:params) do
+      params = Riffer::Params.new
+      params.required(:result, Riffer::Params::AnyOf, description: "A rule or an error") do
+        variant do
+          required :name, String
+          optional :note, String
+        end
+        variant do
+          required :error_code, String, enum: %w[non_english unsupported]
+        end
+      end
+      params
+    end
+
+    it "builds one Params per variant" do
+      variants = params.parameters.first.variants
+
+      expect(variants.map { |variant| variant.parameters.map(&:name) }).must_equal [%i[name note], %i[error_code]]
+    end
+
+    it "raises ArgumentError without a block" do
+      error = expect do
+        Riffer::Params.new.required(:result, Riffer::Params::AnyOf)
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "AnyOf requires a block defining its variants"
+    end
+
+    it "raises ArgumentError with fewer than two variants" do
+      error = expect do
+        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) do
+          variant { required :name, String }
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "AnyOf requires at least two variants"
+    end
+
+    it "raises ArgumentError for a variant without a block" do
+      error = expect do
+        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) { variant }
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "variant requires a block defining its properties"
+    end
+
+    it "raises ArgumentError with of:" do
+      error = expect do
+        Riffer::Params.new.required(:result, Riffer::Params::AnyOf, of: String)
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "of: cannot be used with AnyOf"
+    end
+
+    it "raises ArgumentError with enum:" do
+      error = expect do
+        Riffer::Params.new.optional(:result, Riffer::Params::AnyOf, enum: %w[a b])
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "enum: cannot be used with AnyOf"
+    end
+
+    it "renders one object schema per variant" do
+      expect(params.to_json_schema[:properties]["result"]).must_equal(
+        anyOf: [
+          {
+            type: "object",
+            properties: { "name" => { type: "string" }, "note" => { type: "string" } },
+            required: ["name"],
+            additionalProperties: false,
+          },
+          {
+            type: "object",
+            properties: { "error_code" => { type: "string", enum: %w[non_english unsupported] } },
+            required: ["error_code"],
+            additionalProperties: false,
+          },
+        ],
+        description: "A rule or an error",
+      )
+    end
+
+    it "renders each variant as a strict schema in strict mode" do
+      result = params.to_json_schema(strict: true)[:properties]["result"]
+
+      expect(result[:anyOf].length).must_equal 2
+      expect(result[:anyOf].first[:required]).must_equal %w[name note]
+      expect(result[:anyOf].first[:properties]["note"][:type]).must_equal %w[string null]
+    end
+
+    it "adds a null branch when optional in strict mode" do
+      params = Riffer::Params.new
+      params.optional(:result, Riffer::Params::AnyOf) do
+        variant { required :name, String }
+        variant { required :error_code, String }
+      end
+      result = params.to_json_schema(strict: true)[:properties]["result"]
+
+      expect(result[:anyOf].length).must_equal 3
+      expect(result[:anyOf].last).must_equal(type: "null")
+    end
+
+    it "adds no null branch when optional in non-strict mode" do
+      params = Riffer::Params.new
+      params.optional(:result, Riffer::Params::AnyOf) do
+        variant { required :name, String }
+        variant { required :error_code, String }
+      end
+
+      expect(params.to_json_schema[:properties]["result"][:anyOf].length).must_equal 2
+    end
+
+    it "raises ArgumentError for a bare Hash inside a variant under strict schemas" do
+      params = Riffer::Params.new
+      params.required(:result, Riffer::Params::AnyOf) do
+        variant { required :definition, Hash }
+        variant { required :error_code, String }
+      end
+
+      error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_include "definition: a Hash param requires a block"
+    end
+
+    it "accepts a value matching the first variant" do
+      result = params.validate({ result: { name: "Rule", note: "Checked" } })
+
+      expect(result[:result]).must_equal({ name: "Rule", note: "Checked" })
+    end
+
+    it "accepts a value matching the second variant" do
+      result = params.validate({ result: { error_code: "non_english" } })
+
+      expect(result[:result]).must_equal({ error_code: "non_english" })
+    end
+
+    it "rejects keys the matched variant does not define" do
+      error = expect do
+        params.validate({ result: { name: "Rule", error_code: "non_english" } })
+      end.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "result must match one of the variants: " \
+        "variant 1 (error_code is not allowed), variant 2 (name is not allowed)",
+      )
+    end
+
+    it "does not let an earlier variant swallow a later one's keys" do
+      params = Riffer::Params.new
+      params.required(:result, Riffer::Params::AnyOf) do
+        variant { optional :note, String }
+        variant { required :error_code, String }
+      end
+
+      expect(params.validate({ result: { error_code: "unsupported" } })).
+        must_equal({ result: { error_code: "unsupported" } })
+    end
+
+    it "rejects a value where every field is null" do
+      error = expect do
+        params.validate({ result: { name: nil, note: nil, error_code: nil } })
+      end.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "result must match one of the variants: variant 1 (name is required), variant 2 (error_code is required)",
+      )
+    end
+
+    it "reports every error of each variant" do
+      error = expect do
+        params.validate({ result: { note: 1, error_code: "spanish" } })
+      end.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "result must match one of the variants: " \
+        "variant 1 (name is required, note must be a string), " \
+        "variant 2 (error_code must be one of: non_english, unsupported)",
+      )
+    end
+
+    it "rejects a value that is not an object" do
+      error = expect { params.validate({ result: "Rule" }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "result must be a object"
+    end
+
+    it "requires a value when required" do
+      error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "result is required"
+    end
+
+    it "accepts a missing value when optional" do
+      params = Riffer::Params.new
+      params.optional(:result, Riffer::Params::AnyOf) do
+        variant { required :name, String }
+        variant { required :error_code, String }
+      end
+
+      expect(params.validate({})).must_equal({ result: nil })
+    end
+
+    it "prefixes errors with the path of an enclosing object" do
+      outer = Riffer::Params.new
+      outer.required(:review, Hash) do
+        required :result, Riffer::Params::AnyOf do
+          variant { required :name, String }
+          variant { required :error_code, String }
+        end
+      end
+
+      error = expect { outer.validate({ review: { result: {} } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "review.result must match one of the variants: " \
+        "variant 1 (name is required), variant 2 (error_code is required)",
+      )
+    end
+
+    it "does not share variants with a copy" do
+      copy = params.dup
+      copy.parameters.first.variants.first.required(:extra, String)
+
+      expect(params.parameters.first.variants.first.parameters.map(&:name)).must_equal %i[name note]
     end
   end
 end

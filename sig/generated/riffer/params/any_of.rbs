@@ -1,0 +1,13 @@
+# Generated from lib/riffer/params/any_of.rb with RBS::Inline
+
+class Riffer::Params::AnyOf
+  attr_reader variants: Array[Riffer::Params]
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def variant: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+end

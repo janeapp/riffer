@@ -285,9 +285,32 @@ structured_output do
 end
 ```
 
+#### Either/Or Shapes
+
+Use `Riffer::Params::AnyOf` when a field must be one of several object shapes. Each `variant` block defines one shape, the same way a `Hash` block does:
+
+```ruby
+structured_output do
+  required :result, Riffer::Params::AnyOf, description: "The address, or why none was found" do
+    variant do
+      required :street, String, description: "Street address"
+      required :city, String, description: "City"
+    end
+    variant do
+      required :error_code, String, enum: %w[no_address multiple_addresses]
+      required :error_message, String
+    end
+  end
+end
+```
+
+The schema sends the field as `anyOf`, with one object per variant. An answer must match one variant completely: every required field of that variant, and no field from outside it. Variants are tried in order and the first match is returned. When none match, the error lists each variant's problems: `result must match one of the variants: variant 1 (street is required, city is required), variant 2 (error_code is required, error_message is required)`.
+
+An optional `AnyOf` field can also be `null`. `AnyOf` can only be used on a field, not as the whole structured output, because OpenAI rejects `anyOf` at the root of a schema.
+
 #### Limitations
 
-A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`.
+A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 

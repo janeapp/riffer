@@ -137,6 +137,18 @@ describe Riffer::Params::Param do
 
       expect(param.valid_type?({ key: "value" })).must_equal true
     end
+
+    it "returns true for a hash when the type is AnyOf" do
+      param = Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true, variants: [])
+
+      expect(param.valid_type?({ name: "Rule" })).must_equal true
+    end
+
+    it "returns false for a non-hash when the type is AnyOf" do
+      param = Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true, variants: [])
+
+      expect(param.valid_type?("Rule")).must_equal false
+    end
   end
 
   describe "#type_name" do
@@ -178,6 +190,12 @@ describe Riffer::Params::Param do
 
     it "returns 'object' for Hash" do
       param = Riffer::Params::Param.new(name: :data, type: Hash, required: true)
+
+      expect(param.type_name).must_equal "object"
+    end
+
+    it "returns 'object' for AnyOf" do
+      param = Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true, variants: [])
 
       expect(param.type_name).must_equal "object"
     end
@@ -249,6 +267,15 @@ describe Riffer::Params::Param do
       expect(schema[:items][:type]).must_equal "object"
       expect(schema[:items][:properties].keys).must_equal %w[product quantity]
       expect(schema[:items][:required]).must_equal %w[product quantity]
+    end
+  end
+
+  describe "AnyOf" do
+    it "raises without variants" do
+      error = expect do
+        Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true)
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "result: an AnyOf param requires variants"
     end
   end
 end

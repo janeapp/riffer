@@ -23,9 +23,15 @@ class Riffer::Params::Param
 
   attr_reader nested_params: Riffer::Params?
 
+  attr_reader variants: Array[Riffer::Params]?
+
   # --
   # : (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
+
+  # --
+  # : (Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params]
+  def self.resolve_variants: (Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params]
 
   # --
   # : (Module, Hash[Symbol, untyped]) -> [Module?, Riffer::Params?]
@@ -36,8 +42,8 @@ class Riffer::Params::Param
   def self.json_type_to_ruby: (untyped) -> Module
 
   # --
-  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?) -> void
-  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?) -> void
+  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
 
   # --
   # : (untyped) -> bool

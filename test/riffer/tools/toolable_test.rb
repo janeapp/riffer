@@ -133,6 +133,41 @@ describe Riffer::Tools::Toolable do
         expect(tool_class.parameters_schema[:properties]["applies_when"]).must_equal(type: "object")
       end
     end
+
+    describe "with an AnyOf param" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          identifier "find_patient"
+          description "Finds a patient"
+
+          params do
+            required :lookup, Riffer::Params::AnyOf do
+              variant { required :email, String }
+              variant { required :phone, String }
+            end
+          end
+        end
+      end
+
+      it "renders each variant in strict mode" do
+        expect(tool_class.parameters_schema(strict: true)[:properties]["lookup"]).must_equal(
+          anyOf: [
+            {
+              type: "object",
+              properties: { "email" => { type: "string" } },
+              required: ["email"],
+              additionalProperties: false,
+            },
+            {
+              type: "object",
+              properties: { "phone" => { type: "string" } },
+              required: ["phone"],
+              additionalProperties: false,
+            },
+          ],
+        )
+      end
+    end
   end
 
   describe "#kind" do
