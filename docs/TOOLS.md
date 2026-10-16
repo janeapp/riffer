@@ -82,7 +82,7 @@ end
 Options:
 
 - `description` - Human-readable description for the LLM
-- `enum` - Array of allowed values
+- `enum` - Array of allowed values (for each item, on an `Array` with `of:`)
 
 ### optional
 
@@ -99,7 +99,7 @@ Options:
 
 - `description` - Human-readable description
 - `default` - Default value when not provided
-- `enum` - Array of allowed values
+- `enum` - Array of allowed values (for each item, on an `Array` with `of:`)
 
 ### Supported Types
 

@@ -50,13 +50,15 @@ class Riffer::Params::Param
     variants = resolve_variants(schema[:anyOf]) if schema.key?(:anyOf)
     ruby_type = variants ? Riffer::Params::AnyOf : json_type_to_ruby(schema[:type])
     item_type, nested = resolve_nesting(ruby_type, schema)
+    enum = schema[:enum]
+    enum ||= schema[:items][:enum] if item_type
 
     new(
       name: name,
       type: ruby_type,
       required: required,
       description: schema[:description],
-      enum: schema[:enum],
+      enum: enum,
       default: schema[:default],
       item_type: item_type,
       nested_params: nested,
@@ -159,9 +161,12 @@ class Riffer::Params::Param
       return schema
     end
 
+    # A typed array's enum constrains its items, not the array.
+    value_enum = enum unless item_type
+
     # Providers like Anthropic reject a nullable type union combined with enum.
-    if nullable && enum
-      schema = { anyOf: [{ type: type_name, enum: enum }, { type: "null" }] } #: Hash[Symbol, untyped]
+    if nullable && value_enum
+      schema = { anyOf: [{ type: type_name, enum: value_enum }, { type: "null" }] } #: Hash[Symbol, untyped]
       schema[:description] = description if description
       return schema
     end
@@ -171,7 +176,7 @@ class Riffer::Params::Param
 
     schema = { type: type } #: Hash[Symbol, untyped]
     schema[:description] = description if description
-    schema[:enum] = enum if enum
+    schema[:enum] = value_enum if value_enum
     # Strict providers reject the +default+ keyword; emit it only in
     # non-strict mode, where it makes the schema a lossless round-trip
     # source for +from_json_schema+.
@@ -180,7 +185,7 @@ class Riffer::Params::Param
     if self.type == Array && nested_params
       schema[:items] = nested_params.to_json_schema(strict: strict)
     elsif self.type == Array && item_type
-      schema[:items] = { type: TYPE_MAPPINGS[item_type] }
+      schema[:items] = { type: TYPE_MAPPINGS[item_type], enum: enum }.compact
     elsif self.type == Hash && nested_params
       # The nested schema carries its own type: "object", which would clobber a nullable union.
       schema.merge!(nested_params.to_json_schema(strict: strict).except(:type))
