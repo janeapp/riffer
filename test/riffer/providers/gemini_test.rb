@@ -498,6 +498,34 @@ describe Riffer::Providers::Gemini do
         end
       end
     end
+
+    describe "structured output with enum array" do
+      let(:ticket_tags) { %w[urgent billing technical account] }
+
+      let(:enum_array_structured_output) do
+        params = Riffer::Params.new
+        # Gemini's responseSchema rejects non-string enum values.
+        params.required(:tags, Array, of: String, enum: ticket_tags, description: "Ticket tags")
+        Riffer::Agent::StructuredOutput.new(params)
+      end
+
+      it "returns values from the enum" do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/structured_output_enum_array/returns_values_from_the_enum",
+        ) do
+          provider = Riffer::Providers::Gemini.new
+          result = provider.generate_text(
+            prompt: "Tag this support ticket: 'I was charged twice this month and need it fixed today.'",
+            model: "gemini-2.5-flash-lite",
+            structured_output: enum_array_structured_output,
+          )
+          validated = enum_array_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object[:tags]).must_include "billing"
+        end
+      end
+    end
   end
 
   describe "#stream_text" do

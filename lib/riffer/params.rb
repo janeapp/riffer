@@ -32,7 +32,7 @@ class Riffer::Params
   #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &)
-    nested = build_nested(type, of, &) unless type == Riffer::Params::AnyOf
+    nested = build_nested(type, of, enum, &) unless type == Riffer::Params::AnyOf
     variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
@@ -50,7 +50,7 @@ class Riffer::Params
   #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &)
-    nested = build_nested(type, of, &) unless type == Riffer::Params::AnyOf
+    nested = build_nested(type, of, enum, &) unless type == Riffer::Params::AnyOf
     variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
@@ -89,7 +89,8 @@ class Riffer::Params
         next
       end
 
-      if param.enum && !param.enum.include?(value)
+      # A typed array's enum constrains its items, which validate_typed_array checks.
+      if param.enum && !param.item_type && !param.enum.include?(value)
         errors << "#{param.name} must be one of: #{param.enum.join(', ')}"
         next
       end
@@ -137,9 +138,11 @@ class Riffer::Params
   end
 
   #--
-  #: (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
-  def build_nested(type, of, &block)
+  #: (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def build_nested(type, of, enum, &block)
     raise Riffer::ArgumentError, "cannot use both of: and a block" if of && block
+    raise Riffer::ArgumentError, "enum: cannot be used with Hash" if enum && type == Hash
+    raise Riffer::ArgumentError, "enum: with Array requires of:" if enum && type == Array && !of
 
     if of
       raise Riffer::ArgumentError, "of: can only be used with Array type, got #{type}" unless type == Array
@@ -285,6 +288,11 @@ class Riffer::Params
     value.map.with_index do |item, i|
       unless valid_item.call(item)
         errors << "#{param.name}[#{i}] must be a #{type_name}"
+        next item
+      end
+
+      if param.enum && !param.enum.include?(item)
+        errors << "#{param.name}[#{i}] must be one of: #{param.enum.join(', ')}"
         next item
       end
 
