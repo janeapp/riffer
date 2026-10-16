@@ -243,29 +243,15 @@ describe Riffer::Agent::Run do
       expect(agent.provider.calls.last.key?(:structured_output)).must_equal false
     end
 
-    it "appends the schema to the system instructions" do
+    it "appends the schema to the user message and leaves the system instructions alone" do
       agent = prompted_agent_class.new
       agent.provider.stub_response('{"sentiment":"positive"}')
       agent.generate("Analyze")
 
-      system_message = agent.provider.calls.last[:messages].first
-
-      expect(system_message[:role]).must_equal :system
-      expect(system_message[:content]).must_equal "You are a sentiment analyzer.\n\n#{schema_instructions}"
-    end
-
-    it "sends the schema as the first message when there are no instructions" do
-      klass = stub_agent("Agent") do
-        model "mock/riffer-1"
-        structured_output(strategy: :prompted) { required :sentiment, String }
-      end
-      agent = klass.new
-      agent.provider.stub_response('{"sentiment":"positive"}')
-      agent.generate("Analyze")
-
-      expect(agent.provider.calls.last[:messages].first).must_equal(
-        { role: :system, content: agent.structured_output.prompt_instructions },
-      )
+      expect(agent.provider.calls.last[:messages].map { |m| m.slice(:role, :content) }).must_equal [
+        { role: :system, content: "You are a sentiment analyzer." },
+        { role: :user, content: "Analyze\n\n#{schema_instructions}" },
+      ]
     end
 
     it "sends the schema on every step of a tool loop" do
@@ -286,7 +272,7 @@ describe Riffer::Agent::Run do
       agent.generate("Analyze")
 
       schema_counts = agent.provider.calls.map do |call|
-        call[:messages].count { |m| m[:content] == agent.structured_output.prompt_instructions }
+        call[:messages].count { |m| m[:content].end_with?(agent.structured_output.prompt_instructions) }
       end
 
       expect(schema_counts).must_equal [1, 1]
@@ -297,8 +283,8 @@ describe Riffer::Agent::Run do
       agent.provider.stub_response('{"sentiment":"positive"}')
       result = agent.generate("Analyze")
 
-      expect(result.messages.map(&:content)).wont_include schema_instructions
-      expect(agent.session.messages.first.content).must_equal "You are a sentiment analyzer."
+      expect(result.messages.none? { |m| m.content.include?(schema_instructions) }).must_equal true
+      expect(agent.session.messages.take(2).map(&:content)).must_equal ["You are a sentiment analyzer.", "Analyze"]
     end
 
     it "returns the validated object with the JSON text as content" do

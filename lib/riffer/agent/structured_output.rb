@@ -30,9 +30,14 @@ class Riffer::Agent::StructuredOutput
   #--
   #: () -> String
   def prompt_instructions
-    "When you give your final answer, respond with only a JSON object that conforms to " \
-      "the following JSON Schema, with no other text before or after it:\n\n" \
-      "#{JSON.generate(json_schema)}"
+    schema = json_schema
+    [
+      "When you give your final answer, respond with only a JSON object that conforms to " \
+      "the following JSON Schema, with no other text before or after it:",
+      JSON.generate(schema),
+      "Example of the shape (placeholder values):\n#{JSON.generate(placeholder(schema))}",
+      "Only call tools when the request needs them. If you can answer directly, reply with the JSON object right away.",
+    ].join("\n\n")
   end
 
   #--
@@ -45,5 +50,20 @@ class Riffer::Agent::StructuredOutput
     Result.new(object: validated, json: json)
   rescue Riffer::ValidationError => e
     Result.new(error: "Validation error: #{e.message}")
+  end
+
+  private
+
+  #--
+  #: (Hash[Symbol, untyped]) -> untyped
+  def placeholder(schema)
+    return schema[:enum].join(" | ") if schema[:enum]
+    return placeholder(schema[:anyOf].first) if schema[:anyOf]
+
+    case schema[:type]
+    when "object" then (schema[:properties] || {}).transform_values { |property| placeholder(property) }
+    when "array" then schema[:items] ? [placeholder(schema[:items])] : []
+    else "<#{schema[:type]}>"
+    end
   end
 end

@@ -29,10 +29,65 @@ describe Riffer::Agent::StructuredOutput do
   end
 
   describe "#prompt_instructions" do
-    it "embeds the JSON schema" do
-      so = Riffer::Agent::StructuredOutput.new(sentiment_params, strategy: :prompted)
+    it "follows the schema with an example of its shape and a nudge to answer directly" do
+      params = Riffer::Params.new
+      params.required(:answer, String, description: "The answer")
+      params.required(:details, Hash) do
+        required :confidence, String, enum: %w[low medium high]
+        optional :follow_up, String
+      end
+      params.required(:sources, Array) do
+        required :id, String
+      end
+      so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
 
-      expect(so.prompt_instructions).must_include JSON.generate(so.json_schema)
+      expect(so.prompt_instructions).must_equal <<~TEXT.chomp
+        When you give your final answer, respond with only a JSON object that conforms to the following JSON Schema, with no other text before or after it:
+
+        #{JSON.generate(so.json_schema)}
+
+        Example of the shape (placeholder values):
+        {"answer":"<string>","details":{"confidence":"low | medium | high","follow_up":"<string>"},"sources":[{"id":"<string>"}]}
+
+        Only call tools when the request needs them. If you can answer directly, reply with the JSON object right away.
+      TEXT
+    end
+
+    it "gives every schema type a placeholder in the example" do
+      params = Riffer::Params.new
+      params.required(:count, Integer)
+      params.required(:score, Float)
+      params.required(:active, Riffer::Params::Boolean)
+      params.required(:level, Integer, enum: [1, 2, 3])
+      params.required(:tags, Array, of: String)
+      params.required(:anything, Array)
+      params.required(:metadata, Hash)
+      so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
+
+      example = so.prompt_instructions[/^Example of the shape \(placeholder values\):\n(.+)$/, 1]
+
+      expect(JSON.parse(example)).must_equal(
+        "count" => "<integer>",
+        "score" => "<number>",
+        "active" => "<boolean>",
+        "level" => "1 | 2 | 3",
+        "tags" => ["<string>"],
+        "anything" => [],
+        "metadata" => {},
+      )
+    end
+
+    it "shows the first variant of an AnyOf field in the example" do
+      params = Riffer::Params.new
+      params.required(:contact, Riffer::Params::AnyOf) do
+        variant { required :email, String }
+        variant { required :phone, Integer }
+      end
+      so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
+
+      example = so.prompt_instructions[/^Example of the shape \(placeholder values\):\n(.+)$/, 1]
+
+      expect(JSON.parse(example)).must_equal("contact" => { "email" => "<string>" })
     end
   end
 
