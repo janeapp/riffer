@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.54.0](https://github.com/janeapp/riffer/compare/riffer/v0.53.0...riffer/v0.54.0) (2026-10-16)
+
+
+### Features
+
+* **params:** add `Riffer::Params::AnyOf` ([#491](https://github.com/janeapp/riffer/issues/491)) ([65493ca](https://github.com/janeapp/riffer/commit/65493caa8073cf86983ec27dc6fb84ede068b6b9))
+* **structured_output:** append prompted schema to user messages ([#492](https://github.com/janeapp/riffer/issues/492)) ([332db21](https://github.com/janeapp/riffer/commit/332db216d2e7716904d5ff4a9c1d9d42e128ac83))
+
 ## [0.53.0](https://github.com/janeapp/riffer/compare/riffer/v0.52.1...riffer/v0.53.0) (2026-10-13)
 
 
