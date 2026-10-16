@@ -178,7 +178,7 @@ class Riffer::Params
   #--
   #: (Riffer::Params::Param, untyped, Array[String]) -> untyped
   def validate_nested(param, value, errors)
-    if param.type == Riffer::Params::AnyOf && param.variants
+    if param.type == Riffer::Params::AnyOf
       validate_any_of(param, value, errors)
     elsif param.type == Hash && param.nested_params
       validate_nested_hash(param, value, errors)
@@ -223,7 +223,7 @@ class Riffer::Params
     rescue Riffer::ValidationError => e
       # Enclosing params split errors on "; " to prefix their path, so one
       # variant's errors must not contain it.
-      variant_errors << "variant #{number} (#{e.message.split('; ').join(', ')})"
+      variant_errors << "variant #{number} (#{e.message.gsub('; ', ', ')})"
     end
 
     errors << "#{param.name} must match one of the variants: #{variant_errors.join(', ')}"

@@ -39,7 +39,7 @@ See [Tools](TOOLS.md) for details.
 
 ### Structured Output
 
-Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (`Hash`), typed arrays (`Array, of:`), and arrays of objects (`Array` with block):
+Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (`Hash`), typed arrays (`Array, of:`), arrays of objects (`Array` with block), and either/or shapes (`Riffer::Params::AnyOf`):
 
 ```ruby
 class SentimentAgent < Riffer::Agent

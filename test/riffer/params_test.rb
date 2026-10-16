@@ -924,7 +924,9 @@ describe Riffer::Params do
 
     it "round-trips an AnyOf param losslessly with to_json_schema(strict: false)" do
       params = Riffer::Params.new
-      params.optional(:result, Riffer::Params::AnyOf, description: "A rule or an error") do
+      params.optional(
+        :result, Riffer::Params::AnyOf, description: "A rule or an error", default: { name: "Fallback" },
+      ) do
         variant do
           required :name, String
           optional :tags, Array, of: String
@@ -943,6 +945,7 @@ describe Riffer::Params do
 
       expect(rebuilt.to_json_schema(strict: false)).must_equal schema
       expect(rebuilt.to_json_schema(strict: true)).must_equal params.to_json_schema(strict: true)
+      expect(rebuilt.parameters.first.default).must_equal({ name: "Fallback" })
     end
   end
   describe "#dup" do
@@ -1110,6 +1113,19 @@ describe Riffer::Params do
       result = params.validate({ result: { error_code: "non_english" } })
 
       expect(result[:result]).must_equal({ error_code: "non_english" })
+    end
+
+    it "returns the matched variant's coerced values and defaults" do
+      params = Riffer::Params.new
+      params.required(:result, Riffer::Params::AnyOf) do
+        variant do
+          required :score, Float
+          optional :weight, Float, default: 1.5
+        end
+        variant { required :error_code, String }
+      end
+
+      expect(params.validate({ result: { score: 2 } })).must_equal({ result: { score: 2.0, weight: 1.5 } })
     end
 
     it "rejects keys the matched variant does not define" do

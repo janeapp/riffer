@@ -139,13 +139,17 @@ describe Riffer::Params::Param do
     end
 
     it "returns true for a hash when the type is AnyOf" do
-      param = Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true, variants: [])
+      param = Riffer::Params::Param.new(
+        name: :result, type: Riffer::Params::AnyOf, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
+      )
 
       expect(param.valid_type?({ name: "Rule" })).must_equal true
     end
 
     it "returns false for a non-hash when the type is AnyOf" do
-      param = Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true, variants: [])
+      param = Riffer::Params::Param.new(
+        name: :result, type: Riffer::Params::AnyOf, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
+      )
 
       expect(param.valid_type?("Rule")).must_equal false
     end
@@ -195,7 +199,9 @@ describe Riffer::Params::Param do
     end
 
     it "returns 'object' for AnyOf" do
-      param = Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true, variants: [])
+      param = Riffer::Params::Param.new(
+        name: :result, type: Riffer::Params::AnyOf, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
+      )
 
       expect(param.type_name).must_equal "object"
     end
