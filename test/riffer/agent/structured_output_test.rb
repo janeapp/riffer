@@ -76,6 +76,19 @@ describe Riffer::Agent::StructuredOutput do
         "metadata" => {},
       )
     end
+
+    it "shows the first variant of an AnyOf field in the example" do
+      params = Riffer::Params.new
+      params.required(:contact, Riffer::Params::AnyOf) do
+        variant { required :email, String }
+        variant { required :phone, Integer }
+      end
+      so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
+
+      example = so.prompt_instructions[/^Example of the shape \(placeholder values\):\n(.+)$/, 1]
+
+      expect(JSON.parse(example)).must_equal("contact" => { "email" => "<string>" })
+    end
   end
 
   describe "#initialize" do

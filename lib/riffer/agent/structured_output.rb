@@ -58,6 +58,7 @@ class Riffer::Agent::StructuredOutput
   #: (Hash[Symbol, untyped]) -> untyped
   def placeholder(schema)
     return schema[:enum].join(" | ") if schema[:enum]
+    return placeholder(schema[:anyOf].first) if schema[:anyOf]
 
     case schema[:type]
     when "object" then (schema[:properties] || {}).transform_values { |property| placeholder(property) }
