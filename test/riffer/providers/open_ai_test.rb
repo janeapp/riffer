@@ -596,6 +596,59 @@ describe Riffer::Providers::OpenAI do
       end
     end
 
+    describe "structured output with any_of" do
+      let(:any_of_structured_output) do
+        params = Riffer::Params.new
+        params.required(:result, Riffer::Params::AnyOf, description: "The address, or why none was found") do
+          variant do
+            required :street, String, description: "Street address"
+            required :city, String, description: "City"
+          end
+          variant do
+            required :error_code, String, enum: %w[no_address multiple_addresses], description: "Why no address"
+            required :error_message, String, description: "Explanation of the error"
+          end
+        end
+        Riffer::Agent::StructuredOutput.new(params)
+      end
+
+      it "returns the first variant when it applies" do
+        VCR.use_cassette(
+          "Riffer_Providers_OpenAI/_generate_text/structured_output_any_of/returns_first_variant",
+        ) do
+          provider = Riffer::Providers::OpenAI.new
+          result = provider.generate_text(
+            prompt: "Extract the address from: John lives at 123 Main St, Toronto",
+            model: "gpt-5-mini",
+            structured_output: any_of_structured_output,
+          )
+          validated = any_of_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object[:result][:street]).must_include "123 Main"
+          expect(validated.object[:result][:city]).must_equal "Toronto"
+        end
+      end
+
+      it "returns the second variant when the first does not apply" do
+        VCR.use_cassette(
+          "Riffer_Providers_OpenAI/_generate_text/structured_output_any_of/returns_second_variant",
+        ) do
+          provider = Riffer::Providers::OpenAI.new
+          result = provider.generate_text(
+            prompt: "Extract the address from: John likes long walks by the lake",
+            model: "gpt-5-mini",
+            structured_output: any_of_structured_output,
+          )
+          validated = any_of_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object[:result][:error_code]).must_equal "no_address"
+          expect(validated.object[:result][:error_message]).must_be_instance_of String
+        end
+      end
+    end
+
     describe "without reasoning parameter" do
       it "does not include reasoning in request params" do
         VCR.use_cassette(

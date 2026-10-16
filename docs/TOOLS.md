@@ -103,15 +103,16 @@ Options:
 
 ### Supported Types
 
-| Ruby Type                  | JSON Schema Type |
-| -------------------------- | ---------------- |
-| `String`                   | `string`         |
-| `Integer`                  | `integer`        |
-| `Float`                    | `number`         |
-| `Riffer::Params::Boolean`  | `boolean`        |
-| `TrueClass` / `FalseClass` | `boolean`        |
-| `Array`                    | `array`          |
-| `Hash`                     | `object`         |
+| Ruby Type                  | JSON Schema Type   |
+| -------------------------- | ------------------ |
+| `String`                   | `string`           |
+| `Integer`                  | `integer`          |
+| `Float`                    | `number`           |
+| `Riffer::Params::Boolean`  | `boolean`          |
+| `TrueClass` / `FalseClass` | `boolean`          |
+| `Array`                    | `array`            |
+| `Hash`                     | `object`           |
+| `Riffer::Params::AnyOf`    | `anyOf` of objects |
 
 `Riffer::Params::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
 
@@ -119,7 +120,7 @@ A `Float` param accepts a whole number too, since JSON Schema's `number` covers 
 
 ### Nested Parameters
 
-Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
+Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), arrays of objects (`Array` with block), and either/or shapes (`Riffer::Params::AnyOf` with `variant` blocks). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
 
 ```ruby
 class CreateOrderTool < Riffer::Tool

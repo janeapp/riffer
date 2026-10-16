@@ -163,6 +163,24 @@ describe Riffer::Agent::Serializer do
       expect(result.object).must_equal({ answer: "yes", score: 0.0 })
     end
 
+    it "reconstructs a structured output with AnyOf through JSON" do
+      klass = build_agent_class do
+        structured_output do
+          required :result, Riffer::Params::AnyOf do
+            variant { required :name, String }
+            variant { required :error_code, String }
+          end
+        end
+      end
+      wire = JSON.parse(klass.new.to_json, symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(agent.structured_output.parse_and_validate('{"result":{"error_code":"unsupported"}}').object).
+        must_equal({ result: { error_code: "unsupported" } })
+      expect(agent.structured_output.parse_and_validate('{"result":{"name":null}}').error).
+        must_match(/result must match one of the variants/)
+    end
+
     it "round-trips the prompted structured output strategy through JSON" do
       klass = build_agent_class do
         structured_output(strategy: :prompted) { required :answer, String }

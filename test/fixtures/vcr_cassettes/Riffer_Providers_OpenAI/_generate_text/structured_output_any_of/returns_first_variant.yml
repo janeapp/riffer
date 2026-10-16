@@ -1,0 +1,262 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Extract the address from: John
+        lives at 123 Main St, Toronto"}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"}},"required":["street","city"],"additionalProperties":false},{"type":"object","properties":{"error_code":{"type":"string","description":"Why
+        no address","enum":["no_address","multiple_addresses"]},"error_message":{"type":"string","description":"Explanation
+        of the error"}},"required":["error_code","error_message"],"additionalProperties":false}],"description":"The
+        address, or why none was found"}},"required":["result"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '838'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 16 Oct 2026 18:52:37 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a4b942f19956a2c4-YUL
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '1667'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999757'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_aedb90f15fdf4ab5bdb952ce6e125d5a
+      Set-Cookie:
+      - __cf_bm=ngG1.y_Yc.Uzd0SAYfVSpGQQBebrXnYtQ1vuPr8WvlQ-1792176755.4605541-1.0.1.1-TjsmVLHWk24ZvE3JXXAv5jgvh8_X6y60jOJaqYfAUjSdCQOdbkTPGNz4rM1K9dpZCLG6dfdNBXzvvah0AE8JEWg5.L3bbIoH7wpfbfNWJZzMj7zrJwwA1BzJWr88Ssdz;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Fri,
+        16 Oct 2026 19:22:37 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_03e6e9c2d11ae640016ad2727418a887d28b0f19d6ff3f247c",
+          "object": "response",
+          "created_at": 1792176756,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1792176757,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini-2025-08-07",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_03e6e9c2d11ae640016ad27274dfac87d2a7f3659198c9e36b",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq0nJ1Be_9ZSGm8QLP4KE4pCmCFy83jKcWiHsyhBvp8NlR0khOIvh6yPkQDLZLIODA_xqZ-ZVFJ9P54LZHeOn3zthKpsG0qIMGAhBcdWjbLIgDiD1IhkdspxctCM4CL2xTptor12wx8x6LJRxvD0eLf_pLfF_ctny0RJCA56iq-5B68yisofdfiM5i-6P3q1JcUjRRZ7ATAA4yKBE_w6TUfB-r3rI2LJyqoJE0pcjtvsTzNzGjqZ6JbNeLt00zerVIm6863pguLCejr9ypmeUs8wqQxpy6_04u99RjzhvORPee2MfzZUKvRaUwdd1ltIIhDVB5ZZLfPOcD6yJhrdjMkHKl8zLsUc21D-G-EL5a5At_Hb-NdrAYGIsuIp2lRmKLzzSU2g9uVczDIusCP2afeJTen42WIymcnwli4WgeFLCOcdHVkt1IspHsOF9Yig-d2Ya-Y3EY6a7BRi2-Bfx5s-m-xGPkQsirIPdXVClP5UKFeCUR_-HX_ybNoOqu3gM5XxumjoaajncJ22jTCxDWghHr2-7aOLXCJkSVDA6WXTeLx4CR6eAx4g7i_03DCxfnuVAK-S4MdCmdw2Q2a_ldFWBdbyk4XNuItEFEks_rdRjmk7aT1BhAW7ZaAbAz6YXxEmw0F0xFx94OOuy0QKouk0AMxZteLyE3wuLVVT33uApx4H5SlynimK7bX7AxfgdKcPH9gYtkMsXjLtYsHjviPN9BBJ1QmkiD7MzLEiRn9KhhvvpDzi3xYb1pcV7ihkARR3QxGxZ7GP6IVAMCcpBLHjBj4X5ahUm4P5q3a_utVqZdDfCsVadpoxdnnWwddW2eHjY5UyoSJu8RP6eYppkT1WlBBey-xWGzFeFKesIhMdgY9TJQjnjNuOLWKN1it8R6vfUijUF8NX_KzsW5KWzeH3axJ0XU8STNYcSB5FeuOIKYb9Fx1a7QOsjW52-jRcRd3OB-ioQy_P26NZPhb4mRERixmg83aIYhykagAMPncwvGdyt2_GKQJhVIRBtJTzLedJ3q8fSdPhJZ4AtFt9vhEI41pyZv4domkiuOGwNZa60jXjuecATYfxALroFtWTutbOo-y9VbE5hZhNstnYJSC5vIxMsb9ZZL2Wcpj4mibZYDMoGj-nSpZTV4ii36CfQ6inZQpfoB-zCbf-F3YhbF3dOb6YoHw8Y-P4mKID0-GEZ1S-bl0xXLGzEp90qDxxZUTcMgTeIOfedn8Mc6YMUfM15IDmmJqrHCZPAd9fYXgCZWUjaD4Uqzfqs0n9ZjbEeg_3EabwqGhL-8GWfz9BAq8yh3fNGapVmxB6xLqKIrUvSQgJRBVG_dHyAF9SS6R1Ok7kutXWUyiT78tIVwZchgrhvSVuX5dU82FAwyFx1zbDZaXQRc_KanmGSNyahTCaah3_Il2HCP_Qd4Chyt2tZ9EgVBcA0o-6CAC0B1zU1tJpl1x2AI4YBzDrWtVI0au56PRZOW8RAKF6nfcmbY5USN-48aGYHv7OEpNGyUOi-eTMevePugId-MS22KRYsaBTFn2Y_yY2b97RZ6hQQyUTfu8tUzpXD6DodpAH3aheWUyQnPTqCCeFNDic7T-z2XNNTPE8nBqR9QsanR-eMUCb5-p0_K0xz6yfcXuRvWULHiMOI_nROq0Bg-pCOjr-1GqD_esBHIK3I9FDmfIuNnwFUBnYtY5M-1wjiExAw8WDwqoQQVgNOGPSwqUzPIZndtoKaCIICuVz2hv0KafUG0rNf28kzwZCjIt5jPsMD9qDxESsoCzhpsdF9jOUXo8p4qB4DM9plH3ZA-S5DSle7guVph5nJqt8hG7uxxfYVdxzg0MeXznk88c0qDHfbzGnbV5Z_XN4g8N5X2LWKBcyOocN5mv2ioNCtih5586S7XmX_hMX1BpSdpMEe01ZVXKSjmQ_8qqQPJGjn6-yUcv5hLKoEUqRBwDAehnnhDS1YlD8o9BVUyGdlhSLDCug1Qhg3SH4Fd-jw6qdNpzzFVNfC_Sv4MCRjDkuxom4SdSjMktzhwxtPHyD19gQ3te_I1f_eSEDFJ7KUpg7B9C6_1_YmpP_RpTXt17YbIo_30ayFaN4e84in71aFeXPaeh3kq3tsAkIVCZii0Ul9ZBBacRdRQuMftJnQu0KDdc7QCOY7M8JmJnwqpCPBc0PENRCoPpIjm403f4QJbwkYqEdRzB1kiOcpE1PSjebGL_G2RcprvdLYWKUsSoFw02x3IqYO3-jb_BeIhL3Yk3MWkyUWIruZUGodaun9kvtPymj_SuGQz4p7RIKp5osPUkLWz1BSginTyCLpXv6DpYsemS4d9Iv23okf3D06y3f7lmf2B1t8bJLWUrD3kXNxP4llaNSJU9JRoCEaF1oq29xkO3n1hDpfzUX3shHDFNcPlrSegmPvVvPTIUQ3qVQp2sRqQ0Hx0nbDTtS-kxfmFi4zseUKy9GFDYqZOuDpQTuaUGBvM9cQkc5RET415X3D_OBro-hf6RGQGfWRNZ2ENO9pZaTUUMbDwvt0_hGrrRztjsuvy7_alpfJe1M-Yo4Geu7EIPbHvUkogr81eTbeSp2PlmO8g-aR9zNeLE_WAUR9Z-qgJj6t4ftbjS7MRdSQ4vQxj2vyFon-7bv8rN_XS8DF2EMFMXK2hrj0zYi6aRi9Z5nQgBQmNqh9RN8D2S2Q=",
+              "summary": []
+            },
+            {
+              "id": "msg_03e6e9c2d11ae640016ad2727591d887d294bf94aeefcd8a2a",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"result\":{\"street\":\"123 Main St\",\"city\":\"Toronto\"}}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "result": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "street": {
+                            "type": "string",
+                            "description": "Street address"
+                          },
+                          "city": {
+                            "type": "string",
+                            "description": "City"
+                          }
+                        },
+                        "required": [
+                          "street",
+                          "city"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "error_code": {
+                            "type": "string",
+                            "description": "Why no address",
+                            "enum": [
+                              "no_address",
+                              "multiple_addresses"
+                            ]
+                          },
+                          "error_message": {
+                            "type": "string",
+                            "description": "Explanation of the error"
+                          }
+                        },
+                        "required": [
+                          "error_code",
+                          "error_message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ],
+                    "description": "The address, or why none was found"
+                  }
+                },
+                "required": [
+                  "result"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 125,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 118,
+            "output_tokens_details": {
+              "reasoning_tokens": 64
+            },
+            "total_tokens": 243
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 16 Oct 2026 18:52:37 GMT
+recorded_with: VCR 6.4.0

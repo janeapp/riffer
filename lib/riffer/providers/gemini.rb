@@ -340,6 +340,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     end
 
     schema[:items] = strip_additional_properties(schema[:items]) if schema[:items].is_a?(Hash)
+    schema[:anyOf] = schema[:anyOf].map { |branch| strip_additional_properties(branch) } if schema[:anyOf]
 
     schema
   end

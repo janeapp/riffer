@@ -1,0 +1,90 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
+        John lives at 123 Main St, Toronto"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"}},"required":["street","city"]},{"type":"object","properties":{"error_code":{"type":"string","description":"Why
+        no address","enum":["no_address","multiple_addresses"]},"error_message":{"type":"string","description":"Explanation
+        of the error"}},"required":["error_code","error_message"]}],"description":"The
+        address, or why none was found"}},"required":["result"]}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 16 Oct 2026 18:52:41 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=542
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"result\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\"\n  }\n}"
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 17,
+            "candidatesTokenCount": 32,
+            "totalTokenCount": 49,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 17
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-2.5-flash-lite",
+          "responseId": "eHLSavbJO5rmytMP9u_piQw"
+        }
+  recorded_at: Fri, 16 Oct 2026 18:52:41 GMT
+recorded_with: VCR 6.4.0

@@ -29,9 +29,11 @@ class Riffer::Params
   end
 
   #--
+  #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &)
-    nested = build_nested(type, of, &)
+    nested = build_nested(type, of, &) unless type == Riffer::Params::AnyOf
+    variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
@@ -40,13 +42,16 @@ class Riffer::Params
       enum: enum,
       item_type: of,
       nested_params: nested,
+      variants: variants,
     )
   end
 
   #--
+  #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &)
-    nested = build_nested(type, of, &)
+    nested = build_nested(type, of, &) unless type == Riffer::Params::AnyOf
+    variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
@@ -56,6 +61,7 @@ class Riffer::Params
       default: default,
       item_type: of,
       nested_params: nested,
+      variants: variants,
     )
   end
 
@@ -156,9 +162,25 @@ class Riffer::Params
   end
 
   #--
+  #: (Module?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
+  def build_variants(of, enum, &block)
+    raise Riffer::ArgumentError, "of: cannot be used with AnyOf" if of
+    raise Riffer::ArgumentError, "enum: cannot be used with AnyOf" if enum
+    raise Riffer::ArgumentError, "AnyOf requires a block defining its variants" unless block
+
+    any_of = Riffer::Params::AnyOf.new
+    any_of.instance_eval(&block)
+    raise Riffer::ArgumentError, "AnyOf requires at least two variants" if any_of.variants.size < 2
+
+    any_of.variants
+  end
+
+  #--
   #: (Riffer::Params::Param, untyped, Array[String]) -> untyped
   def validate_nested(param, value, errors)
-    if param.type == Hash && param.nested_params
+    if param.type == Riffer::Params::AnyOf
+      validate_any_of(param, value, errors)
+    elsif param.type == Hash && param.nested_params
       validate_nested_hash(param, value, errors)
     elsif param.type == Array && param.nested_params
       validate_nested_array_of_objects(param, value, errors)
@@ -181,6 +203,49 @@ class Riffer::Params
       errors << "#{param.name}.#{msg}"
     end
     value
+  end
+
+  #--
+  #: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
+  def validate_any_of(param, value, errors)
+    variants = param.variants
+    return value unless variants
+
+    variant_errors = [] #: Array[String]
+    variants.each.with_index(1) do |variant, number|
+      validated = variant.validate(value)
+      # Each variant's schema sets additionalProperties: false on every object
+      # it declares, so a key outside this variant rules it out.
+      unknown = undeclared_keys(value, validated)
+      return validated if unknown.empty?
+
+      variant_errors << "variant #{number} (#{unknown.map { |path| "#{path} is not allowed" }.join(', ')})"
+    rescue Riffer::ValidationError => e
+      # Enclosing params split errors on "; " to prefix their path, so one
+      # variant's errors must not contain it.
+      variant_errors << "variant #{number} (#{e.message.gsub('; ', ', ')})"
+    end
+
+    errors << "#{param.name} must match one of the variants: #{variant_errors.join(', ')}"
+    value
+  end
+
+  # Validation drops keys a Params doesn't declare, at any depth, so they are
+  # the keys in the input that are missing from the output.
+  #--
+  #: (untyped, untyped, ?String?) -> Array[String]
+  def undeclared_keys(value, validated, path = nil)
+    case value
+    when Hash
+      value.flat_map do |key, child|
+        key_path = [path, key].compact.join(".")
+        validated.key?(key) ? undeclared_keys(child, validated[key], key_path) : [key_path]
+      end
+    when Array
+      value.each_with_index.flat_map { |item, i| undeclared_keys(item, validated[i], "#{path}[#{i}]") }
+    else
+      []
+    end
   end
 
   #--
