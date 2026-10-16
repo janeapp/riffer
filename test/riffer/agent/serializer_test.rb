@@ -181,6 +181,19 @@ describe Riffer::Agent::Serializer do
         must_match(/result must match one of the variants/)
     end
 
+    it "reconstructs a structured output with an array of enum values through JSON" do
+      klass = build_agent_class do
+        structured_output { required :tags, Array, of: String, enum: %w[urgent billing] }
+      end
+      wire = JSON.parse(klass.new.to_json, symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(agent.structured_output.parse_and_validate('{"tags":["billing"]}').object).
+        must_equal({ tags: ["billing"] })
+      expect(agent.structured_output.parse_and_validate('{"tags":["spam"]}').error).
+        must_match(/tags\[0\] must be one of: urgent, billing/)
+    end
+
     it "round-trips the prompted structured output strategy through JSON" do
       klass = build_agent_class do
         structured_output(strategy: :prompted) { required :answer, String }

@@ -168,6 +168,25 @@ describe Riffer::Tools::Toolable do
         )
       end
     end
+
+    describe "with an array of enum values" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          identifier "tag_ticket"
+          description "Tags a ticket"
+
+          params do
+            required :tags, Array, of: String, enum: %w[urgent billing]
+          end
+        end
+      end
+
+      it "renders the enum on the items in strict mode" do
+        expect(tool_class.parameters_schema(strict: true)[:properties]["tags"]).must_equal(
+          type: "array", items: { type: "string", enum: %w[urgent billing] },
+        )
+      end
+    end
   end
 
   describe "#kind" do

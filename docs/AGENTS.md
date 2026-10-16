@@ -251,6 +251,16 @@ end
 
 Only primitive types are allowed with `of:`: `String`, `Integer`, `Float`, `TrueClass`, `FalseClass`.
 
+Add `enum:` to limit each item to a list of values:
+
+```ruby
+structured_output do
+  required :tags, Array, of: String, enum: %w[urgent billing technical]
+end
+```
+
+An item outside the list fails validation with its index: `tags[1] must be one of: urgent, billing, technical`.
+
 #### Arrays of Objects
 
 Use `Array` with a block to define arrays of objects:
@@ -310,7 +320,7 @@ An optional `AnyOf` field can also be `null`.
 
 #### Limitations
 
-A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`.
+A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 
