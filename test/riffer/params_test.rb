@@ -104,7 +104,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
       params.required(:city, String)
       error = expect { params.validate({ city: 123 }) }.must_raise(Riffer::ValidationError)
-      expect(error.message).must_match(/city must be a string/)
+      expect(error.message).must_match(/city: expected string, got integer/)
     end
 
     it "raises ValidationError for enum violation" do
@@ -382,7 +382,7 @@ describe Riffer::Params do
       params.required(:price, Float)
       error = expect { params.validate({ price: "120" }) }.must_raise(Riffer::ValidationError)
 
-      expect(error.message).must_match(/price must be a number/)
+      expect(error.message).must_match(/price: expected number, got string/)
     end
 
     it "rejects a boolean for a Float param" do
@@ -390,7 +390,7 @@ describe Riffer::Params do
       params.required(:price, Float)
       error = expect { params.validate({ price: true }) }.must_raise(Riffer::ValidationError)
 
-      expect(error.message).must_match(/price must be a number/)
+      expect(error.message).must_match(/price: expected number, got boolean/)
     end
 
     it "rejects a float for an Integer param" do
@@ -398,7 +398,7 @@ describe Riffer::Params do
       params.required(:quantity, Integer)
       error = expect { params.validate({ quantity: 1.5 }) }.must_raise(Riffer::ValidationError)
 
-      expect(error.message).must_match(/quantity must be an? integer/)
+      expect(error.message).must_match(/quantity: expected integer, got number/)
     end
 
     it "accepts an integer for a Float param nested in an array of objects" do
@@ -445,6 +445,36 @@ describe Riffer::Params do
       error = expect { params.validate({ counts: [1, 2.5] }) }.must_raise(Riffer::ValidationError)
 
       expect(error.message).must_match(/counts\[1\] must be an? integer/)
+    end
+  end
+
+  describe "#validate with an array param the model encoded as a string" do
+    let(:params) do
+      params = Riffer::Params.new
+      params.required(:rows, Array) { required :label, String }
+      params
+    end
+
+    it "accepts a JSON-encoded array" do
+      expect(params.validate(rows: '[{"label":"a"}]')).must_equal(rows: [{ label: "a" }])
+    end
+
+    it "still validates the decoded items" do
+      error = expect { params.validate(rows: '[{"label":42}]') }.must_raise Riffer::ValidationError
+
+      expect(error.message).must_equal "rows[0].label: expected string, got integer"
+    end
+
+    it "rejects a value that cannot be decoded to an array" do
+      error = expect { params.validate(rows: "I updated the note.") }.must_raise Riffer::ValidationError
+
+      expect(error.message).must_equal "rows: expected array, got string"
+    end
+
+    it "names the received type so the model can correct itself" do
+      error = expect { params.validate(rows: 42) }.must_raise Riffer::ValidationError
+
+      expect(error.message).must_equal "rows: expected array, got integer"
     end
   end
 

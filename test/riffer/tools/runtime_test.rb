@@ -53,6 +53,38 @@ describe Riffer::Tools::Runtime do
     end
   end
 
+  describe "#execute with an array param the model encoded as a string" do
+    let(:notes_tool_class) do
+      stub_tool("NotesTool") do
+        description "Replaces note parts"
+
+        params do
+          required :parts, Array do
+            required :id, Integer
+            required :html, String
+          end
+        end
+
+        def call(context:, parts:)
+          text("updated #{parts.map { |part| part[:id] }.join(', ')}")
+        end
+      end
+    end
+
+    it "runs the tool instead of discarding the call" do
+      runtime = Riffer::Tools::Runtime::Inline.new
+      tool_call = make_tool_call(
+        name: "notes_tool",
+        arguments: %({"parts":"[{\\"id\\":41,\\"html\\":\\"<p>x</p>\\"}]"}),
+      )
+
+      response = execute_single(runtime, tool_call, tools: [notes_tool_class], context: nil)
+
+      expect(response.success?).must_equal true
+      expect(response.content).must_equal "updated 41"
+    end
+  end
+
   describe "#execute" do
     it "dispatches to correct tool and returns response" do
       runtime = Riffer::Tools::Runtime::Inline.new
