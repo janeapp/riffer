@@ -23,7 +23,7 @@ gem "rubocop-performance", require: false
 gem "rubocop-rake", require: false
 gem "steep", "~> 2.1"
 gem "vcr", "~> 6.0"
-gem "webmock", "~> 3.26"
+gem "webmock", "~> 3.34"
 
 gem "kramdown"
 gem "kramdown-parser-gfm"
