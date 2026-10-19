@@ -1268,4 +1268,126 @@ describe Riffer::Params do
       expect(params.parameters.first.variants.first.parameters.map(&:name)).must_equal %i[name note]
     end
   end
+
+  describe "Array of enum values" do
+    let(:params) do
+      params = Riffer::Params.new
+      params.required(:tags, Array, of: String, enum: %w[urgent billing follow_up])
+      params
+    end
+
+    it "raises ArgumentError with enum: on an Array without of:" do
+      error = expect do
+        Riffer::Params.new.required(:tags, Array, enum: [%w[urgent]])
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "enum: with Array requires of:"
+    end
+
+    it "raises ArgumentError with enum: on an Array with a block" do
+      error = expect do
+        Riffer::Params.new.required(:items, Array, enum: %w[urgent]) { required :name, String }
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "enum: with Array requires of:"
+    end
+
+    it "raises ArgumentError with enum: on a Hash" do
+      error = expect do
+        Riffer::Params.new.optional(:address, Hash, enum: [{ city: "Toronto" }]) { required :city, String }
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "enum: cannot be used with Hash"
+    end
+
+    it "renders the enum on the items" do
+      expect(params.to_json_schema[:properties]["tags"]).must_equal(
+        type: "array", items: { type: "string", enum: %w[urgent billing follow_up] },
+      )
+    end
+
+    it "keeps the items when optional in strict mode" do
+      params = Riffer::Params.new
+      params.optional(:days, Array, of: Integer, enum: [1, 2, 3])
+
+      expect(params.to_json_schema(strict: true)[:properties]["days"]).must_equal(
+        type: %w[array null], items: { type: "integer", enum: [1, 2, 3] },
+      )
+    end
+
+    it "accepts items from the enum" do
+      expect(params.validate({ tags: %w[urgent follow_up] })).must_equal({ tags: %w[urgent follow_up] })
+    end
+
+    it "accepts an empty array" do
+      expect(params.validate({ tags: [] })).must_equal({ tags: [] })
+    end
+
+    it "rejects an item outside the enum with its index" do
+      error = expect { params.validate({ tags: %w[urgent spam] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "tags[1] must be one of: urgent, billing, follow_up"
+    end
+
+    it "rejects an item of the wrong type before checking the enum" do
+      error = expect { params.validate({ tags: ["urgent", 1] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "tags[1] must be a string"
+    end
+
+    it "coerces integer items of an of: Float enum to floats" do
+      params = Riffer::Params.new
+      params.required(:weights, Array, of: Float, enum: [0.5, 1.0])
+
+      expect(params.validate({ weights: [1, 0.5] })).must_equal({ weights: [1.0, 0.5] })
+    end
+
+    it "prefixes errors with the path of an enclosing object" do
+      outer = Riffer::Params.new
+      outer.required(:ticket, Hash) { required :tags, Array, of: String, enum: %w[urgent billing] }
+
+      error = expect { outer.validate({ ticket: { tags: %w[spam] } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "ticket.tags[0] must be one of: urgent, billing"
+    end
+
+    it "accepts items from the enum inside an AnyOf variant" do
+      outer = Riffer::Params.new
+      outer.required(:result, Riffer::Params::AnyOf) do
+        variant { required :tags, Array, of: String, enum: %w[urgent billing] }
+        variant { required :error_code, String }
+      end
+
+      expect(outer.validate({ result: { tags: %w[billing] } })).must_equal({ result: { tags: %w[billing] } })
+    end
+
+    it "reads the enum back from the items" do
+      rebuilt = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: { "tags" => { type: "array", items: { type: "string", enum: %w[urgent billing] } } },
+          required: ["tags"],
+          additionalProperties: false,
+        },
+      )
+
+      expect(rebuilt.parameters.first.enum).must_equal %w[urgent billing]
+      expect { rebuilt.validate({ tags: %w[spam] }) }.must_raise(Riffer::ValidationError)
+    end
+
+    it "round-trips losslessly with to_json_schema(strict: false)" do
+      schema = params.to_json_schema(strict: false)
+
+      expect(Riffer::Params.from_json_schema(schema).to_json_schema(strict: false)).must_equal schema
+    end
+
+    it "reads an enum written on the array and renders it on the items" do
+      rebuilt = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: { "tags" => { type: "array", enum: %w[urgent billing], items: { type: "string" } } },
+          required: ["tags"],
+          additionalProperties: false,
+        },
+      )
+
+      expect(rebuilt.to_json_schema[:properties]["tags"]).must_equal(
+        type: "array", items: { type: "string", enum: %w[urgent billing] },
+      )
+    end
+  end
 end

@@ -649,6 +649,37 @@ describe Riffer::Providers::OpenAI do
       end
     end
 
+    describe "structured output with enum array" do
+      let(:ticket_tags) { %w[urgent billing technical account] }
+      let(:weekdays) { [1, 2, 3, 4, 5] }
+
+      let(:enum_array_structured_output) do
+        params = Riffer::Params.new
+        params.required(:tags, Array, of: String, enum: ticket_tags, description: "Ticket tags")
+        params.optional(:available_days, Array, of: Integer, enum: weekdays, description: "Weekdays, 1 is Monday")
+        Riffer::Agent::StructuredOutput.new(params)
+      end
+
+      it "returns values from the enum" do
+        VCR.use_cassette(
+          "Riffer_Providers_OpenAI/_generate_text/structured_output_enum_array/returns_values_from_the_enum",
+        ) do
+          provider = Riffer::Providers::OpenAI.new
+          result = provider.generate_text(
+            prompt: "Tag this support ticket: 'I was charged twice this month and need it fixed. " \
+                    "I can take a call on Monday or Wednesday.'",
+            model: "gpt-5-mini",
+            structured_output: enum_array_structured_output,
+          )
+          validated = enum_array_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object[:tags]).must_include "billing"
+          expect(validated.object[:available_days]).must_equal [1, 3]
+        end
+      end
+    end
+
     describe "without reasoning parameter" do
       it "does not include reasoning in request params" do
         VCR.use_cassette(

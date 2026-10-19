@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Tag this support ticket:
+        ''I was charged twice this month and need it fixed. I can take a call on Monday
+        or Wednesday.''"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Ticket
+        tags\",\"items\":{\"type\":\"string\",\"enum\":[\"urgent\",\"billing\",\"technical\",\"account\"]}},\"available_days\":{\"type\":[\"array\",\"null\"],\"description\":\"Weekdays,
+        1 is Monday\",\"items\":{\"type\":\"integer\",\"enum\":[1,2,3,4,5]}}},\"required\":[\"tags\",\"available_days\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 21a11b02-99b0-47c0-bd21-0acc572f6da5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '709'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 16 Oct 2026 19:52:14 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '368'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 8115f503-5a00-4eb1-9687-b9e81f0401df
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1544},"output":{"message":{"content":[{"text":"{\"tags\":
+        [\"billing\"], \"available_days\": [1, 3]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":329,"outputTokens":20,"serverToolUsage":{},"totalTokens":349}}'
+  recorded_at: Fri, 16 Oct 2026 19:52:14 GMT
+recorded_with: VCR 6.4.0
