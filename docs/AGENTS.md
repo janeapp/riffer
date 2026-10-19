@@ -261,6 +261,24 @@ end
 
 An item outside the list fails validation with its index: `tags[1] must be one of: urgent, billing, technical`.
 
+#### Formats
+
+Use `format:` on a `String`, or on an `Array` with `of: String`, to require a standard string format:
+
+```ruby
+structured_output do
+  required :born_on, String, format: "date"
+  optional :email, String, format: "email"
+  required :visit_ids, Array, of: String, format: "uuid"
+end
+```
+
+Supported formats: `date-time`, `time`, `date`, `duration`, `email`, `hostname`, `ipv4`, `ipv6`, `uuid`. Dates and times use RFC 3339 syntax, and a `time` may leave out its UTC offset. `email` and `hostname` are checked loosely, rejecting only values that are clearly not an address or a host name.
+
+A value that doesn't match fails validation, with its index on an array: `born_on must be a valid date`, `visit_ids[1] must be a valid uuid`. Values stay strings.
+
+A model that must match a format writes a matching value even when it has none, so it may invent an email. Make such a field `optional` so the model can return `null`.
+
 #### Arrays of Objects
 
 Use `Array` with a block to define arrays of objects:
@@ -320,7 +338,7 @@ An optional `AnyOf` field can also be `null`.
 
 #### Limitations
 
-A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`.
+A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `String` or an `Array` with `of: String`, or together with `enum:`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 

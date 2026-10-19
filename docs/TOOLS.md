@@ -83,6 +83,7 @@ Options:
 
 - `description` - Human-readable description for the LLM
 - `enum` - Array of allowed values (for each item, on an `Array` with `of:`)
+- `format` - String format such as `"date"` or `"email"` (for each item, on an `Array` with `of: String`; see [Formats](AGENTS.md#formats))
 
 ### optional
 
@@ -100,6 +101,7 @@ Options:
 - `description` - Human-readable description
 - `default` - Default value when not provided
 - `enum` - Array of allowed values (for each item, on an `Array` with `of:`)
+- `format` - String format such as `"date"` or `"email"` (for each item, on an `Array` with `of: String`; see [Formats](AGENTS.md#formats))
 
 ### Supported Types
 

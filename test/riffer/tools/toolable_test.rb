@@ -187,6 +187,25 @@ describe Riffer::Tools::Toolable do
         )
       end
     end
+
+    describe "with a format" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          identifier "book_visit"
+          description "Books a visit"
+
+          params do
+            optional :on, String, format: "date"
+          end
+        end
+      end
+
+      it "renders the format next to the nullable type in strict mode" do
+        expect(tool_class.parameters_schema(strict: true)[:properties]["on"]).must_equal(
+          type: %w[string null], format: "date",
+        )
+      end
+    end
   end
 
   describe "#kind" do

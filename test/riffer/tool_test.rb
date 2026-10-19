@@ -72,6 +72,22 @@ describe Riffer::Tool do
       expect(response.content).must_match(/city is required/)
     end
 
+    it "returns a validation_error response for a value outside its format" do
+      tool_class = stub_tool("Tool") do
+        params do
+          required :on, String, format: "date"
+        end
+
+        def call(context:, on:)
+          text(on)
+        end
+      end
+      response = tool_class.new.call_with_validation(context: nil, on: "next Tuesday")
+
+      expect(response.error_type).must_equal :validation_error
+      expect(response.content).must_equal "on must be a valid date"
+    end
+
     it "applies defaults for optional params" do
       tool = weather_tool_class.new
       result = tool.call_with_validation(context: nil, city: "Toronto")

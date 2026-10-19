@@ -194,6 +194,19 @@ describe Riffer::Agent::Serializer do
         must_match(/tags\[0\] must be one of: urgent, billing/)
     end
 
+    it "reconstructs a structured output with a format through JSON" do
+      klass = build_agent_class do
+        structured_output { required :born_on, String, format: "date" }
+      end
+      wire = JSON.parse(klass.new.to_json, symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(agent.structured_output.parse_and_validate('{"born_on":"1990-12-10"}').object).
+        must_equal({ born_on: "1990-12-10" })
+      expect(agent.structured_output.parse_and_validate('{"born_on":"soon"}').error).
+        must_match(/born_on must be a valid date/)
+    end
+
     it "round-trips the prompted structured output strategy through JSON" do
       klass = build_agent_class do
         structured_output(strategy: :prompted) { required :answer, String }

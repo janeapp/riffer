@@ -609,6 +609,40 @@ describe Riffer::Providers::Anthropic do
         end
       end
     end
+
+    describe "structured output with format" do
+      let(:clinic_id) { "550e8400-e29b-41d4-a716-446655440000" }
+
+      let(:format_structured_output) do
+        params = Riffer::Params.new
+        params.required(:visit_on, String, format: "date", description: "Visit date")
+        params.required(:starts_at, String, format: "date-time", description: "Visit start, with its UTC offset")
+        params.optional(:email, String, format: "email", description: "Patient email, if given")
+        params.required(:clinic_ids, Array, of: String, format: "uuid", description: "Clinic IDs")
+        Riffer::Agent::StructuredOutput.new(params)
+      end
+
+      it "returns values in the format" do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/structured_output_format/returns_values_in_the_format",
+        ) do
+          provider = Riffer::Providers::Anthropic.new
+          result = provider.generate_text(
+            prompt: "Book a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic #{clinic_id}. " \
+                    "The patient gave no email.",
+            model: "claude-haiku-4-5-20251001",
+            structured_output: format_structured_output,
+          )
+          validated = format_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object[:visit_on]).must_equal "2026-10-26"
+          expect(validated.object[:starts_at]).must_equal "2026-10-26T09:30:00-04:00"
+          expect(validated.object[:email]).must_be_nil
+          expect(validated.object[:clinic_ids]).must_equal [clinic_id]
+        end
+      end
+    end
   end
 
   describe "tags" do

@@ -1390,4 +1390,171 @@ describe Riffer::Params do
       )
     end
   end
+
+  describe "format" do
+    let(:params) do
+      params = Riffer::Params.new
+      params.required(:born_on, String, format: "date")
+      params.optional(:email, String, format: "email")
+      params.required(:visit_ids, Array, of: String, format: "uuid")
+      params
+    end
+
+    let(:visit_id) { "550e8400-e29b-41d4-a716-446655440000" }
+
+    it "raises ArgumentError with a format outside the supported list" do
+      error = expect { Riffer::Params.new.required(:site, String, format: "uri") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal(
+        "site: format: must be a supported format " \
+        '(date-time, time, date, duration, email, hostname, ipv4, ipv6, uuid), got "uri"',
+      )
+    end
+
+    it "raises ArgumentError with a format that isn't a string" do
+      error = expect { Riffer::Params.new.required(:on, String, format: :date) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/\Aon: format: must be a supported format \(.*\), got :date\z/)
+    end
+
+    it "raises ArgumentError with format: on a non-String type" do
+      error = expect { Riffer::Params.new.required(:age, Integer, format: "date") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "age: format: requires a String or an Array of: String"
+    end
+
+    it "raises ArgumentError with format: on an Array of a non-String type" do
+      error = expect do
+        Riffer::Params.new.required(:ages, Array, of: Integer, format: "date")
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "ages: format: requires a String or an Array of: String"
+    end
+
+    it "raises ArgumentError with format: on a Hash, an Array of objects or an AnyOf" do
+      [
+        -> { required(:address, Hash, format: "date") { required :city, String } },
+        -> { required(:visits, Array, format: "date") { required :on, String } },
+        lambda do
+          required :result, Riffer::Params::AnyOf, format: "date" do
+            variant { required :on, String }
+            variant { required :error, String }
+          end
+        end,
+      ].each do |definition|
+        error = expect { Riffer::Params.new.instance_exec(&definition) }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/format: requires a String or an Array of: String\z/)
+      end
+    end
+
+    it "raises ArgumentError with format: and enum:" do
+      error = expect do
+        Riffer::Params.new.required(:born_on, String, format: "date", enum: ["2026-10-19"])
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "born_on: format: cannot be used with enum:"
+    end
+
+    it "keeps its own frozen copy of the format" do
+      format = +"date"
+      param = Riffer::Params::Param.new(name: :on, type: String, required: true, format: format)
+      format << "-time"
+
+      expect(param.format).must_equal "date"
+      expect(param.format).must_be :frozen?
+    end
+
+    it "renders the format on the field and on typed array items" do
+      expect(params.to_json_schema[:properties]).must_equal(
+        "born_on" => { type: "string", format: "date" },
+        "email" => { type: "string", format: "email" },
+        "visit_ids" => { type: "array", items: { type: "string", format: "uuid" } },
+      )
+    end
+
+    it "keeps the format next to the nullable type when optional in strict mode" do
+      expect(params.to_json_schema(strict: true)[:properties]["email"]).must_equal(
+        type: %w[string null], format: "email",
+      )
+    end
+
+    it "accepts values in the format" do
+      arguments = { born_on: "1990-12-10", email: "ada@example.com", visit_ids: [visit_id] }
+
+      expect(params.validate(arguments)).must_equal arguments
+    end
+
+    it "accepts null for an optional field" do
+      expect(params.validate({ born_on: "1990-12-10", visit_ids: [] })).must_equal(
+        { born_on: "1990-12-10", email: nil, visit_ids: [] },
+      )
+    end
+
+    it "rejects values outside the format" do
+      error = expect do
+        params.validate({ born_on: "1990-02-30", email: "N/A", visit_ids: [visit_id, "none"] })
+      end.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "born_on must be a valid date; email must be a valid email; visit_ids[1] must be a valid uuid",
+      )
+    end
+
+    it "rejects a value of the wrong type before checking the format" do
+      error = expect { params.validate({ born_on: 19_901_210, visit_ids: [] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "born_on must be a string"
+    end
+
+    it "prefixes errors with the path of an enclosing object" do
+      outer = Riffer::Params.new
+      outer.required(:patient, Hash) { required :born_on, String, format: "date" }
+
+      error = expect { outer.validate({ patient: { born_on: "soon" } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "patient.born_on must be a valid date"
+    end
+
+    it "checks the format inside an AnyOf variant" do
+      outer = Riffer::Params.new
+      outer.required(:contact, Riffer::Params::AnyOf) do
+        variant { required :email, String, format: "email" }
+        variant { required :phone, String }
+      end
+
+      expect(outer.validate({ contact: { email: "ada@example.com" } })).must_equal(
+        { contact: { email: "ada@example.com" } },
+      )
+      error = expect { outer.validate({ contact: { email: "N/A" } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_match(/variant 1 \(email must be a valid email\)/)
+    end
+
+    it "reads the format back from the field and the items" do
+      rebuilt = Riffer::Params.from_json_schema(params.to_json_schema)
+
+      expect(rebuilt.parameters.map(&:format)).must_equal %w[date email uuid]
+      error = expect { rebuilt.validate({ born_on: "soon", visit_ids: [] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "born_on must be a valid date"
+    end
+
+    it "raises when reading back a format on non-string items" do
+      error = expect do
+        Riffer::Params.from_json_schema(
+          {
+            type: "object",
+            properties: { "counts" => { type: "array", items: { type: "integer", format: "date" } } },
+            required: ["counts"],
+          },
+        )
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "counts: format: requires a String or an Array of: String"
+    end
+
+    it "round-trips losslessly with to_json_schema(strict: false)" do
+      schema = params.to_json_schema(strict: false)
+
+      expect(Riffer::Params.from_json_schema(schema).to_json_schema(strict: false)).must_equal schema
+    end
+
+    it "raises when reading back a format outside the supported list" do
+      error = expect do
+        Riffer::Params.from_json_schema(
+          { type: "object", properties: { "count" => { type: "integer", format: "int32" } }, required: ["count"] },
+        )
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/\Acount: format: must be a supported format \(.*\), got "int32"\z/)
+    end
+  end
 end

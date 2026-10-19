@@ -17,6 +17,8 @@ class Riffer::Params::Param
 
   attr_reader enum: Array[untyped]?
 
+  attr_reader format: String?
+
   attr_reader default: untyped
 
   attr_reader item_type: Module?
@@ -42,8 +44,8 @@ class Riffer::Params::Param
   def self.json_type_to_ruby: (untyped) -> Module
 
   # --
-  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
-  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
 
   # --
   # : (untyped) -> bool
@@ -65,6 +67,10 @@ class Riffer::Params::Param
   # --
   # : (Riffer::Params::Param) -> void
   def initialize_copy: (Riffer::Params::Param) -> void
+
+  # --
+  # : () -> void
+  def validate_format!: () -> void
 
   # --
   # : () -> void
