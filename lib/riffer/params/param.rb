@@ -36,6 +36,8 @@ class Riffer::Params::Param
 
   attr_reader :enum #: Array[untyped]? # @dynamic enum
 
+  attr_reader :format #: String? # @dynamic format
+
   attr_reader :default #: untyped # @dynamic default
 
   attr_reader :item_type #: Module? # @dynamic item_type
@@ -52,6 +54,8 @@ class Riffer::Params::Param
     item_type, nested = resolve_nesting(ruby_type, schema)
     enum = schema[:enum]
     enum ||= schema[:items][:enum] if item_type
+    format = schema[:format]
+    format ||= schema[:items][:format] if item_type
 
     new(
       name: name,
@@ -59,6 +63,7 @@ class Riffer::Params::Param
       required: required,
       description: schema[:description],
       enum: enum,
+      format: format,
       default: schema[:default],
       item_type: item_type,
       nested_params: nested,
@@ -104,9 +109,9 @@ class Riffer::Params::Param
   private_class_method :json_type_to_ruby
 
   #--
-  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
-  def initialize(name:, type:, required:, description: nil, enum: nil, default: nil, item_type: nil, nested_params: nil,
-                 variants: nil)
+  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  def initialize(name:, type:, required:, description: nil, enum: nil, format: nil, default: nil, item_type: nil,
+                 nested_params: nil, variants: nil)
     if type == Riffer::Params::AnyOf && variants.nil?
       raise Riffer::ArgumentError, "#{name}: an AnyOf param requires variants"
     end
@@ -116,10 +121,14 @@ class Riffer::Params::Param
     @required = required
     @description = description
     @enum = enum
+    # Frozen and deduplicated, so copies never share a mutable string.
+    @format = format.is_a?(String) ? -format : format
     @default = default
     @item_type = item_type
     @nested_params = nested_params
     @variants = variants
+    # Checked here rather than in Params so from_json_schema enforces it too.
+    validate_format! if format
   end
 
   #--
@@ -161,8 +170,9 @@ class Riffer::Params::Param
       return schema
     end
 
-    # A typed array's enum constrains its items, not the array.
+    # A typed array's enum and format constrain its items, not the array.
     value_enum = enum unless item_type
+    value_format = format unless item_type
 
     # Providers like Anthropic reject a nullable type union combined with enum.
     if nullable && value_enum
@@ -177,6 +187,7 @@ class Riffer::Params::Param
     schema = { type: type } #: Hash[Symbol, untyped]
     schema[:description] = description if description
     schema[:enum] = value_enum if value_enum
+    schema[:format] = value_format if value_format
     # Strict providers reject the +default+ keyword; emit it only in
     # non-strict mode, where it makes the schema a lossless round-trip
     # source for +from_json_schema+.
@@ -185,7 +196,7 @@ class Riffer::Params::Param
     if self.type == Array && nested_params
       schema[:items] = nested_params.to_json_schema(strict: strict)
     elsif self.type == Array && item_type
-      schema[:items] = { type: TYPE_MAPPINGS[item_type], enum: enum }.compact
+      schema[:items] = { type: TYPE_MAPPINGS[item_type], enum: enum, format: format }.compact
     elsif self.type == Hash && nested_params
       # The nested schema carries its own type: "object", which would clobber a nullable union.
       schema.merge!(nested_params.to_json_schema(strict: strict).except(:type))
@@ -207,6 +218,20 @@ class Riffer::Params::Param
     @variants = source.variants&.map(&:dup)
     @enum = Riffer::Helpers::DeepDup.call(source.enum)
     @default = Riffer::Helpers::DeepDup.call(source.default)
+  end
+
+  #--
+  #: () -> void
+  def validate_format!
+    unless Riffer::Params::Format::NAMES.include?(format)
+      raise Riffer::ArgumentError,
+            "#{name}: format: must be a supported format (#{Riffer::Params::Format::NAMES.join(', ')}), " \
+            "got #{format.inspect}"
+    end
+    unless type == String || (type == Array && item_type == String)
+      raise Riffer::ArgumentError, "#{name}: format: requires a String or an Array of: String"
+    end
+    raise Riffer::ArgumentError, "#{name}: format: cannot be used with enum:" if enum
   end
 
   #--

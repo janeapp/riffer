@@ -1,0 +1,39 @@
+# Generated from lib/riffer/params/format.rb with RBS::Inline
+
+module Riffer::Params::Format
+  DATE: Regexp
+
+  DATE_TIME: Regexp
+
+  # The offset is optional: Anthropic's grammar emits times without one.
+  TIME: Regexp
+
+  DURATION: Regexp
+
+  UUID: Regexp
+
+  # The WHATWG HTML pattern: no single pattern matches RFC 5322 exactly, so
+  # this one only rules out values that are clearly not an address.
+  EMAIL: Regexp
+
+  HOSTNAME: Regexp
+
+  # The formats OpenAI, Anthropic and Bedrock all accept. OpenAI rejects uri.
+  CHECKS: Hash[String, ^(String) -> bool]
+
+  NAMES: Array[String]
+
+  # --
+  # : (String, String) -> bool
+  def valid?: (String, String) -> bool
+
+  private
+
+  # --
+  # : (Regexp, String) -> bool
+  def calendar_date?: (Regexp, String) -> bool
+
+  # --
+  # : (String) -> bool
+  def ipv6?: (String) -> bool
+end

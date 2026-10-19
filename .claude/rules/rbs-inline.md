@@ -68,7 +68,7 @@ end
 
 ### Where stubs and stdlib deps live
 
-Dependency signatures come from [`rbs collection`](https://github.com/ruby/gem_rbs_collection): `rbs_collection.yaml` pins the upstream repo to a commit SHA, the gem set is derived from `Gemfile.lock`, and `rbs_collection.lock.yaml` is committed (the installed `.gem_rbs_collection/` is gitignored). Steep auto-detects the config, so the `Steepfile` declares no `library` lines. `yaml` is the one hand-listed entry under `gems:` — it's stdlib, so it never appears in `Gemfile.lock`.
+Dependency signatures come from [`rbs collection`](https://github.com/ruby/gem_rbs_collection): `rbs_collection.yaml` pins the upstream repo to a commit SHA, the gem set is derived from `Gemfile.lock`, and `rbs_collection.lock.yaml` is committed (the installed `.gem_rbs_collection/` is gitignored). Steep auto-detects the config, so the `Steepfile` declares no `library` lines. Stdlib libraries that no gem in `Gemfile.lock` pulls in are hand-listed under `gems:` (`yaml`, `cgi`, `date`, `resolv`).
 
 `bin/typecheck` runs `rbs collection update` before `steep check`, keeping the lock in sync with `Gemfile.lock`; CI fails on lock drift. So after a Dependabot gem bump, run `bin/typecheck` and commit the refreshed lock. To pull newer upstream stubs, bump `revision` in `rbs_collection.yaml` and run `bin/typecheck` — pinning is what makes `update` deterministic.
 

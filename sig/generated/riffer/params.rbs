@@ -15,15 +15,15 @@ class Riffer::Params
 
   # --
   # : (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # --
   # : (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

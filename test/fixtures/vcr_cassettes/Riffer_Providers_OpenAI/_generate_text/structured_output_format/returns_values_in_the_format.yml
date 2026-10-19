@@ -1,0 +1,247 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Book a visit on 2026-10-26 at 9:30am
+        Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000. The
+        patient gave no email."}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"starts_at":{"type":"string","description":"Visit start,
+        with its UTC offset","format":"date-time"},"email":{"type":["string","null"],"description":"Patient
+        email, if given","format":"email"},"clinic_ids":{"type":"array","description":"Clinic
+        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","email","clinic_ids"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '761'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 19 Oct 2026 20:34:46 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a4d2909338430d24-YUL
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '6754'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999868'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_3680f9a40de44cdaa4100baedf95246e
+      Set-Cookie:
+      - __cf_bm=qMei5vQ4z.32Jk7eCrEm8l277B8Hc6JrOF6rZivYBJc-1792442079.2352498-1.0.1.1-M0fxLScvy7E8mOEkaMAvxF0IidXKPOaACfINFeTxnIsqQtbmf4BDMj7OiOZC7frkeWCLY9og6jrLX_F36U4jx6_04IDAo9UvdwjlNTi8zdR9c1lWILPUxqgYaoGJLIZS;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        19 Oct 2026 21:04:46 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_05cfe62966024796016ad67edf786487d2a696bea9239d15f4",
+          "object": "response",
+          "created_at": 1792442079,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1792442086,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini-2025-08-07",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_05cfe62966024796016ad67ee0089c87d2b76f1767a3860413",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq1n7mFdaZjUsQjNNOMH_A_qJqHfimvz7Sc27CW9QeziNoOlwHZtGKieQyaFjM0tg8duq3qvADhI3jlffN80lMjcYwsjZst2JeZdxH6Dp-vfLTps7ARL1Sj26k5IPaOXBy8OAHcRFg_8JS3Rnr6m4uZnQ4nTct45SUVlIDNehb_V3Tax2NzgwRYsXtvQ4hQZMf33ZJToSGJVzapASW58P_RWeaCV0oVsq8wUPsnktS8_1u82p07rCPNui4vsrvYOWNkBg2iD5DSaGVpWVDqeCfsSXWZSenXbtSQ8o-cUCbS1rRD9fwutsWXihRjthJfuE0QqPGIN4jnxJMQ2VcSPL8k-J4Op3_syISYqdlBoahrOeDmjz2G0-QvoAKUYj1Znv6OhYcOIkffuGIhGUV395adAJQ3z818o75-jcLmJ2uo2H8BCb7QXVB48VVBErzgrqkFyCjwyTuAVs6XjFbfF-VuFaVL3eOvMxdZpQU31hzvQUHJdzhVKo_EaQd1sL5JWjBUnFivvX8bjMrGA34q54uNn2PseuT2Paq6Y1-d_t6wwachStu7yHwarpWjP-rFEaNi-haziW9i81urTzyqucqqe7M4tYYM30QZ4LGXg7GS6R22lq3WTrYlbkcRlyLJcCiufYKnEKsehpWaFkd4Fb20FYKZtYa29-gUfoi6K1aVPyn_wcVVbplETTHKXDkW8SypWRaGCr2vkpWJOH6GwcyOosXNAm2qdTQ6DVGdcSTqUwo_4kQy7v55_fV4V-mwgBPHXHZh5cBOUIj5BCulY6h2hUQugbq3OYTv7bDcnVpP5dq3_ZKWCJlbKE_XA3vgrowdjQGMPqa14uWGlbt0owTMnJb329s6sAAriJa3lvX_5IcoVMnCXMJvUNvuRWNdrDzavFyloPSXV0noygOteFJQH_7oRV21Ii2o3HabqYzIJDi9yVOTgpbztsxapn1hGJQxywe8CH0yLuL_J7WqiKkvCdMF150G0PwuhScE5YHsWyKgispgOCR9kdMPH2IsguNqJvjz5lIEUwRjupfWUJhnvL_3QPGshOIBy2e7m0c1EQaOEp7sUaBWiUX5-iyHrV1GB5QR_5MbfG5gXHQGwi0ytJhd5PLiHaefO0EKz6mZlbwP0KmhIp7vwb7hyQiyB9h1N4F4qJCmbNwK6HNr0ZV71SffHGwT0ioWQCA_VSTkL6ioNL2OdAyNGlgN8Mgd81-K_KlPCFkTBdHMolndf_TvLwniQlANzRqQI69MuvObqnzRdQwKpR7ZByZn-pEDvDnT2fXJ30wtcQI0WPz9uSzSgy3Xk_VJYzd8bkOjiRI6j3QXeRDPQW5BYO_GN-WzB7e8g78tfborDTd3thCf_SN2R-bfnFOwdCSdLHHXQA3nCCSc2EupbeRtoCUT5U-SzMlRwM1dP5uv78XiY8BC37acaiXg9fzI5SO4IH46qIpII1r0aEW-ebbwIBW-CKNaUIvWt0BLSgmQ4NACXspd9ddYTsplCHrILwg-k7GYUCkzTUXOB2QyR3hIWNRHPZ9bG8f6MxWekOuEykCQofaWaxFL-knht60h4zaIiseRwXcEiM9O6QXfL2kgC8D8BUpr9TJ1Z5r_XpbXizZSfXwcWgvA0oiOWGTpW8Zp7aF2F2Ha0Vl3v4cHtXHCUhn7FPAUwYtpedcSLK5_MCejx3JohWUdBnKhBMxSCDplmdxIU5933Jouu37Wd09xBIYGW5xhzGvb_H9DFLmuZPl5-EP85b5Drd7ercBOOyQ9NbHoxCeskmvcoxn4hox_YJvCL4kQVbyPmFC4ioCf42JJ4PLupwGTaTOgHlgxYBuz-XtNJrUeIzPYRG89CRr8h2A0gyr_r6bGtH_u7p5QSntxGilSru1JB3YhWPskSRQjA40R_93atvTOceOt9XIWSSdZ8v2L9jSmVW1YXrdm0LmbixrjgNC8F_hJT96mitfWVzatxB_dDmKWcjCxDu6RIZsmFllKzQsOX0pxriSgVopF0p7cwptT5UfGBdz-OPocfuhUC-lQ8o6K5jXcgkbiQ64cFosKI7MNUhl3OCkdxDxzjBBP9OTpO0IFI9KqHt96LnnUngH2SzZU5_gKygBtZnbTZrQcOybffBnEp2Q9uwr5OKg9MsKuqbGXKtxnoXu_bg7O1CjnfwHSLMQt_PzrH-3rMVDebJhuldn9mt6YeV8oBUzMM0a7Oj6hSjf2cIOAcBk0ZYwC92ZVUUb2r6HtmESWKboeRyTsnqDw359yXOGfY-GJ7szBLKYkjlNxhMmTHt3DXyLEqnj0HTj1q_0LTh09_bmt_BH_5lE0CWtnI_PJiG9-FrOpfeUnz8VkE39XnHy98V_xEfdAK1PCOO2TsKzbT_47zqLhbLIhTBsLMb6dR5GfevMbmgWwNsYmANis8zamyf888gUjjx63i4REi1-qhz0HFwXv7y3ZdFd75WDOMKWdJYkbDu2604AQ1OGHsTsA1dK_ebXbI3D7YbWSPsZ6e1YQVqrFMmqOiSHb0hxwwORxFcP2Dc6m2toqQPSiuMLoZGTgOFO1f_mBtLHEPRiqYb5_4IYAzhgnMma8U41hr9D7-n7hUiQqzBHWmGZNfN5pC6Pvm2FP3FK0yrIl85wsygCrg3VeIko2RQ7Imkwg1HqHcFQfqbw5Lubqtm3vfwHEqpoj5NnFr2rbrRqzA85UkTRHnzFowD-udQVftvtvzamgg4oCmJb4hCwjVK7Ofiqw9bw2o7pdXBTwt-ZT6bqPDYJ5BzSlusoqrEsU3EEp7L31b08lzC3fpX3l2WDLcuGJNQd7BRbG-gYw-jdnA_HbCs-9xqCEacd_zBOVMDym6a0cHQJxp3pCt8EzWJgppW-Ls8iWIkZNoMb3J2cFsbFynpbpGgCxb5DPlOln6eJ1QRwJzYTz2ZZmhwhEEN1YwAIIdPMb-U_xHhuDrUI3KvV_AI_QMSGSJuSm4nKizAKUy3cJE5_GLHxzutgKncjAbVnFyjzLvcyDwizg9wnR4KuRlkBcDQ0970B7xd5fiHK5fgQ8coLV74Xhp3Nc-SD4_nJP-hYAxj3P17MvwZLjzXWSfIKiB2qRzo5vUfTV48duDpWX6TMaFKOn9seKDe0Kyb2EzY8X1MZt0SfSx42p2pyViUiXLF8qKPiC1dFPPLp8YXZZ_SCTYCu-yfvBXWIwKpRK_BceQY0o8TuLWQBuSW6SpMQC-6G0WC3dje-ARgrahPZw8MOalBtvUyK__nBt10cjzysQgtEexSk47NUL20uY3zmX7WmwIrVPJI2AbkD-57TlHhocQFPdqeEQiYCx3ZP_ra4CThFCzn6ktOW0VMKPHZhKMlF1G0TwZGzgvo0vTOjBNEWkBRC7KR8ypMqAWIn3WqaAUJgBV3mxak9eahwKC3I1wy0HQWXFu43CrJwjxmX7cCsD_B_V176s9yUJYpkNtJO_tN5JuLJyiImroghLkJYMLjUZaNdao7Ojwk59nlKfkbSS5KAycqZgr7w9oMFRrrUttj2bY1t6kc8h96LUJYEXMnlC6f-sW9PQoqEKvCheq_jqa4mTG54E_x51PROsTwLSWahs7XuxElfgUJjCd9405lW1vyb-nTkTCnGIcSDlaHgCW69OU3zNHr-FEad9x3NA_7AGx5pr0Jx8S4to-H82LMIjMeykxgS1EMS3u4YofVNOTmYBCyFEclmfyHEtWc4dC_bF4u1SaNW3_qVWgQF0aNfpK6G1PUEJBgK7yU_tA6bMFXkbYCI-RFWzEPwDytrniWhff8MJgZyS1OqtmzbM-Lxq9X9W5rTqZ1YMUREGN9GYzCJgDDekZDjlQc_3CFFxZso0EvEUNdMMtsRjK7zjsA5-zjhTPKRy-tKZGg7G0brF2U7AmiPR3z-cSQ0FG_wFC4vyQgSo15FiI9hvxDsTpXpfw3m3u9oAg67RVCdYnIpTYgOR2u2P82-VoAuEmv4vmawSrxrSdpLeLv9vWeyrjc8Lgc4V9XLBLZJYBakKqzI5cA_3hTO_WU-B6_M3UstcVn2MQ_hX9TCSbXqd06o4S78E89EEjdGacNbqwSnABGAZbFGVn5P8-AhjpfAchunT1LmdD7XV8TCa51-BVmPfBsVFSEiPqBlk3VhPUxeUkNeO3U6HWueFZX3NQEdo7IkNobgoBjg-AiSTdLKn_eQ6hMpfcVzyQumXxXQxWZphkH3gpicota9Tnbzzf0ICdSFRKydfWknoyU-IrRZOBT8VWzKBIPKt9fVRRn_FGcNS7DKJ8AxxCT_s3mMVceDcD8zyUq6b36CH_YSSCxhRnASh1M07xk_W63ahHlyA0FcxCyEnuACr-ICQnNNRGT47u4e_2IWENhvZM_YjEY2o64DdiUB8xjUgNJq7DoPZHQIZ1xUbDjN7ZfvZ4FcczFoi9Dbcpm6a8OOJ-qfILJRrDEXprx2oYg87RTsbUJXkL-jRvADPeSfuFY00BvAxqmModsdVB3EvApXfYdY8q1IhZnuMi7vN1gcjf5CkB8vsaDYJTPqJQ496FIZz6p50L-8he3TNbG8xuOGITDmRdkDk7InxaCDg6DIqSExsigk2IJuyV-nzdqfHIoj3I7nFgz4ARHXInHO09A=",
+              "summary": []
+            },
+            {
+              "id": "msg_05cfe62966024796016ad67ee4e8f087d2a9a7faeebf17f941",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"email\":null,\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "visit_on": {
+                    "type": "string",
+                    "description": "Visit date",
+                    "format": "date"
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "description": "Visit start, with its UTC offset",
+                    "format": "date-time"
+                  },
+                  "email": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Patient email, if given",
+                    "format": "email"
+                  },
+                  "clinic_ids": {
+                    "type": "array",
+                    "description": "Clinic IDs",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                },
+                "required": [
+                  "visit_on",
+                  "starts_at",
+                  "email",
+                  "clinic_ids"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 142,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 350,
+            "output_tokens_details": {
+              "reasoning_tokens": 256
+            },
+            "total_tokens": 492
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Mon, 19 Oct 2026 20:34:46 GMT
+recorded_with: VCR 6.4.0

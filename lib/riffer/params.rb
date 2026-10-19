@@ -30,8 +30,8 @@ class Riffer::Params
 
   #--
   #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def required(name, type, description: nil, enum: nil, of: nil, &)
+  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def required(name, type, description: nil, enum: nil, format: nil, of: nil, &)
     nested = build_nested(type, of, enum, &) unless type == Riffer::Params::AnyOf
     variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
@@ -40,6 +40,7 @@ class Riffer::Params
       required: true,
       description: description,
       enum: enum,
+      format: format,
       item_type: of,
       nested_params: nested,
       variants: variants,
@@ -48,8 +49,8 @@ class Riffer::Params
 
   #--
   #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &)
+  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def optional(name, type, description: nil, enum: nil, format: nil, default: nil, of: nil, &)
     nested = build_nested(type, of, enum, &) unless type == Riffer::Params::AnyOf
     variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
@@ -58,6 +59,7 @@ class Riffer::Params
       required: false,
       description: description,
       enum: enum,
+      format: format,
       default: default,
       item_type: of,
       nested_params: nested,
@@ -89,9 +91,14 @@ class Riffer::Params
         next
       end
 
-      # A typed array's enum constrains its items, which validate_typed_array checks.
+      # A typed array's enum and format constrain its items, which validate_typed_array checks.
       if param.enum && !param.item_type && !param.enum.include?(value)
         errors << "#{param.name} must be one of: #{param.enum.join(', ')}"
+        next
+      end
+
+      if param.format && !param.item_type && !Riffer::Params::Format.valid?(param.format, value)
+        errors << "#{param.name} must be a valid #{param.format}"
         next
       end
 
@@ -293,6 +300,11 @@ class Riffer::Params
 
       if param.enum && !param.enum.include?(item)
         errors << "#{param.name}[#{i}] must be one of: #{param.enum.join(', ')}"
+        next item
+      end
+
+      if param.format && !Riffer::Params::Format.valid?(param.format, item)
+        errors << "#{param.name}[#{i}] must be a valid #{param.format}"
         next item
       end
 
