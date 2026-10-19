@@ -2,7 +2,7 @@
 # rbs_inline: enabled
 
 require "date"
-require "resolv"
+require "ipaddr"
 
 module Riffer::Params::Format
   extend self
@@ -32,8 +32,8 @@ module Riffer::Params::Format
     "duration" => ->(value) { DURATION.match?(value) },
     "email" => ->(value) { EMAIL.match?(value) },
     "hostname" => ->(value) { HOSTNAME.match?(value) },
-    "ipv4" => ->(value) { Resolv::IPv4::Regex.match?(value) },
-    "ipv6" => ->(value) { ipv6?(value) },
+    "ipv4" => ->(value) { ip_address?(value, &:ipv4?) },
+    "ipv6" => ->(value) { ip_address?(value, &:ipv6?) },
     "uuid" => ->(value) { UUID.match?(value) },
   }.freeze #: Hash[String, ^(String) -> bool]
 
@@ -60,12 +60,14 @@ module Riffer::Params::Format
   end
 
   #--
-  #: (String) -> bool
-  def ipv6?(value)
-    # Resolv accepts zone IDs (fe80::1%eth0), which aren't part of an address,
-    # and doesn't range-check an IPv4 tail (::ffff:999.0.0.1).
-    return false if value.include?("%") || !Resolv::IPv6::Regex.match?(value)
+  #: (String) { (IPAddr) -> bool } -> bool
+  def ip_address?(value)
+    # IPAddr also accepts a prefix (10.0.0.0/24), a zone ID (fe80::1%eth0) and
+    # brackets ([::1]), none of which are part of an address.
+    return false if value.match?(%r{[/%\[\]]})
 
-    !value.include?(".") || Resolv::IPv4::Regex.match?(value.rpartition(":").last)
+    yield IPAddr.new(value)
+  rescue IPAddr::Error
+    false
   end
 end

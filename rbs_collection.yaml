@@ -11,4 +11,4 @@ gems:
   - name: yaml
   - name: cgi
   - name: date
-  - name: resolv
+  - name: ipaddr

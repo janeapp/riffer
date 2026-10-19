@@ -34,6 +34,6 @@ module Riffer::Params::Format
   def calendar_date?: (Regexp, String) -> bool
 
   # --
-  # : (String) -> bool
-  def ipv6?: (String) -> bool
+  # : (String) { (IPAddr) -> bool } -> bool
+  def ip_address?: (String) { (IPAddr) -> bool } -> bool
 end
