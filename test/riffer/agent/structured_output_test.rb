@@ -60,6 +60,7 @@ describe Riffer::Agent::StructuredOutput do
       params.required(:active, Riffer::Params::Boolean)
       params.required(:level, Integer, enum: [1, 2, 3])
       params.required(:tags, Array, of: String)
+      params.required(:grid, Array, of: [Integer])
       params.required(:anything, Array)
       params.required(:metadata, Hash)
       so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
@@ -72,6 +73,7 @@ describe Riffer::Agent::StructuredOutput do
         "active" => "<boolean>",
         "level" => "1 | 2 | 3",
         "tags" => ["<string>"],
+        "grid" => [["<integer>"]],
         "anything" => [],
         "metadata" => {},
       )

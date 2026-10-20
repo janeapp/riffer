@@ -30,9 +30,10 @@ class Riffer::Params
 
   #--
   #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required(name, type, description: nil, enum: nil, format: nil, of: nil, &)
-    nested = build_nested(type, of, enum, &) unless type == Riffer::Params::AnyOf
+    item_type, dimensions = unwrap_of(of)
+    nested = build_nested(type, item_type, enum, &) unless type == Riffer::Params::AnyOf
     variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
@@ -41,7 +42,8 @@ class Riffer::Params
       description: description,
       enum: enum,
       format: format,
-      item_type: of,
+      item_type: item_type,
+      dimensions: dimensions,
       nested_params: nested,
       variants: variants,
     )
@@ -49,9 +51,10 @@ class Riffer::Params
 
   #--
   #: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional(name, type, description: nil, enum: nil, format: nil, default: nil, of: nil, &)
-    nested = build_nested(type, of, enum, &) unless type == Riffer::Params::AnyOf
+    item_type, dimensions = unwrap_of(of)
+    nested = build_nested(type, item_type, enum, &) unless type == Riffer::Params::AnyOf
     variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
@@ -61,7 +64,8 @@ class Riffer::Params
       enum: enum,
       format: format,
       default: default,
-      item_type: of,
+      item_type: item_type,
+      dimensions: dimensions,
       nested_params: nested,
       variants: variants,
     )
@@ -145,6 +149,15 @@ class Riffer::Params
   end
 
   #--
+  #: ((Module | Array[untyped])?, ?Integer) -> [Module?, Integer]
+  def unwrap_of(of, dimensions = 1)
+    return [of, dimensions] unless of.is_a?(Array)
+    raise Riffer::ArgumentError, "of: must nest exactly one type, got #{of.inspect}" unless of.size == 1 && of.first
+
+    unwrap_of(of.first, dimensions + 1)
+  end
+
+  #--
   #: (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested(type, of, enum, &block)
     raise Riffer::ArgumentError, "cannot use both of: and a block" if of && block
@@ -172,7 +185,7 @@ class Riffer::Params
   end
 
   #--
-  #: (Module?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
+  #: ((Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
   def build_variants(of, enum, &block)
     raise Riffer::ArgumentError, "of: cannot be used with AnyOf" if of
     raise Riffer::ArgumentError, "enum: cannot be used with AnyOf" if enum
@@ -279,36 +292,49 @@ class Riffer::Params
   end
 
   #--
-  #: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
-  def validate_typed_array(param, value, errors)
+  #: (Riffer::Params::Param, Array[untyped], Array[String], ?String, ?Integer) -> Array[untyped]
+  def validate_typed_array(param, value, errors, path = param.name.to_s, dimensions = param.dimensions)
     item_type = param.item_type
     return value unless item_type
 
-    type_name = Riffer::Params::Param::TYPE_MAPPINGS[item_type]
-    valid_item = if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(item_type)
-                   ->(item) { [true, false].include?(item) }
-                 elsif item_type == Float
-                   ->(item) { item.is_a?(Numeric) }
-                 else
-                   ->(item) { item.is_a?(item_type) }
-                 end
     value.map.with_index do |item, i|
-      unless valid_item.call(item)
-        errors << "#{param.name}[#{i}] must be a #{type_name}"
+      item_path = "#{path}[#{i}]"
+
+      if dimensions > 1
+        next validate_typed_array(param, item, errors, item_path, dimensions - 1) if item.is_a?(Array)
+
+        errors << "#{item_path} must be an array"
+        next item
+      end
+
+      unless valid_item?(item_type, item)
+        errors << "#{item_path} must be a #{Riffer::Params::Param::TYPE_MAPPINGS[item_type]}"
         next item
       end
 
       if param.enum && !param.enum.include?(item)
-        errors << "#{param.name}[#{i}] must be one of: #{param.enum.join(', ')}"
+        errors << "#{item_path} must be one of: #{param.enum.join(', ')}"
         next item
       end
 
       if param.format && !Riffer::Params::Format.valid?(param.format, item)
-        errors << "#{param.name}[#{i}] must be a valid #{param.format}"
+        errors << "#{item_path} must be a valid #{param.format}"
         next item
       end
 
       coerce_value(item_type, item)
+    end
+  end
+
+  #--
+  #: (Module, untyped) -> bool
+  def valid_item?(type, item)
+    if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(type)
+      [true, false].include?(item)
+    elsif type == Float
+      item.is_a?(Numeric)
+    else
+      item.is_a?(type)
     end
   end
 

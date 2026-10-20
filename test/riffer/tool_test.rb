@@ -88,6 +88,22 @@ describe Riffer::Tool do
       expect(response.content).must_equal "on must be a valid date"
     end
 
+    it "returns a validation_error response for a nested array item of the wrong type" do
+      tool_class = stub_tool("Tool") do
+        params do
+          required :points, Array, of: [Float]
+        end
+
+        def call(context:, points:)
+          text(points.inspect)
+        end
+      end
+      response = tool_class.new.call_with_validation(context: nil, points: [[43.6, "-79.4"]])
+
+      expect(response.error_type).must_equal :validation_error
+      expect(response.content).must_equal "points[0][1] must be a number"
+    end
+
     it "applies defaults for optional params" do
       tool = weather_tool_class.new
       result = tool.call_with_validation(context: nil, city: "Toronto")

@@ -82,8 +82,8 @@ end
 Options:
 
 - `description` - Human-readable description for the LLM
-- `enum` - Array of allowed values (for each item, on an `Array` with `of:`)
-- `format` - String format such as `"date"` or `"email"` (for each item, on an `Array` with `of: String`; see [Formats](AGENTS.md#formats))
+- `enum` - Array of allowed values (for the innermost items of an `Array` with `of:`)
+- `format` - String format such as `"date"` or `"email"` (for the innermost `String` items of an `Array`; see [Formats](AGENTS.md#formats))
 
 ### optional
 
@@ -100,8 +100,8 @@ Options:
 
 - `description` - Human-readable description
 - `default` - Default value when not provided
-- `enum` - Array of allowed values (for each item, on an `Array` with `of:`)
-- `format` - String format such as `"date"` or `"email"` (for each item, on an `Array` with `of: String`; see [Formats](AGENTS.md#formats))
+- `enum` - Array of allowed values (for the innermost items of an `Array` with `of:`)
+- `format` - String format such as `"date"` or `"email"` (for the innermost `String` items of an `Array`; see [Formats](AGENTS.md#formats))
 
 ### Supported Types
 
@@ -122,7 +122,7 @@ A `Float` param accepts a whole number too, since JSON Schema's `number` covers 
 
 ### Nested Parameters
 
-Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), arrays of objects (`Array` with block), and either/or shapes (`Riffer::Params::AnyOf` with `variant` blocks). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
+Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), arrays of arrays (`Array, of: [Integer]`), arrays of objects (`Array` with block), and either/or shapes (`Riffer::Params::AnyOf` with `variant` blocks). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
 
 ```ruby
 class CreateOrderTool < Riffer::Tool

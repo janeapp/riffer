@@ -249,7 +249,7 @@ structured_output do
 end
 ```
 
-Only primitive types are allowed with `of:`: `String`, `Integer`, `Float`, `TrueClass`, `FalseClass`.
+`of:` takes a primitive type: `String`, `Integer`, `Float`, `Riffer::Params::Boolean`, `TrueClass`, `FalseClass`.
 
 Add `enum:` to limit each item to a list of values:
 
@@ -261,9 +261,20 @@ end
 
 An item outside the list fails validation with its index: `tags[1] must be one of: urgent, billing, technical`.
 
+For an array of arrays, put the type in brackets. Each pair of brackets adds a level, and `enum:` and `format:` apply to the innermost items:
+
+```ruby
+structured_output do
+  required :rows, Array, of: [Integer], description: "Seat numbers, one array per row"
+  required :board, Array, of: [String], enum: %w[x o]
+end
+```
+
+A row that isn't an array fails validation with its index: `rows[1] must be an array`.
+
 #### Formats
 
-Use `format:` on a `String`, or on an `Array` with `of: String`, to require a standard string format:
+Use `format:` on a `String`, or on an `Array` whose innermost type is `String`, to require a standard string format:
 
 ```ruby
 structured_output do
@@ -338,7 +349,7 @@ An optional `AnyOf` field can also be `null`.
 
 #### Limitations
 
-A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `String` or an `Array` with `of: String`, or together with `enum:`.
+A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash` or `of: [Hash]`), or with more than one type (`of: [Integer, String]`), also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `String` or an `Array` whose innermost type is `String`, or together with `enum:`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 

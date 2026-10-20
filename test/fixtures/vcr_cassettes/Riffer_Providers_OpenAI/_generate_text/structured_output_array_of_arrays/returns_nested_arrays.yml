@@ -1,0 +1,247 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Row 1 has seats 1, 2 and 3. Row
+        2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o x, o x o, o
+        x x. Game 2''s rows are: o o x, x x o, o x x."}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":["array","null"],"description":"Tic-tac-toe
+        boards, one per game","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows","boards"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '685'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 20 Oct 2026 04:26:04 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a4d54305dad0a286-YUL
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '4294'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999883'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_934ab546e7a04aabad103cc841e3e518
+      Set-Cookie:
+      - __cf_bm=0rNAYyYFkUzop_PYq1ckEHvovUFtfaNpXioYkw.V8C8-1792470359.98103-1.0.1.1-kUXN7UooAtS1AJFfZ7EeqrO_1SS_k33yRsUlMwC6eiSbPLgPyuTCKLcnCr9_ibyrE_xdZh_RPeBx6XcvBeD0l_jR1a33o97LgMYQ0lPvk8KkViFeoOFlryroOzk1iOcY;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Tue,
+        20 Oct 2026 04:56:04 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_00e6efcb26373bcd016ad6ed58b64087d2a3dea9f7aab878c6",
+          "object": "response",
+          "created_at": 1792470360,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1792470364,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini-2025-08-07",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_00e6efcb26373bcd016ad6ed5948e087d29b66a4bc7019297e",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq1u1cvQvJdHiLycEcQWdHQC1f9_IPLFh64JsbFPxJWKxCFYqT6JCNpplOrc3KxsoK5L_j6uzkGbCwk9enlZY3R0B2qY6HFjIV5E-IWvdHoYytx3KVW4GskWmCuFvNMBtK8UrAzr9s4LbJ12Cn47SFjhXjxFFHbwE7EdV1-ouCmbJgN6gBul3G3efwLokJZ_A28EDSA51gjXn6bwQmPo7hT7-bYWag_StS_7uhVUBP2c9htUyQogIUncjtXyOeCTDsHMIh_ruDSuxfnqrZZ1bIBip-g51DrMccsCzuD-dUW7-aQ4aiV57EHu3p5ATmHXmn-FY7rWU0CvnUTVKIMnhkv0HG80PVArQ24D5pp7B7lJ0-fiTUmG9c5yNIKSVMxAfX5bhK9kpyv_I2dvBAt9cAQi2XxFQh_RLoXilwqc8NBr6seh0zxg2KuWMu1jhW0AWTxW1MN9u7YNc5j4YSpObblsZeZySiA76grsFL1_Qj-BqwHa493IP-1G_Fcwy0UK5GTEL-9KedGYXf4rkShPpLW8t0G5rcCZJ_I_l3DfqMP1ejWJPI8MiSZ_CQSlDkQysVXHRb_DE1OGJ1Ia_TLu26WFjjIMmHnjVufdLCcUHmNaorSzlEfrNBusUdWgeRw8R_-pGqg6yBdMCu3vRJX4tv_-XsNDE1u_nClPwwzUSq1Jjd1QD37xRcCyBNC4MJJhwNWl14MyPW8d9j3ENIG3kFLW8hY1AJ8TY_EjQHTkB2Ddi9oM3JZfCyOQKYSMyW18GlORcCUC-HWcYHqkpDgC3Ch63A6-7MzHBDABFsqOdnBe6NQmnpXy9iYsZQtCS9f_HRbPelPEjVL-LwnQwMkNIrbEnJ89bb_TfkqkyKm4r-B2b0UWbkzhyYHWFPvoQHaRQ8u49yvieK2_wt-VDbngRYSOrSFKpO6DNFimX5y7FTx40A6HqlbK6m2TWw2xaDI7opqoqT3bja_jAKvpbWSlrA23u2ACBrxwwb8Ojktg_46EQUj0soJfs7_e0xFg7c42TbM8I8UMrfabp7RCjnq2B0cuMW6N6rJSSNB0Opivuupq1LEuXccfWMni_ENrtg3NpF_WNSD2GL-d1cL5iQfVZoxlP5ZtXnjWUsxTP44BleES8VwgAHVF3vSyqo7ydZnVHKq5Z3sZAJRMew_UyXsp3fcL2vti_30F7Cze1Rbwm_U69eWmMeYkWBrn0gDXIYDMPYbWXk6VTdYpPzGPCZtOyDfX9D_8JVHSscEkD6Oqpg-MDC4P1nGfuzK3PrmZoHEmg2wioxpDjOl-pNFPmoQe8lh22JrHnW5gyxPFlU7mEi6e-Gorwfvbi2-k8bWA0L8OWo0o3LHgJtqOWSebhdfdVlH3hG9zrY8ONcQBagv0fEQrIkbv-Eylv8IAn6vhhQzC7tSEgDOsqwU3UHNPAita7kxDVT929aNckVuHDKSt6XtM2Cj4dMsR1MpZ9sJn55hW8H3s64EVge1PqEjG99mjf6Kqg4Y1bTpFZEgBvjyXez62D7qqwd-yRjJ5GD2UuGgNzXg3k8uwlmrvqywE9H2g9MK7ngolHfHO76tP8z_plMyp9kGPZsQ7uwVO_Zh5HiDNFr8AfxAs7b_u9KmswtJjCB9cWeZWTnRzx_pUWexqPiZQYZ5VempS53OAu5yBGZAvDo46QIX_y5QWRQYzzKSamNWkbWBBu8O6rNjvedOFAdOp4GH9BT3vRQD54yWH1Xv4sZ_sLAmzu-K0QAL4noU2skZhnPbVAA7R94lUpRzcuXMuroRQODc82JfUnpLF1xJiGJn_mxsJ5jE-YX32TuHrG2av-GOEOvRbqVUHGN7BX-2OwNYI9zOR0ZF1ffjZsQ9svf1V6AWNMF4OKuJj0L5SLPjGTwGFf9s4UpiYx-ty53__VEmsv4U9kcgqyABokSv6MprlJwuC29IGWnfZt5MyTfN74Js_VwfcTxCDEtveNeVCKgb67CsN_r-zcI-AY1v6T4hm9qFWRaJykFYRNJXYJC_cxIBk5yH0Ltqi8NXT5DoMVtrYKOWe8K1cJDWqeimnvekSMdjhASilYgSqh5oWtcB6pSkAxI8XusmQh1f5_ZIxbnlh7dUX7jc1kYAxLIHUVTS7uT2Mr9Jiz8GOB-n-8-TiBRd9wXEYJ_YdWD6iBHtUjnoBZqq4XK00XaeIFOFkVBm3Wyv3JftbXJ0qVFzuzK-aU86vW_R5z9AYNKrh1xANtlKknfwCUsGvWRDHbjy45uFM-1qzqPTplyeWAkb16oA-3rFTs9ogkCH9ci-yBiqf5ehodE8lOzTGE6O_DGDpj8tmTCXQ__YgwoOKl9Nae43mfy6NAIgNz_DMrLjH68uANoikyURvTGh3lR1wlBgwBdrkonod0iwN8aiZVXbDidHBM62X2Yb9EjqkqxYA0GW3mNoesTXgWtbzwfEkkX2Lna8wukR8kQJV2R2OorRSGT6G_GujMol7lwhtrnpRsckNvlWsDDcTnwim0UjQAGPGpGEPSl-z8Ov1weVH4t8lZKwnhbgQTIDXAC-reHcL9a8ZUnklb4_5kTunSwINTqQy71smPJEDDhvj2AHWZ-9xv6Xh5bwgM_I2tvSCKG1mTOTZZrVZhMLqEplcu6KT4s8E0MRCc7Wne5BMzIL3flZ7hkPNvbJqzwvrj4PvuDaeLSICx31wnqmdmZ8IdXdK-SvfYvNQe_Y3s9JhNFKZUjr7sOrK5oDu_VzcKJFdwnkZ-FmEmkG8duBPX_gXV0v4J8GoNH6o8uLr94eh9E2MzhxIjtg4QTHLJbg9GrHJ-FJOvtaIbIy-S0cIwRUDdW0ezJ5JvZOc9d3RqBg-sY9fco5Rj9tj9YN2nPB7jygrluzGuhbKoNEn5hdQjnlt9k-YVgREPyrnnNgaji5siM3cTX2Evv8okrdVSYcZ2oPcRn8WBk5gqElC34xWD0VsT4l9Rhk0BK1AlxWqaDFdylEt9tq3obtaudHLLsN9ys2By-Rq6WfDbQE4MAGbYV6zYKBzAwtNp84FQvueN01kvsUOwRLglxVYCBYMAYA9sVtZYWet5KXbvF9ur8GuT3mHf3e0DPyoXFLjdYMhm336txh-qfgpl3Mj_jHdJK-xvOPv2IaKxJQTTAycIDCS6q9qF7l8o3FW5Y-nVOS5LHRsTg0KWa62HhTOS2O4xlE_S_anOQil2RZttF_sen3gtVUL7u5jN3SMWqHjvqDUZlJ8irKljW2WOoyejfJrA2orlyDH3HkQFg7Zh2n1plNE9kWBVynRY8NGhnsbUiiR8ZljA8BhP69tUrZBxMK9hN3AlRXSlcfxefifc9wnME8bcO9lr3EZ77Auho5-a31-Jo7QcNvfRpU0MrQYLR2hoB4V458dSpxjOC5KB6jZR2Dn9dN4rDCbta6z5qbQjk56erINn-A8yJL7hhWCCs-2KueobFUOa64-AKqcObfEeu0CmqlYe4FpxnXqDicPXYUNTUux1b8Hmmv2VWAGLRb73JJi5KA1ZNl6iUUBEUH-dgdHuMdb2tj2U9mafbBWm6heBwFO1XeZarsp99sznIaF0GoAKwDc1m62HQuy0b1veWptoz9mcVXc041IndWYgo97irl_DSU-em98R3zfI6R_glgdNFK163nh70KFZAzF8hcTjyfghxcFdFfnAx01RvyIkqZ3uI7xrkrVxWdrRSL_2SKljesQn6kSONkkTg455OjNG2qTUj9PreH4_8GzfKsn0f2q73NUOCes1NOpzQSFb3srNAzQa7jJQIphG-IvfEeRCG2wZO6dSxGWYX0VzTAiorSAo-5FEZaedyS43RZlhjMIxXa8rFWj4sguk3IOs=",
+              "summary": []
+            },
+            {
+              "id": "msg_00e6efcb26373bcd016ad6ed5bd11087d2a5633162796c7340",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\n  \"rows\": [\n    [1, 2, 3],\n    [4, 5]\n  ],\n  \"boards\": [\n    [\n      [\"x\", \"o\", \"x\"],\n      [\"o\", \"x\", \"o\"],\n      [\"o\", \"x\", \"x\"]\n    ],\n    [\n      [\"o\", \"o\", \"x\"],\n      [\"x\", \"x\", \"o\"],\n      [\"o\", \"x\", \"x\"]\n    ]\n  ]\n}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rows": {
+                    "type": "array",
+                    "description": "Seat numbers, one array per row",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "boards": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Tic-tac-toe boards, one per game",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "x",
+                            "o"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "rows",
+                  "boards"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 168,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 334,
+            "output_tokens_details": {
+              "reasoning_tokens": 192
+            },
+            "total_tokens": 502
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Tue, 20 Oct 2026 04:26:05 GMT
+recorded_with: VCR 6.4.0

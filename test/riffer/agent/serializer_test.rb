@@ -207,6 +207,19 @@ describe Riffer::Agent::Serializer do
         must_match(/born_on must be a valid date/)
     end
 
+    it "reconstructs a structured output with an array of arrays through JSON" do
+      klass = build_agent_class do
+        structured_output { required :grid, Array, of: [Integer] }
+      end
+      wire = JSON.parse(klass.new.to_json, symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(agent.structured_output.parse_and_validate('{"grid":[[1,2],[3]]}').object).
+        must_equal({ grid: [[1, 2], [3]] })
+      expect(agent.structured_output.parse_and_validate('{"grid":[[1,"2"]]}').error).
+        must_match(/grid\[0\]\[1\] must be a integer/)
+    end
+
     it "round-trips the prompted structured output strategy through JSON" do
       klass = build_agent_class do
         structured_output(strategy: :prompted) { required :answer, String }

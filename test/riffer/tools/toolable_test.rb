@@ -206,6 +206,25 @@ describe Riffer::Tools::Toolable do
         )
       end
     end
+
+    describe "with an array of arrays" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          identifier "plot_route"
+          description "Plots a route"
+
+          params do
+            optional :points, Array, of: [Float]
+          end
+        end
+      end
+
+      it "makes only the field nullable in strict mode" do
+        expect(tool_class.parameters_schema(strict: true)[:properties]["points"]).must_equal(
+          type: %w[array null], items: { type: "array", items: { type: "number" } },
+        )
+      end
+    end
   end
 
   describe "#kind" do

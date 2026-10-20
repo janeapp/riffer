@@ -1417,14 +1417,14 @@ describe Riffer::Params do
 
     it "raises ArgumentError with format: on a non-String type" do
       error = expect { Riffer::Params.new.required(:age, Integer, format: "date") }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "age: format: requires a String or an Array of: String"
+      expect(error.message).must_equal "age: format: requires a String or an Array whose innermost type is String"
     end
 
     it "raises ArgumentError with format: on an Array of a non-String type" do
       error = expect do
         Riffer::Params.new.required(:ages, Array, of: Integer, format: "date")
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "ages: format: requires a String or an Array of: String"
+      expect(error.message).must_equal "ages: format: requires a String or an Array whose innermost type is String"
     end
 
     it "raises ArgumentError with format: on a Hash, an Array of objects or an AnyOf" do
@@ -1439,7 +1439,7 @@ describe Riffer::Params do
         end,
       ].each do |definition|
         error = expect { Riffer::Params.new.instance_exec(&definition) }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/format: requires a String or an Array of: String\z/)
+        expect(error.message).must_match(/format: requires a String or an Array whose innermost type is String\z/)
       end
     end
 
@@ -1539,7 +1539,7 @@ describe Riffer::Params do
           },
         )
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "counts: format: requires a String or an Array of: String"
+      expect(error.message).must_equal "counts: format: requires a String or an Array whose innermost type is String"
     end
 
     it "round-trips losslessly with to_json_schema(strict: false)" do
@@ -1555,6 +1555,192 @@ describe Riffer::Params do
         )
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/\Acount: format: must be a supported format \(.*\), got "int32"\z/)
+    end
+  end
+
+  describe "Array of arrays" do
+    let(:params) do
+      params = Riffer::Params.new
+      params.required(:grid, Array, of: [Integer], description: "Rows of cells")
+      params.optional(:moves, Array, of: [[String]], enum: %w[x o])
+      params
+    end
+
+    it "raises ArgumentError with of: nesting no type or more than one" do
+      [[], [Integer, String], [[]], [nil]].each do |of|
+        error = expect { Riffer::Params.new.required(:grid, Array, of: of) }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/\Aof: must nest exactly one type, got /)
+      end
+    end
+
+    it "raises ArgumentError with of: nesting a non-primitive type" do
+      error = expect { Riffer::Params.new.required(:grid, Array, of: [Hash]) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/\Aof: must be a primitive type \(.*\), got Hash\z/)
+    end
+
+    it "raises ArgumentError with a nested of: on a non-Array type" do
+      error = expect { Riffer::Params.new.required(:grid, String, of: [Integer]) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "of: can only be used with Array type, got String"
+    end
+
+    it "renders one items level per array, with the enum on the innermost items" do
+      expect(params.to_json_schema[:properties]).must_equal(
+        "grid" => {
+          type: "array", description: "Rows of cells", items: { type: "array", items: { type: "integer" } },
+        },
+        "moves" => {
+          type: "array",
+          items: { type: "array", items: { type: "array", items: { type: "string", enum: %w[x o] } } },
+        },
+      )
+    end
+
+    it "makes only the field nullable when optional in strict mode" do
+      expect(params.to_json_schema(strict: true)[:properties]["moves"]).must_equal(
+        type: %w[array null],
+        items: { type: "array", items: { type: "array", items: { type: "string", enum: %w[x o] } } },
+      )
+    end
+
+    it "renders the format on the innermost items" do
+      params = Riffer::Params.new
+      params.required(:visit_ids, Array, of: [String], format: "uuid")
+
+      expect(params.to_json_schema[:properties]["visit_ids"]).must_equal(
+        type: "array", items: { type: "array", items: { type: "string", format: "uuid" } },
+      )
+    end
+
+    it "accepts nested arrays, including empty ones" do
+      arguments = { grid: [[1, 2], []], moves: [[%w[x o]], []] }
+
+      expect(params.validate(arguments)).must_equal arguments
+    end
+
+    it "rejects an inner value that is not an array with its path" do
+      error = expect { params.validate({ grid: [[1], 2] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "grid[1] must be an array"
+    end
+
+    it "rejects innermost items of the wrong type or outside the enum with their path" do
+      error = expect do
+        params.validate({ grid: [[1, "2"]], moves: [[%w[x z]]] })
+      end.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "grid[0][1] must be a integer; moves[0][0][1] must be one of: x, o"
+    end
+
+    it "checks Boolean innermost items" do
+      params = Riffer::Params.new
+      params.required(:checks, Array, of: [Riffer::Params::Boolean])
+
+      expect(params.to_json_schema[:properties]["checks"][:items]).must_equal(type: "array", items: { type: "boolean" })
+      expect(params.validate({ checks: [[true, false]] })).must_equal({ checks: [[true, false]] })
+      error = expect { params.validate({ checks: [[1]] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "checks[0][0] must be a boolean"
+    end
+
+    it "rejects innermost items outside the format with their path" do
+      params = Riffer::Params.new
+      params.required(:visit_ids, Array, of: [String], format: "uuid")
+
+      error = expect { params.validate({ visit_ids: [["visit-1"]] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "visit_ids[0][0] must be a valid uuid"
+    end
+
+    it "coerces integer items of a nested of: Float to floats" do
+      params = Riffer::Params.new
+      params.required(:points, Array, of: [Float])
+
+      expect(params.validate({ points: [[1, 2.5]] })).must_equal({ points: [[1.0, 2.5]] })
+    end
+
+    it "prefixes errors with the path of an enclosing object" do
+      outer = Riffer::Params.new
+      outer.required(:board, Hash) { required :grid, Array, of: [Integer] }
+
+      error = expect { outer.validate({ board: { grid: [["x"]] } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "board.grid[0][0] must be a integer"
+    end
+
+    it "checks nested arrays inside an AnyOf variant" do
+      outer = Riffer::Params.new
+      outer.required(:result, Riffer::Params::AnyOf) do
+        variant { required :grid, Array, of: [Integer] }
+        variant { required :error_code, String }
+      end
+
+      expect(outer.validate({ result: { grid: [[1]] } })).must_equal({ result: { grid: [[1]] } })
+      error = expect { outer.validate({ result: { grid: [1] } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_match(/variant 1 \(grid\[0\] must be an array\)/)
+    end
+
+    it "reads nested items back with the innermost enum" do
+      rebuilt = Riffer::Params.from_json_schema(params.to_json_schema)
+
+      expect(rebuilt.parameters.map { |param| [param.item_type, param.dimensions, param.enum] }).must_equal(
+        [[Integer, 2, nil], [String, 3, %w[x o]]],
+      )
+      error = expect { rebuilt.validate({ grid: [["1"]] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "grid[0][0] must be a integer"
+    end
+
+    it "reads the innermost format back" do
+      params = Riffer::Params.new
+      params.required(:visit_ids, Array, of: [String], format: "uuid")
+      rebuilt = Riffer::Params.from_json_schema(params.to_json_schema)
+
+      expect(rebuilt.parameters.first.format).must_equal "uuid"
+      error = expect { rebuilt.validate({ visit_ids: [["visit-1"]] }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "visit_ids[0][0] must be a valid uuid"
+    end
+
+    it "round-trips losslessly with to_json_schema(strict: false)" do
+      schema = params.to_json_schema(strict: false)
+
+      expect(Riffer::Params.from_json_schema(schema).to_json_schema(strict: false)).must_equal schema
+    end
+
+    it "raises when reading back an inner array without items, nullable, or with an enum or format" do
+      [
+        { type: "array" },
+        { type: %w[array null], items: { type: "integer" } },
+        { type: "array", enum: [[1]], items: { type: "integer" } },
+        { type: "array", format: "date", items: { type: "string" } },
+      ].each do |inner|
+        error = expect do
+          Riffer::Params.from_json_schema(
+            { type: "object", properties: { "grid" => { type: "array", items: inner } }, required: ["grid"] },
+          )
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal "Unsupported nested array: #{inner.to_json}"
+      end
+    end
+
+    it "raises when reading back an enum or format on the field of a nested array" do
+      [
+        { type: "array", enum: [[["x"]]], items: { type: "array", items: { type: "string", enum: ["x"] } } },
+        { type: "array", format: "date", items: { type: "array", items: { type: "string" } } },
+      ].each do |grid|
+        error = expect do
+          Riffer::Params.from_json_schema({ type: "object", properties: { "grid" => grid }, required: ["grid"] })
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal "Unsupported nested array: #{grid.to_json}"
+      end
+    end
+
+    it "raises when reading back innermost items that are objects or a union of types" do
+      [
+        { type: "object", properties: {} },
+        { type: %w[integer null] },
+        { type: %w[string integer] },
+      ].each do |leaf|
+        grid = { type: "array", items: { type: "array", items: leaf } }
+
+        error = expect do
+          Riffer::Params.from_json_schema({ type: "object", properties: { "grid" => grid }, required: ["grid"] })
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal "Unsupported nested array items: #{leaf.to_json}"
+      end
     end
   end
 end
