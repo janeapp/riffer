@@ -6,8 +6,8 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Tag this support ticket:
-        ''I was charged twice this month and need it fixed today.''"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"tags":{"type":"array","description":"Ticket
-        tags","items":{"type":"string","enum":["urgent","billing","technical","account"]}}},"required":["tags"]}}}'
+        ''I was charged twice this month and need it fixed today.''"}]}],"generationConfig":{"responseMimeType":"application/json","responseJsonSchema":{"type":"object","properties":{"tags":{"type":"array","description":"Ticket
+        tags","items":{"type":"string","enum":["urgent","billing","technical","account"]}}},"required":["tags"],"additionalProperties":false}}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -35,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Fri, 16 Oct 2026 19:52:43 GMT
+      - Tue, 20 Oct 2026 21:28:34 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -45,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=480
+      - gfet4t7; dur=390
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -81,7 +81,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "i4DSauHYIJnfytMP6YapgQ8"
+          "responseId": "Ad3XasSTNebpz7IPmIeW4Q8"
         }
-  recorded_at: Fri, 16 Oct 2026 19:52:43 GMT
+  recorded_at: Tue, 20 Oct 2026 21:28:34 GMT
 recorded_with: VCR 6.4.0

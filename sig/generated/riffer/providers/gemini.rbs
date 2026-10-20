@@ -31,6 +31,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # gemini-2.5 models on the Developer API silently ignore responseFormat, so this
+  # uses responseJsonSchema, which every model honours.
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def structured_output_config: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -90,8 +96,4 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (String) -> void
   def validate_model!: (String) -> void
-
-  # --
-  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def strip_additional_properties: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 end

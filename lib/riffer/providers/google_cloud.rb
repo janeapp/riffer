@@ -5,7 +5,8 @@ require "json"
 
 # Gemini Enterprise Agent Platform (formerly Vertex AI). Gemini models share the
 # Gemini Developer API's request and response bodies, so this inherits the
-# Gemini provider's conversion and only swaps the transport and resource paths.
+# Gemini provider's conversion and only swaps the transport, the resource paths,
+# and the structured output fields.
 # Claude models speak the Anthropic Messages format through rawPredict.
 class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
   # Agent Platform model ids may carry an +@version+ suffix.
@@ -66,6 +67,14 @@ class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
       anthropic_version: ANTHROPIC_VERSION,
       **Riffer::Wire::Anthropic::Request.build(messages, options),
     }
+  end
+
+  # Agent Platform deprecates responseMimeType and responseJsonSchema in favour of
+  # responseFormat, which it declares as a repeated field.
+  #--
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def structured_output_config(json_schema)
+    { responseFormat: [{ text: { mimeType: "APPLICATION_JSON", schema: json_schema } }] }
   end
 
   #--

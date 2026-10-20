@@ -136,6 +136,26 @@ describe Riffer::Providers::GoogleCloud do
     end
   end
 
+  describe "structured output" do
+    it "sends the JSON schema as a responseFormat list" do
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      result = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-2.5-flash-lite",
+        { structured_output: structured_output },
+      )
+
+      expect(result[:generationConfig]).must_equal(
+        responseFormat: [{ text: { mimeType: "APPLICATION_JSON", schema: structured_output.json_schema } }],
+      )
+    end
+  end
+
   describe "reasoning level" do
     it "sends the Gemini thinking level in the Agent Platform request" do
       client = Object.new

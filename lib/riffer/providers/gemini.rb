@@ -84,14 +84,19 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     # body fields, so :tags reach observability only.
     generation_config = options.except(:tools, :structured_output, :tags)
 
-    if structured_output
-      generation_config[:responseMimeType] = "application/json"
-      generation_config[:responseSchema] = strip_additional_properties(structured_output.json_schema)
-    end
+    generation_config.merge!(structured_output_config(structured_output.json_schema)) if structured_output
 
     params[:generationConfig] = generation_config unless generation_config.empty?
 
     params
+  end
+
+  # gemini-2.5 models on the Developer API silently ignore responseFormat, so this
+  # uses responseJsonSchema, which every model honours.
+  #--
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def structured_output_config(json_schema)
+    { responseMimeType: "application/json", responseJsonSchema: json_schema }
   end
 
   #--
@@ -289,7 +294,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     {
       name: tool.name,
       description: tool.description,
-      parameters: strip_additional_properties(tool.parameters_schema),
+      parametersJsonSchema: tool.parameters_schema,
     }
   end
 
@@ -316,23 +321,5 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     raise Riffer::ArgumentError,
           "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, " \
           "hyphens, dots, and underscores."
-  end
-
-  #--
-  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def strip_additional_properties(schema)
-    schema = schema.dup
-    schema.delete(:additionalProperties)
-
-    if schema[:properties]
-      schema[:properties] = schema[:properties].transform_values do |prop|
-        strip_additional_properties(prop)
-      end
-    end
-
-    schema[:items] = strip_additional_properties(schema[:items]) if schema[:items].is_a?(Hash)
-    schema[:anyOf] = schema[:anyOf].map { |branch| strip_additional_properties(branch) } if schema[:anyOf]
-
-    schema
   end
 end

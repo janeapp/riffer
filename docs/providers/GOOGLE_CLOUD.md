@@ -139,7 +139,7 @@ Model IDs starting with `claude-` go to Claude on Agent Platform; every other ID
 
 ## Gemini Models
 
-Agent Platform accepts the same request body as the Gemini Developer API, so Gemini models behave as they do on the [Gemini provider](GEMINI.md): the same [model options](GEMINI.md#model-options) (`temperature`, `maxOutputTokens`, `topP`, ...), structured output, tool calling, and streaming.
+Gemini models behave as they do on the [Gemini provider](GEMINI.md): the same [model options](GEMINI.md#model-options) (`temperature`, `maxOutputTokens`, `topP`, ...), structured output, tool calling, and streaming.
 
 The agent-level [`reasoning`](../AGENTS.md#reasoning) setting uses the Gemini default, `thinkingConfig: {thinkingLevel: "<level>"}`. [Catalog](../CATALOG.md#reasoning) entries go under `google_cloud/...` keys; `gemini/...` entries don't apply.
 
@@ -190,4 +190,3 @@ Web search and structured output are partner-model features that an organization
 - **No `gs://` file references** - files are always sent inline
 - **No Google Search grounding** - Gemini models have no web search tool here
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side
-- **String enums only** - Gemini rejects non-string `enum` values, including on `Array, of:` items

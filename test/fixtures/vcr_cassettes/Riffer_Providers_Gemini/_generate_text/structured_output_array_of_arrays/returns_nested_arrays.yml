@@ -7,9 +7,9 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Row 1 has seats 1, 2
         and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o
-        x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"generationConfig":{"responseMimeType":"application/json","responseJsonSchema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
         numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":"array","description":"Tic-tac-toe
-        boards, one per game","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows"]}}}'
+        boards, one per game","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows"],"additionalProperties":false}}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -37,7 +37,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 20 Oct 2026 04:25:59 GMT
+      - Tue, 20 Oct 2026 21:28:35 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,7 +47,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=696
+      - gfet4t7; dur=507
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -83,7 +83,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "Vu3WaoOkOu_iytMPjoKp4Ak"
+          "responseId": "At3XaqrbPMSfz7IPi7fK-Q8"
         }
-  recorded_at: Tue, 20 Oct 2026 04:25:59 GMT
+  recorded_at: Tue, 20 Oct 2026 21:28:35 GMT
 recorded_with: VCR 6.4.0
