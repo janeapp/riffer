@@ -3,6 +3,8 @@
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   FINISH_REASONS: Hash[String, Symbol]
 
+  WEB_SEARCH_TOOL_TYPE: String
+
   REASONING_FORMAT: String
 
   # --

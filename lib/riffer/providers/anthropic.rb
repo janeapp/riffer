@@ -14,6 +14,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     "pause_turn" => :other,
   }.freeze #: Hash[String, Symbol]
 
+  WEB_SEARCH_TOOL_TYPE = Riffer::Wire::Anthropic::Request::WEB_SEARCH_TOOL_TYPE #: String
+
   REASONING_FORMAT = Riffer::Wire::Anthropic::REASONING_FORMAT #: String
 
   #--
