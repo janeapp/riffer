@@ -42,6 +42,8 @@ class Riffer::Params::Param
 
   attr_reader :item_type #: Module? # @dynamic item_type
 
+  attr_reader :dimensions #: Integer # @dynamic dimensions
+
   attr_reader :nested_params #: Riffer::Params? # @dynamic nested_params
 
   attr_reader :variants #: Array[Riffer::Params]? # @dynamic variants
@@ -51,21 +53,19 @@ class Riffer::Params::Param
   def self.from_json_schema(name, schema, required:)
     variants = resolve_variants(schema[:anyOf]) if schema.key?(:anyOf)
     ruby_type = variants ? Riffer::Params::AnyOf : json_type_to_ruby(schema[:type])
-    item_type, nested = resolve_nesting(ruby_type, schema)
-    enum = schema[:enum]
-    enum ||= schema[:items][:enum] if item_type
-    format = schema[:format]
-    format ||= schema[:items][:format] if item_type
+    nested = resolve_nested_params(ruby_type, schema)
+    item_type, dimensions, items = resolve_typed_items(schema) if ruby_type == Array && !nested
 
     new(
       name: name,
       type: ruby_type,
       required: required,
       description: schema[:description],
-      enum: enum,
-      format: format,
+      enum: schema[:enum] || items&.dig(:enum),
+      format: schema[:format] || items&.dig(:format),
       default: schema[:default],
       item_type: item_type,
+      dimensions: dimensions || 1,
       nested_params: nested,
       variants: variants,
     )
@@ -87,18 +87,48 @@ class Riffer::Params::Param
   private_class_method :resolve_variants
 
   #--
-  #: (Module, Hash[Symbol, untyped]) -> [Module?, Riffer::Params?]
-  def self.resolve_nesting(ruby_type, schema)
-    return [nil, Riffer::Params.from_json_schema(schema)] if ruby_type == Hash && schema[:properties]
-    return [nil, nil] unless ruby_type == Array
-
-    items = schema[:items]
-    return [nil, nil] unless items.is_a?(Hash)
-    return [nil, Riffer::Params.from_json_schema(items)] if items[:properties]
-
-    [json_type_to_ruby(items[:type]), nil]
+  #: (Module, Hash[Symbol, untyped]) -> Riffer::Params?
+  def self.resolve_nested_params(ruby_type, schema)
+    if ruby_type == Hash && schema[:properties]
+      Riffer::Params.from_json_schema(schema)
+    elsif ruby_type == Array && schema[:items].is_a?(Hash) && schema[:items][:properties]
+      Riffer::Params.from_json_schema(schema[:items])
+    end
   end
-  private_class_method :resolve_nesting
+  private_class_method :resolve_nested_params
+
+  #--
+  #: (Hash[Symbol, untyped]) -> [Module, Integer, Hash[Symbol, untyped]]?
+  def self.resolve_typed_items(schema)
+    items = schema[:items]
+    return unless items.is_a?(Hash)
+
+    dimensions = 1
+    # Riffer only writes nested arrays with enum/format and a single primitive type on the innermost
+    # items, and no nullable inner arrays; any other shape would read back with a different meaning.
+    while json_type_to_ruby(items[:type]) == Array
+      inner = items[:items]
+      unless items[:type] == "array" && inner.is_a?(Hash) && !items.keys.intersect?(%i[enum format])
+        raise Riffer::ArgumentError, "Unsupported nested array: #{items.to_json}"
+      end
+
+      items = inner
+      dimensions += 1
+    end
+
+    item_type = json_type_to_ruby(items[:type])
+    if dimensions > 1
+      if schema.keys.intersect?(%i[enum format])
+        raise Riffer::ArgumentError, "Unsupported nested array: #{schema.to_json}"
+      end
+      unless items[:type].is_a?(String) && PRIMITIVE_TYPES.include?(item_type)
+        raise Riffer::ArgumentError, "Unsupported nested array items: #{items.to_json}"
+      end
+    end
+
+    [item_type, dimensions, items]
+  end
+  private_class_method :resolve_typed_items
 
   #--
   #: (untyped) -> Module
@@ -109,9 +139,9 @@ class Riffer::Params::Param
   private_class_method :json_type_to_ruby
 
   #--
-  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
   def initialize(name:, type:, required:, description: nil, enum: nil, format: nil, default: nil, item_type: nil,
-                 nested_params: nil, variants: nil)
+                 dimensions: 1, nested_params: nil, variants: nil)
     if type == Riffer::Params::AnyOf && variants.nil?
       raise Riffer::ArgumentError, "#{name}: an AnyOf param requires variants"
     end
@@ -125,6 +155,7 @@ class Riffer::Params::Param
     @format = format.is_a?(String) ? -format : format
     @default = default
     @item_type = item_type
+    @dimensions = dimensions
     @nested_params = nested_params
     @variants = variants
     # Checked here rather than in Params so from_json_schema enforces it too.
@@ -196,7 +227,9 @@ class Riffer::Params::Param
     if self.type == Array && nested_params
       schema[:items] = nested_params.to_json_schema(strict: strict)
     elsif self.type == Array && item_type
-      schema[:items] = { type: TYPE_MAPPINGS[item_type], enum: enum, format: format }.compact
+      items = { type: TYPE_MAPPINGS[item_type], enum: enum, format: format }.compact #: Hash[Symbol, untyped]
+      (dimensions - 1).times { items = { type: "array", items: items } }
+      schema[:items] = items
     elsif self.type == Hash && nested_params
       # The nested schema carries its own type: "object", which would clobber a nullable union.
       schema.merge!(nested_params.to_json_schema(strict: strict).except(:type))
@@ -229,7 +262,7 @@ class Riffer::Params::Param
             "got #{format.inspect}"
     end
     unless type == String || (type == Array && item_type == String)
-      raise Riffer::ArgumentError, "#{name}: format: requires a String or an Array of: String"
+      raise Riffer::ArgumentError, "#{name}: format: requires a String or an Array whose innermost type is String"
     end
     raise Riffer::ArgumentError, "#{name}: format: cannot be used with enum:" if enum
   end

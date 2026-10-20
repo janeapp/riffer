@@ -696,6 +696,38 @@ describe Riffer::Providers::AmazonBedrock do
         end
       end
     end
+
+    describe "structured output with an array of arrays" do
+      let(:nested_structured_output) do
+        params = Riffer::Params.new
+        params.required(:rows, Array, of: [Integer], description: "Seat numbers, one array per row")
+        params.optional(:boards, Array, of: [[String]], enum: %w[x o], description: "Tic-tac-toe boards, one per game")
+        Riffer::Agent::StructuredOutput.new(params)
+      end
+
+      it "returns nested arrays" do
+        VCR.use_cassette(
+          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_array_of_arrays/returns_nested_arrays",
+        ) do
+          provider = Riffer::Providers::AmazonBedrock.new
+          result = provider.generate_text(
+            prompt: "Row 1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. " \
+                    "Game 1's tic-tac-toe board rows are: x o x, o x o, o x x. " \
+                    "Game 2's rows are: o o x, x x o, o x x.",
+            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+            structured_output: nested_structured_output,
+          )
+          validated = nested_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object[:rows]).must_equal [[1, 2, 3], [4, 5]]
+          expect(validated.object[:boards]).must_equal [
+            [%w[x o x], %w[o x o], %w[o x x]],
+            [%w[o o x], %w[x x o], %w[o x x]],
+          ]
+        end
+      end
+    end
   end
 
   describe "tags" do

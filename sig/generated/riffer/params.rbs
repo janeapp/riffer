@@ -15,15 +15,15 @@ class Riffer::Params
 
   # --
   # : (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # --
   # : (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -42,12 +42,16 @@ class Riffer::Params
   def initialize_copy: (Riffer::Params) -> void
 
   # --
+  # : ((Module | Array[untyped])?, ?Integer) -> [Module?, Integer]
+  def unwrap_of: ((Module | Array[untyped])?, ?Integer) -> [ Module?, Integer ]
+
+  # --
   # : (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested: (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
   # --
-  # : (Module?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
-  def build_variants: (Module?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
+  # : ((Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
+  def build_variants: ((Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
 
   # --
   # : (Riffer::Params::Param, untyped, Array[String]) -> untyped
@@ -72,8 +76,12 @@ class Riffer::Params
   def validate_nested_array_of_objects: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
 
   # --
-  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
-  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
+  # : (Riffer::Params::Param, Array[untyped], Array[String], ?String, ?Integer) -> Array[untyped]
+  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String], ?String, ?Integer) -> Array[untyped]
+
+  # --
+  # : (Module, untyped) -> bool
+  def valid_item?: (Module, untyped) -> bool
 
   # --
   # : (Module, untyped) -> untyped

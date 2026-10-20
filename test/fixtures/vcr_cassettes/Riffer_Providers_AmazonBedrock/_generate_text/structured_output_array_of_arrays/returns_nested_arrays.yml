@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Row 1 has seats 1,
+        2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x
+        o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":[\"array\",\"null\"],\"description\":\"Tic-tac-toe
+        boards, one per game\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\",\"boards\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 1e876be3-eaf0-4723-ab4d-36a013616aae
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '791'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 20 Oct 2026 04:26:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '478'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - c15d9aee-c880-4a48-8b3a-da943c9a30bb
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1833},"output":{"message":{"content":[{"text":"{\"rows\":[[1,2,3],[4,5]],\"boards\":[[[\"x\",\"o\",\"x\"],[\"o\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]],[[\"o\",\"o\",\"x\"],[\"x\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]]]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":394,"outputTokens":66,"serverToolUsage":{},"totalTokens":460}}'
+  recorded_at: Tue, 20 Oct 2026 04:26:07 GMT
+recorded_with: VCR 6.4.0
