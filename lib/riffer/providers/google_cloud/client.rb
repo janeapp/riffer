@@ -58,7 +58,7 @@ class Riffer::Providers::GoogleCloud::Client
   end
 
   # +credentials+ is a googleauth credentials object (anything responding to
-  # +apply!+); +nil+ resolves Application Default Credentials.
+  # +updater_proc+); +nil+ resolves Application Default Credentials.
   #--
   #: (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
   def initialize(project_id:, location:, credentials: nil, base_url: nil,
@@ -124,14 +124,16 @@ class Riffer::Providers::GoogleCloud::Client
     URI("#{@base_url}/v1/projects/#{@project_id}/locations/#{@location}/#{path}")
   end
 
-  # googleauth's +apply!+ refreshes only a missing or near-expiry token, so
-  # fibers queued behind a refresh reuse its result.
+  # googleauth refreshes only a missing or near-expiry token, so fibers queued
+  # behind a refresh reuse its result. +updater_proc+ rather than +apply!+,
+  # whose return value is the header String for some credential types and the
+  # headers Hash for others (self-signed JWTs).
   #--
-  #: () -> String
-  def authorization
+  #: () -> Hash[Symbol, String]
+  def auth_headers
     credentials = @credentials || self.class.application_default_credentials
     headers = {} #: Hash[Symbol, String]
-    AUTH_LOCK.synchronize { credentials.apply!(headers) }
+    AUTH_LOCK.synchronize { credentials.updater_proc.call(headers) }
   end
 
   #--
@@ -139,7 +141,7 @@ class Riffer::Providers::GoogleCloud::Client
   def build_request(uri, body)
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
-    request["Authorization"] = authorization
+    auth_headers.each { |name, value| request[name.to_s] = value }
     request.body = body.to_json
     request
   end

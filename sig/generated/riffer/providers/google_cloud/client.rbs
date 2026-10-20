@@ -52,7 +52,7 @@ class Riffer::Providers::GoogleCloud::Client
   def self.base_url_for: (location: String) -> String
 
   # +credentials+ is a googleauth credentials object (anything responding to
-  # +apply!+); +nil+ resolves Application Default Credentials.
+  # +updater_proc+); +nil+ resolves Application Default Credentials.
   # --
   # : (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
   def initialize: (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
@@ -77,11 +77,13 @@ class Riffer::Providers::GoogleCloud::Client
   # : (String) -> URI::Generic
   def resource_uri: (String) -> URI::Generic
 
-  # googleauth's +apply!+ refreshes only a missing or near-expiry token, so
-  # fibers queued behind a refresh reuse its result.
+  # googleauth refreshes only a missing or near-expiry token, so fibers queued
+  # behind a refresh reuse its result. +updater_proc+ rather than +apply!+,
+  # whose return value is the header String for some credential types and the
+  # headers Hash for others (self-signed JWTs).
   # --
-  # : () -> String
-  def authorization: () -> String
+  # : () -> Hash[Symbol, String]
+  def auth_headers: () -> Hash[Symbol, String]
 
   # --
   # : (URI::Generic, Hash[Symbol, untyped]) -> Net::HTTP::Post

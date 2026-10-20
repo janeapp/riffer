@@ -3,10 +3,12 @@
 require "test_helper"
 require "async"
 require "async/barrier"
+require "googleauth"
 
 describe Riffer::Providers::GoogleCloud::Client do
-  # Mimics googleauth's BaseClient#apply!: refreshes only a missing token, and
-  # the refresh yields to the scheduler like a real metadata-server call.
+  # Mimics googleauth's BaseClient#updater_proc: refreshes only a missing
+  # token, and the refresh yields to the scheduler like a real metadata-server
+  # call.
   let(:credentials_class) do
     Class.new do
       attr_reader :refreshes
@@ -21,13 +23,15 @@ describe Riffer::Providers::GoogleCloud::Client do
         @token = nil
       end
 
-      def apply!(hash)
-        if @token.nil?
-          sleep @refresh_delay
-          @refreshes += 1
-          @token = "token-#{@refreshes}"
+      def updater_proc
+        proc do |hash|
+          if @token.nil?
+            sleep @refresh_delay
+            @refreshes += 1
+            @token = "token-#{@refreshes}"
+          end
+          hash.merge(authorization: "Bearer #{@token}")
         end
-        hash[:authorization] = "Bearer #{@token}"
       end
     end
   end
@@ -99,6 +103,26 @@ describe Riffer::Providers::GoogleCloud::Client do
         ).
         to_return(status: 200, body: "{}")
       client.post(path, { contents: [] })
+
+      assert_requested stub
+    end
+
+    it "sends the token of credentials whose apply! returns the headers hash" do
+      key = {
+        type: "service_account",
+        private_key: OpenSSL::PKey::RSA.new(2048).to_pem,
+        client_email: "riffer@my-project.iam.gserviceaccount.com",
+      }
+      self_signed = Google::Auth::ServiceAccountCredentials.make_creds(
+        json_key_io: StringIO.new(key.to_json),
+        scope: Riffer::Providers::GoogleCloud::Client::SCOPE,
+        enable_self_signed_jwt: true,
+      )
+      stub = stub_request(:post, url).with(headers: { "Authorization" => /\ABearer ey/ }).
+        to_return(status: 200, body: "{}")
+      Riffer::Providers::GoogleCloud::Client.new(
+        project_id: "my-project", location: "global", credentials: self_signed,
+      ).post(path, {})
 
       assert_requested stub
     end
