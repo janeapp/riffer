@@ -111,6 +111,10 @@ def stats(runs)
     total: median(timed.map { |r| r[:total_s] }),
     total_p90: percentile(timed.map { |r| r[:total_s] }, 0.9),
     output_tokens: median(timed.map { |r| r[:output_tokens] }),
+    input_tokens: median(timed.map { |r| r[:input_tokens] }),
+    first_request_input: median(timed.map { |r| r[:step_detail]&.first&.dig(:input_tokens) }),
+    input_total: timed.sum { |r| r[:input_tokens].to_i },
+    output_total: timed.sum { |r| r[:output_tokens].to_i },
     cold_ttft: median(timed.select { |r| r[:rep].zero? }.map { |r| r[:ttft_s] }),
     warm_ttft: median(timed.reject { |r| r[:rep].zero? }.map { |r| r[:ttft_s] }),
     clean_json: pct(ok.count { |r| r[:raw_json_clean] }, ok.size),
@@ -342,6 +346,53 @@ cold_rows = MODELS.map do |m|
     "<td class=\"num\">#{fmt_s(prompted[:cold_ttft])}</td><td class=\"num\">#{fmt_s(prompted[:warm_ttft])}</td></tr>"
 end.join
 
+def fmt_tokens(value)
+  return "–" if value.nil?
+
+  value >= 1000 ? "#{(value / 1000.0).round(1)}K" : value.round.to_s
+end
+
+def fmt_delta(native, prompted)
+  return "–" unless native && prompted&.positive?
+
+  delta = 100.0 * (native - prompted) / prompted
+  "#{'+' if delta.positive?}#{delta.round(1)}%"
+end
+
+def token_chart(metric, title, scenarios)
+  rows = scenarios.map do |sc|
+    values = STRATEGIES.to_h { |s| [s, stats(select(scenario: sc, strategy: s))[metric]] }
+    notes = { "native" => "#{fmt_delta(values['native'], values['prompted'])} vs prompted" }
+    { label: SCENARIO_LABEL.fetch(sc, sc), values: values, notes: notes }
+  end
+  max = rows.flat_map { |r| r[:values].values.compact }.max || 1
+  bar_chart(rows, max: max * 1.05, unit: "median tokens per run, all models", title: title, value_fmt: ->(v) { fmt_tokens(v) })
+end
+
+input_token_chart = token_chart(:input_tokens, "Input tokens per run", comparable)
+output_token_chart = token_chart(:output_tokens, "Output tokens per run (includes unseen thinking)", comparable)
+
+token_tiles = %i[input_total output_total].map do |metric|
+  prompted = comparable_stats.dig("prompted", metric)
+  native = comparable_stats.dig("native", metric)
+  label = metric == :input_total ? "Total input tokens" : "Total output tokens"
+  tile(label, fmt_tokens(prompted), fmt_tokens(native),
+       "#{comparable_stats.dig('native', :n)} runs each, scenarios both ran · native #{fmt_delta(native, prompted)}",)
+end.join
+
+token_rows = comparable.flat_map do |sc|
+  MODELS.map do |m|
+    p = stats(select(model: m, scenario: sc, strategy: "prompted"))
+    n = stats(select(model: m, scenario: sc, strategy: "native"))
+    "<tr><td>#{h(SCENARIO_LABEL.fetch(sc, sc))}</td><td>#{h(MODEL_LABEL[m])}</td>" \
+      "<td class=\"num\">#{(n[:first_request_input] - p[:first_request_input]).round}</td>" \
+      "<td class=\"num\">#{fmt_tokens(p[:input_tokens])}</td><td class=\"num\">#{fmt_tokens(n[:input_tokens])}</td>" \
+      "<td class=\"num\">#{fmt_delta(n[:input_tokens], p[:input_tokens])}</td>" \
+      "<td class=\"num\">#{fmt_tokens(p[:output_tokens])}</td><td class=\"num\">#{fmt_tokens(n[:output_tokens])}</td>" \
+      "<td class=\"num\">#{fmt_delta(n[:output_tokens], p[:output_tokens])}</td></tr>"
+  end
+end.join
+
 limit_schemas = LIMITS.map { |l| l[:schema] }.uniq
 limit_rows = limit_schemas.map do |schema|
   entries = LIMITS.select { |l| l[:schema] == schema }
@@ -447,6 +498,10 @@ html = template.gsub(/\{\{(\w+)\}\}/) do
     "tool_table_rows" => tool_table_rows,
     "detail_rows" => detail_rows,
     "cold_rows" => cold_rows,
+    "input_token_chart" => input_token_chart,
+    "output_token_chart" => output_token_chart,
+    "token_tiles" => token_tiles,
+    "token_rows" => token_rows,
     "limit_rows" => limit_rows,
     "problem_rows" => problem_rows,
     "rejected" => h(rejected_scenarios.map { |s| SCENARIO_LABEL.fetch(s, s) }.join(" and ")),

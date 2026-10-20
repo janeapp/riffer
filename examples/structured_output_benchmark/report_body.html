@@ -8,7 +8,7 @@
     <li><strong>It rejects our larger schemas outright.</strong> Bedrock refuses any schema with more than 16 nullable fields, and any schema bigger than about 70–80 properties. Riffer turns every <code>optional</code> field into a nullable one, so a normal intake form hits the limit fast. Our full intake schema (13 optional fields) was rejected by every model, every time. Prompted handled it perfectly.</li>
     <li><strong>It makes things up when a required field has no answer.</strong> Native decoding can't output <code>null</code>, so it fills the gap: in 14 of 15 runs it returned a "valid" object with 77 invented values across 84 unanswerable fields. 57 of those looked like real data (urgency "routine", workers' comp "false", and in one run a realistic email, <code>naomi.lindqvist@example.com</code>). One run got stuck writing a fake email address until it hit the 32,000-token limit. With prompted, every one of those runs failed validation instead, so no invented value reached the app.</li>
     <li><strong>It is slower.</strong> Total run time was longer in every model × scenario cell (median 1.47×, about 5 seconds; up to 51 seconds more on big outputs). Tokens come out about 30% slower (118 vs 166 per second), and the first request with a new schema waits about twice as long for the first token.</li>
-    <li><strong>On everything else, it's a tie.</strong> Both strategies returned 100% schema-valid output on every schema native accepted. Field accuracy was the same (99.9% vs 100%), there were no hallucinations on optional fields, and tool use was perfect: zero needless calls and zero skipped calls in 240 runs.</li>
+    <li><strong>On everything else, it's a tie.</strong> Both strategies returned 100% schema-valid output on every schema native accepted. Field accuracy was the same (99.9% vs 100%), there were no hallucinations on optional fields, and tool use was perfect: zero needless calls and zero skipped calls in 240 runs. Token usage was close too: native used about 4% more input tokens and the same output tokens.</li>
   </ul>
   <p>Earlier we found that the prompted strategy gave fewer validation errors and fewer hallucinations. This run partly changes that picture. On schemas native accepts, native now has no validation errors either. The hallucination gap only shows up when a schema forces an answer the source doesn't have, and there it is large. Native could make sense for small, fully answerable schemas where its built-in guarantee is worth the extra latency.</p>
 </div>
@@ -56,6 +56,19 @@
 <h3>First request with a new schema</h3>
 <p>Bedrock compiles each new schema and caches the result for 24 hours. The first run of each model × scenario (rep 0) was sent before any repeats, so it shows that cost.</p>
 <div class="card scroll"><table><thead><tr><th>Model</th><th class="num">Native TTFT, first request</th><th class="num">Native TTFT, repeats</th><th class="num">Prompted TTFT, first request</th><th class="num">Prompted TTFT, repeats</th></tr></thead><tbody>{{cold_rows}}</tbody></table></div>
+
+<h2>7. Token usage</h2>
+<p>Bedrock reports input and output tokens for every request. These totals add up every request in a run, including each step of a tool loop. The comparison only covers the 6 scenarios both strategies ran.</p>
+<div class="tiles">{{token_tiles}}</div>
+<ul>
+  <li><strong>Native uses slightly more input tokens.</strong> That's surprising, because prompted adds the whole schema to the user message. Bedrock must add its own hidden schema prompt, and it's bigger than riffer's: native's first request was 80–340 tokens larger in every case, and the extra is the same for all three models. In tool loops the extra is paid on every step.</li>
+  <li><strong>Output tokens are about the same.</strong> Differences go both ways and are mostly within normal run-to-run noise. The one steady gap is the treatment plan, where native used 8–14% more. Output counts include the models' unseen thinking. The +117% on Sonnet's intake run is likely the same effect: with prompted, Sonnet often answered almost instantly (0.8s to first token), which suggests it skipped thinking.</li>
+</ul>
+<div class="legend">{{legend}}</div>
+<div class="card">{{input_token_chart}}</div>
+<div class="card">{{output_token_chart}}</div>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Model</th><th class="num">Extra input per request (native)</th><th class="num">Input, prompted</th><th class="num">Input, native</th><th class="num">Change</th><th class="num">Output, prompted</th><th class="num">Output, native</th><th class="num">Change</th></tr></thead><tbody>{{token_rows}}</tbody></table></div>
+<p>Input and output columns are median tokens per run. <strong>Not covered here:</strong> every scenario had a single user message. Prompted adds the schema to every user message, so in a long multi-turn conversation its overhead grows with each turn, while native's likely stays flat. Prompt caching was off, so cached-token pricing wasn't measured.</p>
 
 <h2>Scenarios</h2>
 <div class="card scroll"><table><thead><tr><th>Scenario</th><th>Tools</th><th>What it tests</th></tr></thead><tbody>
