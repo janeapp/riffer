@@ -174,4 +174,3 @@ A `FilePart.from_url` source works too — riffer downloads and base64-encodes i
 
 - **No web search** - Gemini's standard API does not include a web search tool
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side
-- **String enums only** - Gemini rejects non-string `enum` values, including on `Array, of:` items

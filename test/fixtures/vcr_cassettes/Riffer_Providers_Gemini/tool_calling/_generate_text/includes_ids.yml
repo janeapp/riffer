@@ -7,8 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
         Toronto?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
-        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
-        city name"}},"required":["city"]}}]}]}'
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -36,7 +36,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 14 Apr 2026 23:45:32 GMT
+      - Tue, 20 Oct 2026 21:28:33 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,7 +46,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=2252
+      - gfet4t7; dur=284
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -84,10 +84,11 @@ http_interactions:
                 "modality": "TEXT",
                 "tokenCount": 49
               }
-            ]
+            ],
+            "serviceTier": "standard"
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "nNHeadz0LbunqtsPmdjt-QQ"
+          "responseId": "Ad3XaorWHuKfz7IPreOW4A0"
         }
-  recorded_at: Tue, 14 Apr 2026 23:45:32 GMT
+  recorded_at: Tue, 20 Oct 2026 21:28:33 GMT
 recorded_with: VCR 6.4.0
