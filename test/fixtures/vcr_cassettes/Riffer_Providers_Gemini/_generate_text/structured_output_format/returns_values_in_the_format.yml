@@ -7,11 +7,11 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Book a visit on 2026-10-26
         at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
-        The patient gave no email."}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
+        The patient gave no email."}]}],"generationConfig":{"responseMimeType":"application/json","responseJsonSchema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"starts_at":{"type":"string","description":"Visit start,
         with its UTC offset","format":"date-time"},"email":{"type":"string","description":"Patient
         email, if given","format":"email"},"clinic_ids":{"type":"array","description":"Clinic
-        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","clinic_ids"]}}}'
+        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","clinic_ids"],"additionalProperties":false}}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -39,7 +39,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Mon, 19 Oct 2026 20:34:56 GMT
+      - Tue, 20 Oct 2026 21:28:34 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -49,7 +49,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=698
+      - gfet4t7; dur=575
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -85,7 +85,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "8H7Wavf9BdaqytMP1ZW66QI"
+          "responseId": "At3XatT0FMusz7IPj4-E0A0"
         }
-  recorded_at: Mon, 19 Oct 2026 20:34:56 GMT
+  recorded_at: Tue, 20 Oct 2026 21:28:34 GMT
 recorded_with: VCR 6.4.0

@@ -608,7 +608,6 @@ describe Riffer::Providers::Gemini do
 
       let(:enum_array_structured_output) do
         params = Riffer::Params.new
-        # Gemini's responseSchema rejects non-string enum values.
         params.required(:tags, Array, of: String, enum: ticket_tags, description: "Ticket tags")
         Riffer::Agent::StructuredOutput.new(params)
       end
@@ -767,42 +766,7 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "structured output" do
-    it "includes responseMimeType in generationConfig" do
-      provider = Riffer::Providers::Gemini.new
-      params = Riffer::Params.new
-      params.required(:sentiment, String)
-      params.required(:score, Float)
-      structured_output = Riffer::Agent::StructuredOutput.new(params)
-      messages = [Riffer::Messages::User.new("Analyze")]
-
-      result = provider.send(
-        :build_request_params,
-        messages,
-        "gemini-2.5-flash-lite",
-        { structured_output: structured_output },
-      )
-
-      expect(result[:generationConfig][:responseMimeType]).must_equal "application/json"
-    end
-
-    it "includes responseSchema in generationConfig" do
-      provider = Riffer::Providers::Gemini.new
-      params = Riffer::Params.new
-      params.required(:sentiment, String)
-      structured_output = Riffer::Agent::StructuredOutput.new(params)
-      messages = [Riffer::Messages::User.new("Analyze")]
-
-      result = provider.send(
-        :build_request_params,
-        messages,
-        "gemini-2.5-flash-lite",
-        { structured_output: structured_output },
-      )
-
-      expect(result[:generationConfig][:responseSchema][:type]).must_equal "object"
-    end
-
-    it "strips additionalProperties from anyOf branches in responseSchema" do
+    it "sends the JSON schema unmodified as responseJsonSchema" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
       params.required(:result, Riffer::Params::AnyOf) do
@@ -818,9 +782,11 @@ describe Riffer::Providers::Gemini do
         "gemini-2.5-flash-lite",
         { structured_output: structured_output },
       )
-      branches = result[:generationConfig][:responseSchema][:properties]["result"][:anyOf]
 
-      expect(branches.map(&:keys)).must_equal [%i[type properties required], %i[type properties required]]
+      expect(result[:generationConfig]).must_equal(
+        responseMimeType: "application/json",
+        responseJsonSchema: structured_output.json_schema,
+      )
     end
 
     it "does not include generationConfig when not configured" do
@@ -907,6 +873,21 @@ describe Riffer::Providers::Gemini do
           required :city, String, description: "The city name"
         end
       end
+    end
+
+    it "declares tool parameters as JSON Schema" do
+      provider = Riffer::Providers::Gemini.new
+      messages = [Riffer::Messages::User.new("Hello")]
+
+      result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", { tools: [weather_tool] })
+
+      expect(result[:tools]).must_equal [{
+        functionDeclarations: [{
+          name: weather_tool.name,
+          description: weather_tool.description,
+          parametersJsonSchema: weather_tool.parameters_schema,
+        }],
+      }]
     end
 
     describe "#generate_text with tools" do
