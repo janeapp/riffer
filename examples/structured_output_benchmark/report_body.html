@@ -1,0 +1,88 @@
+<h1>Structured output on Bedrock: Riffer prompted vs Bedrock native</h1>
+<div class="meta">Generated {{generated}} · {{runs}} runs plus 30 forced-choice runs · {{models}} · {{reps}} reps per cell · us-west-2</div>
+
+<div class="card verdict">
+  <h3 style="margin-top:0">Recommendation: keep Riffer's prompted strategy as the default</h3>
+  <p>AWS has turned native structured output back on, and it works on Opus 5.5, Sonnet 5.5 and Haiku 5.5. Where it runs, its output is as good as ours. But it is not a drop-in replacement:</p>
+  <ul>
+    <li><strong>It rejects our larger schemas outright.</strong> Bedrock refuses any schema with more than 16 nullable fields, and any schema bigger than about 70–80 properties. Riffer turns every <code>optional</code> field into a nullable one, so a normal intake form hits the limit fast. Our full intake schema (13 optional fields) was rejected by every model, every time. Prompted handled it perfectly.</li>
+    <li><strong>It makes things up when a required field has no answer.</strong> Native decoding can't output <code>null</code>, so it fills the gap: in 14 of 15 runs it returned a "valid" object with 77 invented values across 84 unanswerable fields. 57 of those looked like real data (urgency "routine", workers' comp "false", and in one run a realistic email, <code>naomi.lindqvist@example.com</code>). One run got stuck writing a fake email address until it hit the 32,000-token limit. With prompted, every one of those runs failed validation instead, so no invented value reached the app.</li>
+    <li><strong>It is slower.</strong> Total run time was longer in every model × scenario cell (median 1.47×, about 5 seconds; up to 51 seconds more on big outputs). Tokens come out about 30% slower (118 vs 166 per second), and the first request with a new schema waits about twice as long for the first token.</li>
+    <li><strong>On everything else, it's a tie.</strong> Both strategies returned 100% schema-valid output on every schema native accepted. Field accuracy was the same (99.9% vs 100%), there were no hallucinations on optional fields, and tool use was perfect: zero needless calls and zero skipped calls in 240 runs.</li>
+  </ul>
+  <p>Earlier we found that the prompted strategy gave fewer validation errors and fewer hallucinations. This run partly changes that picture. On schemas native accepts, native now has no validation errors either. The hallucination gap only shows up when a schema forces an answer the source doesn't have, and there it is large. Native could make sense for small, fully answerable schemas where its built-in guarantee is worth the extra latency.</p>
+</div>
+
+<div class="legend">{{legend}}</div>
+<div class="tiles">{{tiles}}</div>
+
+<h2>1. Native rejects large schemas</h2>
+<p>Before any model runs, Bedrock compiles the schema into a grammar. It refuses schemas that are too complex, with one of two errors. These limits are the same on all three models, so they come from Bedrock, not the model. A rejected request fails in about 0.3 seconds with a <code>ValidationException</code>.</p>
+<ul>
+  <li><strong>"Too many parameters with union types (limit: 16)".</strong> Every nullable field counts, at any depth, including fields inside array items. Riffer's strict mode makes every <code>optional</code> field nullable, so <strong>more than 16 optional fields anywhere in the schema = rejected</strong>.</li>
+  <li><strong>"The compiled grammar is too large".</strong> 70 flat string properties are accepted; 80 are rejected. Our intake schema has about 60 properties across nested objects and arrays, and it fails this check even with all formats, enums and nullables removed.</li>
+</ul>
+<div class="card scroll"><table><thead><tr><th>Schema sent to Bedrock native</th><th class="num">Nullable / union fields</th><th>Result (all 3 models)</th><th>Reason</th></tr></thead><tbody>{{limit_rows}}</tbody></table></div>
+<p><strong>Could riffer send a looser schema to get under the limit?</strong> No. We also tried non-strict schemas, where optional fields are left out of <code>required</code> instead of being made nullable. Bedrock has a separate cap for that: 30 and 38 optional fields were rejected with <em>"Schemas contains too many optional parameters"</em>. 17 optional fields failed after several minutes with <em>"Bedrock is unable to process your request"</em>. The full intake schema still failed with <em>"grammar too large"</em>. Raw output: <code>results/non-strict-2026-10-20.txt</code>.</p>
+
+<h2>2. Reliability</h2>
+<p>A run counts as successful when riffer gets a reply that parses and passes schema validation. Every failure in the main run is a native schema rejection. The {{rejected}} scenarios never reached the model.</p>
+<div class="card">{{success_chart}}</div>
+
+<h2>3. Hallucination when the source has no answer</h2>
+<p>This scenario asks for a referral record from a short faxed letter. All 11 fields are <code>required</code>, and the letter doesn't answer 6 of them: urgency, patient email, insurer, number of visits, workers' comp, and practitioner preference. The right behaviour is to say "I don't know". With native, the model can't output <code>null</code> for a required field, so it has to put something there.</p>
+<p>The chart counts only invented values that reached the application. A reply that fails validation delivers nothing. The table counts everything the model wrote in its reply, including replies riffer rejected.</p>
+<div class="card">{{forced_chart}}</div>
+<div class="card scroll"><table><thead><tr><th>Model</th><th>Strategy</th><th class="num">Passed validation</th><th>Failures</th><th class="num">Left blank</th><th class="num">Plausible invented (in reply)</th><th class="num">Placeholder text (in reply)</th><th class="num">Unanswerable fields</th></tr></thead><tbody>{{forced_rows}}</tbody></table></div>
+<p>What each strategy wrote into the unanswerable fields. For prompted, these values sit inside replies that failed validation, so riffer returned <code>:invalid_structured_output</code> and the app never saw them.</p>
+<div class="card scroll"><table><thead><tr><th>Strategy</th><th>Invented values (field: value ×count)</th></tr></thead><tbody>{{forced_value_rows}}</tbody></table></div>
+<p>Riffer's docs already advise making such fields <code>optional</code>. When the schema allows <code>null</code>, both strategies behave well (see the next section). This scenario shows what happens when a schema doesn't, and native fails silently while prompted fails loudly.</p>
+
+<h2>4. Accuracy where both strategies ran</h2>
+<p>Each valid answer is checked field by field against known ground truth. Each source document also contains traps: a statin the patient stopped taking, the husband's warfarin, the sister's sulfa allergy, the mother's cancer, an old Calgary address, the referring clinic's phone number, and voided ledger rows. Neither strategy fell for any trap, and neither invented a value for an optional field. The few errors are counting slips in the no-show report, mostly from Haiku, under both strategies.</p>
+<div class="card">{{accuracy_chart}}</div>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Strategy</th><th>Field</th><th>Outcome</th><th class="num">Runs</th><th>Example</th></tr></thead><tbody>{{problem_rows}}</tbody></table></div>
+
+<h2>5. Tool use</h2>
+<p>Every scenario had the same six clinic tools available. In five scenarios everything needed was already in the prompt, so any tool call was unneeded. In two, the data only existed behind the tools. Both strategies used tools exactly when they should have.</p>
+<div class="card scroll"><table><thead><tr><th>Model</th><th>Strategy</th><th class="num">Needless tool use</th><th class="num">Skipped all tools</th><th class="num">Missed a required tool</th><th class="num">Median calls (pre-visit / no-show)</th><th class="num">Reply was bare JSON</th></tr></thead><tbody>{{tool_table_rows}}</tbody></table></div>
+<p>"Reply was bare JSON" shows how often the reply was only the JSON object. With prompted, Opus sometimes wraps it in a code fence. Riffer's parser removes the fence, so this never caused a failure.</p>
+
+<h2>6. Speed</h2>
+<p>Time to first token (TTFT) is measured from sending the request to the first streamed token of any kind. These models think before answering, and the thinking isn't streamed, so TTFT includes thinking time. Total run time covers the whole agent loop, including tool calls. Bars show the median of 5 runs. Scales are shared across models so panels can be compared.</p>
+<div class="legend">{{legend}}</div>
+<div class="card multiples">{{ttft_charts}}</div>
+<div class="card multiples">{{total_charts}}</div>
+<h3>First request with a new schema</h3>
+<p>Bedrock compiles each new schema and caches the result for 24 hours. The first run of each model × scenario (rep 0) was sent before any repeats, so it shows that cost.</p>
+<div class="card scroll"><table><thead><tr><th>Model</th><th class="num">Native TTFT, first request</th><th class="num">Native TTFT, repeats</th><th class="num">Prompted TTFT, first request</th><th class="num">Prompted TTFT, repeats</th></tr></thead><tbody>{{cold_rows}}</tbody></table></div>
+
+<h2>Scenarios</h2>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Tools</th><th>What it tests</th></tr></thead><tbody>
+<tr><td>Intake (native-sized schema)</td><td>Not needed</td><td>A 9,000-character scanned intake packet with a referral letter and boilerplate, extracted into about 30 properties (7 nullable). Built small enough for native to accept, so accuracy can be compared like for like.</td></tr>
+<tr><td>Intake (full schema)</td><td>Not needed</td><td>The same packet into a realistic EMR record: 6 nested objects, 6 arrays, enums, date and email formats, 13 optional fields.</td></tr>
+<tr><td>Intake (extended schema)</td><td>Not needed</td><td>The full schema plus 25 more optional fields (38 nullable in total).</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Not needed (billing-code lookup offered)</td><td>80 front-desk ledger rows in four formats, plus 5 voided rows that must be dropped. Output is an array of either/or line items (service, product, adjustment) plus totals. About 10–14k output tokens.</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Not needed</td><td>A 16-week, 4-phase rehab plan nested phases → goals → exercises → progression. Exercises must use real IDs from a 60-item library and respect per-phase surgical restrictions.</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Not needed</td><td>A full chart export is pasted into the prompt, so calling a tool is unnecessary. The patient has no insurance and no emergency contact; both should come back null.</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Required (4 calls)</td><td>Only a patient ID is given. The model must fetch the chart, appointments, insurance and practitioner. The patient has no emergency contact and no group number.</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Required (16 calls)</td><td>Per-patient attendance statistics computed from tool data. Four patients have nothing booked, so their next booking should be null.</td></tr>
+<tr><td>Required fields the source can't answer</td><td>Not needed</td><td>A short referral letter into 11 required fields. 6 of them, including a required enum and a required email, have no answer in the letter.</td></tr>
+</tbody></table></div>
+
+<h2>How this was run</h2>
+<ul>
+  <li><strong>Models:</strong> Opus 5.5, Sonnet 5.5 and Haiku 5.5 through the <code>us.</code> cross-region inference profiles in us-west-2, with each model's default (adaptive) thinking and max_tokens 32,000. Fable was left out on purpose.</li>
+  <li><strong>Strategies:</strong> riffer's own <code>Riffer::Providers::AmazonBedrock</code> and <code>Riffer::Agent::StructuredOutput</code>. <code>:native</code> sends the strict schema in Converse <code>outputConfig.textFormat</code>. <code>:prompted</code> adds the schema to every user message. Both are checked by the same <code>parse_and_validate</code>.</li>
+  <li><strong>Harness:</strong> <code>Riffer::Agent</code> doesn't allow streaming with structured output, so the benchmark runs the same tool loop over <code>stream_text</code>. Request building, tools and validation are unchanged; streaming is only used to measure TTFT.</li>
+  <li><strong>Ordering:</strong> rep 0 of every cell ran first, then the remaining runs in random order, 8 at a time, so neither strategy got the quieter time slots.</li>
+  <li><strong>Grading:</strong> deterministic ground truth with no LLM judge. A self-test checks that the graders give a perfect answer full marks and catch every planted hallucination.</li>
+  <li><strong>Limits of this study:</strong> 5 reps per cell, so failures rarer than about 1 in 15 per cell could be missed. All data is synthetic. Canadian regions (ca-central-1) were not tested.</li>
+  <li><strong>Access:</strong> the <code>bedrock-dev</code> profile asks for the SSO role <code>BedrockAPIKeyAccess</code>, which isn't assigned to this login. The runs used the account's <code>AdministratorAccess</code> role through a temporary AWS config file and made only Bedrock inference calls.</li>
+  <li><strong>Code and raw data:</strong> <code>examples/structured_output_benchmark/</code> on branch <code>worktree-bench-bedrock-structured-output</code> in the riffer repo, with <code>bench.rb</code>, <code>probe_limits.rb</code>, <code>selftest.rb</code>, <code>report.rb</code> and the results in <code>results/</code>.</li>
+</ul>
+
+<h2>All results</h2>
+<details><summary>Every model × scenario × strategy cell</summary>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Model</th><th>Strategy</th><th class="num">Valid</th><th>Failures</th><th class="num">Accuracy</th><th class="num">Hallucinated</th><th class="num">Wrong</th><th class="num">Missing</th><th class="num">TTFT median</th><th class="num">TTFT p90</th><th class="num">Total median</th><th class="num">Total p90</th><th class="num">Output tokens</th></tr></thead><tbody>{{detail_rows}}</tbody></table></div>
+</details>

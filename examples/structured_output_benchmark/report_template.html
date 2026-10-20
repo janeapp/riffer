@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structured output on Bedrock: Riffer prompted vs Bedrock native</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+    --series-prompted: #2a78d6; --series-native: #eb6834; --good: #006300; --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface-1: #1a1a19; --text-primary: #f0efec; --text-secondary: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+      --series-prompted: #3987e5; --series-native: #d95926; --good: #0ca30c; --critical: #e66767;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface-1: #1a1a19; --text-primary: #f0efec; --text-secondary: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --series-prompted: #3987e5; --series-native: #d95926; --good: #0ca30c; --critical: #e66767;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .viz-root { background: var(--page); color: var(--text-primary); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; }
+  main { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 6px; }
+  h2 { font-size: 20px; margin: 48px 0 8px; }
+  h3 { font-size: 16px; margin: 24px 0 6px; }
+  p, li { color: var(--text-secondary); max-width: 76ch; }
+  strong { color: var(--text-primary); }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin: 16px 0; }
+  .verdict { border-left: 4px solid var(--series-prompted); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin: 16px 0; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .tile-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+  .tile-row { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+  .tile-name { color: var(--text-secondary); font-size: 13px; flex: 1; }
+  .tile-value { font-size: 22px; font-weight: 600; }
+  .tile-note { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .tile-value.big { font-size: 34px; line-height: 1.1; margin: 4px 0 2px; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+  .sw.s-prompted { background: var(--series-prompted); }
+  .sw.s-native { background: var(--series-native); }
+  .legend { display: flex; gap: 18px; font-size: 13px; color: var(--text-secondary); margin: 8px 0; }
+  .chart { margin: 8px 0 18px; }
+  .chart figcaption { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .chart .unit { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+  svg .grid { stroke: var(--grid); stroke-width: 1; }
+  svg .axis { stroke: var(--axis); stroke-width: 1; }
+  svg .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  svg .row-label { fill: var(--text-secondary); font-size: 12px; }
+  svg .value { fill: var(--text-secondary); font-size: 11px; font-variant-numeric: tabular-nums; }
+  svg .na { fill: var(--muted); font-size: 11px; font-style: italic; }
+  svg .s-prompted { fill: var(--series-prompted); }
+  svg .s-native { fill: var(--series-native); }
+  svg .hit { fill: transparent; }
+  svg .mark { outline: none; cursor: default; }
+  svg .mark:hover path, svg .mark:focus path { opacity: 0.8; }
+  svg .mark:focus .hit { stroke: var(--axis); stroke-width: 1; }
+  .multiples { display: grid; grid-template-columns: 1fr; gap: 4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { color: var(--text-secondary); font-weight: 600; }
+  td:has(> .sw) { white-space: nowrap; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+  .ok { color: var(--good); font-weight: 600; }
+  .bad { color: var(--critical); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  details summary { cursor: pointer; color: var(--text-secondary); font-weight: 600; margin: 8px 0; }
+  .tip { position: fixed; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border); border-radius: 6px;
+         padding: 6px 10px; font-size: 12px; color: var(--text-primary); box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-width: 360px; display: none; z-index: 10; }
+  .theme { position: absolute; top: 16px; right: 24px; font-size: 12px; background: var(--surface-1); color: var(--text-secondary);
+           border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  @media print { .theme { display: none; } }
+</style>
+</head>
+<body>
+<div class="viz-root">
+<button class="theme" type="button" id="theme">Toggle dark mode</button>
+<main>
+{{body}}
+</main>
+<div class="tip" id="tip" role="tooltip"></div>
+</div>
+<script>
+  (function () {
+    var tip = document.getElementById("tip");
+    function show(el, x, y) {
+      tip.textContent = el.getAttribute("data-tip");
+      tip.style.display = "block";
+      var w = tip.offsetWidth, h = tip.offsetHeight;
+      tip.style.left = Math.min(x + 14, window.innerWidth - w - 8) + "px";
+      tip.style.top = Math.max(8, y - h - 10) + "px";
+    }
+    document.querySelectorAll("[data-tip]").forEach(function (el) {
+      el.addEventListener("pointermove", function (e) { show(el, e.clientX, e.clientY); });
+      el.addEventListener("pointerleave", function () { tip.style.display = "none"; });
+      el.addEventListener("focus", function () { var r = el.getBoundingClientRect(); show(el, r.left + 40, r.top); });
+      el.addEventListener("blur", function () { tip.style.display = "none"; });
+    });
+    document.getElementById("theme").addEventListener("click", function () {
+      var root = document.documentElement;
+      var dark = root.getAttribute("data-theme") === "dark" ||
+        (!root.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      root.setAttribute("data-theme", dark ? "light" : "dark");
+    });
+  })();
+</script>
+</body>
+</html>

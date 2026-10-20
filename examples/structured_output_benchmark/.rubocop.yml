@@ -1,0 +1,21 @@
+inherit_from: ../../.rubocop.yml
+
+# A standalone benchmark: fixtures and prompts are long literal data, and the
+# CLI scripts print fixed-width progress lines.
+Layout/LineLength:
+  Max: 200
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/ModuleFunction:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Metrics:
+  Enabled: false

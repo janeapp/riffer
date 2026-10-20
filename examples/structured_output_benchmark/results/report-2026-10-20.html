@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structured output on Bedrock: Riffer prompted vs Bedrock native</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+    --series-prompted: #2a78d6; --series-native: #eb6834; --good: #006300; --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface-1: #1a1a19; --text-primary: #f0efec; --text-secondary: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+      --series-prompted: #3987e5; --series-native: #d95926; --good: #0ca30c; --critical: #e66767;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface-1: #1a1a19; --text-primary: #f0efec; --text-secondary: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --series-prompted: #3987e5; --series-native: #d95926; --good: #0ca30c; --critical: #e66767;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .viz-root { background: var(--page); color: var(--text-primary); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; }
+  main { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 6px; }
+  h2 { font-size: 20px; margin: 48px 0 8px; }
+  h3 { font-size: 16px; margin: 24px 0 6px; }
+  p, li { color: var(--text-secondary); max-width: 76ch; }
+  strong { color: var(--text-primary); }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin: 16px 0; }
+  .verdict { border-left: 4px solid var(--series-prompted); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin: 16px 0; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .tile-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+  .tile-row { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+  .tile-name { color: var(--text-secondary); font-size: 13px; flex: 1; }
+  .tile-value { font-size: 22px; font-weight: 600; }
+  .tile-note { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .tile-value.big { font-size: 34px; line-height: 1.1; margin: 4px 0 2px; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+  .sw.s-prompted { background: var(--series-prompted); }
+  .sw.s-native { background: var(--series-native); }
+  .legend { display: flex; gap: 18px; font-size: 13px; color: var(--text-secondary); margin: 8px 0; }
+  .chart { margin: 8px 0 18px; }
+  .chart figcaption { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .chart .unit { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+  svg .grid { stroke: var(--grid); stroke-width: 1; }
+  svg .axis { stroke: var(--axis); stroke-width: 1; }
+  svg .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  svg .row-label { fill: var(--text-secondary); font-size: 12px; }
+  svg .value { fill: var(--text-secondary); font-size: 11px; font-variant-numeric: tabular-nums; }
+  svg .na { fill: var(--muted); font-size: 11px; font-style: italic; }
+  svg .s-prompted { fill: var(--series-prompted); }
+  svg .s-native { fill: var(--series-native); }
+  svg .hit { fill: transparent; }
+  svg .mark { outline: none; cursor: default; }
+  svg .mark:hover path, svg .mark:focus path { opacity: 0.8; }
+  svg .mark:focus .hit { stroke: var(--axis); stroke-width: 1; }
+  .multiples { display: grid; grid-template-columns: 1fr; gap: 4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { color: var(--text-secondary); font-weight: 600; }
+  td:has(> .sw) { white-space: nowrap; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+  .ok { color: var(--good); font-weight: 600; }
+  .bad { color: var(--critical); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  details summary { cursor: pointer; color: var(--text-secondary); font-weight: 600; margin: 8px 0; }
+  .tip { position: fixed; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border); border-radius: 6px;
+         padding: 6px 10px; font-size: 12px; color: var(--text-primary); box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-width: 360px; display: none; z-index: 10; }
+  .theme { position: absolute; top: 16px; right: 24px; font-size: 12px; background: var(--surface-1); color: var(--text-secondary);
+           border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  @media print { .theme { display: none; } }
+</style>
+</head>
+<body>
+<div class="viz-root">
+<button class="theme" type="button" id="theme">Toggle dark mode</button>
+<main>
+<h1>Structured output on Bedrock: Riffer prompted vs Bedrock native</h1>
+<div class="meta">Generated 2026-10-20 · 240 runs plus 30 forced-choice runs · Opus 5.5, Sonnet 5.5, Haiku 5.5 · 5 reps per cell · us-west-2</div>
+
+<div class="card verdict">
+  <h3 style="margin-top:0">Recommendation: keep Riffer's prompted strategy as the default</h3>
+  <p>AWS has turned native structured output back on, and it works on Opus 5.5, Sonnet 5.5 and Haiku 5.5. Where it runs, its output is as good as ours. But it is not a drop-in replacement:</p>
+  <ul>
+    <li><strong>It rejects our larger schemas outright.</strong> Bedrock refuses any schema with more than 16 nullable fields, and any schema bigger than about 70–80 properties. Riffer turns every <code>optional</code> field into a nullable one, so a normal intake form hits the limit fast. Our full intake schema (13 optional fields) was rejected by every model, every time. Prompted handled it perfectly.</li>
+    <li><strong>It makes things up when a required field has no answer.</strong> Native decoding can't output <code>null</code>, so it fills the gap: in 14 of 15 runs it returned a "valid" object with 77 invented values across 84 unanswerable fields. 57 of those looked like real data (urgency "routine", workers' comp "false", and in one run a realistic email, <code>naomi.lindqvist@example.com</code>). One run got stuck writing a fake email address until it hit the 32,000-token limit. With prompted, every one of those runs failed validation instead, so no invented value reached the app.</li>
+    <li><strong>It is slower.</strong> Total run time was longer in every model × scenario cell (median 1.47×, about 5 seconds; up to 51 seconds more on big outputs). Tokens come out about 30% slower (118 vs 166 per second), and the first request with a new schema waits about twice as long for the first token.</li>
+    <li><strong>On everything else, it's a tie.</strong> Both strategies returned 100% schema-valid output on every schema native accepted. Field accuracy was the same (99.9% vs 100%), there were no hallucinations on optional fields, and tool use was perfect: zero needless calls and zero skipped calls in 240 runs.</li>
+  </ul>
+  <p>Earlier we found that the prompted strategy gave fewer validation errors and fewer hallucinations. This run partly changes that picture. On schemas native accepts, native now has no validation errors either. The hallucination gap only shows up when a schema forces an answer the source doesn't have, and there it is large. Native could make sense for small, fully answerable schemas where its built-in guarantee is worth the extra latency.</p>
+</div>
+
+<div class="legend"><span class="key"><i class="sw s-prompted"></i>Riffer prompted</span><span class="key"><i class="sw s-native"></i>Bedrock native</span></div>
+<div class="tiles"><div class="tile">
+  <div class="tile-label">Runs that returned valid output</div>
+  <div class="tile-row"><i class="sw s-prompted"></i><span class="tile-name">Riffer prompted</span><span class="tile-value">100%</span></div>
+  <div class="tile-row"><i class="sw s-native"></i><span class="tile-name">Bedrock native</span><span class="tile-value">75%</span></div>
+  <div class="tile-note">All 8 scenarios, 3 models, 5 reps each</div>
+</div>
+<div class="tile">
+  <div class="tile-label">Field accuracy where both ran</div>
+  <div class="tile-row"><i class="sw s-prompted"></i><span class="tile-name">Riffer prompted</span><span class="tile-value">99.9%</span></div>
+  <div class="tile-row"><i class="sw s-native"></i><span class="tile-name">Bedrock native</span><span class="tile-value">100.0%</span></div>
+  <div class="tile-note">The 6 scenarios native accepts</div>
+</div>
+<div class="tile">
+  <div class="tile-label">Hallucinated values where both ran</div>
+  <div class="tile-row"><i class="sw s-prompted"></i><span class="tile-name">Riffer prompted</span><span class="tile-value">0</span></div>
+  <div class="tile-row"><i class="sw s-native"></i><span class="tile-name">Bedrock native</span><span class="tile-value">0</span></div>
+  <div class="tile-note">Invented values, trap items, fake IDs (total)</div>
+</div>
+<div class="tile">
+  <div class="tile-label">Tool misuse</div>
+  <div class="tile-row"><i class="sw s-prompted"></i><span class="tile-name">Riffer prompted</span><span class="tile-value">0</span></div>
+  <div class="tile-row"><i class="sw s-native"></i><span class="tile-name">Bedrock native</span><span class="tile-value">0</span></div>
+  <div class="tile-note">Runs with a needless call, a skipped call or a missing required tool</div>
+</div>
+<div class="tile">
+  <div class="tile-label">Bedrock native total run time vs prompted</div>
+  <div class="tile-value big">1.47×</div>
+  <div class="tile-note">Native is slower in 18 of 18 model × scenario cells (median of native ÷ prompted)</div>
+</div>
+<div class="tile">
+  <div class="tile-label">Bedrock native time to first token vs prompted</div>
+  <div class="tile-value big">1.41×</div>
+  <div class="tile-note">Native is slower in 16 of 18 model × scenario cells (median of native ÷ prompted)</div>
+</div>
+</div>
+
+<h2>1. Native rejects large schemas</h2>
+<p>Before any model runs, Bedrock compiles the schema into a grammar. It refuses schemas that are too complex, with one of two errors. These limits are the same on all three models, so they come from Bedrock, not the model. A rejected request fails in about 0.3 seconds with a <code>ValidationException</code>.</p>
+<ul>
+  <li><strong>"Too many parameters with union types (limit: 16)".</strong> Every nullable field counts, at any depth, including fields inside array items. Riffer's strict mode makes every <code>optional</code> field nullable, so <strong>more than 16 optional fields anywhere in the schema = rejected</strong>.</li>
+  <li><strong>"The compiled grammar is too large".</strong> 70 flat string properties are accepted; 80 are rejected. Our intake schema has about 60 properties across nested objects and arrays, and it fails this check even with all formats, enums and nullables removed.</li>
+</ul>
+<div class="card scroll"><table><thead><tr><th>Schema sent to Bedrock native</th><th class="num">Nullable / union fields</th><th>Result (all 3 models)</th><th>Reason</th></tr></thead><tbody><tr><td>16 optional (nullable) fields</td><td class="num">16</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>17 optional (nullable) fields</td><td class="num">17</td><td><span class="bad">✕ Rejected</span></td><td>Too many nullable/union fields (limit 16)</td></tr><tr><td>60 required strings</td><td class="num">0</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>70 required strings</td><td class="num">0</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>80 required strings</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>90 required strings</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>100 required strings</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>150 required strings</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>200 required strings</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake (as benchmarked)</td><td class="num">13</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake without format:</td><td class="num">13</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake without enum:</td><td class="num">13</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake without nullables</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake without format:, enum:</td><td class="num">13</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake without format:, nullables</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>intake without format:, enum:, nullables</td><td class="num">0</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>scenario: intake_lite</td><td class="num">7</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>scenario: intake</td><td class="num">13</td><td><span class="bad">✕ Rejected</span></td><td>Compiled grammar too large</td></tr><tr><td>scenario: intake_xl</td><td class="num">38</td><td><span class="bad">✕ Rejected</span></td><td>Too many nullable/union fields (limit 16)</td></tr><tr><td>scenario: ledger</td><td class="num">1</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>scenario: previsit_tools</td><td class="num">4</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>scenario: previsit_context</td><td class="num">4</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>scenario: noshow_tools</td><td class="num">1</td><td><span class="ok">✓ Accepted</span></td><td></td></tr><tr><td>scenario: treatment_plan</td><td class="num">0</td><td><span class="ok">✓ Accepted</span></td><td></td></tr></tbody></table></div>
+<p><strong>Could riffer send a looser schema to get under the limit?</strong> No. We also tried non-strict schemas, where optional fields are left out of <code>required</code> instead of being made nullable. Bedrock has a separate cap for that: 30 and 38 optional fields were rejected with <em>"Schemas contains too many optional parameters"</em>. 17 optional fields failed after several minutes with <em>"Bedrock is unable to process your request"</em>. The full intake schema still failed with <em>"grammar too large"</em>. Raw output: <code>results/non-strict-2026-10-20.txt</code>.</p>
+
+<h2>2. Reliability</h2>
+<p>A run counts as successful when riffer gets a reply that parses and passes schema validation. Every failure in the main run is a native schema rejection. The Intake (full schema) and Intake (extended schema) scenarios never reached the model.</p>
+<div class="card"><figure class="chart">
+  <figcaption>Runs that returned schema-valid output <span class="unit">% of runs, all models</span></figcaption>
+  <svg viewBox="0 0 720 380" width="100%" role="img" aria-label="Runs that returned schema-valid output"><line x1="210.0" x2="210.0" y1="0" y2="356" class="grid"/><text x="210.0" y="372" class="tick" text-anchor="middle">0%</text><line x1="320.0" x2="320.0" y1="0" y2="356" class="grid"/><text x="320.0" y="372" class="tick" text-anchor="middle">25%</text><line x1="430.0" x2="430.0" y1="0" y2="356" class="grid"/><text x="430.0" y="372" class="tick" text-anchor="middle">50%</text><line x1="540.0" x2="540.0" y1="0" y2="356" class="grid"/><text x="540.0" y="372" class="tick" text-anchor="middle">75%</text><line x1="650.0" x2="650.0" y1="0" y2="356" class="grid"/><text x="650.0" y="372" class="tick" text-anchor="middle">100%</text><line x1="210" x2="210" y1="0" y2="356" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 100%"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H646.0 Q650.0,6 650.0,10 V16 Q650.0,20 646.0,20 H210 Z" class="s-prompted"/><text x="656.0" y="14" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 100%"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H646.0 Q650.0,22 650.0,26 V32 Q650.0,36 646.0,36 H210 Z" class="s-native"/><text x="656.0" y="30" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (full schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (full schema): 100%"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H646.0 Q650.0,50 650.0,54 V60 Q650.0,64 646.0,64 H210 Z" class="s-prompted"/><text x="656.0" y="58" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (full schema): 0% (15 api error)"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H210.75 Q211.5,66 211.5,66.75 V79.25 Q211.5,80 210.75,80 H210 Z" class="s-native"/><text x="217.5" y="74" class="value" dominant-baseline="middle">0%</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (extended schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (extended schema): 100%"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H646.0 Q650.0,94 650.0,98 V104 Q650.0,108 646.0,108 H210 Z" class="s-prompted"/><text x="656.0" y="102" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (extended schema): 0% (15 api error)"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H210.75 Q211.5,110 211.5,110.75 V123.25 Q211.5,124 210.75,124 H210 Z" class="s-native"/><text x="217.5" y="118" class="value" dominant-baseline="middle">0%</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 100%"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H646.0 Q650.0,138 650.0,142 V148 Q650.0,152 646.0,152 H210 Z" class="s-prompted"/><text x="656.0" y="146" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 100%"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H646.0 Q650.0,154 650.0,158 V164 Q650.0,168 646.0,168 H210 Z" class="s-native"/><text x="656.0" y="162" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 100%"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H646.0 Q650.0,182 650.0,186 V192 Q650.0,196 646.0,196 H210 Z" class="s-prompted"/><text x="656.0" y="190" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 100%"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H646.0 Q650.0,198 650.0,202 V208 Q650.0,212 646.0,212 H210 Z" class="s-native"/><text x="656.0" y="206" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 100%"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H646.0 Q650.0,226 650.0,230 V236 Q650.0,240 646.0,240 H210 Z" class="s-prompted"/><text x="656.0" y="234" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 100%"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H646.0 Q650.0,242 650.0,246 V252 Q650.0,256 646.0,256 H210 Z" class="s-native"/><text x="656.0" y="250" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="285" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 100%"><rect x="210" y="269" width="510" height="16" class="hit"/><path d="M210,270 H646.0 Q650.0,270 650.0,274 V280 Q650.0,284 646.0,284 H210 Z" class="s-prompted"/><text x="656.0" y="278" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 100%"><rect x="210" y="285" width="510" height="16" class="hit"/><path d="M210,286 H646.0 Q650.0,286 650.0,290 V296 Q650.0,300 646.0,300 H210 Z" class="s-native"/><text x="656.0" y="294" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="329" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 100%"><rect x="210" y="313" width="510" height="16" class="hit"/><path d="M210,314 H646.0 Q650.0,314 650.0,318 V324 Q650.0,328 646.0,328 H210 Z" class="s-prompted"/><text x="656.0" y="322" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 100%"><rect x="210" y="329" width="510" height="16" class="hit"/><path d="M210,330 H646.0 Q650.0,330 650.0,334 V340 Q650.0,344 646.0,344 H210 Z" class="s-native"/><text x="656.0" y="338" class="value" dominant-baseline="middle">100%</text></g></svg>
+</figure>
+</div>
+
+<h2>3. Hallucination when the source has no answer</h2>
+<p>This scenario asks for a referral record from a short faxed letter. All 11 fields are <code>required</code>, and the letter doesn't answer 6 of them: urgency, patient email, insurer, number of visits, workers' comp, and practitioner preference. The right behaviour is to say "I don't know". With native, the model can't output <code>null</code> for a required field, so it has to put something there.</p>
+<p>The chart counts only invented values that reached the application. A reply that fails validation delivers nothing. The table counts everything the model wrote in its reply, including replies riffer rejected.</p>
+<div class="card"><figure class="chart">
+  <figcaption>Invented values that reached the application <span class="unit">% of unanswerable fields, across all runs</span></figcaption>
+  <svg viewBox="0 0 720 160" width="100%" role="img" aria-label="Invented values that reached the application"><line x1="210.0" x2="210.0" y1="0" y2="136" class="grid"/><text x="210.0" y="152" class="tick" text-anchor="middle">0%</text><line x1="320.0" x2="320.0" y1="0" y2="136" class="grid"/><text x="320.0" y="152" class="tick" text-anchor="middle">25%</text><line x1="430.0" x2="430.0" y1="0" y2="136" class="grid"/><text x="430.0" y="152" class="tick" text-anchor="middle">50%</text><line x1="540.0" x2="540.0" y1="0" y2="136" class="grid"/><text x="540.0" y="152" class="tick" text-anchor="middle">75%</text><line x1="650.0" x2="650.0" y1="0" y2="136" class="grid"/><text x="650.0" y="152" class="tick" text-anchor="middle">100%</text><line x1="210" x2="210" y1="0" y2="136" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Opus 5.5</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Opus 5.5: 0%"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H210.75 Q211.5,6 211.5,6.75 V19.25 Q211.5,20 210.75,20 H210 Z" class="s-prompted"/><text x="217.5" y="14" class="value" dominant-baseline="middle">0%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Opus 5.5: 96.7%"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H631.3333333333333 Q635.3333333333333,22 635.3333333333333,26 V32 Q635.3333333333333,36 631.3333333333333,36 H210 Z" class="s-native"/><text x="641.3333333333333" y="30" class="value" dominant-baseline="middle">96.7%</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Sonnet 5.5</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Sonnet 5.5: 0%"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H210.75 Q211.5,50 211.5,50.75 V63.25 Q211.5,64 210.75,64 H210 Z" class="s-prompted"/><text x="217.5" y="58" class="value" dominant-baseline="middle">0%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Sonnet 5.5: 86.7%"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H587.3333333333334 Q591.3333333333334,66 591.3333333333334,70 V76 Q591.3333333333334,80 587.3333333333334,80 H210 Z" class="s-native"/><text x="597.3333333333334" y="74" class="value" dominant-baseline="middle">86.7%</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Haiku 5.5</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Haiku 5.5: 0%"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H210.75 Q211.5,94 211.5,94.75 V107.25 Q211.5,108 210.75,108 H210 Z" class="s-prompted"/><text x="217.5" y="102" class="value" dominant-baseline="middle">0%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Haiku 5.5: 73.3%"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H528.6666666666666 Q532.6666666666666,110 532.6666666666666,114 V120 Q532.6666666666666,124 528.6666666666666,124 H210 Z" class="s-native"/><text x="538.6666666666666" y="118" class="value" dominant-baseline="middle">73.3%</text></g></svg>
+</figure>
+</div>
+<div class="card scroll"><table><thead><tr><th>Model</th><th>Strategy</th><th class="num">Passed validation</th><th>Failures</th><th class="num">Left blank</th><th class="num">Plausible invented (in reply)</th><th class="num">Placeholder text (in reply)</th><th class="num">Unanswerable fields</th></tr></thead><tbody><tr><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td class="num">0/5</td><td>1 invalid json, 4 schema violation</td><td class="num">16</td><td class="num">8</td><td class="num">0</td><td class="num">24</td></tr><tr><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td><td class="num">5/5</td><td></td><td class="num">1</td><td class="num">20</td><td class="num">9</td><td class="num">30</td></tr><tr><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td class="num">0/5</td><td>1 invalid json, 4 schema violation</td><td class="num">21</td><td class="num">3</td><td class="num">0</td><td class="num">24</td></tr><tr><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td><td class="num">5/5</td><td></td><td class="num">4</td><td class="num">21</td><td class="num">5</td><td class="num">30</td></tr><tr><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td class="num">0/5</td><td>5 schema violation</td><td class="num">30</td><td class="num">0</td><td class="num">0</td><td class="num">30</td></tr><tr><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td><td class="num">4/5</td><td>1 truncated</td><td class="num">2</td><td class="num">16</td><td class="num">6</td><td class="num">24</td></tr></tbody></table></div>
+<p>What each strategy wrote into the unanswerable fields. For prompted, these values sit inside replies that failed validation, so riffer returned <code>:invalid_structured_output</code> and the app never saw them.</p>
+<div class="card scroll"><table><thead><tr><th>Strategy</th><th>Invented values (field: value ×count)</th></tr></thead><tbody><tr><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>urgency</code>: &quot;routine&quot; ×5<br><code>workers_compensation_claim</code>: false ×2<br><code>preferred_practitioner_gender</code>: &quot;no_preference&quot; ×4</td></tr><tr><td><i class="sw s-native"></i>Bedrock native</td><td><code>urgency</code>: &quot;routine&quot; ×14<br><code>patient_email</code>: &quot;unknown@example.invalid&quot; ×2, &quot;null_placeholder_not_available@invalid.example&quot; ×2, &quot;naomi.lindqvist@example.com&quot; ×1, &quot;NOT_PROVIDED_IN_REFERRAL@invalid.invalid&quot; ×1, &quot;NOT_PROVIDED@unknown.invalid&quot; ×1, &quot;unknown@invalid.invalid&quot; ×1, &quot;null-not-in-referral-letter@invalid.example&quot; ×1, &quot;unknown@invalid.example&quot; ×1, &quot;lookup_needed@placeholder.invalid&quot; ×1, &quot;null_not_available_placeholder_removed_see_below_null_value_intended_… ×1, &quot;NOT_PROVIDED_IN_REFERRAL@unknown.invalid&quot; ×1, &quot;unknown@unknown.invalid&quot; ×1<br><code>requested_visit_count</code>: 0 ×13, 1 ×1<br><code>workers_compensation_claim</code>: false ×14<br><code>preferred_practitioner_gender</code>: &quot;no_preference&quot; ×14<br><code>insurance_provider</code>: &quot;null&quot; ×2, &quot;NOT PROVIDED IN REFERRAL - confirm with patient&quot; ×1, &quot;NOT PROVIDED - letter does not state insurer; patient ID required to … ×1, &quot;NOT PROVIDED - letter does not state the insurer, and the chart could… ×1, &quot;lookup_needed&quot; ×1, &quot;NOT PROVIDED IN REFERRAL - to confirm with patient&quot; ×1</td></tr></tbody></table></div>
+<p>Riffer's docs already advise making such fields <code>optional</code>. When the schema allows <code>null</code>, both strategies behave well (see the next section). This scenario shows what happens when a schema doesn't, and native fails silently while prompted fails loudly.</p>
+
+<h2>4. Accuracy where both strategies ran</h2>
+<p>Each valid answer is checked field by field against known ground truth. Each source document also contains traps: a statin the patient stopped taking, the husband's warfarin, the sister's sulfa allergy, the mother's cancer, an old Calgary address, the referring clinic's phone number, and voided ledger rows. Neither strategy fell for any trap, and neither invented a value for an optional field. The few errors are counting slips in the no-show report, mostly from Haiku, under both strategies.</p>
+<div class="card"><figure class="chart">
+  <figcaption>Field accuracy against ground truth <span class="unit">% of graded fields correct, valid runs only</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Field accuracy against ground truth"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0%</text><line x1="320.0" x2="320.0" y1="0" y2="268" class="grid"/><text x="320.0" y="284" class="tick" text-anchor="middle">25%</text><line x1="430.0" x2="430.0" y1="0" y2="268" class="grid"/><text x="430.0" y="284" class="tick" text-anchor="middle">50%</text><line x1="540.0" x2="540.0" y1="0" y2="268" class="grid"/><text x="540.0" y="284" class="tick" text-anchor="middle">75%</text><line x1="650.0" x2="650.0" y1="0" y2="268" class="grid"/><text x="650.0" y="284" class="tick" text-anchor="middle">100%</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H646.0 Q650.0,6 650.0,10 V16 Q650.0,20 646.0,20 H210 Z" class="s-prompted"/><text x="656.0" y="14" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H646.0 Q650.0,22 650.0,26 V32 Q650.0,36 646.0,36 H210 Z" class="s-native"/><text x="656.0" y="30" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H646.0 Q650.0,50 650.0,54 V60 Q650.0,64 646.0,64 H210 Z" class="s-prompted"/><text x="656.0" y="58" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H646.0 Q650.0,66 650.0,70 V76 Q650.0,80 646.0,80 H210 Z" class="s-native"/><text x="656.0" y="74" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 99.9% (0 hallucinated, 1 wrong, 0 missing over 15 runs)"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H645.5914577530176 Q649.5914577530176,94 649.5914577530176,98 V104 Q649.5914577530176,108 645.5914577530176,108 H210 Z" class="s-prompted"/><text x="655.5914577530176" y="102" class="value" dominant-baseline="middle">99.9%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H646.0 Q650.0,110 650.0,114 V120 Q650.0,124 646.0,124 H210 Z" class="s-native"/><text x="656.0" y="118" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 99.7% (0 hallucinated, 1 wrong, 0 missing over 15 runs)"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H644.5333333333333 Q648.5333333333333,138 648.5333333333333,142 V148 Q648.5333333333333,152 644.5333333333333,152 H210 Z" class="s-prompted"/><text x="654.5333333333333" y="146" class="value" dominant-baseline="middle">99.7%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H646.0 Q650.0,154 650.0,158 V164 Q650.0,168 646.0,168 H210 Z" class="s-native"/><text x="656.0" y="162" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H646.0 Q650.0,182 650.0,186 V192 Q650.0,196 646.0,196 H210 Z" class="s-prompted"/><text x="656.0" y="190" class="value" dominant-baseline="middle">100%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 100% (0 hallucinated, 0 wrong, 0 missing over 15 runs)"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H646.0 Q650.0,198 650.0,202 V208 Q650.0,212 646.0,212 H210 Z" class="s-native"/><text x="656.0" y="206" class="value" dominant-baseline="middle">100%</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 99.0% (0 hallucinated, 9 wrong, 0 missing over 15 runs)"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H641.5254237288136 Q645.5254237288136,226 645.5254237288136,230 V236 Q645.5254237288136,240 641.5254237288136,240 H210 Z" class="s-prompted"/><text x="651.5254237288136" y="234" class="value" dominant-baseline="middle">99.0%</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 99.7% (0 hallucinated, 3 wrong, 0 missing over 15 runs)"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H644.5084745762712 Q648.5084745762712,242 648.5084745762712,246 V252 Q648.5084745762712,256 644.5084745762712,256 H210 Z" class="s-native"/><text x="654.5084745762712" y="250" class="value" dominant-baseline="middle">99.7%</text></g></svg>
+</figure>
+</div>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Strategy</th><th>Field</th><th>Outcome</th><th class="num">Runs</th><th>Example</th></tr></thead><tbody><tr><td>Treatment plan, 4 levels</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>phases[n].goals[n].exercises 3-5</code></td><td>wrong</td><td class="num">1</td><td>expected <code>&quot;constraint&quot;</code>, got <code>2</code></td></tr><tr><td>Pre-visit, data in prompt</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>history_12_months.completed</code></td><td>wrong</td><td class="num">1</td><td>expected <code>4</code>, got <code>3</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>patients[P-10749].no_show_rate</code></td><td>wrong</td><td class="num">2</td><td>expected <code>0.33</code>, got <code>0.42</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>patients[P-10749].late_cancellations</code></td><td>wrong</td><td class="num">1</td><td>expected <code>3</code>, got <code>4</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>patients[P-10749].past_appointments</code></td><td>wrong</td><td class="num">1</td><td>expected <code>12</code>, got <code>13</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>patients[P-10633].no_shows</code></td><td>wrong</td><td class="num">1</td><td>expected <code>3</code>, got <code>4</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>patients[P-10633].no_show_rate</code></td><td>wrong</td><td class="num">1</td><td>expected <code>0.33</code>, got <code>0.44</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-prompted"></i>Riffer prompted</td><td><code>highest_risk_patient_id</code></td><td>wrong</td><td class="num">1</td><td>expected <code>&quot;P-10412&quot;</code>, got <code>&quot;P-10633&quot;</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-native"></i>Bedrock native</td><td><code>patients[P-10856].past_appointments</code></td><td>wrong</td><td class="num">1</td><td>expected <code>8</code>, got <code>7</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-native"></i>Bedrock native</td><td><code>patients[P-10101].past_appointments</code></td><td>wrong</td><td class="num">1</td><td>expected <code>5</code>, got <code>4</code></td></tr><tr><td>No-show report, 8 patients</td><td><i class="sw s-native"></i>Bedrock native</td><td><code>patients[P-10101].no_show_rate</code></td><td>wrong</td><td class="num">1</td><td>expected <code>0.2</code>, got <code>0.25</code></td></tr></tbody></table></div>
+
+<h2>5. Tool use</h2>
+<p>Every scenario had the same six clinic tools available. In five scenarios everything needed was already in the prompt, so any tool call was unneeded. In two, the data only existed behind the tools. Both strategies used tools exactly when they should have.</p>
+<div class="card scroll"><table><thead><tr><th>Model</th><th>Strategy</th><th class="num">Needless tool use</th><th class="num">Skipped all tools</th><th class="num">Missed a required tool</th><th class="num">Median calls (pre-visit / no-show)</th><th class="num">Reply was bare JSON</th></tr></thead><tbody><tr><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">0 / 30</td>
+<td class="num">0 / 10</td>
+<td class="num">0 / 10</td>
+<td class="num">4 / 16</td>
+<td class="num">67.5%</td></tr>
+<tr><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0 / 20</td>
+<td class="num">0 / 10</td>
+<td class="num">0 / 10</td>
+<td class="num">4 / 16</td>
+<td class="num">100%</td></tr>
+<tr><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">0 / 30</td>
+<td class="num">0 / 10</td>
+<td class="num">0 / 10</td>
+<td class="num">4 / 16</td>
+<td class="num">100%</td></tr>
+<tr><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0 / 20</td>
+<td class="num">0 / 10</td>
+<td class="num">0 / 10</td>
+<td class="num">4 / 16</td>
+<td class="num">100%</td></tr>
+<tr><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">0 / 30</td>
+<td class="num">0 / 10</td>
+<td class="num">0 / 10</td>
+<td class="num">4 / 16</td>
+<td class="num">100%</td></tr>
+<tr><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0 / 20</td>
+<td class="num">0 / 10</td>
+<td class="num">0 / 10</td>
+<td class="num">4 / 16</td>
+<td class="num">100%</td></tr>
+</tbody></table></div>
+<p>"Reply was bare JSON" shows how often the reply was only the JSON object. With prompted, Opus sometimes wraps it in a code fence. Riffer's parser removes the fence, so this never caused a failure.</p>
+
+<h2>6. Speed</h2>
+<p>Time to first token (TTFT) is measured from sending the request to the first streamed token of any kind. These models think before answering, and the thinking isn't streamed, so TTFT includes thinking time. Total run time covers the whole agent loop, including tool calls. Bars show the median of 5 runs. Scales are shared across models so panels can be compared.</p>
+<div class="legend"><span class="key"><i class="sw s-prompted"></i>Riffer prompted</span><span class="key"><i class="sw s-native"></i>Bedrock native</span></div>
+<div class="card multiples"><figure class="chart">
+  <figcaption>Opus 5.5 — time to first token <span class="unit">median seconds</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Opus 5.5 — time to first token"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0s</text><line x1="375.4736356009969" x2="375.4736356009969" y1="0" y2="268" class="grid"/><text x="375.4736356009969" y="284" class="tick" text-anchor="middle">20s</text><line x1="540.9472712019938" x2="540.9472712019938" y1="0" y2="268" class="grid"/><text x="540.9472712019938" y="284" class="tick" text-anchor="middle">40s</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 4.7s"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H244.98794654703443 Q248.98794654703443,6 248.98794654703443,10 V16 Q248.98794654703443,20 244.98794654703443,20 H210 Z" class="s-prompted"/><text x="254.98794654703443" y="14" class="value" dominant-baseline="middle">4.7s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 6.9s"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H262.884400110149 Q266.884400110149,22 266.884400110149,26 V32 Q266.884400110149,36 262.884400110149,36 H210 Z" class="s-native"/><text x="272.884400110149" y="30" class="value" dominant-baseline="middle">6.9s</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 26s"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H418.9425031096349 Q422.9425031096349,50 422.9425031096349,54 V60 Q422.9425031096349,64 418.9425031096349,64 H210 Z" class="s-prompted"/><text x="428.9425031096349" y="58" class="value" dominant-baseline="middle">26s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 35s"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H492.08747614811296 Q496.08747614811296,66 496.08747614811296,70 V76 Q496.08747614811296,80 492.08747614811296,80 H210 Z" class="s-native"/><text x="502.08747614811296" y="74" class="value" dominant-baseline="middle">35s</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 22s"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H387.39678296573857 Q391.39678296573857,94 391.39678296573857,98 V104 Q391.39678296573857,108 387.39678296573857,108 H210 Z" class="s-prompted"/><text x="397.39678296573857" y="102" class="value" dominant-baseline="middle">22s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 41s"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H545.9904053875343 Q549.9904053875343,110 549.9904053875343,114 V120 Q549.9904053875343,124 545.9904053875343,124 H210 Z" class="s-native"/><text x="555.9904053875343" y="118" class="value" dominant-baseline="middle">41s</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 4.7s"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H245.09062293764867 Q249.09062293764867,138 249.09062293764867,142 V148 Q249.09062293764867,152 245.09062293764867,152 H210 Z" class="s-prompted"/><text x="255.09062293764867" y="146" class="value" dominant-baseline="middle">4.7s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 4.1s"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H240.12074639798038 Q244.12074639798038,154 244.12074639798038,158 V164 Q244.12074639798038,168 240.12074639798038,168 H210 Z" class="s-native"/><text x="250.12074639798038" y="162" class="value" dominant-baseline="middle">4.1s</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 1.2s"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H216.13703074826677 Q220.13703074826677,182 220.13703074826677,186 V192 Q220.13703074826677,196 216.13703074826677,196 H210 Z" class="s-prompted"/><text x="226.13703074826677" y="190" class="value" dominant-baseline="middle">1.2s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 1.4s"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H217.58097024001464 Q221.58097024001464,198 221.58097024001464,202 V208 Q221.58097024001464,212 217.58097024001464,212 H210 Z" class="s-native"/><text x="227.58097024001464" y="206" class="value" dominant-baseline="middle">1.4s</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 1.2s"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H215.54235159735146 Q219.54235159735146,226 219.54235159735146,230 V236 Q219.54235159735146,240 215.54235159735146,240 H210 Z" class="s-prompted"/><text x="225.54235159735146" y="234" class="value" dominant-baseline="middle">1.2s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 1.9s"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H221.38907293201146 Q225.38907293201146,242 225.38907293201146,246 V252 Q225.38907293201146,256 221.38907293201146,256 H210 Z" class="s-native"/><text x="231.38907293201146" y="250" class="value" dominant-baseline="middle">1.9s</text></g></svg>
+</figure>
+<figure class="chart">
+  <figcaption>Sonnet 5.5 — time to first token <span class="unit">median seconds</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Sonnet 5.5 — time to first token"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0s</text><line x1="375.4736356009969" x2="375.4736356009969" y1="0" y2="268" class="grid"/><text x="375.4736356009969" y="284" class="tick" text-anchor="middle">20s</text><line x1="540.9472712019938" x2="540.9472712019938" y1="0" y2="268" class="grid"/><text x="540.9472712019938" y="284" class="tick" text-anchor="middle">40s</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 0.8s"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H213.28020869990283 Q216.5604173998057,6 216.5604173998057,9.28020869990285 V16.71979130009715 Q216.5604173998057,20 213.28020869990283,20 H210 Z" class="s-prompted"/><text x="222.5604173998057" y="14" class="value" dominant-baseline="middle">0.8s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 4.6s"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H244.0669037435792 Q248.0669037435792,22 248.0669037435792,26 V32 Q248.0669037435792,36 244.0669037435792,36 H210 Z" class="s-native"/><text x="254.0669037435792" y="30" class="value" dominant-baseline="middle">4.6s</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 18s"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H358.9532632584851 Q362.9532632584851,50 362.9532632584851,54 V60 Q362.9532632584851,64 358.9532632584851,64 H210 Z" class="s-prompted"/><text x="368.9532632584851" y="58" class="value" dominant-baseline="middle">18s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 29s"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H441.96323666241744 Q445.96323666241744,66 445.96323666241744,70 V76 Q445.96323666241744,80 441.96323666241744,80 H210 Z" class="s-native"/><text x="451.96323666241744" y="74" class="value" dominant-baseline="middle">29s</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 24s"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H408.34782192644434 Q412.34782192644434,94 412.34782192644434,98 V104 Q412.34782192644434,108 408.34782192644434,108 H210 Z" class="s-prompted"/><text x="418.34782192644434" y="102" class="value" dominant-baseline="middle">24s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 34s"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H483.193036571054 Q487.193036571054,110 487.193036571054,114 V120 Q487.193036571054,124 483.193036571054,124 H210 Z" class="s-native"/><text x="493.193036571054" y="118" class="value" dominant-baseline="middle">34s</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 2.7s"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H228.3314779447856 Q232.3314779447856,138 232.3314779447856,142 V148 Q232.3314779447856,152 228.3314779447856,152 H210 Z" class="s-prompted"/><text x="238.3314779447856" y="146" class="value" dominant-baseline="middle">2.7s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 3.1s"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H232.0597975236381 Q236.0597975236381,154 236.0597975236381,158 V164 Q236.0597975236381,168 232.0597975236381,168 H210 Z" class="s-native"/><text x="242.0597975236381" y="162" class="value" dominant-baseline="middle">3.1s</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 0.7s"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H213.02049369132178 Q216.04098738264355,182 216.04098738264355,185.02049369132178 V192.97950630867822 Q216.04098738264355,196 213.02049369132178,196 H210 Z" class="s-prompted"/><text x="222.04098738264355" y="190" class="value" dominant-baseline="middle">0.7s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 1.0s"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H213.98176727247716 Q217.96353454495434,198 217.96353454495434,201.98176727247719 V208.01823272752281 Q217.96353454495434,212 213.98176727247716,212 H210 Z" class="s-native"/><text x="223.96353454495434" y="206" class="value" dominant-baseline="middle">1.0s</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 1.0s"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H213.97570266378628 Q217.95140532757256,226 217.95140532757256,229.97570266378628 V236.02429733621372 Q217.95140532757256,240 213.97570266378628,240 H210 Z" class="s-prompted"/><text x="223.95140532757256" y="234" class="value" dominant-baseline="middle">1.0s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 0.9s"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H213.75364531850565 Q217.50729063701132,242 217.50729063701132,245.75364531850568 V252.24635468149432 Q217.50729063701132,256 213.75364531850565,256 H210 Z" class="s-native"/><text x="223.50729063701132" y="250" class="value" dominant-baseline="middle">0.9s</text></g></svg>
+</figure>
+<figure class="chart">
+  <figcaption>Haiku 5.5 — time to first token <span class="unit">median seconds</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Haiku 5.5 — time to first token"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0s</text><line x1="375.4736356009969" x2="375.4736356009969" y1="0" y2="268" class="grid"/><text x="375.4736356009969" y="284" class="tick" text-anchor="middle">20s</text><line x1="540.9472712019938" x2="540.9472712019938" y1="0" y2="268" class="grid"/><text x="540.9472712019938" y="284" class="tick" text-anchor="middle">40s</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 6.2s"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H257.17723096630107 Q261.17723096630107,6 261.17723096630107,10 V16 Q261.17723096630107,20 257.17723096630107,20 H210 Z" class="s-prompted"/><text x="267.17723096630107" y="14" class="value" dominant-baseline="middle">6.2s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 7.4s"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H266.99268852461773 Q270.99268852461773,22 270.99268852461773,26 V32 Q270.99268852461773,36 266.99268852461773,36 H210 Z" class="s-native"/><text x="276.99268852461773" y="30" class="value" dominant-baseline="middle">7.4s</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 24s"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H404.956836901913 Q408.956836901913,50 408.956836901913,54 V60 Q408.956836901913,64 404.956836901913,64 H210 Z" class="s-prompted"/><text x="414.956836901913" y="58" class="value" dominant-baseline="middle">24s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 35s"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H495.104019156161 Q499.104019156161,66 499.104019156161,70 V76 Q499.104019156161,80 495.104019156161,80 H210 Z" class="s-native"/><text x="505.104019156161" y="74" class="value" dominant-baseline="middle">35s</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 30s"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H453.4454853310008 Q457.4454853310008,94 457.4454853310008,98 V104 Q457.4454853310008,108 453.4454853310008,108 H210 Z" class="s-prompted"/><text x="463.4454853310008" y="102" class="value" dominant-baseline="middle">30s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 51s"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H625.047619047619 Q629.047619047619,110 629.047619047619,114 V120 Q629.047619047619,124 625.047619047619,124 H210 Z" class="s-native"/><text x="635.047619047619" y="118" class="value" dominant-baseline="middle">51s</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 3.7s"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H236.34766620083528 Q240.34766620083528,138 240.34766620083528,142 V148 Q240.34766620083528,152 236.34766620083528,152 H210 Z" class="s-prompted"/><text x="246.34766620083528" y="146" class="value" dominant-baseline="middle">3.7s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 4.9s"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H246.65268578400656 Q250.65268578400656,154 250.65268578400656,158 V164 Q250.65268578400656,168 246.65268578400656,168 H210 Z" class="s-native"/><text x="256.65268578400656" y="162" class="value" dominant-baseline="middle">4.9s</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 0.9s"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H213.59568004882897 Q217.1913600976579,182 217.1913600976579,185.59568004882894 V192.40431995117106 Q217.1913600976579,196 213.59568004882897,196 H210 Z" class="s-prompted"/><text x="223.1913600976579" y="190" class="value" dominant-baseline="middle">0.9s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 1.4s"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H217.31814019108506 Q221.31814019108506,198 221.31814019108506,202 V208 Q221.31814019108506,212 217.31814019108506,212 H210 Z" class="s-native"/><text x="227.31814019108506" y="206" class="value" dominant-baseline="middle">1.4s</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 1.0s"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H214.66831985343168 Q218.66831985343168,226 218.66831985343168,230 V236 Q218.66831985343168,240 214.66831985343168,240 H210 Z" class="s-prompted"/><text x="224.66831985343168" y="234" class="value" dominant-baseline="middle">1.0s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 1.6s"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H218.87933430098337 Q222.87933430098337,242 222.87933430098337,246 V252 Q222.87933430098337,256 218.87933430098337,256 H210 Z" class="s-native"/><text x="228.87933430098337" y="250" class="value" dominant-baseline="middle">1.6s</text></g></svg>
+</figure>
+</div>
+<div class="card multiples"><figure class="chart">
+  <figcaption>Opus 5.5 — total run time <span class="unit">median seconds</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Opus 5.5 — total run time"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0s</text><line x1="357.135489774628" x2="357.135489774628" y1="0" y2="268" class="grid"/><text x="357.135489774628" y="284" class="tick" text-anchor="middle">50s</text><line x1="504.270979549256" x2="504.270979549256" y1="0" y2="268" class="grid"/><text x="504.270979549256" y="284" class="tick" text-anchor="middle">100s</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 7.1s"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H226.82519232679084 Q230.82519232679084,6 230.82519232679084,10 V16 Q230.82519232679084,20 226.82519232679084,20 H210 Z" class="s-prompted"/><text x="236.82519232679084" y="14" class="value" dominant-baseline="middle">7.1s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 11s"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H238.7501647624089 Q242.7501647624089,22 242.7501647624089,26 V32 Q242.7501647624089,36 238.7501647624089,36 H210 Z" class="s-native"/><text x="248.7501647624089" y="30" class="value" dominant-baseline="middle">11s</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 66s"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H401.35745449012666 Q405.35745449012666,50 405.35745449012666,54 V60 Q405.35745449012666,64 401.35745449012666,64 H210 Z" class="s-prompted"/><text x="411.35745449012666" y="58" class="value" dominant-baseline="middle">66s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 100s"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H499.58665532883043 Q503.58665532883043,66 503.58665532883043,70 V76 Q503.58665532883043,80 499.58665532883043,80 H210 Z" class="s-native"/><text x="509.58665532883043" y="74" class="value" dominant-baseline="middle">100s</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 91s"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H473.6598282797637 Q477.6598282797637,94 477.6598282797637,98 V104 Q477.6598282797637,108 473.6598282797637,108 H210 Z" class="s-prompted"/><text x="483.6598282797637" y="102" class="value" dominant-baseline="middle">91s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 142s"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H625.047619047619 Q629.047619047619,110 629.047619047619,114 V120 Q629.047619047619,124 625.047619047619,124 H210 Z" class="s-native"/><text x="635.047619047619" y="118" class="value" dominant-baseline="middle">142s</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 8.4s"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H230.60482350179456 Q234.60482350179456,138 234.60482350179456,142 V148 Q234.60482350179456,152 230.60482350179456,152 H210 Z" class="s-prompted"/><text x="240.60482350179456" y="146" class="value" dominant-baseline="middle">8.4s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 9.0s"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H232.45106785620806 Q236.45106785620806,154 236.45106785620806,158 V164 Q236.45106785620806,168 232.45106785620806,168 H210 Z" class="s-native"/><text x="242.45106785620806" y="162" class="value" dominant-baseline="middle">9.0s</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 11s"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H238.78380582070335 Q242.78380582070335,182 242.78380582070335,186 V192 Q242.78380582070335,196 238.78380582070335,196 H210 Z" class="s-prompted"/><text x="248.78380582070335" y="190" class="value" dominant-baseline="middle">11s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 17s"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H255.69164521129687 Q259.6916452112969,198 259.6916452112969,202 V208 Q259.6916452112969,212 255.69164521129687,212 H210 Z" class="s-native"/><text x="265.6916452112969" y="206" class="value" dominant-baseline="middle">17s</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 16s"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H254.45645748829713 Q258.45645748829713,226 258.45645748829713,230 V236 Q258.45645748829713,240 254.45645748829713,240 H210 Z" class="s-prompted"/><text x="264.45645748829713" y="234" class="value" dominant-baseline="middle">16s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 25s"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H278.22814982053865 Q282.22814982053865,242 282.22814982053865,246 V252 Q282.22814982053865,256 278.22814982053865,256 H210 Z" class="s-native"/><text x="288.22814982053865" y="250" class="value" dominant-baseline="middle">25s</text></g></svg>
+</figure>
+<figure class="chart">
+  <figcaption>Sonnet 5.5 — total run time <span class="unit">median seconds</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Sonnet 5.5 — total run time"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0s</text><line x1="357.135489774628" x2="357.135489774628" y1="0" y2="268" class="grid"/><text x="357.135489774628" y="284" class="tick" text-anchor="middle">50s</text><line x1="504.270979549256" x2="504.270979549256" y1="0" y2="268" class="grid"/><text x="504.270979549256" y="284" class="tick" text-anchor="middle">100s</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 2.5s"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H213.72408164212334 Q217.4481632842467,6 217.4481632842467,9.724081642123354 V16.275918357876648 Q217.4481632842467,20 213.72408164212334,20 H210 Z" class="s-prompted"/><text x="223.4481632842467" y="14" class="value" dominant-baseline="middle">2.5s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 7.5s"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H228.09392399895006 Q232.09392399895006,22 232.09392399895006,26 V32 Q232.09392399895006,36 228.09392399895006,36 H210 Z" class="s-native"/><text x="238.09392399895006" y="30" class="value" dominant-baseline="middle">7.5s</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 47s"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H342.8466669279839 Q346.8466669279839,50 346.8466669279839,54 V60 Q346.8466669279839,64 342.8466669279839,64 H210 Z" class="s-prompted"/><text x="352.8466669279839" y="58" class="value" dominant-baseline="middle">47s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 73s"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H420.749841417439 Q424.749841417439,66 424.749841417439,70 V76 Q424.749841417439,80 420.749841417439,80 H210 Z" class="s-native"/><text x="430.749841417439" y="74" class="value" dominant-baseline="middle">73s</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 65s"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H398.2945467701029 Q402.2945467701029,94 402.2945467701029,98 V104 Q402.2945467701029,108 398.2945467701029,108 H210 Z" class="s-prompted"/><text x="408.2945467701029" y="102" class="value" dominant-baseline="middle">65s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 94s"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H484.0185169423438 Q488.0185169423438,110 488.0185169423438,114 V120 Q488.0185169423438,124 484.0185169423438,124 H210 Z" class="s-native"/><text x="494.0185169423438" y="118" class="value" dominant-baseline="middle">94s</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 4.6s"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H219.50021675969805 Q223.50021675969805,138 223.50021675969805,142 V148 Q223.50021675969805,152 219.50021675969805,152 H210 Z" class="s-prompted"/><text x="229.50021675969805" y="146" class="value" dominant-baseline="middle">4.6s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 6.1s"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H223.8613362183578 Q227.8613362183578,154 227.8613362183578,158 V164 Q227.8613362183578,168 223.8613362183578,168 H210 Z" class="s-native"/><text x="233.8613362183578" y="162" class="value" dominant-baseline="middle">6.1s</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 7.1s"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H226.96630408944617 Q230.96630408944617,182 230.96630408944617,186 V192 Q230.96630408944617,196 226.96630408944617,196 H210 Z" class="s-prompted"/><text x="236.96630408944617" y="190" class="value" dominant-baseline="middle">7.1s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 9.8s"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H234.9341028402223 Q238.9341028402223,198 238.9341028402223,202 V208 Q238.9341028402223,212 234.9341028402223,212 H210 Z" class="s-native"/><text x="244.9341028402223" y="206" class="value" dominant-baseline="middle">9.8s</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 12s"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H240.92070456481173 Q244.92070456481173,226 244.92070456481173,230 V236 Q244.92070456481173,240 240.92070456481173,240 H210 Z" class="s-prompted"/><text x="250.92070456481173" y="234" class="value" dominant-baseline="middle">12s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 17s"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H256.1023474468657 Q260.1023474468657,242 260.1023474468657,246 V252 Q260.1023474468657,256 256.1023474468657,256 H210 Z" class="s-native"/><text x="266.1023474468657" y="250" class="value" dominant-baseline="middle">17s</text></g></svg>
+</figure>
+<figure class="chart">
+  <figcaption>Haiku 5.5 — total run time <span class="unit">median seconds</span></figcaption>
+  <svg viewBox="0 0 720 292" width="100%" role="img" aria-label="Haiku 5.5 — total run time"><line x1="210.0" x2="210.0" y1="0" y2="268" class="grid"/><text x="210.0" y="284" class="tick" text-anchor="middle">0s</text><line x1="357.135489774628" x2="357.135489774628" y1="0" y2="268" class="grid"/><text x="357.135489774628" y="284" class="tick" text-anchor="middle">50s</text><line x1="504.270979549256" x2="504.270979549256" y1="0" y2="268" class="grid"/><text x="504.270979549256" y="284" class="tick" text-anchor="middle">100s</text><line x1="210" x2="210" y1="0" y2="268" class="axis"/><text x="198" y="21" class="row-label" text-anchor="end" dominant-baseline="middle">Intake (native-sized schema)</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Intake (native-sized schema): 7.2s"><rect x="210" y="5" width="510" height="16" class="hit"/><path d="M210,6 H227.12752338845368 Q231.12752338845368,6 231.12752338845368,10 V16 Q231.12752338845368,20 227.12752338845368,20 H210 Z" class="s-prompted"/><text x="237.12752338845368" y="14" class="value" dominant-baseline="middle">7.2s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Intake (native-sized schema): 9.2s"><rect x="210" y="21" width="510" height="16" class="hit"/><path d="M210,22 H232.9747318926337 Q236.9747318926337,22 236.9747318926337,26 V32 Q236.9747318926337,36 232.9747318926337,36 H210 Z" class="s-native"/><text x="242.9747318926337" y="30" class="value" dominant-baseline="middle">9.2s</text></g><text x="198" y="65" class="row-label" text-anchor="end" dominant-baseline="middle">Ledger, 80 rows</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Ledger, 80 rows: 41s"><rect x="210" y="49" width="510" height="16" class="hit"/><path d="M210,50 H325.51874982862216 Q329.51874982862216,50 329.51874982862216,54 V60 Q329.51874982862216,64 325.51874982862216,64 H210 Z" class="s-prompted"/><text x="335.51874982862216" y="58" class="value" dominant-baseline="middle">41s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Ledger, 80 rows: 62s"><rect x="210" y="65" width="510" height="16" class="hit"/><path d="M210,66 H387.0218789297269 Q391.0218789297269,66 391.0218789297269,70 V76 Q391.0218789297269,80 387.0218789297269,80 H210 Z" class="s-native"/><text x="397.0218789297269" y="74" class="value" dominant-baseline="middle">62s</text></g><text x="198" y="109" class="row-label" text-anchor="end" dominant-baseline="middle">Treatment plan, 4 levels</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Treatment plan, 4 levels: 53s"><rect x="210" y="93" width="510" height="16" class="hit"/><path d="M210,94 H360.69529652563944 Q364.69529652563944,94 364.69529652563944,98 V104 Q364.69529652563944,108 360.69529652563944,108 H210 Z" class="s-prompted"/><text x="370.69529652563944" y="102" class="value" dominant-baseline="middle">53s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Treatment plan, 4 levels: 76s"><rect x="210" y="109" width="510" height="16" class="hit"/><path d="M210,110 H428.51343670708275 Q432.51343670708275,110 432.51343670708275,114 V120 Q432.51343670708275,124 428.51343670708275,124 H210 Z" class="s-native"/><text x="438.51343670708275" y="118" class="value" dominant-baseline="middle">76s</text></g><text x="198" y="153" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, data in prompt</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, data in prompt: 4.4s"><rect x="210" y="137" width="510" height="16" class="hit"/><path d="M210,138 H218.97158542934017 Q222.97158542934017,138 222.97158542934017,142 V148 Q222.97158542934017,152 218.97158542934017,152 H210 Z" class="s-prompted"/><text x="228.97158542934017" y="146" class="value" dominant-baseline="middle">4.4s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, data in prompt: 6.6s"><rect x="210" y="153" width="510" height="16" class="hit"/><path d="M210,154 H225.36582014310616 Q229.36582014310616,154 229.36582014310616,158 V164 Q229.36582014310616,168 225.36582014310616,168 H210 Z" class="s-native"/><text x="235.36582014310616" y="162" class="value" dominant-baseline="middle">6.6s</text></g><text x="198" y="197" class="row-label" text-anchor="end" dominant-baseline="middle">Pre-visit, tools required</text><g class="mark" tabindex="0" data-tip="Riffer prompted · Pre-visit, tools required: 6.2s"><rect x="210" y="181" width="510" height="16" class="hit"/><path d="M210,182 H224.1968463331276 Q228.1968463331276,182 228.1968463331276,186 V192 Q228.1968463331276,196 224.1968463331276,196 H210 Z" class="s-prompted"/><text x="234.1968463331276" y="190" class="value" dominant-baseline="middle">6.2s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · Pre-visit, tools required: 8.2s"><rect x="210" y="197" width="510" height="16" class="hit"/><path d="M210,198 H230.24620428677838 Q234.24620428677838,198 234.24620428677838,202 V208 Q234.24620428677838,212 230.24620428677838,212 H210 Z" class="s-native"/><text x="240.24620428677838" y="206" class="value" dominant-baseline="middle">8.2s</text></g><text x="198" y="241" class="row-label" text-anchor="end" dominant-baseline="middle">No-show report, 8 patients</text><g class="mark" tabindex="0" data-tip="Riffer prompted · No-show report, 8 patients: 13s"><rect x="210" y="225" width="510" height="16" class="hit"/><path d="M210,226 H243.03085113395548 Q247.03085113395548,226 247.03085113395548,230 V236 Q247.03085113395548,240 243.03085113395548,240 H210 Z" class="s-prompted"/><text x="253.03085113395548" y="234" class="value" dominant-baseline="middle">13s</text></g><g class="mark" tabindex="0" data-tip="Bedrock native · No-show report, 8 patients: 17s"><rect x="210" y="241" width="510" height="16" class="hit"/><path d="M210,242 H256.9395130710942 Q260.9395130710942,242 260.9395130710942,246 V252 Q260.9395130710942,256 256.9395130710942,256 H210 Z" class="s-native"/><text x="266.9395130710942" y="250" class="value" dominant-baseline="middle">17s</text></g></svg>
+</figure>
+</div>
+<h3>First request with a new schema</h3>
+<p>Bedrock compiles each new schema and caches the result for 24 hours. The first run of each model × scenario (rep 0) was sent before any repeats, so it shows that cost.</p>
+<div class="card scroll"><table><thead><tr><th>Model</th><th class="num">Native TTFT, first request</th><th class="num">Native TTFT, repeats</th><th class="num">Prompted TTFT, first request</th><th class="num">Prompted TTFT, repeats</th></tr></thead><tbody><tr><td>Opus 5.5</td><td class="num">9.9s</td><td class="num">5.2s</td><td class="num">4.8s</td><td class="num">4.6s</td></tr><tr><td>Sonnet 5.5</td><td class="num">18s</td><td class="num">3.8s</td><td class="num">2.5s</td><td class="num">2.4s</td></tr><tr><td>Haiku 5.5</td><td class="num">9.2s</td><td class="num">5.4s</td><td class="num">5.2s</td><td class="num">4.9s</td></tr></tbody></table></div>
+
+<h2>Scenarios</h2>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Tools</th><th>What it tests</th></tr></thead><tbody>
+<tr><td>Intake (native-sized schema)</td><td>Not needed</td><td>A 9,000-character scanned intake packet with a referral letter and boilerplate, extracted into about 30 properties (7 nullable). Built small enough for native to accept, so accuracy can be compared like for like.</td></tr>
+<tr><td>Intake (full schema)</td><td>Not needed</td><td>The same packet into a realistic EMR record: 6 nested objects, 6 arrays, enums, date and email formats, 13 optional fields.</td></tr>
+<tr><td>Intake (extended schema)</td><td>Not needed</td><td>The full schema plus 25 more optional fields (38 nullable in total).</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Not needed (billing-code lookup offered)</td><td>80 front-desk ledger rows in four formats, plus 5 voided rows that must be dropped. Output is an array of either/or line items (service, product, adjustment) plus totals. About 10–14k output tokens.</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Not needed</td><td>A 16-week, 4-phase rehab plan nested phases → goals → exercises → progression. Exercises must use real IDs from a 60-item library and respect per-phase surgical restrictions.</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Not needed</td><td>A full chart export is pasted into the prompt, so calling a tool is unnecessary. The patient has no insurance and no emergency contact; both should come back null.</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Required (4 calls)</td><td>Only a patient ID is given. The model must fetch the chart, appointments, insurance and practitioner. The patient has no emergency contact and no group number.</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Required (16 calls)</td><td>Per-patient attendance statistics computed from tool data. Four patients have nothing booked, so their next booking should be null.</td></tr>
+<tr><td>Required fields the source can't answer</td><td>Not needed</td><td>A short referral letter into 11 required fields. 6 of them, including a required enum and a required email, have no answer in the letter.</td></tr>
+</tbody></table></div>
+
+<h2>How this was run</h2>
+<ul>
+  <li><strong>Models:</strong> Opus 5.5, Sonnet 5.5 and Haiku 5.5 through the <code>us.</code> cross-region inference profiles in us-west-2, with each model's default (adaptive) thinking and max_tokens 32,000. Fable was left out on purpose.</li>
+  <li><strong>Strategies:</strong> riffer's own <code>Riffer::Providers::AmazonBedrock</code> and <code>Riffer::Agent::StructuredOutput</code>. <code>:native</code> sends the strict schema in Converse <code>outputConfig.textFormat</code>. <code>:prompted</code> adds the schema to every user message. Both are checked by the same <code>parse_and_validate</code>.</li>
+  <li><strong>Harness:</strong> <code>Riffer::Agent</code> doesn't allow streaming with structured output, so the benchmark runs the same tool loop over <code>stream_text</code>. Request building, tools and validation are unchanged; streaming is only used to measure TTFT.</li>
+  <li><strong>Ordering:</strong> rep 0 of every cell ran first, then the remaining runs in random order, 8 at a time, so neither strategy got the quieter time slots.</li>
+  <li><strong>Grading:</strong> deterministic ground truth with no LLM judge. A self-test checks that the graders give a perfect answer full marks and catch every planted hallucination.</li>
+  <li><strong>Limits of this study:</strong> 5 reps per cell, so failures rarer than about 1 in 15 per cell could be missed. All data is synthetic. Canadian regions (ca-central-1) were not tested.</li>
+  <li><strong>Access:</strong> the <code>bedrock-dev</code> profile asks for the SSO role <code>BedrockAPIKeyAccess</code>, which isn't assigned to this login. The runs used the account's <code>AdministratorAccess</code> role through a temporary AWS config file and made only Bedrock inference calls.</li>
+  <li><strong>Code and raw data:</strong> <code>examples/structured_output_benchmark/</code> on branch <code>worktree-bench-bedrock-structured-output</code> in the riffer repo, with <code>bench.rb</code>, <code>probe_limits.rb</code>, <code>selftest.rb</code>, <code>report.rb</code> and the results in <code>results/</code>.</li>
+</ul>
+
+<h2>All results</h2>
+<details><summary>Every model × scenario × strategy cell</summary>
+<div class="card scroll"><table><thead><tr><th>Scenario</th><th>Model</th><th>Strategy</th><th class="num">Valid</th><th>Failures</th><th class="num">Accuracy</th><th class="num">Hallucinated</th><th class="num">Wrong</th><th class="num">Missing</th><th class="num">TTFT median</th><th class="num">TTFT p90</th><th class="num">Total median</th><th class="num">Total p90</th><th class="num">Output tokens</th></tr></thead><tbody><tr><td>Intake (native-sized schema)</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">4.7s</td><td class="num">5.1s</td><td class="num">7.1s</td><td class="num">7.8s</td>
+<td class="num">850</td></tr>
+<tr><td>Intake (native-sized schema)</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">6.9s</td><td class="num">11s</td><td class="num">11s</td><td class="num">16s</td>
+<td class="num">919</td></tr>
+<tr><td>Intake (native-sized schema)</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">0.8s</td><td class="num">2.7s</td><td class="num">2.5s</td><td class="num">4.4s</td>
+<td class="num">418</td></tr>
+<tr><td>Intake (native-sized schema)</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">4.6s</td><td class="num">9.1s</td><td class="num">7.5s</td><td class="num">12s</td>
+<td class="num">908</td></tr>
+<tr><td>Intake (native-sized schema)</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">6.2s</td><td class="num">6.8s</td><td class="num">7.2s</td><td class="num">7.8s</td>
+<td class="num">1688</td></tr>
+<tr><td>Intake (native-sized schema)</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">7.4s</td><td class="num">13s</td><td class="num">9.2s</td><td class="num">15s</td>
+<td class="num">1601</td></tr>
+<tr><td>Intake (full schema)</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">7.3s</td><td class="num">8.6s</td><td class="num">16s</td><td class="num">18s</td>
+<td class="num">2053</td></tr>
+<tr><td>Intake (full schema)</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0/5</td><td>5 api error</td>
+<td class="num">–</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>
+<td class="num">–</td></tr>
+<tr><td>Intake (full schema)</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">0.8s</td><td class="num">1.8s</td><td class="num">7.1s</td><td class="num">7.3s</td>
+<td class="num">1234</td></tr>
+<tr><td>Intake (full schema)</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0/5</td><td>5 api error</td>
+<td class="num">–</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>
+<td class="num">–</td></tr>
+<tr><td>Intake (full schema)</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">12s</td><td class="num">13s</td><td class="num">16s</td><td class="num">17s</td>
+<td class="num">4121</td></tr>
+<tr><td>Intake (full schema)</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0/5</td><td>5 api error</td>
+<td class="num">–</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>
+<td class="num">–</td></tr>
+<tr><td>Intake (extended schema)</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">8.6s</td><td class="num">9.8s</td><td class="num">18s</td><td class="num">20s</td>
+<td class="num">2280</td></tr>
+<tr><td>Intake (extended schema)</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0/5</td><td>5 api error</td>
+<td class="num">–</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>
+<td class="num">–</td></tr>
+<tr><td>Intake (extended schema)</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">7.6s</td><td class="num">9.0s</td><td class="num">15s</td><td class="num">16s</td>
+<td class="num">2497</td></tr>
+<tr><td>Intake (extended schema)</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0/5</td><td>5 api error</td>
+<td class="num">–</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>
+<td class="num">–</td></tr>
+<tr><td>Intake (extended schema)</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">99.8%</td><td class="num">0</td><td class="num">0</td><td class="num">1</td>
+<td class="num">12s</td><td class="num">14s</td><td class="num">17s</td><td class="num">19s</td>
+<td class="num">4352</td></tr>
+<tr><td>Intake (extended schema)</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">0/5</td><td>5 api error</td>
+<td class="num">–</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>
+<td class="num">–</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">26s</td><td class="num">27s</td><td class="num">66s</td><td class="num">67s</td>
+<td class="num">10145</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">35s</td><td class="num">40s</td><td class="num">100s</td><td class="num">109s</td>
+<td class="num">9658</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">18s</td><td class="num">22s</td><td class="num">47s</td><td class="num">50s</td>
+<td class="num">10119</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">29s</td><td class="num">59s</td><td class="num">73s</td><td class="num">103s</td>
+<td class="num">10253</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">24s</td><td class="num">46s</td><td class="num">41s</td><td class="num">62s</td>
+<td class="num">14267</td></tr>
+<tr><td>Ledger, 80 rows</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">35s</td><td class="num">37s</td><td class="num">62s</td><td class="num">64s</td>
+<td class="num">14024</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">22s</td><td class="num">24s</td><td class="num">91s</td><td class="num">95s</td>
+<td class="num">10435</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">41s</td><td class="num">47s</td><td class="num">142s</td><td class="num">145s</td>
+<td class="num">11556</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">24s</td><td class="num">26s</td><td class="num">65s</td><td class="num">71s</td>
+<td class="num">10111</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">34s</td><td class="num">44s</td><td class="num">94s</td><td class="num">103s</td>
+<td class="num">10892</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">99.7%</td><td class="num">0</td><td class="num">1</td><td class="num">0</td>
+<td class="num">30s</td><td class="num">39s</td><td class="num">53s</td><td class="num">66s</td>
+<td class="num">12607</td></tr>
+<tr><td>Treatment plan, 4 levels</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">51s</td><td class="num">62s</td><td class="num">76s</td><td class="num">93s</td>
+<td class="num">14322</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">4.7s</td><td class="num">5.1s</td><td class="num">8.4s</td><td class="num">8.6s</td>
+<td class="num">850</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">4.1s</td><td class="num">8.4s</td><td class="num">9.0s</td><td class="num">13s</td>
+<td class="num">703</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">2.7s</td><td class="num">4.2s</td><td class="num">4.6s</td><td class="num">6.3s</td>
+<td class="num">681</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">3.1s</td><td class="num">6.8s</td><td class="num">6.1s</td><td class="num">9.8s</td>
+<td class="num">669</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">99%</td><td class="num">0</td><td class="num">1</td><td class="num">0</td>
+<td class="num">3.7s</td><td class="num">4.6s</td><td class="num">4.4s</td><td class="num">5.6s</td>
+<td class="num">979</td></tr>
+<tr><td>Pre-visit, data in prompt</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">4.9s</td><td class="num">5.2s</td><td class="num">6.6s</td><td class="num">6.7s</td>
+<td class="num">1101</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">1.2s</td><td class="num">1.4s</td><td class="num">11s</td><td class="num">12s</td>
+<td class="num">1041</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">1.4s</td><td class="num">1.9s</td><td class="num">17s</td><td class="num">19s</td>
+<td class="num">1105</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">0.7s</td><td class="num">1.5s</td><td class="num">7.1s</td><td class="num">9.8s</td>
+<td class="num">945</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">1.0s</td><td class="num">26s</td><td class="num">9.8s</td><td class="num">35s</td>
+<td class="num">962</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">0.9s</td><td class="num">1.2s</td><td class="num">6.2s</td><td class="num">6.7s</td>
+<td class="num">1110</td></tr>
+<tr><td>Pre-visit, tools required</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">1.4s</td><td class="num">1.6s</td><td class="num">8.2s</td><td class="num">9.0s</td>
+<td class="num">1176</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Opus 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">1.2s</td><td class="num">1.5s</td><td class="num">16s</td><td class="num">17s</td>
+<td class="num">2097</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Opus 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">1.9s</td><td class="num">4.8s</td><td class="num">25s</td><td class="num">27s</td>
+<td class="num">2135</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Sonnet 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">99.3%</td><td class="num">0</td><td class="num">2</td><td class="num">0</td>
+<td class="num">1.0s</td><td class="num">1.6s</td><td class="num">12s</td><td class="num">13s</td>
+<td class="num">2104</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Sonnet 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td>
+<td class="num">0.9s</td><td class="num">3.4s</td><td class="num">17s</td><td class="num">19s</td>
+<td class="num">2076</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Haiku 5.5</td><td><i class="sw s-prompted"></i>Riffer prompted</td>
+<td class="num">5/5</td><td></td>
+<td class="num">97.6%</td><td class="num">0</td><td class="num">7</td><td class="num">0</td>
+<td class="num">1.0s</td><td class="num">1.2s</td><td class="num">13s</td><td class="num">13s</td>
+<td class="num">3664</td></tr>
+<tr><td>No-show report, 8 patients</td><td>Haiku 5.5</td><td><i class="sw s-native"></i>Bedrock native</td>
+<td class="num">5/5</td><td></td>
+<td class="num">99.0%</td><td class="num">0</td><td class="num">3</td><td class="num">0</td>
+<td class="num">1.6s</td><td class="num">1.9s</td><td class="num">17s</td><td class="num">19s</td>
+<td class="num">3608</td></tr>
+</tbody></table></div>
+</details>
+
+</main>
+<div class="tip" id="tip" role="tooltip"></div>
+</div>
+<script>
+  (function () {
+    var tip = document.getElementById("tip");
+    function show(el, x, y) {
+      tip.textContent = el.getAttribute("data-tip");
+      tip.style.display = "block";
+      var w = tip.offsetWidth, h = tip.offsetHeight;
+      tip.style.left = Math.min(x + 14, window.innerWidth - w - 8) + "px";
+      tip.style.top = Math.max(8, y - h - 10) + "px";
+    }
+    document.querySelectorAll("[data-tip]").forEach(function (el) {
+      el.addEventListener("pointermove", function (e) { show(el, e.clientX, e.clientY); });
+      el.addEventListener("pointerleave", function () { tip.style.display = "none"; });
+      el.addEventListener("focus", function () { var r = el.getBoundingClientRect(); show(el, r.left + 40, r.top); });
+      el.addEventListener("blur", function () { tip.style.display = "none"; });
+    });
+    document.getElementById("theme").addEventListener("click", function () {
+      var root = document.documentElement;
+      var dark = root.getAttribute("data-theme") === "dark" ||
+        (!root.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      root.setAttribute("data-theme", dark ? "light" : "dark");
+    });
+  })();
+</script>
+</body>
+</html>

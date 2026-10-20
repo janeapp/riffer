@@ -1,0 +1,551 @@
+[
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "16 optional (nullable) fields",
+    "accepted": true,
+    "schema_bytes": 734,
+    "unions": 16
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "17 optional (nullable) fields",
+    "accepted": false,
+    "error": "Schemas contains too many parameters with union types (17 parameters with type arrays or anyOf). This causes exponential compilation cost. Reduce the number of nullable or union-typed parameters (limit: 16 parameters with unions).",
+    "schema_bytes": 773,
+    "unions": 17
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "60 required strings",
+    "accepted": true,
+    "schema_bytes": 1854,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "70 required strings",
+    "accepted": true,
+    "schema_bytes": 2154,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "80 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 2454,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "90 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 2754,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "100 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 3054,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "150 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4654,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "200 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 6254,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake (as benchmarked)",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4907,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake without format:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4842,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake without enum:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4448,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake without nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4771,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake without format:, enum:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4383,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake without format:, nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4706,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "intake without format:, enum:, nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4247,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: intake_lite",
+    "accepted": true,
+    "schema_bytes": 2568,
+    "unions": 7
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: intake",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4907,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: intake_xl",
+    "accepted": false,
+    "error": "Schemas contains too many parameters with union types (38 parameters with type arrays or anyOf). This causes exponential compilation cost. Reduce the number of nullable or union-typed parameters (limit: 16 parameters with unions).",
+    "schema_bytes": 6950,
+    "unions": 38
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: ledger",
+    "accepted": true,
+    "schema_bytes": 1669,
+    "unions": 1
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: previsit_tools",
+    "accepted": true,
+    "schema_bytes": 2226,
+    "unions": 4
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: previsit_context",
+    "accepted": true,
+    "schema_bytes": 2226,
+    "unions": 4
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: noshow_tools",
+    "accepted": true,
+    "schema_bytes": 889,
+    "unions": 1
+  },
+  {
+    "model": "us.anthropic.claude-haiku-5-5",
+    "schema": "scenario: treatment_plan",
+    "accepted": true,
+    "schema_bytes": 1262,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "16 optional (nullable) fields",
+    "accepted": true,
+    "schema_bytes": 734,
+    "unions": 16
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "17 optional (nullable) fields",
+    "accepted": false,
+    "error": "Schemas contains too many parameters with union types (17 parameters with type arrays or anyOf). This causes exponential compilation cost. Reduce the number of nullable or union-typed parameters (limit: 16 parameters with unions).",
+    "schema_bytes": 773,
+    "unions": 17
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "60 required strings",
+    "accepted": true,
+    "schema_bytes": 1854,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "70 required strings",
+    "accepted": true,
+    "schema_bytes": 2154,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "80 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 2454,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "90 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 2754,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "100 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 3054,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "150 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4654,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "200 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 6254,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake (as benchmarked)",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4907,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake without format:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4842,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake without enum:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4448,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake without nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4771,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake without format:, enum:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4383,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake without format:, nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4706,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "intake without format:, enum:, nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4247,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: intake_lite",
+    "accepted": true,
+    "schema_bytes": 2568,
+    "unions": 7
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: intake",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4907,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: intake_xl",
+    "accepted": false,
+    "error": "Schemas contains too many parameters with union types (38 parameters with type arrays or anyOf). This causes exponential compilation cost. Reduce the number of nullable or union-typed parameters (limit: 16 parameters with unions).",
+    "schema_bytes": 6950,
+    "unions": 38
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: ledger",
+    "accepted": true,
+    "schema_bytes": 1669,
+    "unions": 1
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: previsit_tools",
+    "accepted": true,
+    "schema_bytes": 2226,
+    "unions": 4
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: previsit_context",
+    "accepted": true,
+    "schema_bytes": 2226,
+    "unions": 4
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: noshow_tools",
+    "accepted": true,
+    "schema_bytes": 889,
+    "unions": 1
+  },
+  {
+    "model": "us.anthropic.claude-sonnet-5-5",
+    "schema": "scenario: treatment_plan",
+    "accepted": true,
+    "schema_bytes": 1262,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "16 optional (nullable) fields",
+    "accepted": true,
+    "schema_bytes": 734,
+    "unions": 16
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "17 optional (nullable) fields",
+    "accepted": false,
+    "error": "Schemas contains too many parameters with union types (17 parameters with type arrays or anyOf). This causes exponential compilation cost. Reduce the number of nullable or union-typed parameters (limit: 16 parameters with unions).",
+    "schema_bytes": 773,
+    "unions": 17
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "60 required strings",
+    "accepted": true,
+    "schema_bytes": 1854,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "70 required strings",
+    "accepted": true,
+    "schema_bytes": 2154,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "80 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 2454,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "90 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 2754,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "100 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 3054,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "150 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4654,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "200 required strings",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 6254,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake (as benchmarked)",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4907,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake without format:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4842,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake without enum:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4448,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake without nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4771,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake without format:, enum:",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4383,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake without format:, nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4706,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "intake without format:, enum:, nullables",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4247,
+    "unions": 0
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: intake_lite",
+    "accepted": true,
+    "schema_bytes": 2568,
+    "unions": 7
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: intake",
+    "accepted": false,
+    "error": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+    "schema_bytes": 4907,
+    "unions": 13
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: intake_xl",
+    "accepted": false,
+    "error": "Schemas contains too many parameters with union types (38 parameters with type arrays or anyOf). This causes exponential compilation cost. Reduce the number of nullable or union-typed parameters (limit: 16 parameters with unions).",
+    "schema_bytes": 6950,
+    "unions": 38
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: ledger",
+    "accepted": true,
+    "schema_bytes": 1669,
+    "unions": 1
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: previsit_tools",
+    "accepted": true,
+    "schema_bytes": 2226,
+    "unions": 4
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: previsit_context",
+    "accepted": true,
+    "schema_bytes": 2226,
+    "unions": 4
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: noshow_tools",
+    "accepted": true,
+    "schema_bytes": 889,
+    "unions": 1
+  },
+  {
+    "model": "us.anthropic.claude-opus-5-5",
+    "schema": "scenario: treatment_plan",
+    "accepted": true,
+    "schema_bytes": 1262,
+    "unions": 0
+  }
+]

@@ -1,0 +1,4 @@
+17 optional, non-strict (omitted from required, no null): REJECTED Bedrock is unable to process your request.
+30 optional, non-strict: REJECTED The model returned the following errors: Schemas contains too many optional parameters (30), which would make grammar compilation inefficient. Reduce the number of optional parameters in your tool sch
+intake, non-strict: REJECTED The model returned the following errors: The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.
+intake_xl, non-strict: REJECTED The model returned the following errors: Schemas contains too many optional parameters (38), which would make grammar compilation inefficient. Reduce the number of optional parameters in your tool sch
