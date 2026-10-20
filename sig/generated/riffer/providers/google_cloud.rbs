@@ -1,0 +1,4 @@
+# Generated from lib/riffer/providers/google_cloud.rb with RBS::Inline
+
+class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
+end
