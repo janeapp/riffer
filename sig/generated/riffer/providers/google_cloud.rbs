@@ -8,7 +8,7 @@ class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
   # Agent Platform model ids may carry an +@version+ suffix.
   VALID_MODEL_PATTERN: Regexp
 
-  # Vertex's stand-in for the anthropic-version header, sent in the body.
+  # Agent Platform's stand-in for the anthropic-version header, sent in the body.
   ANTHROPIC_VERSION: String
 
   # --
