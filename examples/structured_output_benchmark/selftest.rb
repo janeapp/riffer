@@ -15,6 +15,7 @@ require "intake"
 require "treatment_plan"
 require "grading"
 require "tools"
+require "chat"
 require "scenarios"
 
 def assert(label, condition)
@@ -82,6 +83,11 @@ end
   ["intake", Scenarios.grade_intake(perfect_intake)],
   ["intake_lite", Scenarios.grade_intake_lite(perfect_intake)],
   ["intake_xl", Scenarios.grade_intake_xl(perfect_intake.merge(Intake::XL_TRUTH))],
+  ["chat", Scenarios.grade_chat({ reply: "Her next appointment is on December 4.", action: "lookup", patient_ids: ["P-10307"],
+                                  appointment_date: Clinic.next_booked("P-10307")[:date], follow_up_reason: nil, }),],
+  ["forced_choice_open", Scenarios.grade_forced({ patient_name: "Naomi Lindqvist", referral_date: "2026-10-06", working_diagnosis: "Rotator cuff tendinopathy",
+                                                  imaging_done: true, referring_clinic_phone: "604-555-0100", urgency: "not_stated",
+                                                  preferred_practitioner_gender: "not_stated", }),],
 ].each do |name, checks|
   assert("#{name}: perfect answer scores #{checks.size}/#{checks.size}", outcomes(checks).keys == [:correct])
 end
@@ -111,3 +117,6 @@ plan = {
 checks = Scenarios.grade_plan(plan)
 assert("plan: invented IDs and phase-1 overhead work are caught",
        checks.count { |c| c.outcome == :fabricated } == 18 && checks.count { |c| c.field == "phase 1 restriction" && c.outcome == :wrong } == 6,)
+
+guessed = Scenarios.grade_forced({ urgency: "routine", requested_visit_count: 0, workers_compensation_claim: false, preferred_practitioner_gender: "not_stated" })
+assert("forced_choice: guessed values are fabrications, not_stated is an abstention", guessed.count { |c| c.outcome == :fabricated } == 3)

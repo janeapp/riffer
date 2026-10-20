@@ -12,7 +12,7 @@ Compares Riffer's prompted structured-output strategy with Bedrock's native cons
 | `selftest.rb` | Checks the graders: perfect answers score 100%, planted hallucinations are caught |
 | `report.rb` | Renders a self-contained HTML report from the JSONL and limits JSON |
 | `lib/` | Fake clinic backend and tools, fixture documents, scenarios, graders and the streaming harness |
-| `results/` | Raw results from the 2026-10-20 run and the rendered report |
+| `results/` | Raw results from 2026-10-20 (scenario runs, forced-choice runs, 100-run reliability cells, schema limits) and the rendered report |
 
 ## Running
 
@@ -22,7 +22,10 @@ bundle exec ruby examples/structured_output_benchmark/selftest.rb
 bundle exec ruby examples/structured_output_benchmark/bench.rb --reps 5 --concurrency 8 --out results/run.jsonl
 bundle exec ruby examples/structured_output_benchmark/probe_limits.rb \
   --models us.anthropic.claude-haiku-5-5,us.anthropic.claude-sonnet-5-5,us.anthropic.claude-opus-5-5 --out results/limits.json
-ruby examples/structured_output_benchmark/report.rb results/run.jsonl results/limits.json report.html
+bundle exec ruby examples/structured_output_benchmark/bench.rb --scenarios intake_lite,previsit_tools,chat --reps 100 --concurrency 12 \
+  --out results/reliability.jsonl
+ruby examples/structured_output_benchmark/report.rb --results results/run.jsonl,results/forced-choice.jsonl \
+  --reliability results/reliability.jsonl --limits results/limits.json --out report.html
 ```
 
 `bench.rb` accepts `--models`, `--strategies`, `--scenarios`, `--reps`, `--concurrency`, `--region`, `--out` and `--resume`.

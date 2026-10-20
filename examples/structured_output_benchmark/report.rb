@@ -3,20 +3,33 @@
 # Renders a self-contained HTML report from bench.rb's JSONL and
 # probe_limits.rb's JSON.
 #
-#   ruby examples/structured_output_benchmark/report.rb results/run.jsonl results/limits.json report.html
+#   ruby examples/structured_output_benchmark/report.rb --results results/run.jsonl,results/forced.jsonl \
+#     --reliability results/reliability.jsonl --limits results/limits.json --out report.html
 
 require "json"
 require "cgi"
+require "optparse"
 
-results_path, limits_path, out_path = ARGV
-abort "usage: report.rb RESULTS.jsonl LIMITS.json OUT.html" unless out_path
+paths = { results: [] }
+OptionParser.new do |o|
+  o.on("--results LIST", Array) { |v| paths[:results] = v }
+  o.on("--reliability PATH") { |v| paths[:reliability] = v }
+  o.on("--limits PATH") { |v| paths[:limits] = v }
+  o.on("--out PATH") { |v| paths[:out] = v }
+end.parse!
+abort "usage: report.rb --results A.jsonl,B.jsonl --reliability R.jsonl --limits L.json --out OUT.html" unless paths[:out] && paths[:limits]
 
-ALL_RUNS = File.readlines(results_path).map { |l| JSON.parse(l, symbolize_names: true) }.freeze
-# forced_choice measures abstention vs invention and gets its own section, so
-# the headline numbers stay comparable across the extraction/tool scenarios.
-FORCED = ALL_RUNS.select { |r| r[:scenario] == "forced_choice" }.freeze
+def read_jsonl(path) = File.readlines(path).map { |l| JSON.parse(l, symbolize_names: true) }
+
+ALL_RUNS = paths[:results].flat_map { |p| read_jsonl(p) }.freeze
+FORCED_SCENARIOS = %w[forced_choice forced_choice_open].freeze
+# The forced-choice scenarios measure abstention vs invention and get their own
+# section, so the headline numbers stay comparable across the other scenarios.
+FORCED = ALL_RUNS.select { |r| FORCED_SCENARIOS.include?(r[:scenario]) }.freeze
 RUNS = (ALL_RUNS - FORCED).freeze
-LIMITS = JSON.parse(File.read(limits_path), symbolize_names: true).freeze
+RELIABILITY = (paths[:reliability] ? read_jsonl(paths[:reliability]) : []).freeze
+LIMITS = JSON.parse(File.read(paths[:limits]), symbolize_names: true).freeze
+out_path = paths[:out]
 
 STRATEGIES = %w[prompted native].freeze
 STRATEGY_LABEL = { "prompted" => "Riffer prompted", "native" => "Bedrock native" }.freeze
@@ -27,7 +40,7 @@ MODEL_LABEL = {
 }.freeze
 MODELS = MODEL_LABEL.keys.select { |m| RUNS.any? { |r| r[:model] == m } }.freeze
 SCENARIO_ORDER = %w[intake_lite intake intake_xl ledger treatment_plan previsit_context previsit_tools
-                    noshow_tools].freeze
+                    noshow_tools chat].freeze
 SCENARIOS = SCENARIO_ORDER.select { |s| RUNS.any? { |r| r[:scenario] == s } }.freeze
 SCENARIO_LABEL = {
   "intake_lite" => "Intake (native-sized schema)",
@@ -38,8 +51,9 @@ SCENARIO_LABEL = {
   "previsit_context" => "Pre-visit, data in prompt",
   "previsit_tools" => "Pre-visit, tools required",
   "noshow_tools" => "No-show report, 8 patients",
+  "chat" => "Front-desk chat, 16 turns",
 }.freeze
-TOOLS_REQUIRED = %w[previsit_tools noshow_tools].freeze
+TOOLS_REQUIRED = %w[previsit_tools noshow_tools chat].freeze
 
 def h(text) = CGI.escapeHTML(text.to_s)
 
@@ -242,15 +256,21 @@ def speed_tile(label, ratios)
   HTML
 end
 
+# Rare events need the 100-run cells too, so these two tiles count every run on
+# schemas native accepts.
+every_run_stats = STRATEGIES.to_h do |s|
+  [s, stats((RUNS + RELIABILITY).select { |r| r[:strategy] == s && comparable.include?(r[:scenario]) })]
+end
+
 tiles = [
   tile("Runs that returned valid output", fmt_pct(overall.dig("prompted", :success)), fmt_pct(overall.dig("native", :success)),
        "All #{SCENARIOS.size} scenarios, #{MODELS.size} models, #{reps} reps each",),
   tile("Field accuracy where both ran", fmt_pct(comparable_stats.dig("prompted", :accuracy)), fmt_pct(comparable_stats.dig("native", :accuracy)),
        "The #{comparable.size} scenarios native accepts",),
-  tile("Hallucinated values where both ran", comparable_stats.dig("prompted", :fabricated).to_s, comparable_stats.dig("native", :fabricated).to_s,
-       "Invented values, trap items, fake IDs (total)",),
-  tile("Tool misuse", misuse(overall["prompted"]).to_s, misuse(overall["native"]).to_s,
-       "Runs with a needless call, a skipped call or a missing required tool",),
+  tile("Hallucinated values where both ran", every_run_stats["prompted"][:fabricated].to_s, every_run_stats["native"][:fabricated].to_s,
+       "Invented values, trap items, fake IDs, over all #{every_run_stats['native'][:n]} runs per strategy incl. the 100-run cells",),
+  tile("Tool misuse", misuse(every_run_stats["prompted"]).to_s, misuse(every_run_stats["native"]).to_s,
+       "Runs with a needless call, a skipped call or a missing required tool, over the same runs",),
   speed_tile("Bedrock native total run time vs prompted", total_ratios),
   speed_tile("Bedrock native time to first token vs prompted", ttft_ratios),
 ].join
@@ -372,12 +392,22 @@ end
 input_token_chart = token_chart(:input_tokens, "Input tokens per run", comparable)
 output_token_chart = token_chart(:output_tokens, "Output tokens per run (includes unseen thinking)", comparable)
 
-token_tiles = %i[input_total output_total].map do |metric|
-  prompted = comparable_stats.dig("prompted", metric)
-  native = comparable_stats.dig("native", metric)
-  label = metric == :input_total ? "Total input tokens" : "Total output tokens"
-  tile(label, fmt_tokens(prompted), fmt_tokens(native),
-       "#{comparable_stats.dig('native', :n)} runs each, scenarios both ran · native #{fmt_delta(native, prompted)}",)
+# Single-turn and multi-turn runs are reported apart: prompted repeats the
+# schema on every user message, so a pooled total would depend on the mix.
+single_turn = comparable - ["chat"]
+def token_stats(scenarios, strategy) = stats(RUNS.select { |r| r[:strategy] == strategy && scenarios.include?(r[:scenario]) })
+
+token_tiles = [
+  [single_turn, :input_total, "Input tokens, single-turn scenarios"],
+  [single_turn, :output_total, "Output tokens, single-turn scenarios"],
+  [["chat"], :input_tokens, "Input tokens per run, 16-turn chat"],
+].filter_map do |scenarios, metric, label|
+  next unless scenarios.intersect?(comparable)
+
+  prompted = token_stats(scenarios, "prompted")
+  native = token_stats(scenarios, "native")
+  note = metric == :input_tokens ? "Median per run" : "#{native[:n]} runs each"
+  tile(label, fmt_tokens(prompted[metric]), fmt_tokens(native[metric]), "#{note} · native #{fmt_delta(native[metric], prompted[metric])}")
 end.join
 
 token_rows = comparable.flat_map do |sc|
@@ -448,31 +478,46 @@ def forced_stats(runs)
   }
 end
 
-forced_rows = MODELS.flat_map do |m|
+FORCED_VARIANT = { "forced_choice" => "All required", "forced_choice_open" => "Unknown allowed" }.freeze
+
+def forced_runs(variant, model: nil, strategy: nil)
+  FORCED.select do |r|
+    r[:scenario] == variant && (model.nil? || r[:model] == model) && (strategy.nil? || r[:strategy] == strategy)
+  end
+end
+
+forced_rows = FORCED_VARIANT.flat_map do |variant, variant_label|
+  MODELS.flat_map do |m|
+    STRATEGIES.map do |s|
+      st = forced_stats(forced_runs(variant, model: m, strategy: s))
+      failures = st[:statuses].except("ok").map { |k, v| "#{v} #{k.tr('_', ' ')}" }.join(", ")
+      "<tr><td>#{h(variant_label)}</td><td>#{h(MODEL_LABEL[m])}</td><td><i class=\"sw s-#{s}\"></i>#{h(STRATEGY_LABEL[s])}</td>" \
+        "<td class=\"num\">#{st[:valid]}/#{st[:n]}</td><td>#{h(failures)}</td>" \
+        "<td class=\"num\">#{st[:abstained]}</td><td class=\"num\">#{st[:plausible]}</td><td class=\"num\">#{st[:placeholders]}</td>" \
+        "<td class=\"num\">#{st[:slots]}</td></tr>"
+    end
+  end
+end.join
+
+forced_value_rows = FORCED_VARIANT.flat_map do |variant, variant_label|
   STRATEGIES.map do |s|
-    st = forced_stats(FORCED.select { |r| r[:model] == m && r[:strategy] == s })
-    failures = st[:statuses].except("ok").map { |k, v| "#{v} #{k.tr('_', ' ')}" }.join(", ")
-    "<tr><td>#{h(MODEL_LABEL[m])}</td><td><i class=\"sw s-#{s}\"></i>#{h(STRATEGY_LABEL[s])}</td>" \
-      "<td class=\"num\">#{st[:valid]}/#{st[:n]}</td><td>#{h(failures)}</td>" \
-      "<td class=\"num\">#{st[:abstained]}</td><td class=\"num\">#{st[:plausible]}</td><td class=\"num\">#{st[:placeholders]}</td>" \
-      "<td class=\"num\">#{st[:slots]}</td></tr>"
+    values = forced_stats(forced_runs(variant, strategy: s))[:values]
+    summary = values.group_by(&:first).map do |field, list|
+      "<code>#{h(field)}</code>: #{list.map(&:last).tally.sort_by { |_, c| -c }.map { |v, c| "#{h(truncate(v.inspect))} ×#{c}" }.join(', ')}"
+    end
+    "<tr><td>#{h(variant_label)}</td><td><i class=\"sw s-#{s}\"></i>#{h(STRATEGY_LABEL[s])}</td>" \
+      "<td>#{summary.empty? ? 'None' : summary.join('<br>')}</td></tr>"
   end
 end.join
 
-forced_value_rows = STRATEGIES.map do |s|
-  values = forced_stats(FORCED.select { |r| r[:strategy] == s })[:values]
-  summary = values.group_by(&:first).map do |field, list|
-    "<code>#{h(field)}</code>: #{list.map(&:last).tally.sort_by { |_, c| -c }.map { |v, c| "#{h(truncate(v.inspect))} ×#{c}" }.join(', ')}"
+forced_chart_rows = FORCED_VARIANT.flat_map do |variant, variant_label|
+  MODELS.map do |m|
+    values = STRATEGIES.to_h do |s|
+      st = forced_stats(forced_runs(variant, model: m, strategy: s))
+      [s, st[:n].zero? ? nil : 100.0 * st[:delivered] / (st[:n] * 6)]
+    end
+    { label: "#{MODEL_LABEL[m]} · #{variant_label.downcase}", values: values, notes: {} }
   end
-  "<tr><td><i class=\"sw s-#{s}\"></i>#{h(STRATEGY_LABEL[s])}</td><td>#{summary.empty? ? 'None' : summary.join('<br>')}</td></tr>"
-end.join
-
-forced_chart_rows = MODELS.map do |m|
-  values = STRATEGIES.to_h do |s|
-    st = forced_stats(FORCED.select { |r| r[:model] == m && r[:strategy] == s })
-    [s, st[:n].zero? ? nil : 100.0 * st[:delivered] / (st[:n] * 6)]
-  end
-  { label: MODEL_LABEL[m], values: values, notes: {} }
 end
 forced_chart = if FORCED.empty?
                  ""
@@ -480,6 +525,74 @@ forced_chart = if FORCED.empty?
                  bar_chart(forced_chart_rows, max: 100, unit: "% of unanswerable fields, across all runs",
                                               title: "Invented values that reached the application", value_fmt: ->(v) { fmt_pct(v) },)
                end
+
+# Reliability at volume: many repeats of a few scenarios, to bound rare failures.
+
+# Upper end of the Wilson 95% interval; with zero failures it is close to the
+# rule of three (3/n).
+def failure_upper_bound(failures, n)
+  return nil if n.zero?
+
+  z = 1.96
+  p = failures.to_f / n
+  centre = p + ((z**2) / (2 * n))
+  margin = z * Math.sqrt((p * (1 - p) / n) + ((z**2) / (4 * (n**2))))
+  100.0 * (centre + margin) / (1 + ((z**2) / n))
+end
+
+RELIABILITY_SCENARIOS = SCENARIO_ORDER.select { |sc| RELIABILITY.any? { |r| r[:scenario] == sc } }.freeze
+
+def reliability_stats(runs)
+  ok = runs.select { |r| r[:status] == "ok" }
+  failures = runs.size - ok.size
+  graded = ok.filter_map { |r| r[:grade] }
+  {
+    n: runs.size, failures: failures, statuses: runs.map { |r| r[:status] }.tally.except("ok"),
+    upper: failure_upper_bound(failures, runs.size),
+    recovered: ok.count { |r| !r[:raw_json_clean] },
+    accuracy: pct(graded.sum { |g| g[:correct] }, graded.sum { |g| g[:total] }),
+    fabricated: graded.sum { |g| g[:fabricated] },
+    needless: runs.count { |r| r[:unnecessary_tool_use] },
+    missed: runs.count { |r| r[:skipped_tools] || !Array(r[:missing_required_tools]).empty? },
+    ttft: median(runs.map { |r| r[:ttft_s] }), total: median(runs.map { |r| r[:total_s] }),
+    total_p90: percentile(runs.map { |r| r[:total_s] }, 0.9),
+  }
+end
+
+def fmt_upper(value) = value.nil? ? "–" : "≤ #{value.round(1)}%"
+
+reliability_totals = STRATEGIES.to_h { |s| [s, reliability_stats(RELIABILITY.select { |r| r[:strategy] == s })] }
+
+reliability_tiles = if RELIABILITY.empty?
+                      ""
+                    else
+                      [
+                        tile("Runs that failed", "#{reliability_totals.dig('prompted', :failures)} of #{reliability_totals.dig('prompted', :n)}",
+                             "#{reliability_totals.dig('native', :failures)} of #{reliability_totals.dig('native', :n)}",
+                             "Any failure: API error, invalid JSON, schema violation, truncation, step limit",),
+                        tile("Failure rate, 95% upper bound", fmt_upper(reliability_totals.dig("prompted", :upper)),
+                             fmt_upper(reliability_totals.dig("native", :upper)), "The true rate is very likely below this",),
+                        tile("Replies needing riffer's recovery parser", reliability_totals.dig("prompted", :recovered).to_s,
+                             reliability_totals.dig("native", :recovered).to_s, "JSON wrapped in a code fence or prose, then recovered",),
+                        tile("Hallucinated values", reliability_totals.dig("prompted", :fabricated).to_s,
+                             reliability_totals.dig("native", :fabricated).to_s, "Across every graded field",),
+                      ].join
+                    end
+
+reliability_rows = RELIABILITY_SCENARIOS.flat_map do |sc|
+  MODELS.flat_map do |m|
+    STRATEGIES.map do |s|
+      st = reliability_stats(RELIABILITY.select { |r| r[:scenario] == sc && r[:model] == m && r[:strategy] == s })
+      failed = "#{st[:failures]} / #{st[:n]}"
+      "<tr><td>#{h(SCENARIO_LABEL.fetch(sc, sc))}</td><td>#{h(MODEL_LABEL[m])}</td><td><i class=\"sw s-#{s}\"></i>#{h(STRATEGY_LABEL[s])}</td>" \
+        "<td class=\"num\">#{h(failed)}</td><td class=\"num\">#{st[:recovered]}</td><td class=\"num\">#{fmt_pct(st[:accuracy])}</td>" \
+        "<td class=\"num\">#{st[:fabricated]}</td><td class=\"num\">#{st[:needless] + st[:missed]}</td>" \
+        "<td class=\"num\">#{fmt_s(st[:total])}</td></tr>"
+    end
+  end
+end.join
+
+reliability_runs = RELIABILITY.map { |r| r[:rep] }.max.to_i + 1
 
 template = File.read(File.expand_path("report_template.html", __dir__)).
   sub("{{body}}") { File.read(File.expand_path("report_body.html", __dir__)) }
@@ -509,6 +622,11 @@ html = template.gsub(/\{\{(\w+)\}\}/) do
     "forced_rows" => forced_rows,
     "forced_value_rows" => forced_value_rows,
     "forced_chart" => forced_chart,
+    "reliability_tiles" => reliability_tiles,
+    "reliability_rows" => reliability_rows,
+    "reliability_reps" => reliability_runs.to_s,
+    "reliability_total" => RELIABILITY.size.to_s,
+    "forced_runs" => FORCED.size.to_s,
   }.fetch(Regexp.last_match(1))
 end
 File.write(out_path, html)

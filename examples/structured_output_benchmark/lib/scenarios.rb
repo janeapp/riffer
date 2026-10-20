@@ -606,9 +606,66 @@ module Scenarios
     stated + unknowable
   end
 
+  # The same record with an escape hatch on every unanswerable field: nullable
+  # where the type allows, a "not_stated" choice where the field is an enum.
+  FORCED_OPEN_FIELDS = proc do
+    required :patient_name, String
+    required :referral_date, String, format: "date"
+    required :working_diagnosis, String
+    required :imaging_done, Riffer::Params::Boolean
+    required :referring_clinic_phone, String
+    required :urgency, String, enum: %w[routine urgent emergent not_stated]
+    optional :patient_email, String, format: "email"
+    optional :insurance_provider, String
+    optional :requested_visit_count, Integer
+    optional :workers_compensation_claim, Riffer::Params::Boolean
+    required :preferred_practitioner_gender, String, enum: %w[female male no_preference not_stated]
+  end
+
+  # ── multi-turn chat ───────────────────────────────────────────────────────
+
+  CHAT_FIELDS = proc do
+    required :reply, String, description: "What to say to the front-desk user"
+    required :action, String, enum: %w[none lookup book cancel reschedule escalate],
+                              description: "lookup if you fetched data to answer, none for a plain answer, escalate if a person must handle it"
+    required :patient_ids, Array, of: String, description: "Patient IDs this reply is about"
+    optional :appointment_date, String, format: "date", description: "Date of the appointment this reply is about, if any"
+    optional :follow_up_reason, String, description: "Only if a person must follow up"
+  end
+
+  def grade_chat(out)
+    nb = Clinic.next_booked("P-10307")
+    date = Date.parse(nb[:date])
+    reply = out[:reply].to_s
+    mentions_date = [date.iso8601, date.strftime("%B %-d"), date.strftime("%b %-d")].any? { |d| reply.include?(d) }
+    [
+      g.check("action", "lookup", out[:action]),
+      g.check("patient_ids", ["P-10307"], out[:patient_ids]),
+      g.check("appointment_date", nb[:date], out[:appointment_date]),
+      g.check("follow_up_reason", nil, out[:follow_up_reason]),
+      g.constraint("reply states the date", mentions_date, reply[0, 120]),
+    ]
+  end
+
   # ── catalogue ─────────────────────────────────────────────────────────────
 
   ALL = [
+    Scenario.new(
+      key: "forced_choice_open", title: "Unanswerable fields with a way to say unknown",
+      summary: "The same letter and 6 unanswerable fields, but each can be null or \"not_stated\".",
+      tools: :forbidden, required_tools: [],
+      schema: params(&FORCED_OPEN_FIELDS),
+      prompt: "Fill in the referral intake record from this faxed referral letter.\n\n#{REFERRAL_LETTER}",
+      grader: method(:grade_forced),
+    ),
+    Scenario.new(
+      key: "chat", title: "Front-desk chat, 16 user turns (tool required)",
+      summary: "A 15-exchange chat history with a structured reply on every assistant turn; the final question needs an appointment lookup.",
+      tools: :required, required_tools: %w[list_appointments],
+      schema: params(&CHAT_FIELDS),
+      prompt: Chat.messages,
+      grader: method(:grade_chat),
+    ),
     Scenario.new(
       key: "forced_choice", title: "Required fields the source can't answer",
       summary: "A short referral letter → 11 required fields, 6 of which the letter does not answer (incl. a required enum and a required email).",

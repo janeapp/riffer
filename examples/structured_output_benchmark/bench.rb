@@ -21,6 +21,7 @@ require "intake"
 require "treatment_plan"
 require "grading"
 require "tools"
+require "chat"
 require "scenarios"
 require "harness"
 

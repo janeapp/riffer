@@ -23,7 +23,8 @@ module Harness
     started = now
     steps = []
     structured_output = Riffer::Agent::StructuredOutput.new(scenario.schema, strategy: strategy)
-    messages = [Riffer::Messages::System.new(Scenarios::SYSTEM), Riffer::Messages::User.new(scenario.prompt)]
+    conversation = scenario.prompt.is_a?(Array) ? scenario.prompt : [Riffer::Messages::User.new(scenario.prompt)]
+    messages = [Riffer::Messages::System.new(Scenarios::SYSTEM), *conversation]
     provider = provider_factory.call
     final = nil
 

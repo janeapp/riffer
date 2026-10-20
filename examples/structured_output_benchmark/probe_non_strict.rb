@@ -16,6 +16,7 @@ require "intake"
 require "treatment_plan"
 require "grading"
 require "tools"
+require "chat"
 require "scenarios"
 
 client = Aws::BedrockRuntime::Client.new(region: ENV.fetch("AWS_REGION", "us-west-2"))
