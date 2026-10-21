@@ -40,15 +40,15 @@ attr_reader :name #: String
 
 ## Optional-dependency types (consumer-safe signatures)
 
-`sig/generated/` ships with the gem and is loaded by downstream projects (`rbs collection` / `rbs -r riffer`). rbs-inline copies a method's `#:` signature **verbatim** into the shipped sig, so **never name an optional-dependency type in a `#:` signature** — `OpenAI::*`, `Anthropic::*`, `Aws::*`, `MCP::*`, `Async::*`, `Zeitwerk::*`, etc. A consumer who installs riffer without that gem would hit `Cannot find type`, because those providers are pluggable and the gems ship no usable RBS of their own.
+`sig/generated/` ships with the gem and is loaded by downstream projects (`rbs collection` / `rbs -r riffer`). rbs-inline copies a method's `#:` signature **verbatim** into the shipped sig, so **never name an optional-dependency type in a `#:` signature** — `OpenAI::*`, `Aws::*`, `MCP::*`, `Async::*`, `Zeitwerk::*`, etc. A consumer who installs riffer without that gem would hit `Cannot find type`, because those providers are pluggable and the gems ship no usable RBS of their own.
 
 **Workaround — assert the type inside the method body instead.** An inline assertion (`local = arg #: OpenAI::Models::…`) is a Steep-only hint that rbs-inline does **not** emit into the signature. Leave the SDK param/return `untyped` in the `#:` line, keep every riffer/stdlib param and return typed, and recover the SDK type with a body assertion:
 
 ```ruby
 #: (untyped) -> String
 def extract_content(response)
-  message = response #: Anthropic::Models::Message
-  message.content&.first&.text || ""        # fully type-checked against the SDK type
+  typed_response = response #: OpenAI::Models::Responses::Response
+  typed_response.output_text                # fully type-checked against the SDK type
 end
 
 #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
@@ -60,7 +60,7 @@ end
 # When the return value IS the SDK object, type the return `untyped` (no body assertion needed):
 #: (Hash[Symbol, untyped]) -> untyped
 def execute_generate(params)
-  @client.messages.create(**params)
+  @client.responses.create(**params)
 end
 ```
 
@@ -72,7 +72,7 @@ Dependency signatures come from [`rbs collection`](https://github.com/ruby/gem_r
 
 `bin/typecheck` runs `rbs collection update` before `steep check`, keeping the lock in sync with `Gemfile.lock`; CI fails on lock drift. So after a Dependabot gem bump, run `bin/typecheck` and commit the refreshed lock. To pull newer upstream stubs, bump `revision` in `rbs_collection.yaml` and run `bin/typecheck` — pinning is what makes `update` deterministic.
 
-- `sig/_private/` — signatures that must **not** ship. RBS **skips** `_`-prefixed directories in library mode, so consumers never load them; riffer's own `steep check` does (via the `Steepfile`). Two kinds, by predictable path: external-gem signatures are named by gem at the top level — full stubs for the gems upstream has nothing for (`mcp.rbs`, `zeitwerk.rbs`, `opentelemetry.rbs`, `rspec.rbs`, `aws-sdk-core/*`) plus arity patches for the provider SDKs (`openai.rbs`, `anthropic.rbs`); riffer's own hidden stubs mirror `lib/` under `riffer/` (e.g. `riffer/providers/anthropic.rbs` narrows the private `client` method to the SDK-typed client). A stub must be **deleted** once the collection covers that gem, or RBS raises `DuplicatedMethodDefinitionError`.
+- `sig/_private/` — signatures that must **not** ship. RBS **skips** `_`-prefixed directories in library mode, so consumers never load them; riffer's own `steep check` does (via the `Steepfile`). Two kinds, by predictable path: external-gem signatures are named by gem at the top level — full stubs for the gems upstream has nothing for (`mcp.rbs`, `zeitwerk.rbs`, `opentelemetry.rbs`, `rspec.rbs`, `aws-sdk-core/*`) plus arity patches for the provider SDKs (`openai.rbs`); riffer's own hidden stubs mirror `lib/` under `riffer/` (e.g. `riffer/providers/open_ai.rbs` narrows the private `client` method to the SDK-typed client). A stub must be **deleted** once the collection covers that gem, or RBS raises `DuplicatedMethodDefinitionError`.
 - `sig/manual/` — hand-written riffer-only signatures that are **safe to ship**, for the few things rbs-inline can't generate _at all_ (mirroring `lib/`). In practice that's `extend self` modules (`riffer/agent/run.rbs`, `riffer/helpers/call_or_value.rbs`) and modeling an include applied dynamically (`riffer/tools/toolable.rbs`). SDK-free ivars are **not** hand-written here — declare them inline with `# @rbs` (see "Annotation Conventions"). SDK-typed signatures can't ship, so they go in `_private/riffer/providers/` (the narrowed `client`).
 - `sig/manifest.yaml` — declares the **stdlib** RBS the shipped sigs reference (`uri`, `net-http`, `digest`, `ipaddr`) so `rbs -r riffer` resolves them.
 

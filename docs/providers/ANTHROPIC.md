@@ -2,14 +2,6 @@
 
 The Anthropic provider connects to Claude models via the Anthropic API.
 
-## Installation
-
-Add the Anthropic gem to your Gemfile:
-
-```ruby
-gem 'anthropic'
-```
-
 ## Configuration
 
 Configure your Anthropic API key:
@@ -20,18 +12,37 @@ Riffer.configure do |config|
 end
 ```
 
-For anything beyond the API key — timeouts, retries, proxies — supply your own `Anthropic::Client`:
+When `config.anthropic.api_key` is unset, the provider reads `ANTHROPIC_API_KEY`; with neither set it raises `Riffer::ArgumentError`. Set `config.anthropic.base_url` (or `ANTHROPIC_BASE_URL`) to send requests somewhere other than `https://api.anthropic.com`, such as a gateway or proxy.
+
+Riffer reads no other `ANTHROPIC_*` variables. The anthropic gem also read `ANTHROPIC_AUTH_TOKEN` (sent as `Authorization: Bearer`) and `ANTHROPIC_CUSTOM_HEADERS`; riffer does not. Put custom headers on a `connection:` (see [HTTP Client](#http-client)). For bearer auth, subclass `Riffer::Providers::Anthropic::Client` and override its private `headers` method.
+
+## HTTP Client
+
+The provider needs no Anthropic gem. Riffer ships its own Messages API transport, `Riffer::Providers::Anthropic::Client`, built on `Riffer::HTTP::Client`. The provider builds one from the configured credentials by default. To change timeouts, add retries or go through a proxy, build your own and assign it to `config.anthropic.client`:
 
 ```ruby
 Riffer.configure do |config|
-  config.anthropic.client = Anthropic::Client.new(
+  config.anthropic.client = Riffer::Providers::Anthropic::Client.new(
     api_key: ENV['ANTHROPIC_API_KEY'],
-    timeout: 60
+    connection: Faraday.new(request: { open_timeout: 10, read_timeout: 120 })
   )
 end
 ```
 
-The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
+| Option              | Default                                | Description                                                    |
+| ------------------- | -------------------------------------- | -------------------------------------------------------------- |
+| `api_key`           | required                               | Sent as the `x-api-key` header                                 |
+| `base_url`          | `https://api.anthropic.com`            | API origin; requests go to `<base_url>/v1/messages`            |
+| `anthropic_version` | `2023-06-01`                           | Sent as the `anthropic-version` header                         |
+| `connection`        | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections] |
+
+Timeouts, retries, proxies, beta headers (`anthropic-beta` on the connection) and errors are covered in [Configuration → Connections][connections]. An API error becomes a `Riffer::APIError` whose message carries the Anthropic error type, e.g. `Anthropic API error (401): authentication_error: invalid x-api-key`. No requests are retried unless your connection adds retries.
+
+The `anthropic-version` header is pinned to `2023-06-01`. Pass `anthropic_version:` to use another version, but check which request fields it accepts first: version `2026-10-21` rejects `temperature`, `top_p` and `top_k` with a 400.
+
+The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients). An `Anthropic::Client` from the anthropic gem is not accepted and raises `Riffer::ArgumentError`.
+
+[connections]: ../CONFIGURATION.md#connections
 
 ## Supported Models
 

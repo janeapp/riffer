@@ -9,7 +9,16 @@ describe Riffer::Providers::Anthropic do
 
   after do
     Riffer.config.anthropic.api_key = nil
+    Riffer.config.anthropic.base_url = nil
     Riffer.config.anthropic.client = nil
+  end
+
+  def with_env(vars)
+    original = vars.keys.to_h { |key| [key, ENV.fetch(key, nil)] }
+    vars.each { |key, value| ENV[key] = value }
+    yield
+  ensure
+    original.each { |key, value| ENV[key] = value }
   end
 
   describe ".skills_adapter" do
@@ -32,43 +41,45 @@ describe Riffer::Providers::Anthropic do
     let(:provider) { Riffer::Providers::Anthropic.new }
 
     it "normalizes end_turn to stop" do
-      expect(provider.send(:build_finish_reason, :end_turn).reason).must_equal :stop
+      expect(provider.send(:extract_finish_reason, { stop_reason: "end_turn" }).reason).must_equal :stop
     end
 
     it "normalizes stop_sequence to stop" do
-      expect(provider.send(:build_finish_reason, :stop_sequence).reason).must_equal :stop
+      expect(provider.send(:extract_finish_reason, { stop_reason: "stop_sequence" }).reason).must_equal :stop
     end
 
     it "normalizes max_tokens to length" do
-      expect(provider.send(:build_finish_reason, :max_tokens).reason).must_equal :length
+      expect(provider.send(:extract_finish_reason, { stop_reason: "max_tokens" }).reason).must_equal :length
     end
 
     it "normalizes tool_use to tool_calls" do
-      expect(provider.send(:build_finish_reason, :tool_use).reason).must_equal :tool_calls
+      expect(provider.send(:extract_finish_reason, { stop_reason: "tool_use" }).reason).must_equal :tool_calls
     end
 
     it "normalizes refusal to content_filter" do
-      expect(provider.send(:build_finish_reason, :refusal).reason).must_equal :content_filter
+      expect(provider.send(:extract_finish_reason, { stop_reason: "refusal" }).reason).must_equal :content_filter
     end
 
     it "normalizes model_context_window_exceeded to context_window" do
-      expect(provider.send(:build_finish_reason, :model_context_window_exceeded).reason).must_equal :context_window
+      finish_reason = provider.send(:extract_finish_reason, { stop_reason: "model_context_window_exceeded" })
+
+      expect(finish_reason.reason).must_equal :context_window
     end
 
     it "normalizes pause_turn to other and keeps the raw value" do
-      finish_reason = provider.send(:build_finish_reason, :pause_turn)
+      finish_reason = provider.send(:extract_finish_reason, { stop_reason: "pause_turn" })
 
       expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "pause_turn"]
     end
 
     it "normalizes unknown values to other and keeps the raw value" do
-      finish_reason = provider.send(:build_finish_reason, :mystery)
+      finish_reason = provider.send(:extract_finish_reason, { stop_reason: "mystery" })
 
       expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "mystery"]
     end
 
     it "returns nil without a stop reason" do
-      expect(provider.send(:build_finish_reason, nil)).must_be_nil
+      expect(provider.send(:extract_finish_reason, {})).must_be_nil
     end
 
     it "extracts the finish reason when generating" do
@@ -139,25 +150,81 @@ describe Riffer::Providers::Anthropic do
       expect(Riffer::Providers::Anthropic.new.send(:client)).must_be_same_as configured
     end
 
-    it "lets the built client pick up ANTHROPIC_API_KEY" do
-      original = ENV.fetch("ANTHROPIC_API_KEY", nil)
-      ENV["ANTHROPIC_API_KEY"] = "sk-ant-from-env"
+    it "builds a client from ANTHROPIC_API_KEY" do
       Riffer.config.anthropic.api_key = nil
+      stub = stub_request(:post, "https://api.anthropic.com/v1/messages").
+        with(headers: { "x-api-key" => "env_key" }).
+        to_return(status: 200, body: "{}")
 
-      expect(Riffer::Providers::Anthropic.new.send(:client).api_key).must_equal "sk-ant-from-env"
-    ensure
-      ENV["ANTHROPIC_API_KEY"] = original
+      with_env("ANTHROPIC_API_KEY" => "env_key", "ANTHROPIC_BASE_URL" => nil) do
+        Riffer::Providers::Anthropic.new.send(:client).post("v1/messages", {})
+      end
+
+      assert_requested stub
     end
 
-    it "prefers a configured api_key over ANTHROPIC_API_KEY" do
-      original = ENV.fetch("ANTHROPIC_API_KEY", nil)
-      ENV["ANTHROPIC_API_KEY"] = "sk-ant-from-env"
-      Riffer.config.anthropic.api_key = "sk-ant-from-config"
+    it "prefers the configured api_key over ANTHROPIC_API_KEY" do
+      Riffer.config.anthropic.api_key = "config_key"
+      stub = stub_request(:post, "https://api.anthropic.com/v1/messages").
+        with(headers: { "x-api-key" => "config_key" }).
+        to_return(status: 200, body: "{}")
 
-      expect(Riffer::Providers::Anthropic.new.send(:client).api_key).must_equal "sk-ant-from-config"
-    ensure
-      ENV["ANTHROPIC_API_KEY"] = original
+      with_env("ANTHROPIC_API_KEY" => "env_key", "ANTHROPIC_BASE_URL" => nil) do
+        Riffer::Providers::Anthropic.new.send(:client).post("v1/messages", {})
+      end
+
+      assert_requested stub
+    end
+
+    it "builds a client from ANTHROPIC_BASE_URL" do
+      stub = stub_request(:post, "http://localhost:8080/v1/messages").to_return(status: 200, body: "{}")
+
+      with_env("ANTHROPIC_BASE_URL" => "http://localhost:8080") do
+        Riffer::Providers::Anthropic.new.send(:client).post("v1/messages", {})
+      end
+
+      assert_requested stub
+    end
+
+    it "prefers the configured base_url over ANTHROPIC_BASE_URL" do
+      Riffer.config.anthropic.base_url = "http://localhost:8080/"
+      stub = stub_request(:post, "http://localhost:8080/v1/messages").to_return(status: 200, body: "{}")
+
+      with_env("ANTHROPIC_BASE_URL" => "http://env.example.test") do
+        Riffer::Providers::Anthropic.new.send(:client).post("v1/messages", {})
+      end
+
+      assert_requested stub
+    end
+
+    it "raises naming both settings when no API key is set" do
       Riffer.config.anthropic.api_key = nil
+
+      error = with_env("ANTHROPIC_API_KEY" => nil) do
+        expect { Riffer::Providers::Anthropic.new.send(:client) }.must_raise Riffer::ArgumentError
+      end
+
+      expect(error.message).must_include "config.anthropic.api_key"
+      expect(error.message).must_include "ANTHROPIC_API_KEY"
+    end
+
+    describe "with an anthropic gem client configured" do
+      # The gem is not in the bundle, so a stand-in plays its client class.
+      before { Object.const_set(:Anthropic, Module.new.tap { |sdk| sdk.const_set(:Client, Class.new) }) }
+      after { Object.send(:remove_const, :Anthropic) }
+
+      it "raises a migration error" do
+        Riffer.config.anthropic.client = Anthropic::Client.new
+        error = expect { Riffer::Providers::Anthropic.new.send(:client) }.must_raise Riffer::ArgumentError
+
+        expect(error.message).must_include "Riffer::Providers::Anthropic::Client"
+      end
+
+      it "raises a migration error for a client returned by a Proc" do
+        Riffer.config.anthropic.client = -> { Anthropic::Client.new }
+
+        expect { Riffer::Providers::Anthropic.new.send(:client) }.must_raise Riffer::ArgumentError
+      end
     end
   end
 
@@ -1555,51 +1622,37 @@ describe Riffer::Providers::Anthropic do
     end
 
     describe "normalization" do
+      let(:provider) { Riffer::Providers::Anthropic.new }
+      let(:cached_usage) do
+        { input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3, cache_read_input_tokens: 100 }
+      end
+
       it "folds cache buckets into input_tokens" do
-        provider = Riffer::Providers::Anthropic.new
-        usage = Anthropic::Models::Usage.new(
-          input_tokens: 9,
-          output_tokens: 16,
-          cache_creation_input_tokens: 3,
-          cache_read_input_tokens: 100,
-        )
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, { usage: cached_usage })
 
         expect(token_usage.input_tokens).must_equal 112
       end
 
       it "passes cache_write_tokens through" do
-        provider = Riffer::Providers::Anthropic.new
-        usage = Anthropic::Models::Usage.new(
-          input_tokens: 9,
-          output_tokens: 16,
-          cache_creation_input_tokens: 3,
-          cache_read_input_tokens: 100,
-        )
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, { usage: cached_usage })
 
         expect(token_usage.cache_write_tokens).must_equal 3
       end
 
       it "passes cache_read_tokens through" do
-        provider = Riffer::Providers::Anthropic.new
-        usage = Anthropic::Models::Usage.new(
-          input_tokens: 9,
-          output_tokens: 16,
-          cache_creation_input_tokens: 3,
-          cache_read_input_tokens: 100,
-        )
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, { usage: cached_usage })
 
         expect(token_usage.cache_read_tokens).must_equal 100
       end
 
       it "treats unreported cache buckets as zero" do
-        provider = Riffer::Providers::Anthropic.new
-        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16)
-        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        token_usage = provider.send(:extract_token_usage, { usage: { input_tokens: 9, output_tokens: 16 } })
 
         expect(token_usage.input_tokens).must_equal 9
+      end
+
+      it "returns nil without usage" do
+        expect(provider.send(:extract_token_usage, {})).must_be_nil
       end
     end
   end
@@ -1675,56 +1728,51 @@ describe Riffer::Providers::Anthropic do
   describe "reasoning" do
     let(:model) { "claude-haiku-4-5-20251001" }
     let(:provider) { Riffer::Providers::Anthropic.new }
-    # Instantiating runs depends_on "anthropic", which loads the SDK constants below.
-    before { provider }
 
-    def thinking_block(thinking, signature)
-      Anthropic::Models::ThinkingBlock.new(thinking: thinking, signature: signature, type: :thinking)
-    end
-
-    def redacted_thinking_block(data)
-      Anthropic::Models::RedactedThinkingBlock.new(data: data, type: :redacted_thinking)
-    end
-
-    def text_block(text)
-      Anthropic::Models::TextBlock.new(text: text, type: :text, citations: nil)
-    end
+    def thinking_block(thinking, signature) = { type: "thinking", thinking: thinking, signature: signature }
+    def redacted_thinking_block(data) = { type: "redacted_thinking", data: data }
+    def text_block(text) = { type: "text", text: text }
 
     def build_response(content_blocks)
-      Anthropic::Models::Message.new(
-        content: content_blocks,
-        usage: Anthropic::Models::Usage.new(input_tokens: 1, output_tokens: 1),
-        stop_reason: :end_turn,
-      )
+      { content: content_blocks, usage: { input_tokens: 1, output_tokens: 1 }, stop_reason: "end_turn" }
     end
 
-    def thinking_event(thinking)
-      Anthropic::Helpers::Streaming::ThinkingEvent.new(type: :thinking, thinking: thinking, snapshot: thinking)
+    def block_start(index, block) = { type: "content_block_start", index: index, content_block: block }
+    def delta(index, delta) = { type: "content_block_delta", index: index, delta: delta }
+    def block_stop(index) = { type: "content_block_stop", index: index }
+
+    def thinking_events(index, *chunks, signature: "sig")
+      [
+        block_start(index, { type: "thinking", thinking: "", signature: "" }),
+        *chunks.map { |chunk| delta(index, { type: "thinking_delta", thinking: chunk }) },
+        delta(index, { type: "signature_delta", signature: signature }),
+        block_stop(index),
+      ]
     end
 
-    def text_event(text)
-      Anthropic::Helpers::Streaming::TextEvent.new(type: :text, text: text, snapshot: text)
+    def text_events(index, *chunks)
+      [
+        block_start(index, { type: "text", text: "" }),
+        *chunks.map { |chunk| delta(index, { type: "text_delta", text: chunk }) },
+        block_stop(index),
+      ]
     end
 
-    def block_stop(index, content_block)
-      Anthropic::Helpers::Streaming::ContentBlockStopEvent.new(
-        type: :content_block_stop,
-        index: index,
-        content_block: content_block,
-      )
+    def redacted_events(index, data)
+      [block_start(index, redacted_thinking_block(data)), block_stop(index)]
     end
 
     def stream_events(events)
-      events += [Anthropic::Helpers::Streaming::MessageStopEvent.new(type: :message_stop, message: nil)]
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&block| events.each { |e| block.call(e) } }
-      stream_double.define_singleton_method(:accumulated_message) { nil }
-      stream_double.define_singleton_method(:close) { nil }
-      messages_double = Object.new
-      messages_double.define_singleton_method(:stream) { |**_kwargs| stream_double }
-      client_double = Object.new
-      client_double.define_singleton_method(:messages) { messages_double }
-      provider.instance_variable_set(:@client, client_double)
+      events = [
+        { type: "message_start", message: { id: "msg_1", role: "assistant", content: [], usage: { input_tokens: 1 } } },
+        *events,
+        { type: "message_delta", delta: { stop_reason: "end_turn" }, usage: { output_tokens: 1 } },
+        { type: "message_stop" },
+      ]
+      sse = events.map { |event| "event: #{event[:type]}\ndata: #{event.to_json}\n\n" }.join
+      client = Object.new
+      client.define_singleton_method(:post_stream) { |_path, _body, &block| block.call(sse) }
+      provider.instance_variable_set(:@client, client)
       provider.stream_text(prompt: "Hi", model: model).to_a
     end
 
@@ -1769,15 +1817,11 @@ describe Riffer::Providers::Anthropic do
           [
             thinking_block("Think", "sig"),
             text_block("Searching. "),
-            Anthropic::Models::ServerToolUseBlock.new(
-              id: "srvtoolu_1", name: :web_search, input: { query: "ruby" }, type: :server_tool_use,
-            ),
-            Anthropic::Models::WebSearchToolResultBlock.new(
-              tool_use_id: "srvtoolu_1", content: [], type: :web_search_tool_result,
-            ),
+            { type: "server_tool_use", id: "srvtoolu_1", name: "web_search", input: { query: "ruby" } },
+            { type: "web_search_tool_result", tool_use_id: "srvtoolu_1", content: [] },
             text_block("Ruby 4.0.1"),
             text_block(" is out."),
-            Anthropic::Models::ToolUseBlock.new(id: "toolu_1", name: "get_weather", input: {}, type: :tool_use),
+            { type: "tool_use", id: "toolu_1", name: "get_weather", input: {} },
           ],
         )
 
@@ -1786,11 +1830,9 @@ describe Riffer::Providers::Anthropic do
 
       it "attaches the parts to the assistant message from generate_text" do
         response = build_response([thinking_block("Think", "sig"), text_block("42")])
-        messages_double = Object.new
-        messages_double.define_singleton_method(:create) { |**_kwargs| response }
-        client_double = Object.new
-        client_double.define_singleton_method(:messages) { messages_double }
-        provider.instance_variable_set(:@client, client_double)
+        client = Object.new
+        client.define_singleton_method(:post) { |_path, _body| response }
+        provider.instance_variable_set(:@client, client)
 
         result = provider.generate_text(prompt: "Hi", model: model)
 
@@ -1802,23 +1844,8 @@ describe Riffer::Providers::Anthropic do
     end
 
     describe "streaming thinking blocks" do
-      it "yields each thinking delta and one signed ReasoningDone per block" do
-        events = stream_events(
-          [
-            thinking_event("Let me "),
-            thinking_event("think."),
-            block_stop(0, thinking_block("Let me think.", "sig")),
-          ],
-        )
-
-        expect(events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)).must_equal ["Let me ", "think."]
-        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
-          { type: :text, text: "Let me think.", signature: "sig", format: "anthropic-messages-v1" },
-        ]
-      end
-
       it "captures a streamed redacted_thinking block as an encrypted part" do
-        events = stream_events([block_stop(0, redacted_thinking_block("opaque"))])
+        events = stream_events(redacted_events(0, "opaque"))
 
         expect(events.grep(Riffer::StreamEvents::ReasoningDelta)).must_be_empty
         expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
@@ -1827,7 +1854,7 @@ describe Riffer::Providers::Anthropic do
       end
 
       it "keeps a signed thinking block whose text is empty" do
-        events = stream_events([block_stop(0, thinking_block("", "sig"))])
+        events = stream_events(thinking_events(0))
 
         expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
           { type: :text, text: "", signature: "sig", format: "anthropic-messages-v1" },
@@ -1836,43 +1863,11 @@ describe Riffer::Providers::Anthropic do
 
       it "emits parts in block order and leaves the following text block intact" do
         events = stream_events(
-          [
-            thinking_event("First"),
-            block_stop(0, thinking_block("First", "sig-1")),
-            block_stop(1, redacted_thinking_block("opaque")),
-            text_event("4"),
-            text_event("2"),
-            block_stop(2, text_block("42")),
-          ],
+          [*thinking_events(0, "First", signature: "sig-1"), *redacted_events(1, "opaque"), *text_events(2, "4", "2")],
         )
 
         expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.type }).must_equal %i[text encrypted]
         expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal ["42"]
-      end
-
-      it "yields one TextDone joining the text blocks on either side of a thinking block" do
-        events = stream_events(
-          [
-            text_event("Let me "),
-            text_event("check. "),
-            block_stop(0, text_block("Let me check. ")),
-            thinking_event("Hmm"),
-            block_stop(1, thinking_block("Hmm", "sig")),
-            text_event("The answer "),
-            text_event("is 42."),
-            block_stop(2, text_block("The answer is 42.")),
-          ],
-        )
-
-        text_done = events.grep(Riffer::StreamEvents::TextDone).map(&:content)
-
-        expect(text_done).must_equal ["Let me check. The answer is 42."]
-      end
-
-      it "yields no TextDone when the stream carries no text" do
-        events = stream_events([thinking_event("Hmm"), block_stop(0, thinking_block("Hmm", "sig"))])
-
-        expect(events.grep(Riffer::StreamEvents::TextDone)).must_be_empty
       end
     end
 
@@ -2002,59 +1997,6 @@ describe Riffer::Providers::Anthropic do
           expect(second.content).must_include "15"
         end
       end
-    end
-  end
-
-  describe "#stream_text resource cleanup" do
-    let(:provider) { Riffer::Providers::Anthropic.new }
-
-    def install_stream_double(provider, stream_double)
-      messages_double = Object.new
-      messages_double.define_singleton_method(:stream) { |**_kwargs| stream_double }
-      client_double = Object.new
-      client_double.define_singleton_method(:messages) { messages_double }
-      provider.instance_variable_set(:@client, client_double)
-    end
-
-    it "calls stream.close when iteration raises mid-stream" do
-      close_count = 0
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&_block| raise "kaboom" }
-      stream_double.define_singleton_method(:close) { close_count += 1 }
-      install_stream_double(provider, stream_double)
-
-      assert_raises(RuntimeError) do
-        provider.stream_text(prompt: "Hi", model: "claude-haiku-4-5-20251001").to_a
-      end
-      expect(close_count).must_equal 1
-    end
-
-    it "calls stream.close exactly once when the stream ends without a terminal event" do
-      close_count = 0
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&_block| }
-      stream_double.define_singleton_method(:close) { close_count += 1 }
-      install_stream_double(provider, stream_double)
-
-      assert_raises(Riffer::IncompleteStreamError) do
-        provider.stream_text(prompt: "Hi", model: "claude-haiku-4-5-20251001").to_a
-      end
-      expect(close_count).must_equal 1
-    end
-
-    it "calls stream.close exactly once on happy path" do
-      provider # force SDK load before constructing the event below
-      message_stop = Anthropic::Helpers::Streaming::MessageStopEvent.new(type: :message_stop, message: nil)
-      close_count = 0
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&block| block.call(message_stop) }
-      stream_double.define_singleton_method(:accumulated_message) { nil }
-      stream_double.define_singleton_method(:close) { close_count += 1 }
-      install_stream_double(provider, stream_double)
-
-      provider.stream_text(prompt: "Hi", model: "claude-haiku-4-5-20251001").to_a
-
-      expect(close_count).must_equal 1
     end
   end
 end

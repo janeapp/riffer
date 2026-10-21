@@ -37,6 +37,102 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     { thinking: { type: "adaptive" }, output_config: { effort: level.to_s } }
   end
 
+  # Relative to the client's base URL.
+  #--
+  #: (String?, stream: bool) -> String
+  def messages_path(_model, stream:)
+    "v1/messages"
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], stream: bool) -> Hash[Symbol, untyped]
+  def request_body(params, stream:)
+    stream ? params.merge(stream: true) : params
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def execute_generate(params)
+    client.post(messages_path(params[:model], stream: false), request_body(params, stream: false))
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream(params, yielder)
+    stream = Stream.new(tools: @current_tools)
+    decoder = Riffer::Wire::SSE.new
+
+    client.post_stream(messages_path(params[:model], stream: true), request_body(params, stream: true)) do |chunk|
+      decoder.feed(chunk) { |data, _event| stream.handle(JSON.parse(data, symbolize_names: true), yielder) }
+    end
+
+    message = stream.finish!
+    yield_finish_reason(yielder, extract_finish_reason(message))
+    usage = extract_token_usage(message)
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage) if usage
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> String
+  def extract_content(response)
+    content_blocks(response).filter_map { |block| block[:text] if block[:type] == "text" }.join
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    content_blocks(response).filter_map do |block|
+      next unless block[:type] == "tool_use"
+
+      Riffer::Messages::Assistant::ToolCall.new(
+        call_id: block[:id],
+        name: decode_tool_name(block[:name], tools: @current_tools),
+        arguments: (block[:input] || {}).to_json,
+      )
+    end
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    content_blocks(response).filter_map { |block| Stream.reasoning_part(block) }
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage(response)
+    usage = response[:usage]
+    return nil unless usage
+
+    cache_write = usage[:cache_creation_input_tokens]
+    cache_read = usage[:cache_read_input_tokens]
+
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        # Anthropic's input_tokens excludes the cache buckets; TokenUsage's includes them.
+        input_tokens: (usage[:input_tokens] || 0) + (cache_write || 0) + (cache_read || 0),
+        output_tokens: usage[:output_tokens] || 0,
+        cache_write_tokens: cache_write,
+        cache_read_tokens: cache_read,
+      ),
+    )
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason(response)
+    raw = response[:stop_reason]
+    return nil unless raw
+
+    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
+  def content_blocks(response)
+    response[:content] || []
+  end
+
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
