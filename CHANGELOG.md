@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.54.0](https://github.com/janeapp/riffer/compare/riffer/v0.53.0...riffer/v0.54.0) (2026-10-20)
+
+
+### Features
+
+* **params:** add `format:` for string formats ([#497](https://github.com/janeapp/riffer/issues/497)) ([3c2dec8](https://github.com/janeapp/riffer/commit/3c2dec8e70b28de2d7b9d655e8d17ce85dde6812))
+* **params:** add `Riffer::Params::AnyOf` ([#491](https://github.com/janeapp/riffer/issues/491)) ([65493ca](https://github.com/janeapp/riffer/commit/65493caa8073cf86983ec27dc6fb84ede068b6b9))
+* **params:** add arrays of arrays with nested `of:` ([#498](https://github.com/janeapp/riffer/issues/498)) ([2b3449c](https://github.com/janeapp/riffer/commit/2b3449c61474f5cc79643903c08668a8fd9db8b6))
+* **structured_output:** append prompted schema to user messages ([#492](https://github.com/janeapp/riffer/issues/492)) ([332db21](https://github.com/janeapp/riffer/commit/332db216d2e7716904d5ff4a9c1d9d42e128ac83))
+
+
+### Bug Fixes
+
+* **params:** apply enum to each item of an Array of: param ([#493](https://github.com/janeapp/riffer/issues/493)) ([09da9b0](https://github.com/janeapp/riffer/commit/09da9b0ccb0e63b2ed3202a28546371b17118e8c))
+
 ## [0.53.0](https://github.com/janeapp/riffer/compare/riffer/v0.52.1...riffer/v0.53.0) (2026-10-13)
 
 
