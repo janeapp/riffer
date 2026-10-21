@@ -10,6 +10,15 @@ describe Riffer::Providers::Gemini do
   after do
     Riffer.config.gemini.api_key = nil
     Riffer.config.gemini.client = nil
+    Riffer.config.gemini.base_url = nil
+  end
+
+  def with_env(vars)
+    original = vars.keys.to_h { |key| [key, ENV.fetch(key, nil)] }
+    vars.each { |key, value| ENV[key] = value }
+    yield
+  ensure
+    original.each { |key, value| ENV[key] = value }
   end
 
   describe ".semconv_provider_name" do
@@ -110,6 +119,52 @@ describe Riffer::Providers::Gemini do
   describe "client resolution" do
     it "builds a Gemini::Client from the configured api_key" do
       expect(Riffer::Providers::Gemini.new.send(:client)).must_be_instance_of Riffer::Providers::Gemini::Client
+    end
+
+    it "falls back to GEMINI_API_KEY when no api_key is configured" do
+      Riffer.config.gemini.api_key = nil
+      stub = stub_request(:post, /generativelanguage\.googleapis\.com/).
+        with(headers: { "x-goog-api-key" => "env_key" }).
+        to_return(status: 200, body: "{}")
+
+      with_env("GEMINI_API_KEY" => "env_key") do
+        Riffer::Providers::Gemini.new.send(:client).post("v1beta/x", {})
+      end
+
+      assert_requested stub
+    end
+
+    it "prefers the configured api_key over GEMINI_API_KEY" do
+      Riffer.config.gemini.api_key = "config_key"
+      stub = stub_request(:post, /generativelanguage\.googleapis\.com/).
+        with(headers: { "x-goog-api-key" => "config_key" }).
+        to_return(status: 200, body: "{}")
+
+      with_env("GEMINI_API_KEY" => "env_key") do
+        Riffer::Providers::Gemini.new.send(:client).post("v1beta/x", {})
+      end
+
+      assert_requested stub
+    end
+
+    it "uses the configured base_url" do
+      Riffer.config.gemini.base_url = "http://localhost:8080"
+      stub = stub_request(:post, "http://localhost:8080/v1beta/x").to_return(status: 200, body: "{}")
+
+      Riffer::Providers::Gemini.new.send(:client).post("v1beta/x", {})
+
+      assert_requested stub
+    end
+
+    it "raises naming both settings when no api_key is available" do
+      Riffer.config.gemini.api_key = nil
+
+      error = with_env("GEMINI_API_KEY" => nil) do
+        expect { Riffer::Providers::Gemini.new.send(:client) }.must_raise Riffer::ArgumentError
+      end
+
+      expect(error.message).must_include "config.gemini.api_key"
+      expect(error.message).must_include "GEMINI_API_KEY"
     end
 
     it "uses the configured client" do

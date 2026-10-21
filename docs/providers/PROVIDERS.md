@@ -40,7 +40,7 @@ Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes
 | Azure OpenAI   | `config.azure_openai.api_key`, `config.azure_openai.endpoint`     |
 | Anthropic      | `config.anthropic.api_key`                                        |
 | Amazon Bedrock | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
-| Gemini         | `config.gemini.api_key`                                           |
+| Gemini         | `config.gemini.api_key`, `config.gemini.base_url`                 |
 | OpenRouter     | `config.openrouter.api_key`                                       |
 
 Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
