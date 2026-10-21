@@ -101,32 +101,25 @@ The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffe
 
 ### Connections
 
-Clients built on `Riffer::HTTP::Client` send their requests through a [Faraday](https://lostisland.github.io/faraday/) connection and accept your own as `connection:`. The default has a 10-second open timeout, a 600-second read timeout, Faraday's default adapter (`net_http`) and no retries. Pass a connection for retries, persistent connections, proxies, other timeouts or extra headers.
+Clients built on `Riffer::HTTP::Client` send requests through a [Faraday](https://lostisland.github.io/faraday/) connection. The default uses Faraday's `net_http` adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as `connection:`. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no `url:`, and any headers you set on it are sent as well.
 
-Riffer requests absolute URLs and sets the auth and content headers on each request, so the connection needs no `url:`. Headers you set on the connection are sent with every request.
-
-Build the connection once and reuse it, outside the client `Proc`. The `Proc` runs on every call, so a connection built inside it would start a new pool each time:
+For example, to retry rate limits and server errors with [faraday-retry](https://github.com/lostisland/faraday-retry):
 
 ```ruby
-# Gemfile: gem "faraday-net_http_persistent", gem "faraday-retry"
-require "faraday/net_http_persistent"
+# Gemfile: gem "faraday-retry"
 require "faraday/retry"
 
-LLM_CONNECTION = Faraday.new(request: { open_timeout: 10, read_timeout: 300 }) do |f|
+connection = Faraday.new(request: { open_timeout: 10, read_timeout: 300 }) do |f|
   f.request :retry,
     max: 2,
     methods: [:post],
-    retry_statuses: [408, 409, 429, 500, 502, 503, 504, 529],
-    exceptions: [Faraday::TimeoutError, Faraday::ConnectionFailed, Faraday::RetriableResponse]
-  f.adapter :net_http_persistent
+    retry_statuses: [429, 500, 502, 503, 504, 529]
 end
 ```
 
-Then pass `connection: LLM_CONNECTION` when you build the client. faraday-retry skips POST unless `methods:` lists it, and an explicit `exceptions:` list must include `Faraday::RetriableResponse` for `retry_statuses` to take effect.
+Retrying a streaming request is only safe before any data has arrived. If a retry restarts a stream that already yielded chunks, riffer raises `Riffer::Error` rather than yield them twice.
 
-Streams arrive incrementally with the `net_http`, `net_http_persistent` and `async_http` adapters. `httpx` and `typhoeus` work, but each streamed response arrives in one piece once it has finished.
-
-A retry is only safe before a stream has delivered any data. With `net_http`, `net_http_persistent` or `async_http`, if retry middleware restarts a stream after chunks were already yielded, riffer raises `Riffer::Error` rather than yield them twice; retrying a failed status before the stream starts (a 429, say) works as usual. With `httpx` or `typhoeus`, riffer can't tell attempts apart, so don't use retry middleware for streaming requests.
+Streaming is tested with the default `net_http` adapter.
 
 #### Errors
 
