@@ -8,7 +8,7 @@ describe "shipped RBS signatures" do
     # sig/_private is excluded: RBS skips it in library mode, so it never ships.
     shipped_dirs = %w[generated manual]
 
-    forbidden_roots = %w[OpenAI Anthropic Aws MCP Async Zeitwerk Seahorse Faraday RSpec Minitest]
+    forbidden_roots = %w[OpenAI Anthropic Aws MCP Async Zeitwerk Seahorse RSpec Minitest]
 
     # `Riffer::Providers::OpenAI` has root "Riffer" (not flagged); `OpenAI::Models::Response`
     # has root "OpenAI" (flagged).

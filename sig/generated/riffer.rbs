@@ -12,6 +12,18 @@ module Riffer
   class ValidationError < Error
   end
 
+  # A provider answered with a non-success status, or sent an in-stream error
+  # event (+status+ is nil then). +body+ is the raw response text.
+  class APIError < Error
+    attr_reader status: Integer?
+
+    attr_reader body: String?
+
+    # --
+    # : (?String?, ?status: Integer?, ?body: String?) -> void
+    def initialize: (?String?, ?status: Integer?, ?body: String?) -> void
+  end
+
   # Rescue it in the tool to clean up; otherwise it becomes a
   # +:timeout_error+ response.
   class TimeoutError < Error

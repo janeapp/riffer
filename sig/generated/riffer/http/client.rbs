@@ -1,0 +1,52 @@
+# Generated from lib/riffer/http/client.rb with RBS::Inline
+
+class Riffer::HTTP::Client
+  @connection: Faraday::Connection
+
+  DEFAULT_OPEN_TIMEOUT: Integer
+
+  DEFAULT_READ_TIMEOUT: Integer
+
+  # --
+  # : (?connection: Faraday::Connection?) -> void
+  def initialize: (?connection: Faraday::Connection?) -> void
+
+  # Raises Riffer::APIError on a non-success status.
+  # --
+  # : (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def post: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # Raises Riffer::APIError on a non-success status; the error body is never yielded.
+  # --
+  # : (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+  def post_stream: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+
+  private
+
+  # --
+  # : (String) -> String
+  def url_for: (String) -> String
+
+  # Called per request so short-lived credentials can refresh.
+  # --
+  # : () -> Hash[String, String]
+  def headers: () -> Hash[String, String]
+
+  # --
+  # : () -> String
+  def error_label: () -> String
+
+  # --
+  # : (Hash[Symbol, untyped], String) -> String
+  def error_message: (Hash[Symbol, untyped], String) -> String
+
+  # Headers go on the request, never on the connection, which may be shared
+  # across fibers and keeps whatever headers the caller configured on it.
+  # --
+  # : (String, Hash[Symbol, untyped], ?on_data: Proc?) -> Faraday::Response
+  def request: (String, Hash[Symbol, untyped], ?on_data: Proc?) -> Faraday::Response
+
+  # --
+  # : (Integer, String) -> bot
+  def raise_api_error!: (Integer, String) -> bot
+end

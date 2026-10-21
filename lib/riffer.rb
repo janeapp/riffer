@@ -9,6 +9,7 @@ loader.inflector.inflect(
   "azure_open_ai" => "AzureOpenAI",
   "open_router" => "OpenRouter",
   "sse" => "SSE",
+  "http" => "HTTP",
 )
 # Test-framework wiring a consumer requires by hand; neither file defines the
 # constant its path implies, and both reference framework constants riffer
@@ -29,6 +30,21 @@ module Riffer
   class ArgumentError < ::ArgumentError; end
 
   class ValidationError < Error; end
+
+  # A provider answered with a non-success status, or sent an in-stream error
+  # event (+status+ is nil then). +body+ is the raw response text.
+  class APIError < Error
+    attr_reader :status #: Integer? # @dynamic status
+    attr_reader :body #: String? # @dynamic body
+
+    #--
+    #: (?String?, ?status: Integer?, ?body: String?) -> void
+    def initialize(message = nil, status: nil, body: nil)
+      super(message)
+      @status = status
+      @body = body
+    end
+  end
 
   # Rescue it in the tool to clean up; otherwise it becomes a
   # +:timeout_error+ response.

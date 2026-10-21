@@ -8,7 +8,6 @@ class Riffer::Mcp::Client
   #: (endpoint: String, ?headers: (Hash[String, String] | Proc), ?client: untyped?) -> void
   def initialize(endpoint:, headers: {}, client: nil)
     depends_on "mcp"
-    depends_on "faraday"
 
     @client = client || begin
       resolved_headers = Riffer::Helpers::CallOrValue.resolve(headers)
