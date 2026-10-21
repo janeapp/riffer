@@ -8,14 +8,20 @@ class Riffer::Providers::Anthropic < Riffer::Providers::AnthropicCompatible::Mes
     "anthropic"
   end
 
-  #--
-  #: () -> void
-  def initialize
-    super
-    depends_on "anthropic"
-  end
-
   private
+
+  #--
+  #: () -> untyped
+  def client
+    resolved = super
+    if defined?(::Anthropic::Client) && resolved.is_a?(::Anthropic::Client) # steep:ignore UnknownConstant
+      raise Riffer::ArgumentError,
+            "config.anthropic.client now takes a Riffer::Providers::Anthropic::Client; pass timeouts, retries " \
+            "and proxies through its connection: (see the Anthropic provider docs)"
+    end
+
+    resolved
+  end
 
   #--
   #: () -> untyped
@@ -24,279 +30,15 @@ class Riffer::Providers::Anthropic < Riffer::Providers::AnthropicCompatible::Mes
   end
 
   #--
-  #: () -> untyped
+  #: () -> Riffer::Providers::Anthropic::Client
   def build_client
-    # Never pass an explicit nil credential, so the SDK's own
-    # ANTHROPIC_API_KEY resolution stays reachable.
-    ::Anthropic::Client.new(**{ api_key: Riffer.config.anthropic.api_key }.compact)
-  end
-
-  #--
-  #: (Hash[Symbol, untyped]) -> untyped
-  def execute_generate(params)
-    client.messages.create(**params)
-  end
-
-  #--
-  #: (untyped) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage(response)
-    message = response #: Anthropic::Models::Message
-    build_token_usage(message.usage)
-  end
-
-  #--
-  #: (untyped) -> Riffer::Providers::FinishReason?
-  def extract_finish_reason(response)
-    message = response #: Anthropic::Models::Message
-    build_finish_reason(message.stop_reason)
-  end
-
-  #--
-  #: (untyped) -> Riffer::Providers::FinishReason?
-  def build_finish_reason(stop_reason)
-    return nil unless stop_reason
-
-    raw = stop_reason.to_s
-    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
-  end
-
-  #--
-  #: (untyped) -> Riffer::Providers::TokenUsage
-  def build_token_usage(usage)
-    cache_write = usage.cache_creation_input_tokens
-    cache_read = usage.cache_read_input_tokens
-
-    apply_pricing(
-      Riffer::Providers::TokenUsage.new(
-        # Anthropic's input_tokens excludes the cache buckets; TokenUsage's includes them.
-        input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
-        output_tokens: usage.output_tokens,
-        cache_write_tokens: cache_write,
-        cache_read_tokens: cache_read,
-      ),
-    )
-  end
-
-  #--
-  #: (untyped) -> String
-  def extract_content(response)
-    message = response #: Anthropic::Models::Message
-    (message.content || []).filter_map { |block| block.text if block.is_a?(::Anthropic::Models::TextBlock) }.join
-  end
-
-  #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
-    message = response #: Anthropic::Models::Message
-    content_blocks = message.content
-    return [] if content_blocks.nil? || content_blocks.empty?
-
-    tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
-
-    content_blocks.each do |block|
-      next unless block.is_a?(::Anthropic::Models::ToolUseBlock)
-
-      tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-        call_id: block.id,
-        name: decode_tool_name(block.name, tools: @current_tools),
-        arguments: block.input.to_json,
-      )
+    config = Riffer.config.anthropic
+    api_key = config.api_key || ENV.fetch("ANTHROPIC_API_KEY", nil)
+    unless api_key
+      raise Riffer::ArgumentError, "Anthropic requires an API key: set config.anthropic.api_key or ANTHROPIC_API_KEY"
     end
 
-    tool_calls
-  end
-
-  #--
-  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
-  def extract_reasoning(response)
-    message = response #: Anthropic::Models::Message
-    (message.content || []).filter_map { |block| build_reasoning_part(block) }
-  end
-
-  #--
-  #: (untyped) -> Riffer::Messages::Assistant::ReasoningPart?
-  def build_reasoning_part(block)
-    case block
-    when ::Anthropic::Models::ThinkingBlock
-      Riffer::Messages::Assistant::ReasoningPart.new(
-        type: :text,
-        text: block.thinking,
-        signature: block.signature,
-        format: REASONING_FORMAT,
-      )
-    when ::Anthropic::Models::RedactedThinkingBlock
-      Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: block.data, format: REASONING_FORMAT)
-    end
-  end
-
-  #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def execute_stream(params, yielder)
-    current_state = {
-      text: nil,
-      tool_call: nil,
-      web_search_index: nil,
-      web_search_json: nil,
-      web_search_query: nil,
-    } #: Hash[Symbol, untyped]
-
-    stream_completed = false
-
-    # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
-    # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
-    stream = client.messages.stream(
-      **params,
-      request_options: { extra_headers: { "accept-encoding" => "identity" } },
-    )
-
-    begin
-      stream.each do |event|
-        case event
-        when ::Anthropic::Models::RawContentBlockStartEvent
-          handle_raw_content_block_start(event, state: current_state)
-        when ::Anthropic::Models::RawContentBlockDeltaEvent
-          handle_raw_content_block_delta(event, state: current_state)
-        when ::Anthropic::Helpers::Streaming::TextEvent
-          handle_text_event(event, state: current_state, yielder: yielder)
-        when ::Anthropic::Helpers::Streaming::ThinkingEvent
-          yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
-        when ::Anthropic::Helpers::Streaming::InputJsonEvent
-          handle_input_json_event(event, state: current_state, yielder: yielder)
-        when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
-          case event.content_block
-          when ::Anthropic::Models::ToolUseBlock
-            handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
-          when ::Anthropic::Models::ThinkingBlock, ::Anthropic::Models::RedactedThinkingBlock
-            handle_content_block_stop_reasoning(event, yielder: yielder)
-          when ::Anthropic::Models::ServerToolUseBlock
-            handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder)
-          when ::Anthropic::Models::WebSearchToolResultBlock
-            handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder)
-          end
-        when ::Anthropic::Helpers::Streaming::MessageStopEvent
-          stream_completed = true
-          handle_message_stop(
-            event, state: current_state, accumulated_message: stream.accumulated_message, yielder: yielder,
-          )
-        end
-      end
-    ensure
-      # Anthropic SDK does not auto-close the underlying HTTP stream when
-      # iteration is interrupted (raise / fiber cancellation), so the SSE
-      # socket leaks until GC. close is idempotent and a no-op after EOF.
-      stream.close
-    end
-
-    return if stream_completed
-
-    raise Riffer::IncompleteStreamError, "Anthropic stream ended without a message_stop event"
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped]) -> void
-  def handle_raw_content_block_start(event, state:)
-    content_block = event.content_block
-    return unless content_block.type.to_s == "server_tool_use" && content_block.name.to_s == "web_search"
-
-    state[:web_search_index] = event.index
-    state[:web_search_json] = +""
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped]) -> void
-  def handle_raw_content_block_delta(event, state:)
-    return unless state[:web_search_index] == event.index
-
-    delta = event.delta
-    state[:web_search_json] << delta.partial_json if delta.respond_to?(:partial_json)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_text_event(event, state:, yielder:)
-    # Mutating append avoids O(n^2) copying across the response; the buffer
-    # reaches TextDone only at message stop, so no reader sees it mid-append.
-    state[:text] ||= +""
-    state[:text] << event.text
-    yielder << Riffer::StreamEvents::TextDelta.new(event.text)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_input_json_event(event, state:, yielder:)
-    # server_tool_use (web_search) input streams through the raw-event path
-    # (handle_raw_content_block_delta) and must not surface as tool-call deltas.
-    return if state[:web_search_json]
-
-    state[:tool_call] = { id: nil, name: nil, arguments: +"" } if state[:tool_call].nil?
-    state[:tool_call][:arguments] << event.partial_json
-    yielder << Riffer::StreamEvents::ToolCallDelta.new(
-      item_id: state[:tool_call][:id] || "pending",
-      name: state[:tool_call][:name],
-      arguments_delta: event.partial_json,
-    )
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_tool_use(event, state:, yielder:)
-    content_block = event.content_block
-    arguments = content_block.input.is_a?(String) ? content_block.input : content_block.input.to_json
-    yielder << Riffer::StreamEvents::ToolCallDone.new(
-      item_id: content_block.id,
-      call_id: content_block.id,
-      name: decode_tool_name(content_block.name, tools: @current_tools),
-      arguments: arguments,
-    )
-    state[:tool_call] = nil
-  end
-
-  # The SDK's accumulated block already carries the full thinking text and the
-  # signature from its trailing signature_delta.
-  #--
-  #: (untyped, yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_reasoning(event, yielder:)
-    part = build_reasoning_part(event.content_block) #: Riffer::Messages::Assistant::ReasoningPart
-    yielder << Riffer::StreamEvents::ReasoningDone.new(part)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_server_tool_use(_event, state:, yielder:)
-    return unless state[:web_search_json]
-
-    input = JSON.parse(state[:web_search_json], symbolize_names: true)
-    state[:web_search_query] = input[:query]
-    state[:web_search_index] = nil
-    state[:web_search_json] = nil
-    yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: input[:query])
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_web_search_result(event, state:, yielder:)
-    content_block = event.content_block
-    sources = (content_block.content || []).filter_map do |item|
-      next unless item.type.to_s == "web_search_result"
-
-      { title: item.title, url: item.url }
-    end
-
-    yielder << Riffer::StreamEvents::WebSearchDone.new(state[:web_search_query] || "", sources: sources)
-    state[:web_search_query] = nil
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
-  def handle_message_stop(_event, state:, accumulated_message:, yielder:)
-    yielder << Riffer::StreamEvents::TextDone.new(state[:text]) if state[:text]
-
-    message = accumulated_message #: Anthropic::Models::Message?
-    yield_finish_reason(yielder, build_finish_reason(message&.stop_reason))
-
-    usage = message&.usage
-    return unless usage
-
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
+    base_url = config.base_url || ENV.fetch("ANTHROPIC_BASE_URL", nil) || Client::DEFAULT_BASE_URL
+    Client.new(api_key: api_key, base_url: base_url)
   end
 end

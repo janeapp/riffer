@@ -18,7 +18,7 @@ end
 
 Providers take no constructor arguments — these settings are the only way to give a provider its credentials.
 
-Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key` / `.base_url`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
+Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key` / `.base_url`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key` / `.base_url`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
 
 ## Accessing Configuration
 
@@ -63,7 +63,7 @@ Every provider accepts a client instance or a `Proc` returning one:
 | -------------- | ------------------------------ | ------------------------------------------------------------- |
 | OpenAI         | `config.openai.client`         | `OpenAI::Client`                                              |
 | Azure OpenAI   | `config.azure_openai.client`   | `OpenAI::Client` (with the Azure endpoint as `base_url`)      |
-| Anthropic      | `config.anthropic.client`      | `Anthropic::Client`                                           |
+| Anthropic      | `config.anthropic.client`      | `Riffer::Providers::Anthropic::Client` (riffer-owned)         |
 | Amazon Bedrock | `config.amazon_bedrock.client` | `Aws::BedrockRuntime::Client`                                 |
 | Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below) |
 | OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)          |
@@ -93,9 +93,11 @@ A configured client always wins over configured credentials: once `config.<provi
 
 ### Falling through to the SDK
 
-A credential you leave unset in riffer is omitted from the default client rather than passed as `nil`, so each vendor SDK still applies its own resolution. `OPENAI_API_KEY` / `OPENAI_BASE_URL`, `ANTHROPIC_API_KEY`, and the AWS chains — region from `AWS_REGION` / `AWS_DEFAULT_REGION` / shared config, credentials from the environment, the shared credentials file, or an instance/task IAM role — all work with no riffer configuration at all.
+A credential you leave unset in riffer is omitted from the default client rather than passed as `nil`, so each vendor SDK still applies its own resolution. `OPENAI_API_KEY` / `OPENAI_BASE_URL` and the AWS chains — region from `AWS_REGION` / `AWS_DEFAULT_REGION` / shared config, credentials from the environment, the shared credentials file, or an instance/task IAM role — all work with no riffer configuration at all.
 
 Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
+
+The Anthropic provider uses no vendor SDK. Riffer reads `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` itself when `config.anthropic.api_key` / `.base_url` are unset, and raises `Riffer::ArgumentError` when no key is found. Its client, `Riffer::Providers::Anthropic::Client`, takes a `connection:` (see [Connections](#connections) and [Anthropic](providers/ANTHROPIC.md)).
 
 The Gemini provider has no vendor SDK, so riffer ships its own transport, `Riffer::Providers::Gemini::Client`, built on `Riffer::HTTP::Client` (see [Connections](#connections)). Its key falls back to `GEMINI_API_KEY` when `config.gemini.api_key` is unset, and raises `Riffer::ArgumentError` when neither is set. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 

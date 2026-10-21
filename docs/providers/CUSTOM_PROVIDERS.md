@@ -169,6 +169,41 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+## Anthropic-Compatible Endpoints
+
+For a service that speaks the Anthropic Messages API, subclass `Riffer::Providers::AnthropicCompatible::MessagesAPI` instead of `Base`. It brings the request building, response parsing and streaming of the Anthropic provider; you supply the client. An endpoint that takes Anthropic's `x-api-key` header can use `Riffer::Providers::Anthropic::Client` with its own `base_url`. For other auth, subclass `Riffer::HTTP::Client`:
+
+```ruby
+class AcmeClaude < Riffer::Providers::AnthropicCompatible::MessagesAPI
+  class Client < Riffer::HTTP::Client
+    def initialize(api_key:, connection: nil)
+      super(connection: connection)
+      @api_key = api_key
+    end
+
+    private
+
+    def url_for(path) = "https://llm.acme.example/#{path}"
+    def headers = { "authorization" => "Bearer #{@api_key}" }
+    def error_label = "Acme"
+  end
+
+  private
+
+  def build_client
+    Client.new(api_key: ENV.fetch("ACME_API_KEY"))
+  end
+
+  # Only when the endpoint differs from POST v1/messages with the standard body:
+  def messages_path(model, stream:) = "models/#{model}:#{stream ? 'streamRawPredict' : 'rawPredict'}"
+  def request_body(params, stream:) = { anthropic_version: "acme-2025-01-01", **super.except(:model) }
+end
+
+Riffer::Providers::Repository.register(:acme) { AcmeClaude }
+```
+
+`messages_path` returns the path relative to the client's base URL; `request_body` returns the JSON body actually sent, and by default adds `stream: true` when streaming. Read credentials from your own configuration or environment in `build_client`, never from `ANTHROPIC_API_KEY`, so an Anthropic key is never sent to another vendor.
+
 ## Tool Support
 
 Tools are converted in `build_request_params` and passed through to both `execute_generate` and `execute_stream`:

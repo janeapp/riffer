@@ -3,6 +3,8 @@
 class Riffer::Config::Anthropic
   attr_reader api_key: String?
 
+  attr_reader base_url: String?
+
   attr_accessor client: untyped
 
   # --
@@ -12,4 +14,8 @@ class Riffer::Config::Anthropic
   # --
   # : (untyped) -> void
   def api_key=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def base_url=: (untyped) -> void
 end

@@ -9,7 +9,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | OpenAI         | `openai`         | `openai`                 |
 | Azure OpenAI   | `azure_openai`   | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
-| Anthropic      | `anthropic`      | `anthropic`              |
+| Anthropic      | `anthropic`      | None                     |
 | Gemini         | `gemini`         | None                     |
 | OpenRouter     | `openrouter`     | `openai`                 |
 | Mock           | `mock`           | None                     |
@@ -38,7 +38,7 @@ Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes
 | -------------- | ----------------------------------------------------------------- |
 | OpenAI         | `config.openai.api_key`, `config.openai.base_url`                 |
 | Azure OpenAI   | `config.azure_openai.api_key`, `config.azure_openai.endpoint`     |
-| Anthropic      | `config.anthropic.api_key`                                        |
+| Anthropic      | `config.anthropic.api_key`, `config.anthropic.base_url`           |
 | Amazon Bedrock | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
 | Gemini         | `config.gemini.api_key`, `config.gemini.base_url`                 |
 | OpenRouter     | `config.openrouter.api_key`                                       |

@@ -20,6 +20,47 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # : (Symbol) -> Hash[Symbol, untyped]
   def default_reasoning_options: (Symbol) -> Hash[Symbol, untyped]
 
+  # Relative to the client's base URL.
+  # --
+  # : (String?, stream: bool) -> String
+  def messages_path: (String?, stream: bool) -> String
+
+  # --
+  # : (Hash[Symbol, untyped], stream: bool) -> Hash[Symbol, untyped]
+  def request_body: (Hash[Symbol, untyped], stream: bool) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> String
+  def extract_content: (Hash[Symbol, untyped]) -> String
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
+  def content_blocks: (Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
+
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

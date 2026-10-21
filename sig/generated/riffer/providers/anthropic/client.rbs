@@ -1,0 +1,36 @@
+# Generated from lib/riffer/providers/anthropic/client.rb with RBS::Inline
+
+class Riffer::Providers::Anthropic::Client < Riffer::HTTP::Client
+  @api_key: String
+
+  @base_url: String
+
+  @anthropic_version: String
+
+  DEFAULT_BASE_URL: String
+
+  # Version 2026-10-21 rejects temperature, top_p and top_k.
+  DEFAULT_ANTHROPIC_VERSION: String
+
+  # --
+  # : (api_key: String, ?base_url: String, ?anthropic_version: String, ?connection: Faraday::Connection?) -> void
+  def initialize: (api_key: String, ?base_url: String, ?anthropic_version: String, ?connection: Faraday::Connection?) -> void
+
+  private
+
+  # --
+  # : (String) -> String
+  def url_for: (String) -> String
+
+  # --
+  # : () -> Hash[String, String]
+  def headers: () -> Hash[String, String]
+
+  # --
+  # : () -> String
+  def error_label: () -> String
+
+  # --
+  # : (Hash[Symbol, untyped], String) -> String
+  def error_message: (Hash[Symbol, untyped], String) -> String
+end
