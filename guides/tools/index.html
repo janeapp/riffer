@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.53.0</span>
+            <span class="version">v0.54.0</span>
           </div>
         </nav>
       </div>
@@ -280,7 +280,8 @@
 
 <ul>
   <li><code>description</code> - Human-readable description for the LLM</li>
-  <li><code>enum</code> - Array of allowed values</li>
+  <li><code>enum</code> - Array of allowed values (for the innermost items of an <code>Array</code> with <code>of:</code>)</li>
+  <li><code>format</code> - String format such as <code>"date"</code> or <code>"email"</code> (for the innermost <code>String</code> items of an <code>Array</code>; see <a href="/guides/agents/#formats">Formats</a>)</li>
 </ul>
 
 <h3 id="optional">optional</h3>
@@ -298,7 +299,8 @@
 <ul>
   <li><code>description</code> - Human-readable description</li>
   <li><code>default</code> - Default value when not provided</li>
-  <li><code>enum</code> - Array of allowed values</li>
+  <li><code>enum</code> - Array of allowed values (for the innermost items of an <code>Array</code> with <code>of:</code>)</li>
+  <li><code>format</code> - String format such as <code>"date"</code> or <code>"email"</code> (for the innermost <code>String</code> items of an <code>Array</code>; see <a href="/guides/agents/#formats">Formats</a>)</li>
 </ul>
 
 <h3 id="supported-types">Supported Types</h3>
@@ -339,6 +341,10 @@
       <td><code>Hash</code></td>
       <td><code>object</code></td>
     </tr>
+    <tr>
+      <td><code>Riffer::Params::AnyOf</code></td>
+      <td><code>anyOf</code> of objects</td>
+    </tr>
   </tbody>
 </table>
 
@@ -348,7 +354,7 @@
 
 <h3 id="nested-parameters">Nested Parameters</h3>
 
-<p>Tool params support the same nested DSL as structured output — nested objects (<code>Hash</code> with block), typed arrays (<code>Array, of:</code>), and arrays of objects (<code>Array</code> with block). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
+<p>Tool params support the same nested DSL as structured output — nested objects (<code>Hash</code> with block), typed arrays (<code>Array, of:</code>), arrays of arrays (<code>Array, of: [Integer]</code>), arrays of objects (<code>Array</code> with block), and either/or shapes (<code>Riffer::Params::AnyOf</code> with <code>variant</code> blocks). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateOrderTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
   <span class="n">description</span> <span class="s2">"Creates an order"</span>

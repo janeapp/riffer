@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.53.0</span>
+            <span class="version">v0.54.0</span>
           </div>
         </nav>
       </div>
@@ -398,7 +398,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>With <code>strategy: :prompted</code>, the provider never receives its native structured-output field. Instead, an instruction carrying the JSON Schema is appended to the system instructions on every request of the run (it is not stored in <code>session.messages</code>), and the reply is parsed and validated exactly as above: <code>response.content</code> is the reply’s JSON text, <code>response.structured_output</code> holds the validated object, and a reply that fails parsing or validation ends with <code>:invalid_structured_output</code>. Because nothing forces the model to comply, expect more <code>:invalid_structured_output</code> outcomes than with the native strategy.</p>
+<p>With <code>strategy: :prompted</code>, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in <code>session.messages</code>, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (<code>"&lt;string&gt;"</code>, enum values as <code>"a | b"</code>, an <code>AnyOf</code> field as its first variant), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: <code>response.content</code> is the reply’s JSON text, <code>response.structured_output</code> holds the validated object, and a reply that fails parsing or validation ends with <code>:invalid_structured_output</code>. Because nothing forces the model to comply, expect more <code>:invalid_structured_output</code> outcomes than with the native strategy.</p>
 
 <table>
   <thead>
@@ -414,7 +414,7 @@
     </tr>
     <tr>
       <td><code>:prompted</code></td>
-      <td>Schema sent in the system prompt; experimental, may change</td>
+      <td>Schema appended to each user message; experimental, may change</td>
     </tr>
   </tbody>
 </table>
@@ -447,7 +447,43 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Only primitive types are allowed with <code>of:</code>: <code>String</code>, <code>Integer</code>, <code>Float</code>, <code>TrueClass</code>, <code>FalseClass</code>.</p>
+<p><code>of:</code> takes a primitive type: <code>String</code>, <code>Integer</code>, <code>Float</code>, <code>Riffer::Params::Boolean</code>, <code>TrueClass</code>, <code>FalseClass</code>.</p>
+
+<p>Add <code>enum:</code> to limit each item to a list of values:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:tags</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="sx">%w[urgent billing technical]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>An item outside the list fails validation with its index: <code>tags[1] must be one of: urgent, billing, technical</code>.</p>
+
+<p>For an array of arrays, put the type in brackets. Each pair of brackets adds a level, and <code>enum:</code> and <code>format:</code> apply to the innermost items:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:rows</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="p">[</span><span class="no">Integer</span><span class="p">],</span> <span class="ss">description: </span><span class="s2">"Seat numbers, one array per row"</span>
+  <span class="n">required</span> <span class="ss">:board</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="p">[</span><span class="no">String</span><span class="p">],</span> <span class="ss">enum: </span><span class="sx">%w[x o]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>A row that isn’t an array fails validation with its index: <code>rows[1] must be an array</code>.</p>
+
+<h4 id="formats">Formats</h4>
+
+<p>Use <code>format:</code> on a <code>String</code>, or on an <code>Array</code> whose innermost type is <code>String</code>, to require a standard string format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:born_on</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"date"</span>
+  <span class="n">optional</span> <span class="ss">:email</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"email"</span>
+  <span class="n">required</span> <span class="ss">:visit_ids</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"uuid"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Supported formats: <code>date-time</code>, <code>time</code>, <code>date</code>, <code>duration</code>, <code>email</code>, <code>hostname</code>, <code>ipv4</code>, <code>ipv6</code>, <code>uuid</code>. Dates and times use RFC 3339 syntax, and a <code>time</code> may leave out its UTC offset. <code>email</code> and <code>hostname</code> are checked loosely, rejecting only values that are clearly not an address or a host name.</p>
+
+<p>A value that doesn’t match fails validation, with its index on an array: <code>born_on must be a valid date</code>, <code>visit_ids[1] must be a valid uuid</code>. Values stay strings.</p>
+
+<p>A model that must match a format writes a matching value even when it has none, so it may invent an email. Make such a field <code>optional</code> so the model can return <code>null</code>.</p>
 
 <h4 id="arrays-of-objects">Arrays of Objects</h4>
 
@@ -481,9 +517,31 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
+<h4 id="eitheror-shapes">Either/Or Shapes</h4>
+
+<p>Use <code>Riffer::Params::AnyOf</code> when a field must be one of several object shapes. Each <code>variant</code> block defines one shape, the same way a <code>Hash</code> block does:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:result</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="o">::</span><span class="no">AnyOf</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The address, or why none was found"</span> <span class="k">do</span>
+    <span class="n">variant</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Street address"</span>
+      <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"City"</span>
+    <span class="k">end</span>
+    <span class="n">variant</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:error_code</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="sx">%w[no_address multiple_addresses]</span>
+      <span class="n">required</span> <span class="ss">:error_message</span><span class="p">,</span> <span class="no">String</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The schema sends the field as <code>anyOf</code>, with one object per variant. An answer must match one variant completely: every required field of that variant, and no field from outside it. Variants are tried in order and the first match is returned. When none match, the error lists each variant’s problems: <code>result must match one of the variants: variant 1 (street is required, city is required), variant 2 (error_code is required, error_message is required)</code>.</p>
+
+<p>An optional <code>AnyOf</code> field can also be <code>null</code>.</p>
+
 <h4 id="limitations">Limitations</h4>
 
-<p>A <code>Hash</code> param requires a block, and an <code>Array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code>) also raises <code>Riffer::ArgumentError</code>.</p>
+<p>A <code>Hash</code> param requires a block, and an <code>Array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code> or <code>of: [Hash]</code>), or with more than one type (<code>of: [Integer, String]</code>), also raises <code>Riffer::ArgumentError</code>. An <code>AnyOf</code> param requires a block with at least two <code>variant</code>s, and can’t be used with <code>of:</code> or <code>enum:</code>. Using <code>enum:</code> on a <code>Hash</code>, or on an <code>Array</code> without <code>of:</code>, also raises <code>Riffer::ArgumentError</code>. So does <code>format:</code> with an unsupported format, on a type other than <code>String</code> or an <code>Array</code> whose innermost type is <code>String</code>, or together with <code>enum:</code>.</p>
 
 <p>Structured output is not compatible with streaming — calling <code>stream</code> on an agent with structured output configured raises <code>Riffer::ArgumentError</code>.</p>
 
