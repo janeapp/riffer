@@ -70,6 +70,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def build_signature_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
 
+  # Distinct from GoogleCloud's: the Developer API and Agent Platform each
+  # reject the other's signatures.
+  # --
+  # : () -> String
+  def reasoning_format: () -> String
+
   # Gemini's own call ids are too short to stay unique across a session, so
   # riffer makes its own and appends Gemini's, which gemini_call_id reads back
   # on replay. A signed call's id comes from its signature, so

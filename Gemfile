@@ -6,6 +6,7 @@ gemspec
 gem "async", "~> 2.46"
 gem "aws-sdk-bedrockruntime", "~> 1.85"
 gem "dotenv"
+gem "googleauth", "~> 1.17"
 gem "guard"
 gem "guard-shell"
 gem "io-event", "< 1.23"

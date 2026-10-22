@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 22 Oct 2026 20:12:29 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"Hello! How can I help you today?\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-22T20:12:28.665686Z\",\"responseId\": \"LG7aatbQKN-K9LsPt_yM4Ao\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a18Y2Dpva2wxCtQDAplm2o3/Ry7Y4L3uhWLvPKEcaXLLVUN1O93Y5iuFv1ps3HFQ6B/CNj4RloiXobEKIHQ7TsSUBh0iye+1DZvotRV24uywmy6KLlw9x1o=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 2,\"candidatesTokenCount\":
+        9,\"totalTokenCount\": 11,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 2}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 9}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-22T20:12:28.665686Z\",\"responseId\": \"LG7aatbQKN-K9LsPt_yM4Ao\"}\r\n\r\n"
+  recorded_at: Thu, 22 Oct 2026 20:12:29 GMT
+recorded_with: VCR 6.4.0

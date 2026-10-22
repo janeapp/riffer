@@ -8,7 +8,8 @@ describe Riffer::Config do
     it "initializes every section" do
       config = Riffer::Config.new
       sections = %i[
-        amazon_bedrock anthropic azure_openai gemini openai openrouter evals mcp skills tracing files pricing
+        amazon_bedrock anthropic azure_openai gemini google_cloud openai openrouter evals mcp skills tracing files
+        pricing
       ]
 
       expect(sections.map { |section| config.public_send(section).class }).must_equal [
@@ -16,6 +17,7 @@ describe Riffer::Config do
         Riffer::Config::Anthropic,
         Riffer::Config::AzureOpenAI,
         Riffer::Config::Gemini,
+        Riffer::Config::GoogleCloud,
         Riffer::Config::OpenAI,
         Riffer::Config::OpenRouter,
         Riffer::Config::Evals,
