@@ -36,7 +36,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Thu, 22 Oct 2026 19:32:37 GMT
+      - Thu, 22 Oct 2026 23:14:54 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,31 +46,31 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=871
+      - gfet4t7; dur=544
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
-        {\"name\": \"get_weather\",\"args\": {\"city\": \"Toronto\"},\"id\": \"call_79386\"},\"thoughtSignature\":
-        \"EmAKXgFpFH0TyGS5Ga8bEzgoIypcunBvSLIUrnIK8+Lzm0wPrIhajR8aphe0kTUepKlheD3LMbjcXCmF/ZgZm/b+TNPQv1PGc2ozrlzW40tdtJ0lJfuqmd+X5ta9QfNrGZ4=\"}],\"role\":
+        {\"name\": \"get_weather\",\"args\": {\"city\": \"Toronto\"},\"id\": \"call_312454\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TJNEJglJrFWEa432ynCXuJlVcMM0eKsU6xS5wOssEqrN359YJmEJKVLwi55dE5Lv/P0Qc/GTLjun9AL7p74D/4TIyO9SsfRdwVJ6o+6Y7BPoHPar5WKjrbY0=\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 60,\"candidatesTokenCount\":
         16,\"totalTokenCount\": 76,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         60}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"1WTaav6nCPCf_uMP0OTnsAo\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        \"7pjaavXFE-aez7IP0NLewAU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 60,\"candidatesTokenCount\":
         16,\"totalTokenCount\": 76,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         60}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"1WTaav6nCPCf_uMP0OTnsAo\"}\r\n\r\n"
-  recorded_at: Thu, 22 Oct 2026 19:32:37 GMT
+        \"7pjaavXFE-aez7IP0NLewAU\"}\r\n\r\n"
+  recorded_at: Thu, 22 Oct 2026 23:14:54 GMT
 - request:
     method: post
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TyGS5Ga8bEzgoIypcunBvSLIUrnIK8+Lzm0wPrIhajR8aphe0kTUepKlheD3LMbjcXCmF/ZgZm/b+TNPQv1PGc2ozrlzW40tdtJ0lJfuqmd+X5ta9QfNrGZ4="}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"15
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_312454","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TJNEJglJrFWEa432ynCXuJlVcMM0eKsU6xS5wOssEqrN359YJmEJKVLwi55dE5Lv/P0Qc/GTLjun9AL7p74D/4TIyO9SsfRdwVJ6o+6Y7BPoHPar5WKjrbY0="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_312454","name":"get_weather","response":{"result":"15
         degrees Celsius and sunny."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
@@ -101,7 +101,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Thu, 22 Oct 2026 19:32:38 GMT
+      - Thu, 22 Oct 2026 23:14:55 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -111,7 +111,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=436
+      - gfet4t7; dur=524
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -120,17 +120,17 @@ http_interactions:
         weather\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         96,\"candidatesTokenCount\": 2,\"totalTokenCount\": 98,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 96}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"1mTaaqWoCrWs_PUPgev_iAo\"}\r\n\r\ndata:
+        \"gemini-3.5-flash-lite\",\"responseId\": \"75jaau2cAf2yqtsP9JG5oA4\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" in Toronto is currently
         15 degrees Celsius and sunny.\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
         {\"promptTokenCount\": 96,\"candidatesTokenCount\": 14,\"totalTokenCount\":
         110,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 96}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"1mTaaqWoCrWs_PUPgev_iAo\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TKQ4ly8ElS10gHpV4rgSe+KDAN1f1toJRP5sTio3qaFS5WeVE4P21UKjSRnViszuejHbD3lRGfwvjEvGdY84ccqPPRhZRRg0bnjpXd80D04roT++RQ8hFMXc=\"}],\"role\":
+        \"75jaau2cAf2yqtsP9JG5oA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TPDVcnmyL5hYExfiqAkob3PAqqMg1voKdJlACYWpUAfN/yDOrQMo7bsDPumieXqGEZS29/2qcgBAJKoxdW/NGGRjBxCoE2iAzrxs6rbwm4ECRSK8ItPgs9WQ=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         96,\"candidatesTokenCount\": 14,\"totalTokenCount\": 110,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 96}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"1mTaaqWoCrWs_PUPgev_iAo\"}\r\n\r\n"
-  recorded_at: Thu, 22 Oct 2026 19:32:38 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"75jaau2cAf2yqtsP9JG5oA4\"}\r\n\r\n"
+  recorded_at: Thu, 22 Oct 2026 23:14:55 GMT
 recorded_with: VCR 6.4.0

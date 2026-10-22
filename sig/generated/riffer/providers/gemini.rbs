@@ -5,6 +5,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   REASONING_FORMAT: String
 
+  GEMINI_CALL_ID_PATTERN: Regexp
+
   FINISH_REASONS: Hash[String, Symbol]
 
   # --
@@ -63,11 +65,18 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def build_signature_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
 
   # Gemini's own call ids are too short to stay unique across a session, so
-  # riffer makes its own. A signed call's id comes from its signature, so
+  # riffer makes its own and appends Gemini's, which gemini_call_id reads back
+  # on replay. A signed call's id comes from its signature, so
   # extract_tool_calls and extract_reasoning agree on it.
   # --
   # : (Hash[Symbol, untyped]) -> String
   def tool_call_id: (Hash[Symbol, untyped]) -> String
+
+  # Gemini matches each functionResponse to its functionCall by this id, which
+  # parallel calls to the same function need.
+  # --
+  # : (String) -> String?
+  def gemini_call_id: (String) -> String?
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?

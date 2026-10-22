@@ -34,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Thu, 22 Oct 2026 19:32:36 GMT
+      - Thu, 22 Oct 2026 23:14:56 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=482
+      - gfet4t7; dur=653
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -63,9 +63,9 @@ http_interactions:
                       "args": {
                         "city": "Toronto"
                       },
-                      "id": "call_89933"
+                      "id": "call_172942"
                     },
-                    "thoughtSignature": "EmAKXgFpFH0TRoVTnw4laqvJRL3yBO1TJazZQnY6RkWey4OEfZ+7FBnDuZu4rvOEt/9Yvvri7gIDMKv8FKgeb4DMqQbQ6m0qFPfAIlBxhhV6vXvqXF7b0VlCmuCM1ZX+SIU="
+                    "thoughtSignature": "EmAKXgFpFH0TtjUn0TriRQNSbEkEBLJDKT1q34LOdaXKY7CQNKjqnjFhOZIUHC6MFcyl6HT5Nn2H6SsNYeWxmgfZ+4iGXlWJKk0wjihKzMMsL0i/3lmExvZOi+32ONoFU5A="
                   }
                 ],
                 "role": "model"
@@ -88,16 +88,16 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "02Taao_XJ9-c_uMPjfiE-Qg"
+          "responseId": "75jaauuDLd2Z_uMPmMuTiQ0"
         }
-  recorded_at: Thu, 22 Oct 2026 19:32:36 GMT
+  recorded_at: Thu, 22 Oct 2026 23:14:56 GMT
 - request:
     method: post
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TRoVTnw4laqvJRL3yBO1TJazZQnY6RkWey4OEfZ+7FBnDuZu4rvOEt/9Yvvri7gIDMKv8FKgeb4DMqQbQ6m0qFPfAIlBxhhV6vXvqXF7b0VlCmuCM1ZX+SIU="}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"15
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_172942","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TtjUn0TriRQNSbEkEBLJDKT1q34LOdaXKY7CQNKjqnjFhOZIUHC6MFcyl6HT5Nn2H6SsNYeWxmgfZ+4iGXlWJKk0wjihKzMMsL0i/3lmExvZOi+32ONoFU5A="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_172942","name":"get_weather","response":{"result":"15
         degrees Celsius and sunny."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
@@ -126,7 +126,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Thu, 22 Oct 2026 19:32:36 GMT
+      - Thu, 22 Oct 2026 23:14:56 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -136,7 +136,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=790
+      - gfet4t7; dur=447
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -151,7 +151,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "The weather in Toronto is currently 15 degrees Celsius and sunny.",
-                    "thoughtSignature": "EmAKXgFpFH0T1l2dGbHCHhrQ6mtkyh0MpyoxmyyeqX8sfspJueb9VvSU4RtG5PZWklNjtXfgl4uEKpfuZGc+WhFx5nkmtQI8hyeaQOFPZ6L++il8DXKXaw5oU+eq+TF5VGo="
+                    "thoughtSignature": "EmAKXgFpFH0TOa7h32E22uBwV57LDlZab8tIjtmPSz58tvCHJjTbaR0avCYgqMlKRI/sRujy54Qky3/gpNNuz526tnnJJq222Ktx4cvCiX3cdBPBPMGv1NtbisajH+geDlg="
                   }
                 ],
                 "role": "model"
@@ -173,7 +173,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "1GTaarfUDYK9qtsP76_J4As"
+          "responseId": "8Jjaava8G9fg_uMPrpKO4A8"
         }
-  recorded_at: Thu, 22 Oct 2026 19:32:36 GMT
+  recorded_at: Thu, 22 Oct 2026 23:14:56 GMT
 recorded_with: VCR 6.4.0
