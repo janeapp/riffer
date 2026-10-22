@@ -27,11 +27,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Option       | Default                                     | Description                                                        |
-| ------------ | ------------------------------------------- | ------------------------------------------------------------------ |
-| `api_key`    | required                                    | Sent as the `x-goog-api-key` header                                |
-| `base_url`   | `https://generativelanguage.googleapis.com` | API origin                                                         |
-| `connection` | riffer default: 10s open / 600s read        | Your own `Faraday::Connection`; see [Connections][connections]     |
+| Option       | Default                                     | Description                                                    |
+| ------------ | ------------------------------------------- | -------------------------------------------------------------- |
+| `api_key`    | required                                    | Sent as the `x-goog-api-key` header                            |
+| `base_url`   | `https://generativelanguage.googleapis.com` | API origin                                                     |
+| `connection` | riffer default: 10s open / 600s read        | Your own `Faraday::Connection`; see [Connections][connections] |
 
 Timeouts, retries, proxies and errors are covered in [Configuration → Connections][connections].
 
@@ -156,6 +156,8 @@ response = provider.generate_text(
   tools: [WeatherTool]
 )
 ```
+
+Gemini's own call ids are short, so riffer gives each tool call its own `call_id` (`gemini_call_<hex>`) and appends Gemini's id when there is one. On later turns riffer sends that id back on the function call and its result, so Gemini can match results to parallel calls of the same tool.
 
 ### Thought Signatures
 

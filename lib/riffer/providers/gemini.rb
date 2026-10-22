@@ -10,6 +10,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   REASONING_FORMAT = "gemini-generate-content-v1" #: String
 
+  GEMINI_CALL_ID_PATTERN = /\Agemini_call_\h{24}_(.+)\z/ #: Regexp
+
   FINISH_REASONS = {
     "STOP" => :stop,
     "MAX_TOKENS" => :length,
@@ -173,14 +175,24 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   # Gemini's own call ids are too short to stay unique across a session, so
-  # riffer makes its own. A signed call's id comes from its signature, so
+  # riffer makes its own and appends Gemini's, which gemini_call_id reads back
+  # on replay. A signed call's id comes from its signature, so
   # extract_tool_calls and extract_reasoning agree on it.
   #--
   #: (Hash[Symbol, untyped]) -> String
   def tool_call_id(part)
     signature = part[:thoughtSignature]
     suffix = signature ? Digest::SHA256.hexdigest(signature)[0, 24] : SecureRandom.hex(12)
-    "gemini_call_#{suffix}"
+    gemini_id = part.dig(:functionCall, :id)
+    gemini_id ? "gemini_call_#{suffix}_#{gemini_id}" : "gemini_call_#{suffix}"
+  end
+
+  # Gemini matches each functionResponse to its functionCall by this id, which
+  # parallel calls to the same function need.
+  #--
+  #: (String) -> String?
+  def gemini_call_id(call_id)
+    call_id[GEMINI_CALL_ID_PATTERN, 1]
   end
 
   #--
@@ -303,9 +315,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           role: "user",
           parts: [{
             functionResponse: {
+              id: gemini_call_id(message.tool_call_id),
               name: message.name,
               response: { result: message.content },
-            },
+            }.compact,
           }],
         }
       end
@@ -331,9 +344,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     message.tool_calls.each do |tc|
       parts << {
         functionCall: {
+          id: gemini_call_id(tc.call_id),
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
-        },
+        }.compact,
         thoughtSignature: call_signatures[tc.call_id],
       }.compact
     end

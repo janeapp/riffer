@@ -942,10 +942,41 @@ describe Riffer::Providers::Gemini do
         ]
       end
 
-      it "makes its own call ids rather than using Gemini's" do
+      it "makes its own call ids and keeps Gemini's on the end" do
         call_ids = provider.send(:extract_tool_calls, signed_response).map(&:call_id)
 
-        expect(call_ids).must_be(:all?) { |id| id.match?(/\Agemini_call_\h{24}\z/) }
+        expect(call_ids[0]).must_match(/\Agemini_call_\h{24}_call_1\z/)
+        expect(call_ids[1]).must_match(/\Agemini_call_\h{24}_call_2\z/)
+      end
+
+      it "makes its own call id when Gemini sends none" do
+        response = { candidates: [{ content: { parts: [{ functionCall: { name: "get_weather", args: {} } }] } }] }
+
+        call_id = provider.send(:extract_tool_calls, response).first.call_id
+
+        expect(call_id).must_match(/\Agemini_call_\h{24}\z/)
+      end
+
+      it "sends Gemini's call id back on each function response" do
+        tool_calls = provider.send(:extract_tool_calls, signed_response)
+
+        contents = provider.send(:partition_messages, tool_calls.map { |tc| tool_result(tc) })[:contents]
+
+        expect(contents.map { |content| content[:parts].first[:functionResponse][:id] }).must_equal %w[call_1 call_2]
+      end
+
+      it "sends no call id for tool calls riffer did not get from Gemini" do
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "toolu_123",
+          name: "get_weather",
+          arguments: "{}",
+        )
+        message = Riffer::Messages::Assistant.new("", tool_calls: [tool_call])
+
+        contents = provider.send(:partition_messages, [message, tool_result(tool_call)])[:contents]
+
+        expect(contents[0][:parts].first[:functionCall]).wont_include :id
+        expect(contents[1][:parts].first[:functionResponse]).wont_include :id
       end
 
       it "puts each signature back on the part it came on and skips other formats" do
@@ -964,8 +995,11 @@ describe Riffer::Providers::Gemini do
 
         expect(result[:parts]).must_equal [
           { text: "Checking.", thoughtSignature: "text-sig" },
-          { functionCall: { name: "get_weather", args: { "city" => "Toronto" } }, thoughtSignature: "call-sig" },
-          { functionCall: { name: "get_weather", args: { "city" => "Paris" } } },
+          {
+            functionCall: { id: "call_1", name: "get_weather", args: { "city" => "Toronto" } },
+            thoughtSignature: "call-sig",
+          },
+          { functionCall: { id: "call_2", name: "get_weather", args: { "city" => "Paris" } } },
         ]
       end
 
@@ -980,6 +1014,26 @@ describe Riffer::Providers::Gemini do
           second = provider.generate_text(messages: history, model: model, tools: [weather_tool])
 
           expect(second.content).must_include "15"
+        end
+      end
+
+      it "matches each result to its call across a parallel tool call round trip" do
+        VCR.use_cassette("Riffer_Providers_Gemini/thought_signatures/_generate_text/parallel_tool_call_round_trip") do
+          question = Riffer::Messages::User.new("What is the weather in Toronto and in Paris?")
+          temperatures = { "Toronto" => "15", "Paris" => "22" }
+
+          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
+
+          expect(first.tool_calls.size).must_equal 2
+
+          results = first.tool_calls.map do |tc|
+            temperature = temperatures.fetch(JSON.parse(tc.arguments)["city"])
+            Riffer::Messages::Tool.new("#{temperature} degrees Celsius.", tool_call_id: tc.call_id, name: tc.name)
+          end
+          second = provider.generate_text(messages: [question, first, *results], model: model, tools: [weather_tool])
+
+          expect(second.content).must_include "15"
+          expect(second.content).must_include "22"
         end
       end
 
