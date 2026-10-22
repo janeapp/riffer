@@ -19,12 +19,10 @@ class Riffer::Wire::SSE
   def feed(chunk, &)
     @buffer << chunk
 
-    while (match = @buffer.match(/\r\n|\r|\n/))
-      line_end = match.end(0) #: Integer
-      # A trailing CR may be the first half of a CRLF split across chunks.
-      break if match[0] == "\r" && line_end == @buffer.length
-
-      line = @buffer.slice!(0, line_end).to_s.chomp
+    # Lines end in LF or CRLF. The SSE spec also allows a bare CR, which no
+    # supported provider sends.
+    while (line_end = @buffer.index("\n"))
+      line = @buffer.slice!(0, line_end + 1).to_s.chomp
       process_line(line, &)
     end
   end

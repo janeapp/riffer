@@ -27,10 +27,14 @@ describe Riffer::Wire::SSE do
     expect(decode("data: line one\ndata: line two\n\n")).must_equal [["line one\nline two", nil]]
   end
 
-  it "accepts CRLF and bare CR line endings" do
-    events = decode("data: crlf\r\n\r\ndata: cr\r\rdata: lf\n\n")
+  it "accepts CRLF and LF line endings" do
+    events = decode("data: crlf\r\n\r\ndata: lf\n\n")
 
-    expect(events).must_equal [["crlf", nil], ["cr", nil], ["lf", nil]]
+    expect(events).must_equal [["crlf", nil], ["lf", nil]]
+  end
+
+  it "does not treat a bare CR as a line ending" do
+    expect(decode("data: cr\r\r")).must_be_empty
   end
 
   it "reassembles an event split across chunks" do
