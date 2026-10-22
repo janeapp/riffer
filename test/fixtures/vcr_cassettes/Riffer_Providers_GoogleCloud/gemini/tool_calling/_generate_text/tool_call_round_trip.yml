@@ -1,0 +1,146 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Thu, 22 Oct 2026 20:12:30 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_955485"
+                    },
+                    "thoughtSignature": "AY89a1/M9JcA8XtKiaCnmzf91QkWdv0nLswrngonZG3JBXE7KTlC9sqAJ/B4H0J301Jb7QXPjRptaRhPo9XtZnRYN06DfSLKAgBVdUzcZ51ZSL697GLXlHsetLQ="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 35,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 51,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 35
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 16
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-22T20:12:29.562107Z",
+          "responseId": "LW7aarunIvur9LsPjryQ-As"
+        }
+  recorded_at: Thu, 22 Oct 2026 20:12:30 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a1/M9JcA8XtKiaCnmzf91QkWdv0nLswrngonZG3JBXE7KTlC9sqAJ/B4H0J301Jb7QXPjRptaRhPo9XtZnRYN06DfSLKAgBVdUzcZ51ZSL697GLXlHsetLQ="}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"The
+        weather in Toronto is 15 degrees Celsius."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Thu, 22 Oct 2026 20:12:31 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJjYW5kaWRhdGVzIjogWwogICAgewogICAgICAiY29udGVudCI6IHsKICAgICAgICAicm9sZSI6ICJtb2RlbCIsCiAgICAgICAgInBhcnRzIjogWwogICAgICAgICAgewogICAgICAgICAgICAidGV4dCI6ICJUaGUgd2VhdGhlciBpbiBUb3JvbnRvIGlzIGN1cnJlbnRseSAxNcKwQy4iLAogICAgICAgICAgICAidGhvdWdodFNpZ25hdHVyZSI6ICJBWTg5YTErM0V0LzBTVWY4UjR6Z1VFQmZlYUdLV1M5dUsySVF2MnZpb05kOXF5Y3JKdkxRelNWQnFnRWQ4M1RTWjdhQnVDeiswbmN4RUpNUHhpT1FvWC9BQ2JTejVoT2NhOHIzNS9WQ1RobFdIcVRCRk9SNVZGd3hnaUU9IgogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgImZpbmlzaFJlYXNvbiI6ICJTVE9QIgogICAgfQogIF0sCiAgInVzYWdlTWV0YWRhdGEiOiB7CiAgICAicHJvbXB0VG9rZW5Db3VudCI6IDYzLAogICAgImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMTIsCiAgICAidG90YWxUb2tlbkNvdW50IjogNzUsCiAgICAidHJhZmZpY1R5cGUiOiAiT05fREVNQU5EIiwKICAgICJwcm9tcHRUb2tlbnNEZXRhaWxzIjogWwogICAgICB7CiAgICAgICAgIm1vZGFsaXR5IjogIlRFWFQiLAogICAgICAgICJ0b2tlbkNvdW50IjogNjMKICAgICAgfQogICAgXSwKICAgICJjYW5kaWRhdGVzVG9rZW5zRGV0YWlscyI6IFsKICAgICAgewogICAgICAgICJtb2RhbGl0eSI6ICJURVhUIiwKICAgICAgICAidG9rZW5Db3VudCI6IDEyCiAgICAgIH0KICAgIF0KICB9LAogICJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwKICAiY3JlYXRlVGltZSI6ICIyMDI2LTEwLTIyVDIwOjEyOjMwLjMxMTM0MFoiLAogICJyZXNwb25zZUlkIjogIkxtN2FhcXlBRTlTMTk5OFB4cTdNa0FzIgp9Cg==
+  recorded_at: Thu, 22 Oct 2026 20:12:31 GMT
+recorded_with: VCR 6.4.0

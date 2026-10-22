@@ -44,6 +44,10 @@ VCR.configure do |config|
   config.filter_sensitive_data("<AZURE_OPENAI_API_KEY>") { ENV.fetch("AZURE_OPENAI_API_KEY", "test_api_key") }
   config.filter_sensitive_data("<AZURE_OPENAI_ENDPOINT>") { ENV.fetch("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com/") }
   config.filter_sensitive_data("<GEMINI_API_KEY>") { ENV.fetch("GEMINI_API_KEY", "test_api_key") }
+  config.filter_sensitive_data("<GOOGLE_CLOUD_ACCESS_TOKEN>") do
+    ENV.fetch("GOOGLE_CLOUD_ACCESS_TOKEN", "test_access_token")
+  end
+  config.filter_sensitive_data("<GOOGLE_CLOUD_PROJECT>") { ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project") }
   config.filter_sensitive_data("<OPENROUTER_API_KEY>") { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
   config.filter_sensitive_data("<AWS_TEST_IMAGE_S3_URI>") do
     ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png")

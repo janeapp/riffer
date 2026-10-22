@@ -1,0 +1,71 @@
+# Generated from lib/riffer/providers/google_cloud/client.rb with RBS::Inline
+
+# <tt>Riffer.config.google_cloud.client</tt> accepts any object implementing +post+ and +post_stream+
+# (see Riffer::HTTP::Client); this class is the default, not a required base. Paths are relative to
+# the client's <tt>v1/projects/{project_id}/locations/{location}</tt> resource.
+class Riffer::Providers::GoogleCloud::Client < Riffer::HTTP::Client
+  self.@application_default_credentials: untyped
+
+  @base_url: String
+
+  @credentials: untyped
+
+  @location: String
+
+  @project_id: String
+
+  SCOPE: String
+
+  # Both are interpolated into the endpoint's host or path.
+  VALID_PROJECT_ID_PATTERN: Regexp
+
+  VALID_LOCATION_PATTERN: Regexp
+
+  # googleauth's metadata-server lookups (GCE, Cloud Run, GKE) go through a
+  # process-wide google-cloud-env cache that detects reentrancy by Thread, so
+  # two fibers inside it at once raise ThreadError. Every googleauth call that
+  # can reach it holds this lock; Ruby's Mutex is fiber-aware, so waiters yield
+  # to the scheduler instead of blocking the thread.
+  AUTH_LOCK: Thread::Mutex
+
+  # Memoized process-wide so every client shares one token cache.
+  # --
+  # : () -> untyped
+  def self.application_default_credentials: () -> untyped
+
+  # --
+  # : (location: String) -> String
+  def self.base_url_for: (location: String) -> String
+
+  # --
+  # : (Riffer::Config::GoogleCloud) -> Riffer::Providers::GoogleCloud::Client
+  def self.from_config: (Riffer::Config::GoogleCloud) -> Riffer::Providers::GoogleCloud::Client
+
+  # +credentials+ is a googleauth credentials object (anything responding to
+  # +updater_proc+); +nil+ resolves Application Default Credentials.
+  # --
+  # : (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?connection: Faraday::Connection?) -> void
+  def initialize: (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?connection: Faraday::Connection?) -> void
+
+  private
+
+  # --
+  # : (String, Regexp, String) -> void
+  def validate!: (String, Regexp, String) -> void
+
+  # --
+  # : (String) -> String
+  def url_for: (String) -> String
+
+  # googleauth refreshes only a missing or near-expiry token, so fibers queued
+  # behind a refresh reuse its result. +updater_proc+ rather than +apply!+,
+  # whose return value is the header String for some credential types and the
+  # headers Hash for others (self-signed JWTs).
+  # --
+  # : () -> Hash[String, String]
+  def headers: () -> Hash[String, String]
+
+  # --
+  # : () -> String
+  def error_label: () -> String
+end
