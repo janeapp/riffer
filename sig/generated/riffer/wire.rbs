@@ -5,13 +5,13 @@ module Riffer::Wire
 
   # --
   # : (String) -> String
-  def self.encode_tool_name: (String) -> String
+  def encode_tool_name: (String) -> String
 
   # --
   # : (String, tools: Array[singleton(Riffer::Tool)]) -> String
-  def self.decode_tool_name: (String, tools: Array[singleton(Riffer::Tool)]) -> String
+  def decode_tool_name: (String, tools: Array[singleton(Riffer::Tool)]) -> String
 
   # --
   # : (String) -> Hash[String, untyped]
-  def self.parse_tool_arguments: (String) -> Hash[String, untyped]
+  def parse_tool_arguments: (String) -> Hash[String, untyped]
 end
