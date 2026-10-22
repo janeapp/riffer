@@ -2,23 +2,21 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
     headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
       User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
+      - Faraday v2.14.4
       X-Goog-Api-Key:
       - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
   response:
     status:
       code: 200
@@ -35,7 +33,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 14 Apr 2026 23:45:25 GMT
+      - Thu, 22 Oct 2026 19:19:18 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -45,7 +43,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=1345
+      - gfet4t7; dur=600
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -53,10 +51,17 @@ http_interactions:
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"Hello!\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 3,\"candidatesTokenCount\":
         2,\"totalTokenCount\": 5,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        3}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\": \"ldHeaYWeFJ6nqtsPguzEgQU\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        3}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"tmHaaoGtCpaymtkPztug2Ao\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" How can I help you today?\"}],\"role\": \"model\"},\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 3,\"candidatesTokenCount\":
-        2,\"totalTokenCount\": 5,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        3}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\": \"ldHeaYWeFJ6nqtsPguzEgQU\"}\r\n\r\n"
-  recorded_at: Tue, 14 Apr 2026 23:45:25 GMT
+        9,\"totalTokenCount\": 12,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        3}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"tmHaaoGtCpaymtkPztug2Ao\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TqQQ9/zaDK701CyqSBz7pAZhRp3x5w4AV+vW8by1ONu/9XnBiYlbkoT3VhKgXXgonX9vnlJ0BYL4aHbg0P6ujD2jt2qNoMgAFzrHHHwAgXNaIszZi0/ZVqEI=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        3,\"candidatesTokenCount\": 9,\"totalTokenCount\": 12,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 3}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"tmHaaoGtCpaymtkPztug2Ao\"}\r\n\r\n"
+  recorded_at: Thu, 22 Oct 2026 19:19:18 GMT
 recorded_with: VCR 6.4.0

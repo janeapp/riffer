@@ -2,28 +2,26 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
-        John lives at 123 Main St, Toronto"}]}],"generationConfig":{"responseMimeType":"application/json","responseJsonSchema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
+        John lives at 123 Main St, Toronto"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
         address"},"city":{"type":"string","description":"City"}},"required":["street","city"],"additionalProperties":false},{"type":"object","properties":{"error_code":{"type":"string","description":"Why
         no address","enum":["no_address","multiple_addresses"]},"error_message":{"type":"string","description":"Explanation
         of the error"}},"required":["error_code","error_message"],"additionalProperties":false}],"description":"The
-        address, or why none was found"}},"required":["result"],"additionalProperties":false}}}'
+        address, or why none was found"}},"required":["result"],"additionalProperties":false}}}}}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -38,7 +36,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 20 Oct 2026 21:28:31 GMT
+      - Thu, 22 Oct 2026 19:19:26 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -48,7 +46,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=371
+      - gfet4t7; dur=685
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -62,7 +60,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"result\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\"\n  }\n}"
+                    "text": "{\n  \"result\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\"\n  }\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TfEGn4JX2/l/2nSsgm8M5UE3rARDVsobrQNux0GkH7rpHUdt61qQGpFvEMRFJ+s926Dv1fOtEPu2VhjJXGwZz0PNpktpI7JTmVp276+zHHUOqajxeyiD1xjs="
                   }
                 ],
                 "role": "model"
@@ -83,8 +82,8 @@ http_interactions:
             ],
             "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "_9zXapvGBI7Xz7IP3oG_-A8"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "vWHaatrRLo_Vz7IPx4L60As"
         }
-  recorded_at: Tue, 20 Oct 2026 21:28:31 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:26 GMT
 recorded_with: VCR 6.4.0

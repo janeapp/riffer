@@ -24,7 +24,7 @@ class MyAgent < Riffer::Agent
   model 'azure_openai/gpt-5-mini'                                     # Azure OpenAI
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
-  model 'gemini/gemini-2.5-flash-lite'                                # Gemini
+  model 'gemini/gemini-3.5-flash-lite'                                # Gemini
   model 'openrouter/anthropic/claude-sonnet-4.6'                      # OpenRouter
   model 'mock/any'                                                    # Mock provider
 end

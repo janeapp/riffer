@@ -3,6 +3,8 @@
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN: Regexp
 
+  REASONING_FORMAT: String
+
   FINISH_REASONS: Hash[String, Symbol]
 
   # --
@@ -31,8 +33,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # gemini-2.5 models on the Developer API silently ignore responseFormat, so this
-  # uses responseJsonSchema, which every model honours.
+  # gemini-2.x models on the Developer API silently ignore responseFormat and
+  # return prose; structured output needs gemini-3 or later.
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def structured_output_config: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -48,6 +50,24 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # Gemini 3 needs each thoughtSignature back on the part it came on, and
+  # rejects a function call in the current turn that lost it. The reasoning
+  # part's id names the tool call it belongs to; nil means the text.
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_signature_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # Gemini's own call ids are too short to stay unique across a session, so
+  # riffer makes its own. A signed call's id comes from its signature, so
+  # extract_tool_calls and extract_reasoning agree on it.
+  # --
+  # : (Hash[Symbol, untyped]) -> String
+  def tool_call_id: (Hash[Symbol, untyped]) -> String
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?

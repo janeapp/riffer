@@ -2,23 +2,21 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Describe this image"},{"inlineData":{"mimeType":"image/png","data":"iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="}}]}]}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -33,7 +31,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 14 Apr 2026 23:45:06 GMT
+      - Thu, 22 Oct 2026 19:19:30 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -43,7 +41,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=998
+      - gfet4t7; dur=1281
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -57,7 +55,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "The image is a solid, vibrant red color. There are no other objects, shapes, or details visible. It is a completely monochromatic image."
+                    "text": "A solid, unbroken field of bright red.",
+                    "thoughtSignature": "EmAKXgFpFH0TqmXpMoRws9tvC0wQjLpyEHQQqdylsSqwd/uw2+d0i6UvgooamvPACqI1iGqhb4n6sDct4mo4fG6hqnU0Hf4pbLbEoaP9Clc/8c3dvIxJNajhLP36Hxwe7Tw="
                   }
                 ],
                 "role": "model"
@@ -67,22 +66,23 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 262,
-            "candidatesTokenCount": 29,
-            "totalTokenCount": 291,
+            "promptTokenCount": 1093,
+            "candidatesTokenCount": 9,
+            "totalTokenCount": 1102,
             "promptTokensDetails": [
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              },
               {
                 "modality": "TEXT",
                 "tokenCount": 4
-              },
-              {
-                "modality": "IMAGE",
-                "tokenCount": 258
               }
-            ]
+            ],
+            "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "gtHeaZqJMoHAqtsPorXgmAQ"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "wWHaauHRHoK9qtsP76_J4As"
         }
-  recorded_at: Tue, 14 Apr 2026 23:45:06 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:30 GMT
 recorded_with: VCR 6.4.0

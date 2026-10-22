@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
@@ -10,18 +10,16 @@ http_interactions:
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -36,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 20 Oct 2026 21:28:33 GMT
+      - Thu, 22 Oct 2026 19:19:35 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=284
+      - gfet4t7; dur=534
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -64,8 +62,10 @@ http_interactions:
                       "name": "get_weather",
                       "args": {
                         "city": "Toronto"
-                      }
-                    }
+                      },
+                      "id": "call_155694"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0T581z7LFSVQgkynBb1A7kqsYGkm0xvlhSJE475E+dLSrmTcfcBFGy8K6SbMq0OJ1FXwVeQFuh7yaAF4A9QizE0wzpCWL2p8JuGEPKdayKJk9eo5wyfx/+TFg="
                   }
                 ],
                 "role": "model"
@@ -76,19 +76,19 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 49,
-            "candidatesTokenCount": 15,
-            "totalTokenCount": 64,
+            "promptTokenCount": 60,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 76,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 49
+                "tokenCount": 60
               }
             ],
             "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "Ad3XaorWHuKfz7IPreOW4A0"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "x2HaasvQBYahz7IPvbOT0QU"
         }
-  recorded_at: Tue, 20 Oct 2026 21:28:33 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:35 GMT
 recorded_with: VCR 6.4.0

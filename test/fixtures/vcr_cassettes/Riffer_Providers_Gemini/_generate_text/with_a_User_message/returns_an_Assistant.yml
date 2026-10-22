@@ -2,23 +2,21 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -33,7 +31,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 14 Apr 2026 23:45:09 GMT
+      - Thu, 22 Oct 2026 19:19:24 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -43,7 +41,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=802
+      - gfet4t7; dur=364
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -57,7 +55,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "Hello! How can I help you today?"
+                    "text": "Hello! How can I help you today?",
+                    "thoughtSignature": "EmAKXgFpFH0TmceSZslhM374jjqO6cqJvNTzLT7YVGQmD+mWHuci1Nh+ER586ShcEcAH7D/ghmtw1HCR/R8epw8YELFjnQrkjwaCDNHkF4MlOAXyeH0i/k6ChRXEwPtu0/4="
                   }
                 ],
                 "role": "model"
@@ -75,10 +74,11 @@ http_interactions:
                 "modality": "TEXT",
                 "tokenCount": 3
               }
-            ]
+            ],
+            "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "hNHeae31O-2kmtkPn_iFwAQ"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "vGHaapyoFMue_uMPjZ6JiQw"
         }
-  recorded_at: Tue, 14 Apr 2026 23:45:08 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:24 GMT
 recorded_with: VCR 6.4.0

@@ -2,27 +2,25 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Row 1 has seats 1, 2
         and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o
-        x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"generationConfig":{"responseMimeType":"application/json","responseJsonSchema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
         numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":"array","description":"Tic-tac-toe
-        boards, one per game","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows"],"additionalProperties":false}}}'
+        boards, one per game","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows"],"additionalProperties":false}}}}}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -37,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 20 Oct 2026 21:28:35 GMT
+      - Thu, 22 Oct 2026 19:19:17 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=507
+      - gfet4t7; dur=1022
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -61,7 +59,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"rows\": [\n    [1, 2, 3],\n    [4, 5]\n  ],\n  \"boards\": [\n    [\n      [\"x\", \"o\", \"x\"],\n      [\"o\", \"x\", \"o\"],\n      [\"o\", \"x\", \"x\"]\n    ],\n    [\n      [\"o\", \"o\", \"x\"],\n      [\"x\", \"x\", \"o\"],\n      [\"o\", \"x\", \"x\"]\n    ]\n  ]\n}"
+                    "text": "{\n  \"rows\": [\n    [1, 2, 3],\n    [4, 5]\n  ],\n  \"boards\": [\n    [\n      [\"x\", \"o\", \"x\"],\n      [\"o\", \"x\", \"o\"],\n      [\"o\", \"x\", \"x\"]\n    ],\n    [\n      [\"o\", \"o\", \"x\"],\n      [\"x\", \"x\", \"o\"],\n      [\"o\", \"x\", \"x\"]\n    ]\n  ]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TagZzUmvE4OKV08c3BZgwaK7sjP4g520+q+habKOLPhTabcXTwoav8im4jf2nEsSPBsSG6NdlC6M4FWvwJ+spAOcrdypxebzjrahPqM1KHQLnoaqWGSxWtOo="
                   }
                 ],
                 "role": "model"
@@ -82,8 +81,8 @@ http_interactions:
             ],
             "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "At3XaqrbPMSfz7IPi7fK-Q8"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "tGHaauj3HtmMqtsPmL_dwAY"
         }
-  recorded_at: Tue, 20 Oct 2026 21:28:35 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:17 GMT
 recorded_with: VCR 6.4.0

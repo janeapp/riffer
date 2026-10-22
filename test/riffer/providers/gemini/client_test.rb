@@ -3,7 +3,7 @@
 require "test_helper"
 
 describe Riffer::Providers::Gemini::Client do
-  let(:path) { "v1beta/models/gemini-2.5-flash-lite:generateContent" }
+  let(:path) { "v1beta/models/gemini-3.5-flash-lite:generateContent" }
   let(:url) { "https://generativelanguage.googleapis.com/#{path}" }
   let(:client) { Riffer::Providers::Gemini::Client.new(api_key: "test_api_key") }
 
@@ -60,7 +60,7 @@ describe Riffer::Providers::Gemini::Client do
   end
 
   describe "#post_stream" do
-    let(:stream_path) { "v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse" }
+    let(:stream_path) { "v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse" }
     let(:stream_url) { "https://generativelanguage.googleapis.com/#{stream_path}" }
 
     it "yields the response body chunks" do
