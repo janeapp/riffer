@@ -161,7 +161,7 @@ response = provider.generate_text(
 
 Gemini 3 models attach an opaque `thoughtSignature` to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.
 
-Riffer keeps each signature on the assistant message as an `:encrypted` [reasoning part](../MESSAGES.md#reasoning) tagged `format: "gemini-generate-content-v1"` (`Riffer::Providers::Gemini::REASONING_FORMAT`). A signature from a function call carries that tool call's `call_id` as its `id`; the text signature has no `id`. Streams emit them as `ReasoningDone` events. On later turns riffer puts each signature back on the part it came from. You don't have to do anything as long as the assistant messages stay in the history.
+Riffer keeps each signature on the assistant message as the `data` of an `:encrypted` [reasoning part](../MESSAGES.md#reasoning) tagged `format: "gemini-generate-content-v1"` (`Riffer::Providers::Gemini::REASONING_FORMAT`). A signature from a function call carries that tool call's `call_id` as its `id`; the text signature has no `id`. Streams emit them as `ReasoningDone` events. On later turns riffer puts each signature back on the part it came from. You don't have to do anything as long as the assistant messages stay in the history.
 
 If you persist sessions, keep the `reasoning` key when you store messages. If you drop it and pick a session back up between a tool call and its result, the next request is rejected. Gemini only checks the signatures of the current turn, so older turns without them still work.
 

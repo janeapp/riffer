@@ -166,7 +166,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     Riffer::Messages::Assistant::ReasoningPart.new(
       type: :encrypted,
-      signature: signature,
+      data: signature,
       id: part[:functionCall] ? tool_call_id(part) : nil,
       format: REASONING_FORMAT,
     )
@@ -319,13 +319,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
-    signatures = message.reasoning.
-      select { |part| part.format == REASONING_FORMAT }.
-      to_h { |part| [part.id, part.signature] }
+    signature_parts = message.reasoning.select { |part| part.format == REASONING_FORMAT }
+    text_signature = signature_parts.find { |part| part.id.nil? }&.data
+    call_signatures = signature_parts.select(&:id).to_h { |part| [part.id, part.data] }
 
     parts = [] #: Array[Hash[Symbol, untyped]]
     if message.content && !message.content.empty?
-      parts << { text: message.content, thoughtSignature: signatures[nil] }.compact
+      parts << { text: message.content, thoughtSignature: text_signature }.compact
     end
 
     message.tool_calls.each do |tc|
@@ -334,7 +334,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
         },
-        thoughtSignature: signatures[tc.call_id],
+        thoughtSignature: call_signatures[tc.call_id],
       }.compact
     end
 
