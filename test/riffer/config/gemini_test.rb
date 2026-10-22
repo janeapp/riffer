@@ -38,6 +38,34 @@ describe Riffer::Config::Gemini do
     end
   end
 
+  describe "#base_url" do
+    it "initializes to nil" do
+      expect(Riffer::Config::Gemini.new.base_url).must_be_nil
+    end
+
+    it "accepts a string" do
+      section = Riffer::Config::Gemini.new
+      section.base_url = "http://localhost:8080"
+
+      expect(section.base_url).must_equal "http://localhost:8080"
+    end
+
+    it "allows clearing with nil" do
+      section = Riffer::Config::Gemini.new
+      section.base_url = "http://localhost:8080"
+      section.base_url = nil
+
+      expect(section.base_url).must_be_nil
+    end
+
+    it "raises for a non-string, naming the attribute" do
+      section = Riffer::Config::Gemini.new
+      error = expect { section.base_url = :value }.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_match(/^base_url /)
+    end
+  end
+
   describe "#client" do
     it "initializes to nil" do
       expect(Riffer::Config::Gemini.new.client).must_be_nil

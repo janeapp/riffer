@@ -51,7 +51,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: () -> untyped
   def build_client
-    Riffer::Providers::Gemini::Client.new(**{ api_key: Riffer.config.gemini.api_key }.compact)
+    config = Riffer.config.gemini
+    api_key = config.api_key || ENV.fetch("GEMINI_API_KEY", nil)
+    unless api_key
+      raise Riffer::ArgumentError, "Gemini requires an API key: set config.gemini.api_key or GEMINI_API_KEY"
+    end
+
+    Riffer::Providers::Gemini::Client.new(
+      api_key: api_key,
+      base_url: config.base_url || Riffer::Providers::Gemini::Client::DEFAULT_BASE_URL,
+    )
   end
 
   #--

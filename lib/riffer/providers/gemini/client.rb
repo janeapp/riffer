@@ -1,107 +1,39 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-require "json"
-require "net/http"
-require "uri"
-
 # <tt>Riffer.config.gemini.client</tt> accepts any object implementing +post+ and +post_stream+
-# with these contracts; this class is the default, not a required base.
-class Riffer::Providers::Gemini::Client
-  # @rbs @api_key: String?
+# (see Riffer::HTTP::Client); this class is the default, not a required base.
+class Riffer::Providers::Gemini::Client < Riffer::HTTP::Client
+  # @rbs @api_key: String
   # @rbs @base_url: String
-  # @rbs @open_timeout: Integer
-  # @rbs @read_timeout: Integer
-  # @rbs @write_timeout: Integer?
-  # @rbs @proxy_address: String?
-  # @rbs @proxy_port: Integer?
 
   DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com" #: String
-  DEFAULT_OPEN_TIMEOUT = 10 #: Integer
-  DEFAULT_READ_TIMEOUT = 60 #: Integer
 
-  #: (?api_key: String?, ?base_url: String, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
-  def initialize(api_key: nil, base_url: DEFAULT_BASE_URL, open_timeout: DEFAULT_OPEN_TIMEOUT,
-                 read_timeout: DEFAULT_READ_TIMEOUT, write_timeout: nil,
-                 proxy_address: nil, proxy_port: nil)
+  #--
+  #: (api_key: String, ?base_url: String, ?connection: Faraday::Connection?) -> void
+  def initialize(api_key:, base_url: DEFAULT_BASE_URL, connection: nil)
+    super(connection: connection)
     @api_key = api_key
-    @base_url = base_url
-    @open_timeout = open_timeout
-    @read_timeout = read_timeout
-    @write_timeout = write_timeout
-    @proxy_address = proxy_address
-    @proxy_port = proxy_port
-  end
-
-  # Raises Riffer::Error on a non-success status.
-  #--
-  #: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def post(path, body)
-    uri = URI("#{@base_url}/#{path}")
-    response = start_http(uri) { |http| http.request(build_request(uri, body)) }
-    handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
-    JSON.parse(response.body, symbolize_names: true)
-  end
-
-  # Raises Riffer::Error on a non-success status.
-  #--
-  #: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
-  def post_stream(path, body, &block)
-    uri = URI("#{@base_url}/#{path}")
-    start_http(uri) do |http|
-      http.request(build_request(uri, body)) do |response|
-        handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
-
-        begin
-          response.read_body(&block)
-        rescue IOError
-          # A pre-buffered body (VCR/WebMock playback) raises IOError on a
-          # streaming read; hand over the full body instead.
-          yield(response.body)
-        end
-      end
-    end
+    @base_url = base_url.chomp("/")
   end
 
   private
 
   #--
-  #: (URI::Generic, Hash[Symbol, untyped]) -> Net::HTTP::Post
-  def build_request(uri, body)
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["x-goog-api-key"] = @api_key
-    request.body = body.to_json
-    request
+  #: (String) -> String
+  def url_for(path)
+    "#{@base_url}/#{path}"
   end
 
   #--
-  #: [R] (URI::Generic) { (Net::HTTP) -> R } -> R
-  def start_http(uri, &)
-    host = uri.hostname #: String
-    options = {
-      use_ssl: uri.scheme == "https",
-      open_timeout: @open_timeout,
-      read_timeout: @read_timeout,
-    } #: Hash[Symbol, untyped]
-    options[:write_timeout] = @write_timeout if @write_timeout
-
-    if @proxy_address
-      Net::HTTP.start(host, uri.port, @proxy_address, @proxy_port, nil, nil, **options, &)
-    else
-      Net::HTTP.start(host, uri.port, **options, &)
-    end
+  #: () -> Hash[String, String]
+  def headers
+    { "x-goog-api-key" => @api_key }
   end
 
   #--
-  #: (Net::HTTPResponse) -> void
-  def handle_api_error!(response)
-    parsed = begin
-      JSON.parse(response.body, symbolize_names: true)
-    rescue JSON::ParserError
-      { message: response.body }
-    end
-    error_message = parsed.dig(:error, :message) || parsed[:message] || response.body
-    raise Riffer::Error, "Gemini API error (#{response.code}): #{error_message}"
+  #: () -> String
+  def error_label
+    "Gemini"
   end
 end

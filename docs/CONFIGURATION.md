@@ -18,7 +18,7 @@ end
 
 Providers take no constructor arguments — these settings are the only way to give a provider its credentials.
 
-Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
+Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key` / `.base_url`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
 
 ## Accessing Configuration
 
@@ -52,7 +52,7 @@ Riffer.configure do |config|
   )
   config.gemini.client = Riffer::Providers::Gemini::Client.new(
     api_key: ENV['GEMINI_API_KEY'],
-    read_timeout: 120
+    connection: Faraday.new(request: { open_timeout: 10, read_timeout: 120 })
   )
 end
 ```
@@ -97,7 +97,7 @@ A credential you leave unset in riffer is omitted from the default client rather
 
 Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
 
-The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
+The Gemini provider has no vendor SDK, so riffer ships its own transport, `Riffer::Providers::Gemini::Client`, built on `Riffer::HTTP::Client` (see [Connections](#connections)). Its key falls back to `GEMINI_API_KEY` when `config.gemini.api_key` is unset, and raises `Riffer::ArgumentError` when neither is set. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 
 ### Connections
 

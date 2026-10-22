@@ -12,37 +12,39 @@ Riffer.configure do |config|
 end
 ```
 
+When `config.gemini.api_key` is unset, the provider reads `GEMINI_API_KEY`; with neither set it raises `Riffer::ArgumentError`. Set `config.gemini.base_url` to send requests somewhere other than `https://generativelanguage.googleapis.com` (proxies, regional mirrors).
+
 ## HTTP Client
 
-Gemini has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client`. The provider builds one from the configured `api_key` by default; construct your own to tune the HTTP knobs and assign it to `config.gemini.client`:
+Gemini has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client`, built on `Riffer::HTTP::Client`. The provider builds one from the configured credentials by default; construct your own to change timeouts, add retries or route through a proxy, and assign it to `config.gemini.client`:
 
 ```ruby
 Riffer.configure do |config|
   config.gemini.client = Riffer::Providers::Gemini::Client.new(
     api_key: ENV['GEMINI_API_KEY'],
-    read_timeout: 120
+    connection: Faraday.new(request: { open_timeout: 10, read_timeout: 120 })
   )
 end
 ```
 
-| Option          | Default                                     | Description                            |
-| --------------- | ------------------------------------------- | -------------------------------------- |
-| `api_key`       | `nil`                                       | Sent as the `x-goog-api-key` header    |
-| `base_url`      | `https://generativelanguage.googleapis.com` | API origin (proxies, regional mirrors) |
-| `open_timeout`  | `10`                                        | Connection-open timeout in seconds     |
-| `read_timeout`  | `60`                                        | Read timeout in seconds                |
-| `write_timeout` | `nil`                                       | Write timeout in seconds               |
-| `proxy_address` | `nil`                                       | HTTP proxy host                        |
-| `proxy_port`    | `nil`                                       | HTTP proxy port                        |
+| Option       | Default                                     | Description                                                        |
+| ------------ | ------------------------------------------- | ------------------------------------------------------------------ |
+| `api_key`    | required                                    | Sent as the `x-goog-api-key` header                                |
+| `base_url`   | `https://generativelanguage.googleapis.com` | API origin                                                         |
+| `connection` | riffer default: 10s open / 600s read        | Your own `Faraday::Connection`; see [Connections][connections]     |
+
+Timeouts, retries, proxies and errors are covered in [Configuration → Connections][connections].
 
 The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
-The class is a default implementation, not a required base: any object implementing the two-method contract works, e.g. a Faraday-based or instrumented transport.
+The class is a default implementation, not a required base: any object implementing the two-method contract works, e.g. an instrumented transport.
 
-| Method                                  | Contract                                                                                                                      |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `post(path, body)`                      | POST `body` as JSON to `path`; return the parsed response `Hash` (symbol keys); raise `Riffer::Error` on a non-success status |
-| `post_stream(path, body) { \|chunk\| }` | POST `body` as JSON to `path`; yield raw response body chunks; raise `Riffer::Error` on a non-success status                  |
+| Method                                  | Contract                                                                                                                         |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `post(path, body)`                      | POST `body` as JSON to `path`; return the parsed response `Hash` (symbol keys); raise `Riffer::APIError` on a non-success status |
+| `post_stream(path, body) { \|chunk\| }` | POST `body` as JSON to `path`; yield raw response body chunks; raise `Riffer::APIError` on a non-success status                  |
+
+[connections]: ../CONFIGURATION.md#connections
 
 ## Supported Models
 
