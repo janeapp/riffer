@@ -158,7 +158,7 @@ describe Riffer::Providers::GoogleCloud do
       tool_call = provider.send(:extract_tool_calls, response).first
       developer_api = Riffer::Messages::Assistant::ReasoningPart.new(
         type: :encrypted,
-        signature: "developer-api-sig",
+        data: "developer-api-sig",
         id: tool_call.call_id,
         format: Riffer::Providers::Gemini::REASONING_FORMAT,
       )
@@ -367,7 +367,7 @@ describe Riffer::Providers::GoogleCloud do
           first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
           tool_call = first.tool_calls.first
 
-          expect(first.reasoning.find { |part| part.id == tool_call.call_id }&.signature).wont_be_nil
+          expect(first.reasoning.find { |part| part.id == tool_call.call_id }&.data).wont_be_nil
 
           result = Riffer::Messages::Tool.new(
             "The weather in Toronto is 15 degrees Celsius.",
