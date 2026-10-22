@@ -10,6 +10,7 @@ module Riffer::Providers::Repository
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     anthropic: -> { Riffer::Providers::Anthropic },
+    anthropic_vertex: -> { Riffer::Providers::AnthropicVertex },
     azure_openai: -> { Riffer::Providers::AzureOpenAI },
     gemini: -> { Riffer::Providers::Gemini },
     google_cloud: -> { Riffer::Providers::GoogleCloud },
