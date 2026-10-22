@@ -9,7 +9,7 @@ class Riffer::Providers::Base
   # @rbs @client: untyped
   # @rbs self.@semconv_provider_name: String?
 
-  WIRE_SEPARATOR = "__" #: String
+  WIRE_SEPARATOR = Riffer::Wire::TOOL_NAME_SEPARATOR #: String
 
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -135,14 +135,13 @@ class Riffer::Providers::Base
   #--
   #: (String) -> String
   def encode_tool_name(name)
-    name.gsub("/", WIRE_SEPARATOR)
+    Riffer::Wire.encode_tool_name(name)
   end
 
   #--
   #: (String, tools: Array[singleton(Riffer::Tool)]) -> String
   def decode_tool_name(wire_name, tools:)
-    tool = tools.find { |t| encode_tool_name(t.name) == wire_name }
-    tool ? tool.name : wire_name
+    Riffer::Wire.decode_tool_name(wire_name, tools: tools)
   end
 
   #--
@@ -417,9 +416,7 @@ class Riffer::Providers::Base
   #--
   #: (String) -> Hash[String, untyped]
   def parse_tool_arguments(arguments)
-    return {} if arguments.empty?
-
-    JSON.parse(arguments)
+    Riffer::Wire.parse_tool_arguments(arguments)
   end
 
   #--

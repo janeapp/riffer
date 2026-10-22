@@ -1,0 +1,51 @@
+# frozen_string_literal: true
+# rbs_inline: enabled
+
+class Riffer::Wire::SSE
+  # @rbs @buffer: String
+  # @rbs @data: Array[String]
+  # @rbs @event: String?
+
+  #--
+  #: () -> void
+  def initialize
+    @buffer = +""
+    @data = []
+    @event = nil
+  end
+
+  #--
+  #: (String) { (String, String?) -> void } -> void
+  def feed(chunk, &)
+    @buffer << chunk
+
+    # Lines end in LF or CRLF. The SSE spec also allows a bare CR, which no
+    # supported provider sends.
+    while (line_end = @buffer.index("\n"))
+      line = @buffer.slice!(0, line_end + 1).to_s.chomp
+      process_line(line, &)
+    end
+  end
+
+  private
+
+  #--
+  #: (String) { (String, String?) -> void } -> void
+  def process_line(line)
+    if line.empty?
+      yield(@data.join("\n"), @event) unless @data.empty?
+      @data = []
+      @event = nil
+      return
+    end
+    return if line.start_with?(":")
+
+    field, value = line.split(":", 2)
+    value = value.to_s.delete_prefix(" ")
+
+    case field
+    when "data" then @data << value
+    when "event" then @event = value
+    end
+  end
+end
