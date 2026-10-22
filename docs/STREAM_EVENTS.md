@@ -310,7 +310,7 @@ When an agent uses tools during streaming, the flow is:
 5. More text events stream in
 6. Repeat until no more tool calls
 
-> **Note:** When `web_search` is enabled, `WebSearchStatus` and `WebSearchDone` events may appear before text events as the provider performs a server-side search.
+> **Note:** When `web_search` is enabled, `WebSearchStatus` and `WebSearchDone` events may appear before text events as the provider performs a server-side search. Gemini sends its `WebSearchDone` after the text.
 
 ```ruby
 agent.stream("What's the weather in Tokyo?").each do |event|

@@ -7,6 +7,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   GEMINI_CALL_ID_PATTERN: Regexp
 
+  WEB_SEARCH_TOOL_TYPE: String
+
   FINISH_REASONS: Hash[String, Symbol]
 
   # --
@@ -34,6 +36,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (true | Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def web_search_tool: (true | Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # gemini-2.x models on the Developer API silently ignore responseFormat and
   # return prose; structured output needs gemini-3 or later.
@@ -97,6 +103,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def yield_web_search_queries: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # Gemini reports every query and source of the turn together, without saying
+  # which query found which source, so they become one WebSearchDone.
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def yield_web_search_done: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

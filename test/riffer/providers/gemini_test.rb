@@ -1158,6 +1158,142 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "web search" do
+    let(:provider) { Riffer::Providers::Gemini.new }
+    let(:model) { "gemini-3.5-flash-lite" }
+    let(:prompt) { "What is the latest Ruby version? Answer in one sentence." }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+    let(:weather_tool) do
+      stub_tool("GetWeather") do
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+    end
+
+    it "sends the googleSearch tool with server-side invocations on" do
+      result = provider.send(:build_request_params, messages, model, { web_search: true })
+
+      expect(result[:tools]).must_equal [{ googleSearch: {} }]
+      expect(result[:toolConfig]).must_equal({ includeServerSideToolInvocations: true })
+      expect(result).wont_include :generationConfig
+    end
+
+    it "merges a web_search hash into the googleSearch tool" do
+      time_range = { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" }
+
+      result = provider.send(:build_request_params, messages, model, { web_search: { timeRangeFilter: time_range } })
+
+      expect(result[:tools]).must_equal [{ googleSearch: { timeRangeFilter: time_range } }]
+    end
+
+    it "sends googleSearch after the function declarations" do
+      result = provider.send(:build_request_params, messages, model, { tools: [weather_tool], web_search: true })
+
+      expect(result[:tools].map(&:keys)).must_equal [[:functionDeclarations], [:googleSearch]]
+    end
+
+    it "leaves out the signatures of search toolCall and toolResponse parts" do
+      search = { toolType: "GOOGLE_SEARCH_WEB", id: "call_1" }
+      parts = [
+        { toolCall: search.merge(args: { queries: ["ruby"] }), thoughtSignature: "call-sig" },
+        { toolResponse: search.merge(response: {}), thoughtSignature: "response-sig" },
+        { text: "Ruby 4.0.", thoughtSignature: "text-sig" },
+      ]
+      response = { candidates: [{ content: { parts: parts } }] }
+
+      expect(provider.send(:extract_reasoning, response).map(&:signature)).must_equal ["text-sig"]
+    end
+
+    describe "#generate_text with web_search" do
+      it "returns the grounded answer" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_generate_text/returns_the_grounded_answer") do
+          result = provider.generate_text(prompt: prompt, model: model, web_search: true)
+
+          expect(result.content).must_include "Ruby"
+        end
+      end
+
+      it "accepts hash web_search options" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_generate_text/accepts_hash_web_search_options") do
+          result = provider.generate_text(
+            prompt: prompt,
+            model: model,
+            web_search: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
+          )
+
+          expect(result.content).must_include "Ruby"
+        end
+      end
+
+      it "completes a tool call round trip with search enabled" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_generate_text/tool_call_round_trip") do
+          question = Riffer::Messages::User.new("What is the weather in Toronto, and what is the latest Ruby version?")
+          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool], web_search: true)
+          tool_call = first.tool_calls.first
+
+          expect(tool_call.name).must_equal "get_weather"
+
+          result = Riffer::Messages::Tool.new(
+            "15 degrees Celsius and sunny.",
+            tool_call_id: tool_call.call_id,
+            name: tool_call.name,
+          )
+          second = provider.generate_text(
+            messages: [question, first, result],
+            model: model,
+            tools: [weather_tool],
+            web_search: true,
+          )
+
+          expect(second.content).must_include "15"
+        end
+      end
+    end
+
+    describe "#stream_text with web_search" do
+      it "yields WebSearchStatus events with the queries" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
+          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
+          searching = events.grep(Riffer::StreamEvents::WebSearchStatus).select { |e| e.status == "searching" }
+
+          expect(searching).wont_be_empty
+          expect(searching).must_be(:all?) { |e| !e.query.to_s.empty? }
+        end
+      end
+
+      it "yields a WebSearchDone event with sources" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
+          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
+          done = events.grep(Riffer::StreamEvents::WebSearchDone)
+
+          expect(done.size).must_equal 1
+          expect(done.first.query).wont_be_empty
+          expect(done.first.sources).wont_be_empty
+          expect(done.first.sources.first.keys).must_equal %i[title url]
+        end
+      end
+
+      it "streams the grounded answer" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
+          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
+          text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+          expect(text_done.content).must_include "Ruby"
+        end
+      end
+
+      it "yields no reasoning for the search parts" do
+        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
+          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
+
+          expect(events.grep(Riffer::StreamEvents::ReasoningDone).size).must_equal 1
+        end
+      end
+    end
+  end
+
   describe "reasoning level" do
     let(:provider) { Riffer::Providers::Gemini.new }
     let(:prompt) { "What is 17 times 23? Reply with just the number." }

@@ -12,6 +12,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   GEMINI_CALL_ID_PATTERN = /\Agemini_call_\h{24}_(.+)\z/ #: Regexp
 
+  WEB_SEARCH_TOOL_TYPE = "GOOGLE_SEARCH_WEB" #: String
+
   FINISH_REASONS = {
     "STOP" => :stop,
     "MAX_TOKENS" => :length,
@@ -80,6 +82,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     partitioned = partition_messages(messages)
     tools = options[:tools]
     structured_output = options[:structured_output]
+    web_search = options[:web_search]
 
     params = {
       model: model,
@@ -88,21 +91,33 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     params[:systemInstruction] = partitioned[:system_instruction] if partitioned[:system_instruction]
 
+    gemini_tools = [] #: Array[Hash[Symbol, untyped]]
     if tools && !tools.empty?
-      params[:tools] = [{
-        functionDeclarations: tools.map { |t| convert_tool_to_gemini_format(t) },
-      }]
+      gemini_tools << { functionDeclarations: tools.map { |t| convert_tool_to_gemini_format(t) } }
     end
+    gemini_tools << web_search_tool(web_search) if web_search
+    params[:tools] = gemini_tools unless gemini_tools.empty?
+
+    # The Developer API rejects Google Search next to function declarations
+    # unless it also returns the search as toolCall/toolResponse parts. Those
+    # parts carry the queries mid-stream, so it is on whenever search is.
+    params[:toolConfig] = { includeServerSideToolInvocations: true } if web_search
 
     # The Gemini Developer API has no request labels field and rejects unknown
     # body fields, so :tags reach observability only.
-    generation_config = options.except(:tools, :structured_output, :tags)
+    generation_config = options.except(:tools, :structured_output, :web_search, :tags)
 
     generation_config.merge!(structured_output_config(structured_output.json_schema)) if structured_output
 
     params[:generationConfig] = generation_config unless generation_config.empty?
 
     params
+  end
+
+  #--
+  #: (true | Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def web_search_tool(web_search)
+    { googleSearch: web_search.is_a?(Hash) ? web_search : {} }
   end
 
   # gemini-2.x models on the Developer API silently ignore responseFormat and
@@ -165,6 +180,9 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def build_signature_part(part)
     signature = part[:thoughtSignature]
     return unless signature
+    # Search toolCall/toolResponse parts aren't replayed, so neither are their
+    # signatures. Without them in the history Gemini searches again.
+    return if part[:toolCall] || part[:toolResponse]
 
     Riffer::Messages::Assistant::ReasoningPart.new(
       type: :encrypted,
@@ -269,11 +287,18 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
             name: fc[:name],
             arguments: arguments,
           )
+        elsif part[:toolCall]
+          yield_web_search_queries(part[:toolCall], yielder)
+        elsif part.dig(:toolResponse, :toolType) == WEB_SEARCH_TOOL_TYPE
+          yielder << Riffer::StreamEvents::WebSearchStatus.new("completed")
         end
 
         signature_part = build_signature_part(part)
         yielder << Riffer::StreamEvents::ReasoningDone.new(signature_part) if signature_part
       end
+
+      grounding = parsed.dig(:candidates, 0, :groundingMetadata)
+      yield_web_search_done(grounding, yielder) if grounding
 
       raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
 
@@ -288,6 +313,33 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def yield_web_search_queries(tool_call, yielder)
+    return unless tool_call[:toolType] == WEB_SEARCH_TOOL_TYPE
+
+    queries = tool_call.dig(:args, :queries) || [] #: Array[String]
+    queries.each do |query|
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: query)
+    end
+  end
+
+  # Gemini reports every query and source of the turn together, without saying
+  # which query found which source, so they become one WebSearchDone.
+  #--
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def yield_web_search_done(grounding, yielder)
+    queries = grounding[:webSearchQueries] || []
+    return if queries.empty?
+
+    chunks = grounding[:groundingChunks] || [] #: Array[Hash[Symbol, untyped]]
+    sources = chunks.filter_map do |chunk|
+      web = chunk[:web]
+      { title: web[:title], url: web[:uri] } if web
+    end
+    yielder << Riffer::StreamEvents::WebSearchDone.new(queries.join(", "), sources: sources)
   end
 
   #--

@@ -92,6 +92,15 @@ model_options thinkingConfig: {thinkingLevel: "low"}
 
 The agent-level [`reasoning`](../AGENTS.md#reasoning) setting writes `thinkingConfig: {thinkingLevel: "<level>"}` by default, including `"off"` for `:off`, which Gemini rejects. Gemini 2.5 models take `thinkingBudget` instead; map them in a [catalog](../CATALOG.md#reasoning) entry.
 
+### web_search
+
+Enable grounding with Google Search. Pass `true` to use defaults or a hash to merge into the `googleSearch` tool:
+
+```ruby
+model_options web_search: true
+model_options web_search: {timeRangeFilter: {startTime: "2026-01-01T00:00:00Z", endTime: "2026-06-30T00:00:00Z"}}
+```
+
 ## Usage
 
 ### Basic Generation
@@ -167,6 +176,33 @@ Riffer keeps each signature on the assistant message as the `data` of an `:encry
 
 If you persist sessions, keep the `reasoning` key when you store messages. If you drop it and pick a session back up between a tool call and its result, the next request is rejected. Gemini only checks the signatures of the current turn, so older turns without them still work.
 
+### Web Search
+
+With `web_search` set, riffer adds the `googleSearch` tool and turns on `toolConfig.includeServerSideToolInvocations`, which Gemini requires when Google Search and function tools are used together.
+
+```ruby
+provider.stream_text(
+  prompt: "What is the latest Ruby version?",
+  model: "gemini-3.5-flash-lite",
+  web_search: true
+).each do |event|
+  case event
+  when Riffer::StreamEvents::WebSearchStatus
+    puts "[search: #{event.status}] #{event.query}"
+  when Riffer::StreamEvents::WebSearchDone
+    puts "[search complete: #{event.query}]"
+    event.sources.each { |s| puts "  - #{s[:title]}: #{s[:url]}" }
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+- Each search query streams as a `"searching"` `WebSearchStatus`; a `"completed"` status follows once the results are in.
+- Gemini reports the queries and sources of a response together, at the end, without saying which query found which source. Riffer emits them as one `WebSearchDone`, after the text, with the queries joined by `", "`.
+- Source `title`s are domains (`"ruby-lang.org"`) and `url`s are Google redirect links (`https://vertexaisearch.cloud.google.com/grounding-api-redirect/...`).
+- The search parts of a response aren't sent back on later turns. After a tool call, Gemini searches again if it still needs results.
+
 ### File Support
 
 Gemini's API only accepts inline base64-encoded files (images and documents), never a URL reference:
@@ -184,5 +220,4 @@ A `FilePart.from_url` source works too — riffer downloads and base64-encodes i
 
 ## Limitations
 
-- **No web search** - Gemini's standard API does not include a web search tool
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side
