@@ -104,14 +104,14 @@ Riffer doesn't check whether a model supports a level. If the model rejects the 
 
 The defaults send the level name as the provider's effort value:
 
-| Provider             | `:off`                                                                | Other levels                                                                                                |
-| -------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| OpenAI, Azure OpenAI | `reasoning: "none"`                                                   | `reasoning: "<level>"`                                                                                      |
-| OpenRouter           | `reasoning: "none"`                                                   | `reasoning: "<level>"`                                                                                      |
-| Anthropic            | `thinking: { type: "disabled" }`                                      | `thinking: { type: "adaptive" }, output_config: { effort: "<level>" }`                                      |
-| Amazon Bedrock       | `additional_model_request_fields: { thinking: { type: "disabled" } }` | `additional_model_request_fields: { thinking: { type: "adaptive" }, output_config: { effort: "<level>" } }` |
-| Gemini, Google Cloud | `thinkingConfig: { thinkingLevel: "off" }`                            | `thinkingConfig: { thinkingLevel: "<level>" }`                                                              |
-| Mock                 | nothing                                                               | nothing                                                                                                     |
+| Provider                         | `:off`                                                                | Other levels                                                                                                |
+| -------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| OpenAI, Azure OpenAI             | `reasoning: "none"`                                                   | `reasoning: "<level>"`                                                                                      |
+| OpenRouter                       | `reasoning: "none"`                                                   | `reasoning: "<level>"`                                                                                      |
+| Anthropic, Google Cloud (Claude) | `thinking: { type: "disabled" }`                                      | `thinking: { type: "adaptive" }, output_config: { effort: "<level>" }`                                      |
+| Amazon Bedrock                   | `additional_model_request_fields: { thinking: { type: "disabled" } }` | `additional_model_request_fields: { thinking: { type: "adaptive" }, output_config: { effort: "<level>" } }` |
+| Gemini, Google Cloud (Gemini)    | `thinkingConfig: { thinkingLevel: "off" }`                            | `thinkingConfig: { thinkingLevel: "<level>" }`                                                              |
+| Mock                             | nothing                                                               | nothing                                                                                                     |
 
 Add a catalog entry for models that need different params, for example:
 
