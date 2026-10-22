@@ -986,8 +986,8 @@ describe Riffer::Providers::Gemini do
         parts = provider.send(:extract_reasoning, signed_response)
 
         expect(parts.map(&:to_h)).must_equal [
-          { type: :encrypted, signature: "text-sig", format: format },
-          { type: :encrypted, signature: "call-sig", id: tool_calls.first.call_id, format: format },
+          { type: :encrypted, data: "text-sig", format: format },
+          { type: :encrypted, data: "call-sig", id: tool_calls.first.call_id, format: format },
         ]
       end
 
@@ -1000,7 +1000,7 @@ describe Riffer::Providers::Gemini do
       it "puts each signature back on the part it came on and skips other formats" do
         foreign = Riffer::Messages::Assistant::ReasoningPart.new(
           type: :encrypted,
-          signature: "foreign",
+          data: "foreign",
           format: "anthropic-messages-v1",
         )
         message = Riffer::Messages::Assistant.new(
@@ -1023,7 +1023,7 @@ describe Riffer::Providers::Gemini do
           first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
           tool_call = first.tool_calls.first
 
-          expect(first.reasoning.find { |part| part.id == tool_call.call_id }&.signature).wont_be_nil
+          expect(first.reasoning.find { |part| part.id == tool_call.call_id }&.data).wont_be_nil
 
           history = [question, first, tool_result(tool_call)]
           second = provider.generate_text(messages: history, model: model, tools: [weather_tool])
@@ -1043,7 +1043,7 @@ describe Riffer::Providers::Gemini do
             arguments: tool_done.arguments,
           )
 
-          expect(parts.find { |part| part.id == tool_call.call_id }&.signature).wont_be_nil
+          expect(parts.find { |part| part.id == tool_call.call_id }&.data).wont_be_nil
 
           history = [
             question,
