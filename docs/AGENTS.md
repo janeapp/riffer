@@ -212,7 +212,7 @@ class SentimentAgent < Riffer::Agent
 end
 ```
 
-With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in `session.messages`, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (`"<string>"`, enum values as `"a | b"`, an `AnyOf` field as its first variant), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
+With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in `session.messages`, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (`"<string>"`, enum values as `"a | b"`, an `AnyOf` field as its first variant, or as `"<integer> | <string>"` when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
 
 | Strategy            | Behavior                                                        |
 | ------------------- | --------------------------------------------------------------- |
@@ -347,9 +347,28 @@ The schema sends the field as `anyOf`, with one object per variant. An answer mu
 
 An optional `AnyOf` field can also be `null`.
 
+A variant can be a primitive type instead of a block, with its own `description:`, `enum:` or `format:`, and one field can mix both kinds:
+
+```ruby
+structured_output do
+  required :quantity, Riffer::Params::AnyOf, description: "A count, or a word like 'several'" do
+    variant Integer
+    variant String
+  end
+  optional :due, Riffer::Params::AnyOf do
+    variant String, format: "date"
+    variant String, enum: ["none"]
+  end
+end
+```
+
+Each primitive variant is sent as its own `anyOf` branch. A value whose type matches no variant fails validation: `quantity must be a integer or string`. A value of the right type that fails every variant gets each variant's problems: `due must match one of the variants: variant 1 (must be a valid date), variant 2 (must be one of: none)`.
+
 #### Limitations
 
-A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash` or `of: [Hash]`), or with more than one type (`of: [Integer, String]`), also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `String` or an `Array` whose innermost type is `String`, or together with `enum:`.
+Anthropic and Bedrock reject a structured output schema with more than 16 union-type fields. Every `AnyOf` field counts, and so does every optional field, since strict mode sends it as nullable.
+
+A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash` or `of: [Hash]`), or with more than one type (`of: [Integer, String]`), also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. A `variant` takes either a primitive type, with optional `description:`, `enum:` or `format:`, or a block. Anything else raises `Riffer::ArgumentError`, and so does an `Integer` variant after a `Float` variant without `enum:`, since that `Float` variant accepts every number and the first match wins. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `String` or an `Array` whose innermost type is `String`, or together with `enum:`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 

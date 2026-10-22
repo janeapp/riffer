@@ -866,25 +866,47 @@ describe Riffer::Params do
       expect(params.parameters.first.variants.length).must_equal 2
     end
 
-    it "raises on an anyOf branch that is not an object" do
-      error = expect do
-        Riffer::Params.from_json_schema(
-          {
-            type: "object",
-            properties: {
-              "result" => {
-                anyOf: [
-                  { type: "object", properties: { "name" => { type: "string" } }, required: ["name"] },
-                  { type: "string" },
-                ],
-              },
+    it "reconstructs primitive anyOf branches as primitive variants" do
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: {
+            "due" => {
+              anyOf: [
+                { type: "string", format: "date", description: "The due date" },
+                { type: "string", enum: ["none"] },
+                { type: "integer" },
+              ],
             },
-            required: ["result"],
-            additionalProperties: false,
           },
-        )
-      end.must_raise Riffer::ArgumentError
-      expect(error.message).must_equal 'Unsupported anyOf branch: {"type":"string"}'
+          required: ["due"],
+        },
+      )
+      variants = params.parameters.first.variants
+
+      expect(variants.map { |variant| [variant.type, variant.format, variant.enum, variant.description] }).must_equal [
+        [String, "date", nil, "The due date"], [String, nil, ["none"], nil], [Integer, nil, nil, nil],
+      ]
+      expect(variants.map(&:required)).must_equal [true, true, true]
+    end
+
+    it "raises on an anyOf branch that is not a plain object or primitive" do
+      [
+        { type: "array", items: { type: "string" } },
+        { type: %w[string null] },
+        { type: "string", anyOf: [{ type: "string" }, { type: "integer" }] },
+      ].each do |branch|
+        error = expect do
+          Riffer::Params.from_json_schema(
+            {
+              type: "object",
+              properties: { "result" => { anyOf: [{ type: "string" }, branch] } },
+              required: ["result"],
+            },
+          )
+        end.must_raise Riffer::ArgumentError
+        expect(error.message).must_equal "Unsupported anyOf branch: #{branch.to_json}"
+      end
     end
 
     it "raises on the nullable enum shape strict schemas emit" do
@@ -898,10 +920,19 @@ describe Riffer::Params do
           },
         )
       end.must_raise Riffer::ArgumentError
-      expect(error.message).must_equal 'Unsupported anyOf branch: {"type":"string","enum":["c","f"]}'
+      expect(error.message).must_equal "anyOf requires at least two branches"
     end
 
-    it "raises on an anyOf with fewer than two object branches" do
+    it "raises on a union of types instead of narrowing it to the first" do
+      error = expect do
+        Riffer::Params.from_json_schema(
+          { type: "object", properties: { "quantity" => { type: %w[integer string] } }, required: ["quantity"] },
+        )
+      end.must_raise Riffer::ArgumentError
+      expect(error.message).must_equal 'Unsupported JSON Schema type: ["integer", "string"]'
+    end
+
+    it "raises on an anyOf with fewer than two branches" do
       error = expect do
         Riffer::Params.from_json_schema(
           {
@@ -919,7 +950,7 @@ describe Riffer::Params do
           },
         )
       end.must_raise Riffer::ArgumentError
-      expect(error.message).must_equal "anyOf requires at least two object branches"
+      expect(error.message).must_equal "anyOf requires at least two branches"
     end
 
     it "round-trips an AnyOf param losslessly with to_json_schema(strict: false)" do
@@ -946,6 +977,23 @@ describe Riffer::Params do
       expect(rebuilt.to_json_schema(strict: false)).must_equal schema
       expect(rebuilt.to_json_schema(strict: true)).must_equal params.to_json_schema(strict: true)
       expect(rebuilt.parameters.first.default).must_equal({ name: "Fallback" })
+    end
+
+    it "round-trips an AnyOf param with primitive and object variants" do
+      params = Riffer::Params.new
+      params.optional(:due, Riffer::Params::AnyOf, description: "When it's due") do
+        variant String, format: "date", description: "The due date"
+        variant String, enum: ["none"]
+        variant Integer
+        variant { required :days, Integer }
+      end
+      schema = params.to_json_schema(strict: false)
+      wire = JSON.parse(JSON.generate(schema), symbolize_names: true)
+
+      rebuilt = Riffer::Params.from_json_schema(wire)
+
+      expect(rebuilt.to_json_schema(strict: false)).must_equal schema
+      expect(rebuilt.to_json_schema(strict: true)).must_equal params.to_json_schema(strict: true)
     end
   end
   describe "#dup" do
@@ -1021,11 +1069,11 @@ describe Riffer::Params do
       expect(error.message).must_equal "AnyOf requires at least two variants"
     end
 
-    it "raises ArgumentError for a variant without a block" do
+    it "raises ArgumentError for a variant without a type or a block" do
       error = expect do
         Riffer::Params.new.required(:result, Riffer::Params::AnyOf) { variant }
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "variant requires a block defining its properties"
+      expect(error.message).must_equal "variant requires a type or a block defining its properties"
     end
 
     it "raises ArgumentError with of:" do
@@ -1266,6 +1314,170 @@ describe Riffer::Params do
       copy.parameters.first.variants.first.required(:extra, String)
 
       expect(params.parameters.first.variants.first.parameters.map(&:name)).must_equal %i[name note]
+    end
+  end
+
+  describe "AnyOf with primitive variants" do
+    let(:params) do
+      params = Riffer::Params.new
+      params.required(:quantity, Riffer::Params::AnyOf, description: "A count or a word") do
+        variant Integer
+        variant String
+      end
+      params.optional(:due, Riffer::Params::AnyOf) do
+        variant String, format: "date", description: "The due date"
+        variant String, enum: ["none"]
+      end
+      params
+    end
+
+    it "raises ArgumentError for a variant with both a type and a block" do
+      error = expect do
+        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) do
+          variant(String) { required :name, String }
+          variant Integer
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "variant takes a type or a block, not both"
+    end
+
+    it "raises ArgumentError for a variant type that is not primitive" do
+      error = expect do
+        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) do
+          variant Hash
+          variant String
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal(
+        "variant type must be a primitive type " \
+        "(String, Integer, Float, Riffer::Params::Boolean, TrueClass, FalseClass), got Hash",
+      )
+    end
+
+    it "raises ArgumentError for an Integer variant after a Float variant" do
+      error = expect do
+        Riffer::Params.new.required(:amount, Riffer::Params::AnyOf) do
+          variant Float
+          variant Integer
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "amount: an Integer variant after a Float variant without enum: can never match"
+    end
+
+    it "allows an Integer variant after a Float variant with an enum" do
+      params = Riffer::Params.new
+      params.required(:amount, Riffer::Params::AnyOf) do
+        variant Float, enum: [1.5]
+        variant Integer
+      end
+
+      expect(params.validate({ amount: 3 })).must_equal({ amount: 3 })
+    end
+
+    it "raises ArgumentError for a block variant with description:, enum: or format:" do
+      [{ description: "An email" }, { enum: ["x"] }, { format: "email" }].each do |options|
+        error = expect do
+          Riffer::Params.new.required(:contact, Riffer::Params::AnyOf) do
+            variant(**options) { required :email, String }
+            variant String
+          end
+        end.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_equal "description:, enum: and format: only apply to a primitive variant"
+      end
+    end
+
+    it "raises ArgumentError for a variant with both enum: and format:" do
+      error = expect do
+        Riffer::Params.new.required(:due, Riffer::Params::AnyOf) do
+          variant String, format: "date", enum: ["2026-01-01"]
+          variant Integer
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "due: format: cannot be used with enum:"
+    end
+
+    it "renders one branch per variant" do
+      expect(params.to_json_schema[:properties]).must_equal(
+        "quantity" => { anyOf: [{ type: "integer" }, { type: "string" }], description: "A count or a word" },
+        "due" => {
+          anyOf: [{ type: "string", description: "The due date", format: "date" }, { type: "string", enum: ["none"] }],
+        },
+      )
+    end
+
+    it "adds a single null branch to an optional field in strict mode" do
+      expect(params.to_json_schema(strict: true)[:properties]["due"]).must_equal(
+        anyOf: [
+          { type: "string", description: "The due date", format: "date" },
+          { type: "string", enum: ["none"] },
+          { type: "null" },
+        ],
+      )
+    end
+
+    it "accepts a value matching any variant" do
+      expect(params.validate({ quantity: 3, due: "2026-11-03" })).must_equal({ quantity: 3, due: "2026-11-03" })
+      expect(params.validate({ quantity: "several", due: "none" })).must_equal({ quantity: "several", due: "none" })
+    end
+
+    it "accepts a missing value when optional" do
+      expect(params.validate({ quantity: 3 })).must_equal({ quantity: 3, due: nil })
+    end
+
+    it "rejects a value whose type matches no variant" do
+      error = expect { params.validate({ quantity: true }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "quantity must be a integer or string"
+    end
+
+    it "reports each variant's error when the type matches but no variant passes" do
+      error = expect { params.validate({ quantity: 1, due: "soon" }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "due must match one of the variants: variant 1 (must be a valid date), variant 2 (must be one of: none)",
+      )
+    end
+
+    it "keeps integers from an Integer variant and coerces a Float variant's values" do
+      params = Riffer::Params.new
+      params.required(:amount, Riffer::Params::AnyOf) do
+        variant Integer
+        variant Float
+      end
+      params.required(:ratio, Riffer::Params::AnyOf) do
+        variant String
+        variant Float
+      end
+
+      expect(params.validate({ amount: 3, ratio: 1 })).must_equal({ amount: 3, ratio: 1.0 })
+      expect(params.validate({ amount: 2.5, ratio: "half" })).must_equal({ amount: 2.5, ratio: "half" })
+    end
+
+    it "accepts a primitive or an object when a field has both kinds of variant" do
+      params = Riffer::Params.new
+      params.required(:contact, Riffer::Params::AnyOf) do
+        variant String
+        variant { required :email, String }
+      end
+
+      expect(params.validate({ contact: "front desk" })).must_equal({ contact: "front desk" })
+      expect(params.validate({ contact: { email: "a@b.co" } })).must_equal({ contact: { email: "a@b.co" } })
+
+      error = expect { params.validate({ contact: { phone: "555" } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal(
+        "contact must match one of the variants: variant 1 (must be a string), variant 2 (email is required)",
+      )
+    end
+
+    it "prefixes errors with the path of an enclosing object" do
+      outer = Riffer::Params.new
+      outer.required(:item, Hash) do
+        required :quantity, Riffer::Params::AnyOf do
+          variant Integer
+          variant String
+        end
+      end
+
+      error = expect { outer.validate({ item: { quantity: [1] } }) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_equal "item.quantity must be a integer or string"
     end
   end
 
@@ -1729,17 +1941,17 @@ describe Riffer::Params do
     end
 
     it "raises when reading back innermost items that are objects or a union of types" do
-      [
-        { type: "object", properties: {} },
-        { type: %w[integer null] },
-        { type: %w[string integer] },
-      ].each do |leaf|
+      {
+        { type: "object", properties: {} } => 'Unsupported nested array items: {"type":"object","properties":{}}',
+        { type: %w[integer null] } => 'Unsupported nested array items: {"type":["integer","null"]}',
+        { type: %w[string integer] } => 'Unsupported JSON Schema type: ["string", "integer"]',
+      }.each do |leaf, message|
         grid = { type: "array", items: { type: "array", items: leaf } }
 
         error = expect do
           Riffer::Params.from_json_schema({ type: "object", properties: { "grid" => grid }, required: ["grid"] })
         end.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_equal "Unsupported nested array items: #{leaf.to_json}"
+        expect(error.message).must_equal message
       end
     end
   end

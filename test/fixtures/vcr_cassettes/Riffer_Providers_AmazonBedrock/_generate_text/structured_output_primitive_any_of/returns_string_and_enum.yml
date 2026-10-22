@@ -1,0 +1,47 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Read this order: several
+        boxes, with no due date"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"quantity\":{\"anyOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}],\"description\":\"A
+        count, or a word when there is no count\"},\"due\":{\"anyOf\":[{\"type\":\"string\",\"format\":\"date\"},{\"type\":\"string\",\"enum\":[\"none\"]},{\"type\":\"null\"}],\"description\":\"The
+        due date, or none when there isn''t one\"}},\"required\":[\"quantity\",\"due\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 0fa29d5d-371b-49a2-817c-9be871f755e3
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '654'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 22 Oct 2026 18:45:10 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '358'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9c8addb1-8a6b-46c2-8436-61fa9e29c451
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1385},"output":{"message":{"content":[{"text":"{\"quantity\":\"several\",\"due\":\"none\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":312,"outputTokens":12,"serverToolUsage":{},"totalTokens":324}}'
+  recorded_at: Thu, 22 Oct 2026 18:45:10 GMT
+recorded_with: VCR 6.4.0

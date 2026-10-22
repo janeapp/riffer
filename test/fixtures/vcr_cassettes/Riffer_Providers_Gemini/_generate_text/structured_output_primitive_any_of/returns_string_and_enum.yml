@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Read this order: several
+        boxes, with no due date"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"quantity":{"anyOf":[{"type":"integer"},{"type":"string"}],"description":"A
+        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]}],"description":"The
+        due date, or none when there isn''t one"}},"required":["quantity"]}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Thu, 22 Oct 2026 18:44:59 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=523
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"quantity\": \"several\",\n  \"due\": \"none\"\n}"
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 12,
+            "candidatesTokenCount": 19,
+            "totalTokenCount": 31,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 12
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-2.5-flash-lite",
+          "responseId": "qlnaauCFNZSOiLMPqZa4sQY"
+        }
+  recorded_at: Thu, 22 Oct 2026 18:44:59 GMT
+recorded_with: VCR 6.4.0

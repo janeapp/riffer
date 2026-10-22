@@ -27,15 +27,15 @@ class Riffer::Params::Param
 
   attr_reader nested_params: Riffer::Params?
 
-  attr_reader variants: Array[Riffer::Params]?
+  attr_reader variants: Array[Riffer::Params | Riffer::Params::Param]?
 
   # --
   # : (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
 
   # --
-  # : (Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params]
-  def self.resolve_variants: (Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params]
+  # : (Symbol, Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params | Riffer::Params::Param]
+  def self.resolve_variants: (Symbol, Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params | Riffer::Params::Param]
 
   # --
   # : (Module, Hash[Symbol, untyped]) -> Riffer::Params?
@@ -50,8 +50,8 @@ class Riffer::Params::Param
   def self.json_type_to_ruby: (untyped) -> Module
 
   # --
-  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
-  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
+  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
 
   # --
   # : (untyped) -> bool
@@ -73,6 +73,11 @@ class Riffer::Params::Param
   # --
   # : (Riffer::Params::Param) -> void
   def initialize_copy: (Riffer::Params::Param) -> void
+
+  # The first matching variant wins, and a Float variant without an enum accepts any number.
+  # --
+  # : () -> void
+  def validate_variant_order!: () -> void
 
   # --
   # : () -> void

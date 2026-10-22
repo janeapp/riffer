@@ -34,7 +34,7 @@ class Riffer::Params
   def required(name, type, description: nil, enum: nil, format: nil, of: nil, &)
     item_type, dimensions = unwrap_of(of)
     nested = build_nested(type, item_type, enum, &) unless type == Riffer::Params::AnyOf
-    variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
+    variants = build_variants(name, of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
@@ -55,7 +55,7 @@ class Riffer::Params
   def optional(name, type, description: nil, enum: nil, format: nil, default: nil, of: nil, &)
     item_type, dimensions = unwrap_of(of)
     nested = build_nested(type, item_type, enum, &) unless type == Riffer::Params::AnyOf
-    variants = build_variants(of, enum, &) if type == Riffer::Params::AnyOf
+    variants = build_variants(name, of, enum, &) if type == Riffer::Params::AnyOf
     @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
@@ -90,19 +90,8 @@ class Riffer::Params
         next
       end
 
-      unless param.valid_type?(value)
-        errors << "#{param.name} must be a #{param.type_name}"
-        next
-      end
-
-      # A typed array's enum and format constrain its items, which validate_typed_array checks.
-      if param.enum && !param.item_type && !param.enum.include?(value)
-        errors << "#{param.name} must be one of: #{param.enum.join(', ')}"
-        next
-      end
-
-      if param.format && !param.item_type && !Riffer::Params::Format.valid?(param.format, value)
-        errors << "#{param.name} must be a valid #{param.format}"
+      if (error = value_error(param, value))
+        errors << "#{param.name} #{error}"
         next
       end
 
@@ -185,17 +174,30 @@ class Riffer::Params
   end
 
   #--
-  #: ((Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
-  def build_variants(of, enum, &block)
+  #: (Symbol, (Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
+  def build_variants(name, of, enum, &block)
     raise Riffer::ArgumentError, "of: cannot be used with AnyOf" if of
     raise Riffer::ArgumentError, "enum: cannot be used with AnyOf" if enum
     raise Riffer::ArgumentError, "AnyOf requires a block defining its variants" unless block
 
-    any_of = Riffer::Params::AnyOf.new
+    any_of = Riffer::Params::AnyOf.new(name)
     any_of.instance_eval(&block)
     raise Riffer::ArgumentError, "AnyOf requires at least two variants" if any_of.variants.size < 2
 
     any_of.variants
+  end
+
+  #--
+  #: (Riffer::Params::Param, untyped) -> String?
+  def value_error(param, value)
+    return "must be a #{param.type_name}" unless param.valid_type?(value)
+
+    # A typed array's enum and format constrain its items, which validate_typed_array checks.
+    return "must be one of: #{param.enum.join(', ')}" if param.enum && !param.item_type && !param.enum.include?(value)
+
+    return unless param.format && !param.item_type && !Riffer::Params::Format.valid?(param.format, value)
+
+    "must be a valid #{param.format}"
   end
 
   #--
@@ -229,13 +231,26 @@ class Riffer::Params
   end
 
   #--
-  #: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
+  #: (Riffer::Params::Param, untyped, Array[String]) -> untyped
   def validate_any_of(param, value, errors)
     variants = param.variants
     return value unless variants
 
     variant_errors = [] #: Array[String]
     variants.each.with_index(1) do |variant, number|
+      if variant.is_a?(Riffer::Params::Param)
+        error = value_error(variant, value)
+        return coerce_value(variant.type, value) unless error
+
+        variant_errors << "variant #{number} (#{error})"
+        next
+      end
+
+      unless value.is_a?(Hash)
+        variant_errors << "variant #{number} (must be a object)"
+        next
+      end
+
       validated = variant.validate(value)
       # Each variant's schema sets additionalProperties: false on every object
       # it declares, so a key outside this variant rules it out.

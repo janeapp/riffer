@@ -153,6 +153,15 @@ describe Riffer::Params::Param do
 
       expect(param.valid_type?("Rule")).must_equal false
     end
+
+    it "returns true for a value matching any primitive or object variant of an AnyOf" do
+      param = Riffer::Params::Param.new(
+        name: :quantity, type: Riffer::Params::AnyOf, required: true,
+        variants: [Riffer::Params::Param.new(name: :quantity, type: Integer, required: true), Riffer::Params.new],
+      )
+
+      expect([3, { count: 3 }, "three"].map { |value| param.valid_type?(value) }).must_equal [true, true, false]
+    end
   end
 
   describe "#type_name" do
@@ -204,6 +213,15 @@ describe Riffer::Params::Param do
       )
 
       expect(param.type_name).must_equal "object"
+    end
+
+    it "joins the distinct variant types for an AnyOf with primitive variants" do
+      variants = [Integer, String, String].map { |type| Riffer::Params::Param.new(name: :quantity, type: type, required: true) }
+      param = Riffer::Params::Param.new(
+        name: :quantity, type: Riffer::Params::AnyOf, required: true, variants: variants + [Riffer::Params.new],
+      )
+
+      expect(param.type_name).must_equal "integer or string or object"
     end
   end
 
