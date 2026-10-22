@@ -1,0 +1,135 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '51'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 22 Oct 2026 20:19:28 GMT
+      Internal-Weighted-Total-Tokens:
+      - '649'
+      Stream-Reported-Http-Code:
+      - '200'
+      Request-Id:
+      - req_vrtx_011CgHtrtKuPo7vNi1DspRNQ
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Input-Tokens:
+      - '394'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHtrtMtYAD4K3qmfojNE","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01SvnJhZgXsxvN9gN6s6N9pu","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":51,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Thu, 22 Oct 2026 20:19:28 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01SvnJhZgXsxvN9gN6s6N9pu","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01SvnJhZgXsxvN9gN6s6N9pu","content":"The
+        weather in Toronto is 15 degrees Celsius."}]}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Stream-Reported-Http-Code:
+      - '200'
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Input-Tokens:
+      - '470'
+      Date:
+      - Thu, 22 Oct 2026 20:19:30 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Content-Type:
+      - application/json
+      Request-Id:
+      - req_vrtx_011CgHtrxjKS1vc4HYAeG8Ks
+      Internal-Weighted-Total-Tokens:
+      - '560'
+      Internal-Output-Tokens:
+      - '18'
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ192cnR4XzAxMUNnSHRyeGs0QThMcVV6Q0hCM1lxNCIsInR5cGUiOiJtZXNzYWdlIiwicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOlt7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IlRoZSB3ZWF0aGVyIGluIFRvcm9udG8gaXMgY3VycmVudGx5IDE1wrBDLiJ9XSwiY29udGFpbmVyIjpudWxsLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjQ3MCwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE4LCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsidGhpbmtpbmdfdG9rZW5zIjowfX19
+  recorded_at: Thu, 22 Oct 2026 20:19:30 GMT
+recorded_with: VCR 6.4.0
