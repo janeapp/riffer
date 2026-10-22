@@ -1241,7 +1241,7 @@ describe Riffer::Providers::Anthropic do
       end
 
       provider = Riffer::Providers::Anthropic.new
-      format = provider.send(:convert_tool_to_anthropic_format, tool)
+      format = provider.send(:convert_tool, tool)
       schema = format[:input_schema]
 
       expect(schema[:required]).must_include "age"
@@ -1734,7 +1734,7 @@ describe Riffer::Providers::Anthropic do
 
     def convert(reasoning, content: "42", tool_calls: [])
       assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
-      provider.send(:convert_assistant_to_anthropic_format, assistant)
+      provider.send(:convert_assistant, assistant)
     end
 
     describe "capturing thinking blocks" do

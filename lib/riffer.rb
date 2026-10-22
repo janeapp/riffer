@@ -10,6 +10,7 @@ loader.inflector.inflect(
   "open_router" => "OpenRouter",
   "sse" => "SSE",
   "http" => "HTTP",
+  "messages_api" => "MessagesAPI",
 )
 # Test-framework wiring a consumer requires by hand; neither file defines the
 # constant its path implies, and both reference framework constants riffer

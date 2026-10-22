@@ -1,0 +1,4 @@
+# Generated from lib/riffer/providers/anthropic_compatible.rb with RBS::Inline
+
+module Riffer::Providers::AnthropicCompatible
+end
