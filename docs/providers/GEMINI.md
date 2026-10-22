@@ -51,9 +51,9 @@ The class is a default implementation, not a required base: any object implement
 Use Gemini model IDs in the `gemini/model` format:
 
 ```ruby
-model 'gemini/gemini-2.5-flash-lite'
-model 'gemini/gemini-2.5-pro'
-model 'gemini/gemini-2.5-flash'
+model 'gemini/gemini-3.5-flash-lite'
+model 'gemini/gemini-3.8-flash'
+model 'gemini/gemini-3.1-pro-preview'
 ```
 
 ## Model Options
@@ -101,7 +101,7 @@ provider = Riffer::Providers::Gemini.new
 
 response = provider.generate_text(
   prompt: "Hello!",
-  model: "gemini-2.5-flash-lite"
+  model: "gemini-3.5-flash-lite"
 )
 puts response.content
 ```
@@ -109,7 +109,7 @@ puts response.content
 ### Streaming
 
 ```ruby
-provider.stream_text(prompt: "Tell me a story", model: "gemini-2.5-flash-lite").each do |event|
+provider.stream_text(prompt: "Tell me a story", model: "gemini-3.5-flash-lite").each do |event|
   case event
   when Riffer::StreamEvents::TextDelta
     print event.content
@@ -129,11 +129,13 @@ structured_output = Riffer::Agent::StructuredOutput.new(params)
 
 response = provider.generate_text(
   prompt: "Analyze: 'This is great!'",
-  model: "gemini-2.5-flash-lite",
+  model: "gemini-3.5-flash-lite",
   structured_output: structured_output
 )
 puts response.structured_output
 ```
+
+Structured output is sent as `responseFormat`, which needs a gemini-3 model or later. gemini-2.x models ignore it and return prose.
 
 ### Tool Calling
 
@@ -150,10 +152,18 @@ end
 
 response = provider.generate_text(
   prompt: "What's the weather in Tokyo?",
-  model: "gemini-2.5-flash-lite",
+  model: "gemini-3.5-flash-lite",
   tools: [WeatherTool]
 )
 ```
+
+### Thought Signatures
+
+Gemini 3 models attach an opaque `thoughtSignature` to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.
+
+Riffer keeps each signature on the assistant message as an `:encrypted` [reasoning part](../MESSAGES.md#reasoning) tagged `format: "gemini-generate-content-v1"` (`Riffer::Providers::Gemini::REASONING_FORMAT`). A signature from a function call carries that tool call's `call_id` as its `id`; the text signature has no `id`. Streams emit them as `ReasoningDone` events. On later turns riffer puts each signature back on the part it came from. You don't have to do anything as long as the assistant messages stay in the history.
+
+If you persist sessions, keep the `reasoning` key when you store messages. If you drop it and pick a session back up between a tool call and its result, the next request is rejected. Gemini only checks the signatures of the current turn, so older turns without them still work.
 
 ### File Support
 
@@ -163,7 +173,7 @@ Gemini's API only accepts inline base64-encoded files (images and documents), ne
 file = Riffer::Messages::User::FilePart.new(data: base64_data, media_type: "image/png")
 response = provider.generate_text(
   prompt: "Describe this image",
-  model: "gemini-2.5-flash-lite",
+  model: "gemini-3.5-flash-lite",
   files: [file]
 )
 ```

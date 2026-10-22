@@ -84,7 +84,7 @@ describe Riffer::Providers::Gemini do
 
     it "extracts the finish reason when generating" do
       VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
-        result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
+        result = provider.generate_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
 
         expect(result.finish_reason).must_equal :stop
       end
@@ -92,7 +92,7 @@ describe Riffer::Providers::Gemini do
 
     it "emits a FinishReasonDone event when streaming" do
       VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
-        events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
+        events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
         done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
 
         expect(done.finish_reason).must_equal :stop
@@ -218,9 +218,9 @@ describe Riffer::Providers::Gemini do
 
     it "accepts valid model names" do
       provider = Riffer::Providers::Gemini.new
-      path = provider.send(:api_path, "gemini-2.5-flash-lite", "generateContent")
+      path = provider.send(:api_path, "gemini-3.5-flash-lite", "generateContent")
 
-      expect(path).must_include "v1beta/models/gemini-2.5-flash-lite:generateContent"
+      expect(path).must_include "v1beta/models/gemini-3.5-flash-lite:generateContent"
     end
   end
 
@@ -231,7 +231,7 @@ describe Riffer::Providers::Gemini do
           "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
         ) do
           provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
+          result = provider.generate_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -244,7 +244,7 @@ describe Riffer::Providers::Gemini do
           "Riffer_Providers_Gemini/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
         ) do
           provider = Riffer::Providers::Gemini.new
-          params = { system: "Be concise", prompt: "Say hello", model: "gemini-2.5-flash-lite" }
+          params = { system: "Be concise", prompt: "Say hello", model: "gemini-3.5-flash-lite" }
           result = provider.generate_text(**params)
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -262,7 +262,7 @@ describe Riffer::Providers::Gemini do
             { role: "system", content: "Be concise" },
             { role: "user", content: "Say hello" },
           ]
-          result = provider.generate_text(messages: messages, model: "gemini-2.5-flash-lite")
+          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -274,7 +274,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_a_User_message/returns_an_Assistant") do
           provider = Riffer::Providers::Gemini.new
           messages = [Riffer::Messages::User.new("Say hello")]
-          result = provider.generate_text(messages: messages, model: "gemini-2.5-flash-lite")
+          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -289,7 +289,7 @@ describe Riffer::Providers::Gemini do
             Riffer::Messages::System.new("Be concise"),
             Riffer::Messages::User.new("Say hello"),
           ]
-          result = provider.generate_text(messages: messages, model: "gemini-2.5-flash-lite")
+          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -307,7 +307,7 @@ describe Riffer::Providers::Gemini do
             Riffer::Messages::Assistant.new("Hello!"),
             Riffer::Messages::User.new("How are you?"),
           ]
-          result = provider.generate_text(messages: messages, model: "gemini-2.5-flash-lite")
+          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -324,7 +324,7 @@ describe Riffer::Providers::Gemini do
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: structured_output,
           )
 
@@ -341,7 +341,7 @@ describe Riffer::Providers::Gemini do
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: structured_output,
           )
 
@@ -358,7 +358,7 @@ describe Riffer::Providers::Gemini do
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: structured_output,
           )
           JSON.parse(result.content)
@@ -374,7 +374,7 @@ describe Riffer::Providers::Gemini do
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: structured_output,
           )
           parsed = JSON.parse(result.content)
@@ -392,7 +392,7 @@ describe Riffer::Providers::Gemini do
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: structured_output,
           )
           parsed = JSON.parse(result.content)
@@ -424,7 +424,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: nested_object_prompt,
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: nested_object_structured_output,
           )
           parsed = JSON.parse(result.content)
@@ -452,7 +452,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: typed_array_prompt,
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: typed_array_structured_output,
           )
           parsed = JSON.parse(result.content)
@@ -486,7 +486,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: array_of_objects_prompt,
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: array_of_objects_structured_output,
           )
           parsed = JSON.parse(result.content)
@@ -524,7 +524,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "Extract the address from: John lives at 123 Main St, Toronto",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: any_of_structured_output,
           )
           validated = any_of_structured_output.parse_and_validate(result.content)
@@ -542,7 +542,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "Extract the address from: John likes long walks by the lake",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: any_of_structured_output,
           )
           validated = any_of_structured_output.parse_and_validate(result.content)
@@ -619,7 +619,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "Tag this support ticket: 'I was charged twice this month and need it fixed today.'",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: enum_array_structured_output,
           )
           validated = enum_array_structured_output.parse_and_validate(result.content)
@@ -650,7 +650,7 @@ describe Riffer::Providers::Gemini do
           result = provider.generate_text(
             prompt: "Book a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic #{clinic_id}. " \
                     "The patient gave no email.",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: format_structured_output,
           )
           validated = format_structured_output.parse_and_validate(result.content)
@@ -681,7 +681,7 @@ describe Riffer::Providers::Gemini do
             prompt: "Row 1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. " \
                     "Game 1's tic-tac-toe board rows are: x o x, o x o, o x x. " \
                     "Game 2's rows are: o o x, x x o, o x x.",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: nested_structured_output,
           )
           validated = nested_structured_output.parse_and_validate(result.content)
@@ -702,7 +702,7 @@ describe Riffer::Providers::Gemini do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::Gemini.new
-          result = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
+          result = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
 
           expect(result).must_be_instance_of Enumerator
         end
@@ -711,7 +711,7 @@ describe Riffer::Providers::Gemini do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
 
           expect(events).wont_be_empty
         end
@@ -720,7 +720,7 @@ describe Riffer::Providers::Gemini do
       it "yields TextDelta events" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
           provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
           deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
           expect(deltas).wont_be_empty
@@ -730,7 +730,7 @@ describe Riffer::Providers::Gemini do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
           provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
           expect(done).wont_be_nil
@@ -744,7 +744,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
           )
 
           expect(result).must_be_instance_of Enumerator
@@ -756,7 +756,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
           ).to_a
 
           expect(events).wont_be_empty
@@ -766,7 +766,7 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "structured output" do
-    it "sends the JSON schema unmodified as responseJsonSchema" do
+    it "sends the JSON schema unmodified in responseFormat" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
       params.required(:result, Riffer::Params::AnyOf) do
@@ -779,13 +779,12 @@ describe Riffer::Providers::Gemini do
       result = provider.send(
         :build_request_params,
         messages,
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash-lite",
         { structured_output: structured_output },
       )
 
       expect(result[:generationConfig]).must_equal(
-        responseMimeType: "application/json",
-        responseJsonSchema: structured_output.json_schema,
+        responseFormat: { text: { mimeType: "APPLICATION_JSON", schema: structured_output.json_schema } },
       )
     end
 
@@ -793,7 +792,7 @@ describe Riffer::Providers::Gemini do
       provider = Riffer::Providers::Gemini.new
       messages = [Riffer::Messages::User.new("Hello")]
 
-      result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {})
+      result = provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", {})
 
       expect(result.key?(:generationConfig)).must_equal false
     end
@@ -808,7 +807,7 @@ describe Riffer::Providers::Gemini do
       result = provider.send(
         :build_request_params,
         messages,
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash-lite",
         { structured_output: structured_output },
       )
 
@@ -821,13 +820,13 @@ describe Riffer::Providers::Gemini do
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
 
     it "does not add a labels field (the Developer API has none)" do
-      params = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", { tags: { "team" => "growth" } })
+      params = provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", { tags: { "team" => "growth" } })
 
       expect(params.key?(:labels)).must_equal false
     end
 
     it "does not pass tags through to API params" do
-      params = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", { tags: { "team" => "growth" } })
+      params = provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", { tags: { "team" => "growth" } })
 
       expect(params.key?(:tags)).must_equal false
     end
@@ -836,7 +835,7 @@ describe Riffer::Providers::Gemini do
       params = provider.send(
         :build_request_params,
         messages,
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash-lite",
         { temperature: 0.5, tags: { "team" => "growth" } },
       )
 
@@ -856,7 +855,7 @@ describe Riffer::Providers::Gemini do
       ) do
         result = provider.generate_text(
           prompt: "Say hello",
-          model: "gemini-2.5-flash-lite",
+          model: "gemini-3.5-flash-lite",
           tags: { "user_id" => "u_1", "team" => "growth" },
         )
 
@@ -879,7 +878,7 @@ describe Riffer::Providers::Gemini do
       provider = Riffer::Providers::Gemini.new
       messages = [Riffer::Messages::User.new("Hello")]
 
-      result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", { tools: [weather_tool] })
+      result = provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", { tools: [weather_tool] })
 
       expect(result[:tools]).must_equal [{
         functionDeclarations: [{
@@ -896,7 +895,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           )
 
@@ -909,7 +908,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           )
 
@@ -922,7 +921,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           )
 
@@ -935,7 +934,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           )
           args = JSON.parse(result.tool_calls.first.arguments)
@@ -949,7 +948,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           )
 
@@ -958,66 +957,103 @@ describe Riffer::Providers::Gemini do
       end
     end
 
-    describe "#generate_text with Tool message in history" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::Gemini.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "gemini_call_abc123",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "The weather in Toronto is 15 degrees Celsius.",
-              tool_call_id: "gemini_call_abc123",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "gemini-2.5-flash-lite",
-            tools: [weather_tool],
-          )
+    describe "thought signatures" do
+      let(:provider) { Riffer::Providers::Gemini.new }
+      let(:model) { "gemini-3.5-flash-lite" }
+      let(:format) { Riffer::Providers::Gemini::REASONING_FORMAT }
+      let(:question) { Riffer::Messages::User.new("What is the weather in Toronto?") }
+      let(:signed_response) do
+        toronto = { id: "call_1", name: "get_weather", args: { city: "Toronto" } }
+        paris = { id: "call_2", name: "get_weather", args: { city: "Paris" } }
+        parts = [
+          { text: "Checking.", thoughtSignature: "text-sig" },
+          { functionCall: toronto, thoughtSignature: "call-sig" },
+          { functionCall: paris },
+        ]
+        { candidates: [{ content: { parts: parts } }] }
+      end
 
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
+      def tool_result(tool_call)
+        Riffer::Messages::Tool.new(
+          "15 degrees Celsius and sunny.",
+          tool_call_id: tool_call.call_id,
+          name: tool_call.name,
+        )
+      end
+
+      it "keeps each signature as an encrypted part tied to its tool call" do
+        tool_calls = provider.send(:extract_tool_calls, signed_response)
+        parts = provider.send(:extract_reasoning, signed_response)
+
+        expect(parts.map(&:to_h)).must_equal [
+          { type: :encrypted, signature: "text-sig", format: format },
+          { type: :encrypted, signature: "call-sig", id: tool_calls.first.call_id, format: format },
+        ]
+      end
+
+      it "makes its own call ids rather than using Gemini's" do
+        call_ids = provider.send(:extract_tool_calls, signed_response).map(&:call_id)
+
+        expect(call_ids).must_be(:all?) { |id| id.match?(/\Agemini_call_\h{24}\z/) }
+      end
+
+      it "puts each signature back on the part it came on and skips other formats" do
+        foreign = Riffer::Messages::Assistant::ReasoningPart.new(
+          type: :encrypted,
+          signature: "foreign",
+          format: "anthropic-messages-v1",
+        )
+        message = Riffer::Messages::Assistant.new(
+          "Checking.",
+          tool_calls: provider.send(:extract_tool_calls, signed_response),
+          reasoning: provider.send(:extract_reasoning, signed_response) + [foreign],
+        )
+
+        result = provider.send(:convert_assistant_to_gemini_format, message)
+
+        expect(result[:parts]).must_equal [
+          { text: "Checking.", thoughtSignature: "text-sig" },
+          { functionCall: { name: "get_weather", args: { "city" => "Toronto" } }, thoughtSignature: "call-sig" },
+          { functionCall: { name: "get_weather", args: { "city" => "Paris" } } },
+        ]
+      end
+
+      it "replays the signature across a tool call round trip" do
+        VCR.use_cassette("Riffer_Providers_Gemini/thought_signatures/_generate_text/tool_call_round_trip") do
+          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
+          tool_call = first.tool_calls.first
+
+          expect(first.reasoning.find { |part| part.id == tool_call.call_id }&.signature).wont_be_nil
+
+          history = [question, first, tool_result(tool_call)]
+          second = provider.generate_text(messages: history, model: model, tools: [weather_tool])
+
+          expect(second.content).must_include "15"
         end
       end
 
-      it "returns response with content" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::Gemini.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "gemini_call_abc123",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "The weather in Toronto is 15 degrees Celsius.",
-              tool_call_id: "gemini_call_abc123",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "gemini-2.5-flash-lite",
-            tools: [weather_tool],
+      it "replays a streamed signature across a tool call round trip" do
+        VCR.use_cassette("Riffer_Providers_Gemini/thought_signatures/_stream_text/tool_call_round_trip") do
+          events = provider.stream_text(messages: [question], model: model, tools: [weather_tool]).to_a
+          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+          parts = events.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
+          tool_call = Riffer::Messages::Assistant::ToolCall.new(
+            call_id: tool_done.call_id,
+            name: tool_done.name,
+            arguments: tool_done.arguments,
           )
 
-          expect(result.content).wont_be_empty
+          expect(parts.find { |part| part.id == tool_call.call_id }&.signature).wont_be_nil
+
+          history = [
+            question,
+            Riffer::Messages::Assistant.new("", tool_calls: [tool_call], reasoning: parts),
+            tool_result(tool_call),
+          ]
+          second = provider.stream_text(messages: history, model: model, tools: [weather_tool]).to_a
+          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+          expect(text_done.content).must_include "15"
         end
       end
     end
@@ -1028,7 +1064,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
@@ -1042,7 +1078,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
@@ -1056,7 +1092,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             tools: [weather_tool],
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
@@ -1107,7 +1143,7 @@ describe Riffer::Providers::Gemini do
       it "includes usage in the response" do
         VCR.use_cassette("Riffer_Providers_Gemini/usage/_generate_text/includes_usage") do
           provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
+          result = provider.generate_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
 
           expect(result.token_usage).wont_be_nil
         end
@@ -1118,7 +1154,7 @@ describe Riffer::Providers::Gemini do
       it "yields TokenUsageDone event" do
         VCR.use_cassette("Riffer_Providers_Gemini/usage/_stream_text/yields_usage_done") do
           provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
           usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 
           expect(usage_done).wont_be_nil
@@ -1183,7 +1219,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Gemini.new
           file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
+          result = provider.generate_text(prompt: "Describe this image", model: "gemini-3.5-flash-lite", files: [file])
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -1193,7 +1229,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Gemini.new
           file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
+          result = provider.generate_text(prompt: "Describe this image", model: "gemini-3.5-flash-lite", files: [file])
 
           expect(result.content).wont_be_empty
         end

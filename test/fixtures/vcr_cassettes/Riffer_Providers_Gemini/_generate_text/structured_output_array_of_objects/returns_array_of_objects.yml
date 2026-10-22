@@ -2,27 +2,25 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"List 2 items from an
-        order: a book costing $12.99 and a pen costing $1.50"}]}],"generationConfig":{"responseMimeType":"application/json","responseJsonSchema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
+        order: a book costing $12.99 and a pen costing $1.50"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
         identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
         name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":"integer","description":"Quantity
-        ordered"}},"required":["name","price"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}'
+        ordered"}},"required":["name","price"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}}}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -37,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 20 Oct 2026 21:28:28 GMT
+      - Thu, 22 Oct 2026 19:19:23 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=519
+      - gfet4t7; dur=910
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -61,7 +59,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"order_id\": \"some_order_id\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50\n    }\n  ]\n}"
+                    "text": "{\n  \"order_id\": \"ORD-12345\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99,\n      \"quantity\": 1\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50,\n      \"quantity\": 1\n    }\n  ]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0Tq93958jD9FqQCfSsyZMih2nHpzClA3Cj6G9Xl2QLlNf3/PBBYH07j+u6MJauVOszQA1Ll/S3jlSFyNNgnOQPDYoY/OxzM9pIGd2zwDs0B1yVyqUbVXH88bY="
                   }
                 ],
                 "role": "model"
@@ -72,8 +71,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 27,
-            "candidatesTokenCount": 75,
-            "totalTokenCount": 102,
+            "candidatesTokenCount": 93,
+            "totalTokenCount": 120,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -82,8 +81,8 @@ http_interactions:
             ],
             "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "_NzXasKAG7uIz7IPqK_IuQ0"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "u2HaataXC7iKqtsPudaemQw"
         }
-  recorded_at: Tue, 20 Oct 2026 21:28:28 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:24 GMT
 recorded_with: VCR 6.4.0

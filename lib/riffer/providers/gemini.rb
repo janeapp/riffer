@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
+require "digest"
 require "json"
 require "securerandom"
 
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
+
+  REASONING_FORMAT = "gemini-generate-content-v1" #: String
 
   FINISH_REASONS = {
     "STOP" => :stop,
@@ -100,12 +103,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     params
   end
 
-  # gemini-2.5 models on the Developer API silently ignore responseFormat, so this
-  # uses responseJsonSchema, which every model honours.
+  # gemini-2.x models on the Developer API silently ignore responseFormat and
+  # return prose; structured output needs gemini-3 or later.
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def structured_output_config(json_schema)
-    { responseMimeType: "application/json", responseJsonSchema: json_schema }
+    { responseFormat: { text: { mimeType: "APPLICATION_JSON", schema: json_schema } } }
   end
 
   #--
@@ -136,11 +139,48 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
       fc = part[:functionCall]
       Riffer::Messages::Assistant::ToolCall.new(
-        call_id: "gemini_call_#{SecureRandom.hex(12)}",
+        call_id: tool_call_id(part),
         name: fc[:name],
         arguments: encode_tool_arguments(fc[:args]),
       )
     end
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    parts = response.dig(:candidates, 0, :content, :parts)
+    return [] unless parts
+
+    parts.filter_map { |part| build_signature_part(part) }
+  end
+
+  # Gemini 3 needs each thoughtSignature back on the part it came on, and
+  # rejects a function call in the current turn that lost it. The reasoning
+  # part's id names the tool call it belongs to; nil means the text.
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_signature_part(part)
+    signature = part[:thoughtSignature]
+    return unless signature
+
+    Riffer::Messages::Assistant::ReasoningPart.new(
+      type: :encrypted,
+      signature: signature,
+      id: part[:functionCall] ? tool_call_id(part) : nil,
+      format: REASONING_FORMAT,
+    )
+  end
+
+  # Gemini's own call ids are too short to stay unique across a session, so
+  # riffer makes its own. A signed call's id comes from its signature, so
+  # extract_tool_calls and extract_reasoning agree on it.
+  #--
+  #: (Hash[Symbol, untyped]) -> String
+  def tool_call_id(part)
+    signature = part[:thoughtSignature]
+    suffix = signature ? Digest::SHA256.hexdigest(signature)[0, 24] : SecureRandom.hex(12)
+    "gemini_call_#{suffix}"
   end
 
   #--
@@ -209,7 +249,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
         elsif part[:functionCall]
           fc = part[:functionCall]
           saw_function_call = true
-          call_id = "gemini_call_#{SecureRandom.hex(12)}"
+          call_id = tool_call_id(part)
           arguments = encode_tool_arguments(fc[:args])
           yielder << Riffer::StreamEvents::ToolCallDone.new(
             item_id: call_id,
@@ -218,6 +258,9 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
             arguments: arguments,
           )
         end
+
+        signature_part = build_signature_part(part)
+        yielder << Riffer::StreamEvents::ReasoningDone.new(signature_part) if signature_part
       end
 
       raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
@@ -276,8 +319,14 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
+    signatures = message.reasoning.
+      select { |part| part.format == REASONING_FORMAT }.
+      to_h { |part| [part.id, part.signature] }
+
     parts = [] #: Array[Hash[Symbol, untyped]]
-    parts << { text: message.content } if message.content && !message.content.empty?
+    if message.content && !message.content.empty?
+      parts << { text: message.content, thoughtSignature: signatures[nil] }.compact
+    end
 
     message.tool_calls.each do |tc|
       parts << {
@@ -285,7 +334,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
         },
-      }
+        thoughtSignature: signatures[tc.call_id],
+      }.compact
     end
 
     { role: "model", parts: parts }
