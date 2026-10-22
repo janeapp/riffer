@@ -1203,7 +1203,7 @@ describe Riffer::Providers::Gemini do
       ]
       response = { candidates: [{ content: { parts: parts } }] }
 
-      expect(provider.send(:extract_reasoning, response).map(&:signature)).must_equal ["text-sig"]
+      expect(provider.send(:extract_reasoning, response).map(&:data)).must_equal ["text-sig"]
     end
 
     describe "#generate_text with web_search" do
