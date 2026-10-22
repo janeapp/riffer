@@ -1,0 +1,8 @@
+# The collection's faraday 2.7 stubs declare Request#options= but not the
+# reader that streaming needs to set on_data. Loaded only for riffer's own
+# Steep run (consumers skip sig/_private).
+module Faraday
+  class Request
+    def options: () -> Faraday::RequestOptions
+  end
+end

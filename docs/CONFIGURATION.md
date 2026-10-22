@@ -99,6 +99,33 @@ Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenA
 
 The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 
+### Connections
+
+Clients built on `Riffer::HTTP::Client` send requests through a [Faraday](https://lostisland.github.io/faraday/) connection. The default uses Faraday's `net_http` adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as `connection:`. Riffer's defaults don't carry over to a connection you pass in, so set its timeouts yourself, in the form its adapter reads them. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no `url:`, and any headers you set on it are sent as well.
+
+For example, to retry rate limits and server errors with [faraday-retry](https://github.com/lostisland/faraday-retry):
+
+```ruby
+# Gemfile: gem "faraday-retry"
+require "faraday/retry"
+
+connection = Faraday.new(request: { open_timeout: 10, read_timeout: 300 }) do |f|
+  f.request :retry,
+    max: 2,
+    methods: [:post],
+    retry_statuses: [429, 500, 502, 503, 504, 529]
+end
+```
+
+Retrying a streaming request is only safe before any data has arrived. If a retry restarts a stream that already yielded chunks, riffer raises `Riffer::Error` rather than yield them twice.
+
+Streaming is tested with the default `net_http` adapter.
+
+#### Errors
+
+- A non-success status raises `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream) and `body` the raw response text.
+- Transport failures are raised as Faraday's own errors, such as `Faraday::TimeoutError` and `Faraday::ConnectionFailed` (both `Faraday::Error`s).
+
 ### MCP (Model Context Protocol)
 
 Optional settings for [MCP server integrations](MCP.md):

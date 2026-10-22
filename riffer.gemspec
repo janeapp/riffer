@@ -45,6 +45,10 @@ Gem::Specification.new do |spec|
   # Ruby 3.4 moved base64 from a default gem to a bundled one, so it's no
   # longer guaranteed to be on a consumer's load path without this.
   spec.add_dependency "base64"
+  spec.add_dependency "faraday", "~> 2.6"
+  # 3.0 is the first release that passes the env to on_data, which streaming
+  # needs to read the status and detect a retried attempt.
+  spec.add_dependency "faraday-net_http", ">= 3.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

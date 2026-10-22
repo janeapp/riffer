@@ -150,7 +150,7 @@ reg = Riffer::Mcp.registrations["github"]
 reg.tools    # => [<Class:...>, ...]  (Riffer::Mcp::Tool subclasses; .mcp_server_tool_name returns the server-side name)
 ```
 
-Discovery failures raise from `register` directly, typically `Faraday::Error` for network issues or `Riffer::DependencyError` if the `mcp`/`faraday` gems are missing. Rescue `StandardError` for graceful degradation:
+Discovery failures raise from `register` directly, typically `Faraday::Error` for network issues or `Riffer::DependencyError` if the `mcp` gem is missing. Rescue `StandardError` for graceful degradation:
 
 ```ruby
 begin
@@ -176,11 +176,10 @@ All inherit from `Riffer::Mcp::Error < Riffer::Error`.
 
 ## Requirements
 
-The `mcp` and `faraday` gems are **optional** dependencies — they are not included in Riffer's runtime gemspec. To use MCP integration, add both to your own Gemfile:
+The `mcp` gem is an **optional** dependency — it is not included in Riffer's runtime gemspec. To use MCP integration, add it to your own Gemfile:
 
 ```ruby
 gem "mcp"
-gem "faraday"
 ```
 
-Faraday is required for the MCP HTTP transport. If either gem is missing when `Riffer::Mcp.register` is called, a `Riffer::DependencyError` is raised.
+Its HTTP transport uses Faraday, which Riffer already depends on. If `mcp` is missing when `Riffer::Mcp.register` is called, a `Riffer::DependencyError` is raised.
