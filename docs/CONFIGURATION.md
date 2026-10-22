@@ -101,7 +101,7 @@ The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffe
 
 ### Connections
 
-Clients built on `Riffer::HTTP::Client` send requests through a [Faraday](https://lostisland.github.io/faraday/) connection. The default uses Faraday's `net_http` adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as `connection:`. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no `url:`, and any headers you set on it are sent as well.
+Clients built on `Riffer::HTTP::Client` send requests through a [Faraday](https://lostisland.github.io/faraday/) connection. The default uses Faraday's `net_http` adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as `connection:`. Riffer's defaults don't carry over to a connection you pass in, so set its timeouts yourself, in the form its adapter reads them. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no `url:`, and any headers you set on it are sent as well.
 
 For example, to retry rate limits and server errors with [faraday-retry](https://github.com/lostisland/faraday-retry):
 
