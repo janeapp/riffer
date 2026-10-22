@@ -543,7 +543,8 @@ A tag you pass with the same key wins. The default tags count towards the provid
 | OpenRouter            | `metadata` (all tags)          | Also mapped to `user`                   |
 | Anthropic             | `metadata.user_id` **only**    | The only tag forwarded                  |
 | Gemini                | _(none — observability only)_  | Tag only; no request field              |
-| Google Cloud          | `labels` (all tags, rewritten) | Ordinary entry; no dedicated user field |
+| Google Cloud (Gemini) | `labels` (all tags, rewritten) | Ordinary entry; no dedicated user field |
+| Google Cloud (Claude) | `metadata.user_id` **only**    | The only tag forwarded                  |
 
 If `model_options` already sets the native field (`metadata`, `request_metadata` or `labels`), the tags are merged into it; a tag wins on a shared key.
 
@@ -552,6 +553,8 @@ If `model_options` already sets the native field (`metadata`, `request_metadata`
 **Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only.
 
 **Google Cloud rewrites tags into valid labels.** Agent Platform `labels` keys and values take at most 63 lowercase letters, digits, underscores and dashes, and keys start with a letter. Riffer downcases each tag, replaces any other character with `_`, cuts it to 63 characters, and drops tags whose key doesn't start with a letter. `agent: "support/triage_agent"` goes out as `agent: "support_triage_agent"`. Labels set in `model_options` are sent as is. Labels show up in Google Cloud billing reports, so high-cardinality tags such as `user_id` add one label value per user.
+
+Claude on Google Cloud (`anthropic_vertex`) follows the Anthropic rule above.
 
 ### Provider limits (not enforced)
 

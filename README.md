@@ -124,6 +124,8 @@ bundle exec ruby -Itest test/riffer/providers/anthropic_test.rb
 bundle exec ruby -Itest test/riffer/providers/amazon_bedrock_test.rb
 GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
   bundle exec ruby -Itest test/riffer/providers/google_cloud_test.rb
+GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
+  bundle exec ruby -Itest test/riffer/providers/anthropic_vertex_test.rb
 ```
 
 Google Cloud tests take a short-lived access token rather than a key, so pass it on the command line instead of storing it in `.env`.
