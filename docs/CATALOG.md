@@ -110,7 +110,7 @@ The defaults send the level name as the provider's effort value:
 | OpenRouter           | `reasoning: "none"`                                                   | `reasoning: "<level>"`                                                                                      |
 | Anthropic            | `thinking: { type: "disabled" }`                                      | `thinking: { type: "adaptive" }, output_config: { effort: "<level>" }`                                      |
 | Amazon Bedrock       | `additional_model_request_fields: { thinking: { type: "disabled" } }` | `additional_model_request_fields: { thinking: { type: "adaptive" }, output_config: { effort: "<level>" } }` |
-| Gemini               | `thinkingConfig: { thinkingLevel: "off" }`                            | `thinkingConfig: { thinkingLevel: "<level>" }`                                                              |
+| Gemini, Google Cloud | `thinkingConfig: { thinkingLevel: "off" }`                            | `thinkingConfig: { thinkingLevel: "<level>" }`                                                              |
 | Mock                 | nothing                                                               | nothing                                                                                                     |
 
 Add a catalog entry for models that need different params, for example:
