@@ -140,6 +140,18 @@ describe Riffer::Providers::AnthropicVertex do
       )
     end
 
+    it "sends the anthropic_version of a subclass" do
+      transport.response = message_body
+      subclass = Class.new(Riffer::Providers::AnthropicVertex) do
+        private
+
+        def anthropic_version = "vertex-2023-10-16"
+      end
+      subclass.new.generate_text(prompt: "Say hello", model: model)
+
+      expect(transport.requests.first.last[:anthropic_version]).must_equal "vertex-2023-10-16"
+    end
+
     it "reads content, reasoning, usage and finish reason from the response" do
       transport.response = message_body
       result = provider.generate_text(prompt: "Say hello", model: model)
