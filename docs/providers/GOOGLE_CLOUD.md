@@ -1,6 +1,13 @@
-# Google Cloud Provider
+# Google Cloud Providers
 
-The Google Cloud provider connects to Gemini models hosted on Gemini Enterprise Agent Platform (formerly Vertex AI), authenticating with Google Cloud credentials instead of an API key.
+Two providers connect to models hosted on Gemini Enterprise Agent Platform (formerly Vertex AI), authenticating with Google Cloud credentials instead of an API key:
+
+| Provider                             | Identifier         | Models |
+| ------------------------------------ | ------------------ | ------ |
+| `Riffer::Providers::GoogleCloud`     | `google_cloud`     | Gemini |
+| `Riffer::Providers::AnthropicVertex` | `anthropic_vertex` | Claude |
+
+Both read `config.google_cloud` and send requests through the same client, `Riffer::Providers::GoogleCloud::Client`.
 
 ## Installation
 
@@ -58,11 +65,11 @@ The location decides the endpoint a request is sent to:
 
 **The default `"global"` location offers no data-residency guarantee.** Google may serve a global request from any region. If your data must stay in a region or jurisdiction, set an explicit regional or multi-region `location`, and check that the model you use is available there.
 
-A single `location` applies to every `google_cloud/...` model. To bind one location explicitly, or to reach several locations from one process, use either approach below.
+A single `location` applies to every `google_cloud/...` and `anthropic_vertex/...` model. To bind one location explicitly, or to reach several locations from one process, use either approach below.
 
 ### Binding the client
 
-`config.google_cloud.client` takes a client instance or a no-argument `Proc` resolved on every LLM call (see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients)). A configured client wins over `project_id`, `location`, and `credentials`:
+`config.google_cloud.client` takes a client instance or a no-argument `Proc` resolved on every LLM call (see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients)). Both providers use it, and it wins over `project_id`, `location`, and `credentials`:
 
 ```ruby
 Riffer.configure do |config|
@@ -96,6 +103,8 @@ end
 Riffer::Providers::Repository.register(:google_cloud_eu) { GoogleCloudEurope }
 ```
 
+A subclass of `Riffer::Providers::AnthropicVertex` binds a location for Claude models the same way.
+
 Agents then pick the location by model prefix (`model 'google_cloud_eu/gemini-3.5-flash-lite'`). Register each subclass once, at boot, and return the same class from the block every time: riffer maps a provider class back to its registry key, and the [catalog](../CATALOG.md) looks up pricing and reasoning entries under that key (`google_cloud_eu/gemini-3.5-flash-lite`).
 
 ## HTTP Client
@@ -124,16 +133,18 @@ The class is a default implementation, not a required base: any object implement
 
 ## Supported Models
 
-Use Agent Platform model IDs in the `google_cloud/model` format:
+Use Agent Platform model IDs, prefixed with the provider for the model family:
 
 ```ruby
 model 'google_cloud/gemini-3.5-flash-lite'
 model 'google_cloud/gemini-3.8-flash'
+model 'anthropic_vertex/claude-haiku-5-5'
+model 'anthropic_vertex/claude-haiku-4-5@20251001'
 ```
 
-Model IDs may carry an `@version` suffix.
+Model IDs may carry an `@version` suffix, as Agent Platform's dated Claude snapshots do; use the ID Model Garden shows.
 
-## Usage
+## Gemini Models (`google_cloud`)
 
 Gemini models behave as they do on the [Gemini provider](GEMINI.md): the same [model options](GEMINI.md#model-options) (`temperature`, `maxOutputTokens`, `topP`, `thinkingConfig`, `web_search`, ...), tool calling with [thought signatures](GEMINI.md#thought-signatures), and streaming.
 
@@ -157,8 +168,48 @@ Thought signatures are tagged `format: "google-cloud-generate-content-v1"` (`Rif
 
 Files are sent inline as base64 (images and documents). A `FilePart.from_url` source works too: riffer downloads and base64-encodes it before sending, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
 
+## Claude Models (`anthropic_vertex`)
+
+Claude models use Agent Platform's Anthropic endpoints (`rawPredict` and `streamRawPredict`), which take the Anthropic Messages API body. Riffer builds the same body as the [Anthropic provider](ANTHROPIC.md), so the same [model options](ANTHROPIC.md#model-options) apply (`max_tokens`, defaulting to `4096`, `thinking`, `output_config`, `web_search`, ...). The model goes in the URL, and `anthropic_version: "2026-10-21"`, the Anthropic provider's API version, goes in the body in place of the `anthropic-version` header. That version rejects `temperature`, `top_p` and `top_k`. Enable each Claude model for your project in Model Garden before calling it.
+
+To send another version, subclass the provider, override `anthropic_version`, and register the subclass under `anthropic_vertex`. A registration replaces the built-in under the same identifier, so models and [catalog](../CATALOG.md) entries keep their `anthropic_vertex/...` names:
+
+```ruby
+class LegacyAnthropicVertex < Riffer::Providers::AnthropicVertex
+  private
+
+  def anthropic_version = "vertex-2023-10-16"
+end
+
+Riffer::Providers::Repository.register(:anthropic_vertex) { LegacyAnthropicVertex }
+```
+
+```ruby
+provider = Riffer::Providers::AnthropicVertex.new
+
+response = provider.generate_text(
+  prompt: "Hello!",
+  model: "claude-haiku-5-5",
+  thinking: { type: "adaptive", display: "summarized" },
+  output_config: { effort: "high" }
+)
+```
+
+Claude models on Agent Platform behave as they do on the Anthropic provider:
+
+- **Reasoning** is captured as [reasoning parts](../MESSAGES.md#reasoning) tagged `format: "anthropic-messages-v1"` and sent back on later turns, as described in [Anthropic → Reasoning Replay](ANTHROPIC.md#reasoning-replay). Thinking signatures are accepted by both APIs, so a conversation can move between `anthropic` and `anthropic_vertex`. The agent-level [`reasoning`](../AGENTS.md#reasoning) setting uses the Anthropic default; [catalog](../CATALOG.md#reasoning) entries go under `anthropic_vertex/...` keys.
+- **Web search:** `web_search: true` (or a hash of options) adds the `web_search_20250305` server tool and streams `WebSearchStatus` / `WebSearchDone` events.
+- **Structured output** is sent as a strict `output_config.format` JSON schema.
+- **Skills** are rendered with the XML skills adapter.
+- **Tags:** only the reserved `user_id` tag is sent, as `metadata.user_id`.
+- **Incomplete streams:** a stream that ends without a `message_stop` event raises `Riffer::IncompleteStreamError`.
+
+`anthropic_vertex` never reads `config.anthropic` or `ANTHROPIC_API_KEY`. Files are sent inline as base64.
+
+Web search and structured output are partner-model features that an organization policy can turn off. If a request fails with a `constraints/vertexai.allowedPartnerModelFeatures` violation, an organization policy administrator must allow `publishers/anthropic/models/MODEL:web_search` or `:structured_outputs` (or `publishers/anthropic` for every feature); see [Control access to Model Garden models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/control-model-access).
+
 ## Limitations
 
-- **Tags stay off requests** - per-call [tags](../AGENTS.md#per-call-tags) reach spans only; they are not yet sent as Agent Platform request `labels`
+- **Tags stay off Gemini requests** - per-call [tags](../AGENTS.md#per-call-tags) reach spans only; they are not yet sent as Agent Platform request `labels`
 - **No `gs://` file references** - files are always sent inline
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side

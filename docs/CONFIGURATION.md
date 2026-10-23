@@ -102,7 +102,7 @@ The Anthropic provider uses no vendor SDK. Riffer reads `ANTHROPIC_API_KEY` and 
 
 The Gemini provider has no vendor SDK, so riffer ships its own transport, `Riffer::Providers::Gemini::Client`, built on `Riffer::HTTP::Client` (see [Connections](#connections)). Its key falls back to `GEMINI_API_KEY` when `config.gemini.api_key` is unset, and raises `Riffer::ArgumentError` when neither is set. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 
-The Google Cloud provider ships its own Agent Platform transport too: `Riffer::Providers::GoogleCloud::Client`, also built on `Riffer::HTTP::Client`, is bound to one `project_id` and `location` and authenticates with `config.google_cloud.credentials`, or Application Default Credentials when unset. The default `"global"` location has no data-residency guarantee; see [Google Cloud → Locations and Data Residency](providers/GOOGLE_CLOUD.md#locations-and-data-residency) for pinning a location and for reaching several locations from one process.
+The Google Cloud providers (`google_cloud` for Gemini, `anthropic_vertex` for Claude) share their own Agent Platform transport: `Riffer::Providers::GoogleCloud::Client`, also built on `Riffer::HTTP::Client`, is bound to one `project_id` and `location` and authenticates with `config.google_cloud.credentials`, or Application Default Credentials when unset. The default `"global"` location has no data-residency guarantee; see [Google Cloud → Locations and Data Residency](providers/GOOGLE_CLOUD.md#locations-and-data-residency) for pinning a location and for reaching several locations from one process.
 
 ### Connections
 

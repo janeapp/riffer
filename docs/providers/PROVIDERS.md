@@ -4,16 +4,17 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 
 ## Available Providers
 
-| Provider       | Identifier       | Gem Required             |
-| -------------- | ---------------- | ------------------------ |
-| OpenAI         | `openai`         | `openai`                 |
-| Azure OpenAI   | `azure_openai`   | `openai`                 |
-| Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
-| Anthropic      | `anthropic`      | None                     |
-| Gemini         | `gemini`         | None                     |
-| Google Cloud   | `google_cloud`   | `googleauth`             |
-| OpenRouter     | `openrouter`     | `openai`                 |
-| Mock           | `mock`           | None                     |
+| Provider              | Identifier         | Gem Required             |
+| --------------------- | ------------------ | ------------------------ |
+| OpenAI                | `openai`           | `openai`                 |
+| Azure OpenAI          | `azure_openai`     | `openai`                 |
+| Amazon Bedrock        | `amazon_bedrock`   | `aws-sdk-bedrockruntime` |
+| Anthropic             | `anthropic`        | None                     |
+| Gemini                | `gemini`           | None                     |
+| Google Cloud (Gemini) | `google_cloud`     | `googleauth`             |
+| Google Cloud (Claude) | `anthropic_vertex` | `googleauth`             |
+| OpenRouter            | `openrouter`       | `openai`                 |
+| Mock                  | `mock`             | None                     |
 
 ## Model String Format
 
@@ -26,7 +27,8 @@ class MyAgent < Riffer::Agent
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
   model 'gemini/gemini-3.5-flash-lite'                                # Gemini
-  model 'google_cloud/gemini-3.5-flash-lite'                          # Google Cloud (Agent Platform)
+  model 'google_cloud/gemini-3.5-flash-lite'                          # Google Cloud (Gemini)
+  model 'anthropic_vertex/claude-haiku-5-5'                           # Google Cloud (Claude)
   model 'openrouter/anthropic/claude-sonnet-4.6'                      # OpenRouter
   model 'mock/any'                                                    # Mock provider
 end
@@ -36,15 +38,15 @@ end
 
 Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes no arguments.
 
-| Provider       | Configured credentials                                            |
-| -------------- | ----------------------------------------------------------------- |
-| OpenAI         | `config.openai.api_key`, `config.openai.base_url`                 |
-| Azure OpenAI   | `config.azure_openai.api_key`, `config.azure_openai.endpoint`     |
-| Anthropic      | `config.anthropic.api_key`, `config.anthropic.base_url`           |
-| Amazon Bedrock | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
-| Gemini         | `config.gemini.api_key`, `config.gemini.base_url`                 |
-| Google Cloud   | `config.google_cloud.project_id`, `.location`, `.credentials`     |
-| OpenRouter     | `config.openrouter.api_key`                                       |
+| Provider                       | Configured credentials                                            |
+| ------------------------------ | ----------------------------------------------------------------- |
+| OpenAI                         | `config.openai.api_key`, `config.openai.base_url`                 |
+| Azure OpenAI                   | `config.azure_openai.api_key`, `config.azure_openai.endpoint`     |
+| Anthropic                      | `config.anthropic.api_key`, `config.anthropic.base_url`           |
+| Amazon Bedrock                 | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
+| Gemini                         | `config.gemini.api_key`, `config.gemini.base_url`                 |
+| Google Cloud (Gemini, Claude)  | `config.google_cloud.project_id`, `.location`, `.credentials`     |
+| OpenRouter                     | `config.openrouter.api_key`                                       |
 
 Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
@@ -188,6 +190,9 @@ Riffer::Providers::Repository.find(:gemini)
 Riffer::Providers::Repository.find(:google_cloud)
 # => Riffer::Providers::GoogleCloud
 
+Riffer::Providers::Repository.find(:anthropic_vertex)
+# => Riffer::Providers::AnthropicVertex
+
 Riffer::Providers::Repository.find(:openrouter)
 # => Riffer::Providers::OpenRouter
 
@@ -204,5 +209,5 @@ Riffer::Providers::Repository.find(:mock)
 - [Mock](MOCK_PROVIDER.md) - Mock provider for testing
 - [Custom Providers](CUSTOM_PROVIDERS.md) - Creating your own provider
 - [Gemini](GEMINI.md) - Gemini models via Google GenAI API
-- [Google Cloud](GOOGLE_CLOUD.md) - Gemini models on Agent Platform (formerly Vertex AI)
+- [Google Cloud](GOOGLE_CLOUD.md) - Gemini and Claude models on Agent Platform (formerly Vertex AI)
 - [OpenRouter](OPENROUTER.md) - Unified gateway across many vendors
