@@ -1,6 +1,6 @@
 # Google Cloud Provider
 
-The Google Cloud provider connects to Gemini models hosted on Gemini Enterprise Agent Platform (formerly Vertex AI), authenticating with Google Cloud credentials instead of an API key.
+The Google Cloud provider connects to Gemini models hosted on Gemini Enterprise Agent Platform (formerly Vertex AI), authenticating with Google Cloud credentials.
 
 ## Installation
 
@@ -30,7 +30,11 @@ end
 
 ### Credentials
 
-With `credentials` unset, riffer resolves [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials) once per process with the `https://www.googleapis.com/auth/cloud-platform` scope: `GOOGLE_APPLICATION_CREDENTIALS`, then `gcloud auth application-default login`, then the attached service account on GCE, Cloud Run, and GKE.
+With `credentials` unset, riffer uses [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials). `googleauth` checks, in order:
+
+1. The service account key file named by `GOOGLE_APPLICATION_CREDENTIALS`.
+2. Your own Google account, after you run `gcloud auth application-default login` (local development).
+3. The service account attached to the machine on Compute Engine, Cloud Run, or GKE.
 
 To use a specific identity, pass any `googleauth` credentials object:
 
@@ -44,7 +48,7 @@ Riffer.configure do |config|
 end
 ```
 
-The access token is cached on the credentials object and refreshed only when it is missing or about to expire. Concurrent fibers or threads that need a token at the same time wait for one shared refresh. This also avoids a `googleauth` bug on GCE, Cloud Run, and GKE, where concurrent fibers fetching a token from the metadata server raise `ThreadError` (surfacing as `Google::Auth::AuthorizationError` under load).
+Riffer caches the access token and refreshes it shortly before it expires.
 
 ## Locations and Data Residency
 
@@ -133,9 +137,54 @@ model 'google_cloud/gemini-3.8-flash'
 
 Model IDs may carry an `@version` suffix.
 
+## Model Options
+
+### temperature
+
+Controls randomness:
+
+```ruby
+model_options temperature: 0.7
+```
+
+### maxOutputTokens
+
+Maximum tokens in response:
+
+```ruby
+model_options maxOutputTokens: 4096
+```
+
+### topP
+
+Nucleus sampling:
+
+```ruby
+model_options topP: 0.9
+```
+
+### thinkingConfig
+
+Controls thinking, passed through as Agent Platform expects:
+
+```ruby
+model_options thinkingConfig: {thinkingLevel: "low"}
+```
+
+The agent-level [`reasoning`](../AGENTS.md#reasoning) setting writes `thinkingConfig: {thinkingLevel: "<level>"}` by default. To map a model differently, add a [catalog](../CATALOG.md#reasoning) entry under its `google_cloud/...` key.
+
+### web_search
+
+Enable grounding with Google Search. Pass `true` to use defaults or a hash to merge into the `googleSearch` tool:
+
+```ruby
+model_options web_search: true
+model_options web_search: {excludeDomains: ["example.com"]}
+```
+
 ## Usage
 
-Gemini models behave as they do on the [Gemini provider](GEMINI.md): the same [model options](GEMINI.md#model-options) (`temperature`, `maxOutputTokens`, `topP`, `thinkingConfig`, `web_search`, ...), tool calling with [thought signatures](GEMINI.md#thought-signatures), and streaming.
+### Basic Generation
 
 ```ruby
 provider = Riffer::Providers::GoogleCloud.new
@@ -147,15 +196,103 @@ response = provider.generate_text(
 puts response.content
 ```
 
-The differences from the Gemini provider:
+### Streaming
 
-- **Structured output** is sent as `responseFormat`, which Agent Platform takes as a list: `[{text: {mimeType: "APPLICATION_JSON", schema: ...}}]`.
-- **Web search** streams no `WebSearchStatus` events. Agent Platform doesn't return the search as separate parts, so the queries and sources only arrive in the `WebSearchDone` at the end. The `web_search` hash takes Agent Platform's `googleSearch` fields (for example `excludeDomains`).
-- **Reasoning:** the agent-level [`reasoning`](../AGENTS.md#reasoning) setting uses the Gemini default, `thinkingConfig: {thinkingLevel: "<level>"}`. [Catalog](../CATALOG.md#reasoning) entries go under `google_cloud/...` keys; `gemini/...` entries don't apply.
+```ruby
+provider.stream_text(prompt: "Tell me a story", model: "gemini-3.5-flash-lite").each do |event|
+  case event
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  when Riffer::StreamEvents::TextDone
+    puts "\n---"
+  end
+end
+```
 
-Thought signatures are tagged `format: "google-cloud-generate-content-v1"` (`Riffer::Providers::GoogleCloud::REASONING_FORMAT`), not the Gemini provider's format: Agent Platform and the Gemini Developer API each reject the other's signatures. A conversation that moves between `gemini` and `google_cloud` keeps both kinds on its messages, and each provider sends back only its own. Switching between a tool call and its result still fails, since the call reaches the other API without a signature it accepts.
+### Structured Output
 
-Files are sent inline as base64 (images and documents). A `FilePart.from_url` source works too: riffer downloads and base64-encodes it before sending, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
+```ruby
+params = Riffer::Params.new
+params.required(:sentiment, String)
+params.required(:score, Float)
+structured_output = Riffer::Agent::StructuredOutput.new(params)
+
+response = provider.generate_text(
+  prompt: "Analyze: 'This is great!'",
+  model: "gemini-3.5-flash-lite",
+  structured_output: structured_output
+)
+puts response.structured_output
+```
+
+### Tool Calling
+
+```ruby
+class WeatherTool < Riffer::Tool
+  description "Gets weather"
+  params do
+    required :city, String
+  end
+  def call(context:, city:)
+    text("Sunny in #{city}")
+  end
+end
+
+response = provider.generate_text(
+  prompt: "What's the weather in Tokyo?",
+  model: "gemini-3.5-flash-lite",
+  tools: [WeatherTool]
+)
+```
+
+Riffer gives each tool call its own `call_id` (`gemini_call_<hex>`) and appends the model's id when there is one. On later turns riffer sends that id back on the function call and its result, so the model can match results to parallel calls of the same tool.
+
+### Thought Signatures
+
+Gemini 3 models attach an opaque `thoughtSignature` to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.
+
+Riffer keeps each signature on the assistant message as the `data` of an `:encrypted` [reasoning part](../MESSAGES.md#reasoning) tagged `format: "google-cloud-generate-content-v1"` (`Riffer::Providers::GoogleCloud::REASONING_FORMAT`). A signature from a function call carries that tool call's `call_id` as its `id`; the text signature has no `id`. Streams emit them as `ReasoningDone` events. On later turns riffer puts each signature back on the part it came from. You don't have to do anything as long as the assistant messages stay in the history.
+
+If you persist sessions, keep the `reasoning` key when you store messages. If you drop it and pick a session back up between a tool call and its result, the next request is rejected. Only the signatures of the current turn are checked, so older turns without them still work.
+
+### Web Search
+
+With `web_search` set, riffer adds the `googleSearch` tool and turns on `toolConfig.includeServerSideToolInvocations`, which is required when Google Search and function tools are used together.
+
+```ruby
+provider.stream_text(
+  prompt: "What is the latest Ruby version?",
+  model: "gemini-3.5-flash-lite",
+  web_search: true
+).each do |event|
+  case event
+  when Riffer::StreamEvents::WebSearchDone
+    puts "[search complete: #{event.query}]"
+    event.sources.each { |s| puts "  - #{s[:title]}: #{s[:url]}" }
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+- No `WebSearchStatus` events are streamed. The queries and sources of a response arrive together, at the end, without saying which query found which source. Riffer emits them as one `WebSearchDone`, after the text, with the queries joined by `", "`.
+- Source `title`s are domains (`"ruby-lang.org"`) and `url`s are Google redirect links (`https://vertexaisearch.cloud.google.com/grounding-api-redirect/...`).
+- After a tool call, the model searches again if it still needs results.
+
+### File Support
+
+Files are sent inline as base64 (images and documents):
+
+```ruby
+file = Riffer::Messages::User::FilePart.new(data: base64_data, media_type: "image/png")
+response = provider.generate_text(
+  prompt: "Describe this image",
+  model: "gemini-3.5-flash-lite",
+  files: [file]
+)
+```
+
+A `FilePart.from_url` source works too: riffer downloads and base64-encodes it before sending, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
 
 ## Limitations
 
