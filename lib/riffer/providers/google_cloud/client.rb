@@ -58,11 +58,11 @@ class Riffer::Providers::GoogleCloud::Client < Riffer::HTTP::Client
   # +credentials+ is a googleauth credentials object (anything responding to
   # +updater_proc+); +nil+ resolves Application Default Credentials.
   #--
-  #: (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?connection: Faraday::Connection?) -> void
-  def initialize(project_id:, location:, credentials: nil, base_url: nil, connection: nil)
+  #: (project_id: String, location: String, ?credentials: untyped, ?base_url: String?, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize(project_id:, location:, credentials: nil, base_url: nil, headers: {}, connection: nil)
     validate!(project_id, VALID_PROJECT_ID_PATTERN, "project_id")
     validate!(location, VALID_LOCATION_PATTERN, "location")
-    super(connection: connection)
+    super(headers: headers, connection: connection)
 
     @project_id = project_id
     @location = location

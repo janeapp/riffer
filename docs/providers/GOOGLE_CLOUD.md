@@ -108,6 +108,7 @@ Riffer ships its own Agent Platform transport, `Riffer::Providers::GoogleCloud::
 | `location`    | required                               | Location segment of the resource path; also picks the endpoint |
 | `credentials` | `nil`                                  | A `googleauth` credentials object; `nil` resolves ADC          |
 | `base_url`    | derived from `location`                | API origin (Private Service Connect, proxies)                  |
+| `headers`     | `{}`                                   | Sent on every request; replaces riffer's same-name headers     |
 | `connection`  | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections] |
 
 Timeouts, retries, proxies and errors are covered in [Configuration → Connections][connections]. Errors are labelled `Google Cloud API error (<status>): <message>`.
