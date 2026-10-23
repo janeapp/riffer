@@ -10,8 +10,8 @@ class Riffer::Providers::Gemini::Client < Riffer::HTTP::Client
   DEFAULT_BASE_URL: String
 
   # --
-  # : (api_key: String, ?base_url: String, ?connection: Faraday::Connection?) -> void
-  def initialize: (api_key: String, ?base_url: String, ?connection: Faraday::Connection?) -> void
+  # : (api_key: String, ?base_url: String, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize: (api_key: String, ?base_url: String, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
 
   private
 

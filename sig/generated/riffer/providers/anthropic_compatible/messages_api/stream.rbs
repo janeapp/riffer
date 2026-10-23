@@ -1,0 +1,71 @@
+# Generated from lib/riffer/providers/anthropic_compatible/messages_api/stream.rb with RBS::Inline
+
+class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
+  @completed: bool
+
+  @web_search_query: String?
+
+  @partial_json: Hash[Integer, String]
+
+  @message: Hash[Symbol, untyped]
+
+  @tools: Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def self.reasoning_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # --
+  # : (tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (tools: Array[singleton(Riffer::Tool)]) -> void
+
+  # Raises Riffer::APIError on a stream +error+ event.
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # The caller reads finish reason and usage from here so it can price the usage.
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def finish!: () -> Hash[Symbol, untyped]
+
+  private
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def start_message: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def start_block: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def apply_delta: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def stop_block: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def apply_message_delta: (Hash[Symbol, untyped]) -> void
+
+  # --
+  # : (Riffer::Providers::_EventSink) -> void
+  def stop_message: (Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> void
+  def raise_stream_error: (Hash[Symbol, untyped]) -> void
+
+  # A response cut off by max_tokens can end a block mid-input, leaving JSON
+  # that does not parse.
+  # --
+  # : (String) -> Hash[String, untyped]?
+  def parse_input: (String) -> Hash[String, untyped]?
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
+  def web_search_sources: (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
+end

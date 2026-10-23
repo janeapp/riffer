@@ -3,7 +3,6 @@
 source "https://rubygems.org"
 gemspec
 
-gem "anthropic", "~> 1.76.0"
 gem "async", "~> 2.46"
 gem "aws-sdk-bedrockruntime", "~> 1.85"
 gem "dotenv"

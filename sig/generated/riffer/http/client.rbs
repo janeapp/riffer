@@ -3,13 +3,17 @@
 class Riffer::HTTP::Client
   @connection: Faraday::Connection
 
+  @extra_headers: Hash[String, String]
+
   DEFAULT_OPEN_TIMEOUT: Integer
 
   DEFAULT_READ_TIMEOUT: Integer
 
+  # +headers+ are sent on every request and win over the subclass's auth and
+  # version headers, as do headers set on the +connection+.
   # --
-  # : (?connection: Faraday::Connection?) -> void
-  def initialize: (?connection: Faraday::Connection?) -> void
+  # : (?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize: (?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
 
   # Raises Riffer::APIError on a non-success status.
   # --
@@ -42,6 +46,9 @@ class Riffer::HTTP::Client
 
   # Headers go on the request, never on the connection, which may be shared
   # across fibers and keeps whatever headers the caller configured on it.
+  # Faraday matches header names case-insensitively, so a caller's header
+  # replaces the subclass's whatever its casing. The content and encoding
+  # headers below are always riffer's: the body and the stream depend on them.
   # --
   # : (String, Hash[Symbol, untyped], ?on_data: Proc?) -> Faraday::Response
   def request: (String, Hash[Symbol, untyped], ?on_data: Proc?) -> Faraday::Response

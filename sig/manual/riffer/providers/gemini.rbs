@@ -1,0 +1,8 @@
+# Narrows the private `client` to riffer's Gemini transport. It ships, since
+# the transport ships with riffer; rbs-inline can't generate it because the
+# class only inherits `client`.
+class Riffer::Providers::Gemini
+  private
+
+  def client: () -> Riffer::Providers::Gemini::Client
+end

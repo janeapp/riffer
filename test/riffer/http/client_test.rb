@@ -65,6 +65,46 @@ describe Riffer::HTTP::Client do
       assert_requested stub
       expect(connection.headers.key?("x-api-key")).must_equal false
     end
+
+    it "sends the passed headers on every request" do
+      stub = stub_request(:post, url).
+        with(headers: { "x-team" => "search", "x-api-key" => "secret" }).
+        to_return(status: 200, body: "{}")
+      client = client_class.new(headers: { "x-team" => "search" })
+      2.times { client.post("v1/messages", {}) }
+
+      assert_requested stub, times: 2
+    end
+
+    it "lets a passed header replace a subclass header whatever its casing" do
+      stub_request(:post, url).to_return(status: 200, body: "{}")
+      client_class.new(headers: { "X-Api-Key" => "override" }).post("v1/messages", {})
+
+      assert_requested(:post, url) { |req| req.headers.slice("X-Api-Key") == { "X-Api-Key" => "override" } }
+    end
+
+    it "lets a connection header replace a subclass header" do
+      stub = stub_request(:post, url).
+        with(headers: { "x-api-key" => "from-connection" }).
+        to_return(status: 200, body: "{}")
+      connection = Faraday.new(headers: { "x-api-key" => "from-connection" })
+      client_class.new(connection: connection).post("v1/messages", {})
+
+      assert_requested stub
+    end
+
+    it "keeps the content and stream headers its own" do
+      expected = {
+        "Content-Type" => "application/json",
+        "Accept" => "text/event-stream",
+        "Accept-Encoding" => "identity",
+      }
+      stub = stub_request(:post, url).with(headers: expected).to_return(status: 200, body: "")
+      passed = { "content-type" => "text/plain", "accept" => "application/json", "accept-encoding" => "gzip" }
+      client_class.new(headers: passed).post_stream("v1/messages", {}) { |_chunk| nil }
+
+      assert_requested stub
+    end
   end
 
   describe "#post" do

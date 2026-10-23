@@ -12,10 +12,6 @@ GEM
   specs:
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.76.0)
-      base64 (~> 0.1)
-      connection_pool (>= 2, < 4)
-      standardwebhooks (~> 1.0)
     ast (2.4.3)
     async (2.46.0)
       console (~> 1.29)
@@ -216,7 +212,6 @@ GEM
     securerandom (0.4.1)
     shellany (0.0.1)
     simpleidn (0.3.0)
-    standardwebhooks (1.1.0)
     steep (2.1.0)
       concurrent-ruby (>= 1.1.10)
       csv (>= 3.0.9)
@@ -265,7 +260,6 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.76.0)
   async (~> 2.46)
   aws-sdk-bedrockruntime (~> 1.85)
   dotenv

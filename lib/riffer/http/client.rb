@@ -6,13 +6,17 @@ require "json"
 
 class Riffer::HTTP::Client
   # @rbs @connection: Faraday::Connection
+  # @rbs @extra_headers: Hash[String, String]
 
   DEFAULT_OPEN_TIMEOUT = 10 #: Integer
   DEFAULT_READ_TIMEOUT = 600 #: Integer
 
+  # +headers+ are sent on every request and win over the subclass's auth and
+  # version headers, as do headers set on the +connection+.
   #--
-  #: (?connection: Faraday::Connection?) -> void
-  def initialize(connection: nil)
+  #: (?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize(headers: {}, connection: nil)
+    @extra_headers = headers
     @connection = connection || Faraday.new(
       request: { open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT },
     )
@@ -99,11 +103,15 @@ class Riffer::HTTP::Client
 
   # Headers go on the request, never on the connection, which may be shared
   # across fibers and keeps whatever headers the caller configured on it.
+  # Faraday matches header names case-insensitively, so a caller's header
+  # replaces the subclass's whatever its casing. The content and encoding
+  # headers below are always riffer's: the body and the stream depend on them.
   #--
   #: (String, Hash[Symbol, untyped], ?on_data: Proc?) -> Faraday::Response
   def request(path, body, on_data: nil)
     @connection.post(url_for(path)) do |req|
-      req.headers.update(headers)
+      req.headers.update(@extra_headers)
+      headers.each { |name, value| req.headers[name] ||= value }
       req.headers["content-type"] = "application/json"
       if on_data
         req.headers["accept"] = "text/event-stream"
