@@ -2,24 +2,22 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Analyze the sentiment
-        of the following text: ''I love this product, it is amazing!''"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"sentiment":{"type":"string"},"score":{"type":"number"}},"required":["sentiment","score"]}}}'
+        of the following text: ''I love this product, it is amazing!''"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"sentiment":{"type":"string"},"score":{"type":"number"}},"required":["sentiment","score"],"additionalProperties":false}}}}}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -34,7 +32,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 14 Apr 2026 23:45:04 GMT
+      - Thu, 22 Oct 2026 19:19:28 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +42,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=1202
+      - gfet4t7; dur=706
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -58,7 +56,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"sentiment\": \"positive\",\n  \"score\": 0.99\n}"
+                    "text": "{\n  \"sentiment\": \"positive\",\n  \"score\": 1.0\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TpXmZNTfZkhzm6ZRATTKqI0bla01KP8PN6g+B2BvRNq3GmQw4quQ3QybE08hn6gesU8/H3+G+ZFCi69FHtD0Q7cZbzGiHZrd5X0tvmCkhQvVbZ2WMdsYh1T0="
                   }
                 ],
                 "role": "model"
@@ -69,17 +68,18 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 19,
-            "candidatesTokenCount": 21,
-            "totalTokenCount": 40,
+            "candidatesTokenCount": 20,
+            "totalTokenCount": 39,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
                 "tokenCount": 19
               }
-            ]
+            ],
+            "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "gNHeaf70GauuqtsP_5bzwAQ"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "v2Haapu_H_Sc_uMPtImziQk"
         }
-  recorded_at: Tue, 14 Apr 2026 23:45:04 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:28 GMT
 recorded_with: VCR 6.4.0

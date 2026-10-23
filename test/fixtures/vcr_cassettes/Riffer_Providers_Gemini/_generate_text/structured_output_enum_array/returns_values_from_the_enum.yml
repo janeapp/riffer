@@ -2,25 +2,23 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Tag this support ticket:
-        ''I was charged twice this month and need it fixed today.''"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"tags":{"type":"array","description":"Ticket
-        tags","items":{"type":"string","enum":["urgent","billing","technical","account"]}}},"required":["tags"]}}}'
+        ''I was charged twice this month and need it fixed today.''"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Ticket
+        tags","items":{"type":"string","enum":["urgent","billing","technical","account"]}}},"required":["tags"],"additionalProperties":false}}}}}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -35,7 +33,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Fri, 16 Oct 2026 19:52:43 GMT
+      - Thu, 22 Oct 2026 19:19:37 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -45,7 +43,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=480
+      - gfet4t7; dur=832
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -59,7 +57,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"tags\": [\"urgent\", \"billing\"]\n}"
+                    "text": "{\n  \"tags\": [\n    \"urgent\",\n    \"billing\"\n  ]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TnZ3HmZVSn/NDnYNM3jf4TbVIZxhvDzYR2e1I8NCM/Nls2HrvEgXoou5YYvj9siUbGD08mT6AXiToDOTi/MHHODarfb5qfKf4n3ZnAIbvnRXRbXkBiMx5h4k="
                   }
                 ],
                 "role": "model"
@@ -70,8 +69,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 19,
-            "candidatesTokenCount": 14,
-            "totalTokenCount": 33,
+            "candidatesTokenCount": 22,
+            "totalTokenCount": 41,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -80,8 +79,8 @@ http_interactions:
             ],
             "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "i4DSauHYIJnfytMP6YapgQ8"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "yGHaaselGZCJqtsP8c_zuQk"
         }
-  recorded_at: Fri, 16 Oct 2026 19:52:43 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:37 GMT
 recorded_with: VCR 6.4.0

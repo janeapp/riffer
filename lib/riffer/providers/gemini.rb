@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
+require "digest"
 require "json"
 require "securerandom"
 
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
+
+  REASONING_FORMAT = "gemini-generate-content-v1" #: String
+
+  GEMINI_CALL_ID_PATTERN = /\Agemini_call_\h{24}_(.+)\z/ #: Regexp
 
   FINISH_REASONS = {
     "STOP" => :stop,
@@ -93,14 +98,19 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     # body fields, so :tags reach observability only.
     generation_config = options.except(:tools, :structured_output, :tags)
 
-    if structured_output
-      generation_config[:responseMimeType] = "application/json"
-      generation_config[:responseSchema] = strip_additional_properties(structured_output.json_schema)
-    end
+    generation_config.merge!(structured_output_config(structured_output.json_schema)) if structured_output
 
     params[:generationConfig] = generation_config unless generation_config.empty?
 
     params
+  end
+
+  # gemini-2.x models on the Developer API silently ignore responseFormat and
+  # return prose; structured output needs gemini-3 or later.
+  #--
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def structured_output_config(json_schema)
+    { responseFormat: { text: { mimeType: "APPLICATION_JSON", schema: json_schema } } }
   end
 
   #--
@@ -131,11 +141,58 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
       fc = part[:functionCall]
       Riffer::Messages::Assistant::ToolCall.new(
-        call_id: "gemini_call_#{SecureRandom.hex(12)}",
+        call_id: tool_call_id(part),
         name: fc[:name],
         arguments: encode_tool_arguments(fc[:args]),
       )
     end
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    parts = response.dig(:candidates, 0, :content, :parts)
+    return [] unless parts
+
+    parts.filter_map { |part| build_signature_part(part) }
+  end
+
+  # Gemini 3 needs each thoughtSignature back on the part it came on, and
+  # rejects a function call in the current turn that lost it. The reasoning
+  # part's id names the tool call it belongs to; nil means the text.
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_signature_part(part)
+    signature = part[:thoughtSignature]
+    return unless signature
+
+    Riffer::Messages::Assistant::ReasoningPart.new(
+      type: :encrypted,
+      data: signature,
+      id: part[:functionCall] ? tool_call_id(part) : nil,
+      format: REASONING_FORMAT,
+    )
+  end
+
+  # Gemini's own call ids are too short to stay unique across a session, so
+  # riffer makes its own and appends Gemini's, which gemini_call_id reads back
+  # on replay. A signed call's id comes from its signature, so
+  # extract_tool_calls and extract_reasoning agree on it.
+  #--
+  #: (Hash[Symbol, untyped]) -> String
+  def tool_call_id(part)
+    signature = part[:thoughtSignature]
+    suffix = signature ? Digest::SHA256.hexdigest(signature)[0, 24] : SecureRandom.hex(12)
+    gemini_id = part.dig(:functionCall, :id)
+    gemini_id ? "gemini_call_#{suffix}_#{gemini_id}" : "gemini_call_#{suffix}"
+  end
+
+  # Gemini matches each functionResponse to its functionCall by this id, which
+  # parallel calls to the same function need.
+  #--
+  #: (String) -> String?
+  def gemini_call_id(call_id)
+    call_id[GEMINI_CALL_ID_PATTERN, 1]
   end
 
   #--
@@ -204,7 +261,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
         elsif part[:functionCall]
           fc = part[:functionCall]
           saw_function_call = true
-          call_id = "gemini_call_#{SecureRandom.hex(12)}"
+          call_id = tool_call_id(part)
           arguments = encode_tool_arguments(fc[:args])
           yielder << Riffer::StreamEvents::ToolCallDone.new(
             item_id: call_id,
@@ -213,6 +270,9 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
             arguments: arguments,
           )
         end
+
+        signature_part = build_signature_part(part)
+        yielder << Riffer::StreamEvents::ReasoningDone.new(signature_part) if signature_part
       end
 
       raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
@@ -255,9 +315,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           role: "user",
           parts: [{
             functionResponse: {
+              id: gemini_call_id(message.tool_call_id),
               name: message.name,
               response: { result: message.content },
-            },
+            }.compact,
           }],
         }
       end
@@ -271,16 +332,24 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
+    signature_parts = message.reasoning.select { |part| part.format == REASONING_FORMAT }
+    text_signature = signature_parts.find { |part| part.id.nil? }&.data
+    call_signatures = signature_parts.select(&:id).to_h { |part| [part.id, part.data] }
+
     parts = [] #: Array[Hash[Symbol, untyped]]
-    parts << { text: message.content } if message.content && !message.content.empty?
+    if message.content && !message.content.empty?
+      parts << { text: message.content, thoughtSignature: text_signature }.compact
+    end
 
     message.tool_calls.each do |tc|
       parts << {
         functionCall: {
+          id: gemini_call_id(tc.call_id),
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
-        },
-      }
+        }.compact,
+        thoughtSignature: call_signatures[tc.call_id],
+      }.compact
     end
 
     { role: "model", parts: parts }
@@ -298,7 +367,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     {
       name: tool.name,
       description: tool.description,
-      parameters: strip_additional_properties(tool.parameters_schema),
+      parametersJsonSchema: tool.parameters_schema,
     }
   end
 
@@ -325,23 +394,5 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     raise Riffer::ArgumentError,
           "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, " \
           "hyphens, dots, and underscores."
-  end
-
-  #--
-  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def strip_additional_properties(schema)
-    schema = schema.dup
-    schema.delete(:additionalProperties)
-
-    if schema[:properties]
-      schema[:properties] = schema[:properties].transform_values do |prop|
-        strip_additional_properties(prop)
-      end
-    end
-
-    schema[:items] = strip_additional_properties(schema[:items]) if schema[:items].is_a?(Hash)
-    schema[:anyOf] = schema[:anyOf].map { |branch| strip_additional_properties(branch) } if schema[:anyOf]
-
-    schema
   end
 end

@@ -2,26 +2,24 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"List 3 tags and 3 scores
-        (0.0-1.0) for: ''Ruby is a great programming language''"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"tags":{"type":"array","description":"Descriptive
+        (0.0-1.0) for: ''Ruby is a great programming language''"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Descriptive
         tags","items":{"type":"string"}},"scores":{"type":"array","description":"Relevance
-        scores between 0 and 1","items":{"type":"number"}}},"required":["tags","scores"]}}}'
+        scores between 0 and 1","items":{"type":"number"}}},"required":["tags","scores"],"additionalProperties":false}}}}}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
-      User-Agent:
-      - Ruby
-      Host:
-      - generativelanguage.googleapis.com
-      Content-Type:
-      - application/json
-      X-Goog-Api-Key:
-      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -36,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 14 Apr 2026 23:45:08 GMT
+      - Thu, 22 Oct 2026 19:19:38 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=1235
+      - gfet4t7; dur=848
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -60,7 +58,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"tags\": [\"programming language\", \"ruby\", \"developer tools\"],\n  \"scores\": [0.9, 0.8, 0.7]\n}"
+                    "text": "{\n  \"tags\": [\"Ruby\", \"programming language\", \"software development\"],\n  \"scores\": [0.95, 0.90, 0.85]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0Tid9TjcG+VmjNboa5o317o8C0s1K3JLh8mBKzwlc1q2IQVojXAhi198m91gF0InYOi3WmsOZuyskuaf99gJXFFrdcuI/8bmMO/RXln1Te4WtaxdWeYt7Mu9w="
                   }
                 ],
                 "role": "model"
@@ -71,17 +70,18 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 28,
-            "candidatesTokenCount": 39,
-            "totalTokenCount": 67,
+            "candidatesTokenCount": 42,
+            "totalTokenCount": 70,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
                 "tokenCount": 28
               }
-            ]
+            ],
+            "serviceTier": "standard"
           },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "hNHeaY6GB-qlmtkPr9rr4AU"
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "yWHaasP-JvmiqtsPitzh6Ag"
         }
-  recorded_at: Tue, 14 Apr 2026 23:45:08 GMT
+  recorded_at: Thu, 22 Oct 2026 19:19:38 GMT
 recorded_with: VCR 6.4.0

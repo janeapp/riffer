@@ -3,6 +3,10 @@
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN: Regexp
 
+  REASONING_FORMAT: String
+
+  GEMINI_CALL_ID_PATTERN: Regexp
+
   FINISH_REASONS: Hash[String, Symbol]
 
   # --
@@ -31,6 +35,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # gemini-2.x models on the Developer API silently ignore responseFormat and
+  # return prose; structured output needs gemini-3 or later.
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def structured_output_config: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -42,6 +52,31 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # Gemini 3 needs each thoughtSignature back on the part it came on, and
+  # rejects a function call in the current turn that lost it. The reasoning
+  # part's id names the tool call it belongs to; nil means the text.
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_signature_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # Gemini's own call ids are too short to stay unique across a session, so
+  # riffer makes its own and appends Gemini's, which gemini_call_id reads back
+  # on replay. A signed call's id comes from its signature, so
+  # extract_tool_calls and extract_reasoning agree on it.
+  # --
+  # : (Hash[Symbol, untyped]) -> String
+  def tool_call_id: (Hash[Symbol, untyped]) -> String
+
+  # Gemini matches each functionResponse to its functionCall by this id, which
+  # parallel calls to the same function need.
+  # --
+  # : (String) -> String?
+  def gemini_call_id: (String) -> String?
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
@@ -90,8 +125,4 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (String) -> void
   def validate_model!: (String) -> void
-
-  # --
-  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def strip_additional_properties: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 end
