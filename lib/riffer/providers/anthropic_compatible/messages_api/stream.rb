@@ -3,13 +3,10 @@
 
 require "json"
 
-# Finish reason and token usage are left to the caller, read from #finish!, so
-# it can price the usage.
 class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # @rbs @tools: Array[singleton(Riffer::Tool)]
   # @rbs @message: Hash[Symbol, untyped]
   # @rbs @partial_json: Hash[Integer, String]
-  # @rbs @text: String?
   # @rbs @web_search_query: String?
   # @rbs @completed: bool
 
@@ -32,12 +29,11 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   end
 
   #--
-  #: (?tools: Array[singleton(Riffer::Tool)]) -> void
-  def initialize(tools: [])
+  #: (tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize(tools:)
     @tools = tools
     @message = { content: [] }
     @partial_json = {}
-    @text = nil
     @web_search_query = nil
     @completed = false
   end
@@ -57,8 +53,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     end
   end
 
-  # Returns the accumulated message body. Raises Riffer::IncompleteStreamError
-  # when the stream ended without +message_stop+.
+  # The caller reads finish reason and usage from here so it can price the usage.
   #--
   #: () -> Hash[Symbol, untyped]
   def finish!
@@ -88,7 +83,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     when "thinking"
       block[:thinking] = +block[:thinking].to_s
       block[:signature] = block[:signature].to_s
-    when "tool_use", "server_tool_use" then @partial_json[index] = +""
     end
   end
 
@@ -102,9 +96,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     case delta[:type]
     when "text_delta"
       block[:text] << delta[:text]
-      # Mutating append avoids O(n^2) copying; the buffer reaches TextDone
-      # only at message stop.
-      (@text ||= +"") << delta[:text]
       yielder << Riffer::StreamEvents::TextDelta.new(delta[:text])
     when "input_json_delta"
       (@partial_json[index] ||= +"") << delta[:partial_json]
@@ -169,8 +160,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   #: (Riffer::Providers::_EventSink) -> void
   def stop_message(yielder)
     @completed = true
-    text = @text
-    yielder << Riffer::StreamEvents::TextDone.new(text) if text
+    text = @message[:content].filter_map { |block| block[:text] if block[:type] == "text" }.join
+    yielder << Riffer::StreamEvents::TextDone.new(text) unless text.empty?
   end
 
   #--
@@ -190,11 +181,11 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     nil
   end
 
-  # An error result carries an object, not a list, as its content.
   #--
   #: (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
   def web_search_sources(block)
     content = block[:content]
+    # An error result carries an object, not a list, as its content.
     return [] unless content.is_a?(Array)
 
     content.filter_map do |item|
