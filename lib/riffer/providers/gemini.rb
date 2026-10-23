@@ -188,8 +188,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       type: :encrypted,
       data: signature,
       id: part[:functionCall] ? tool_call_id(part) : nil,
-      format: REASONING_FORMAT,
+      format: reasoning_format,
     )
+  end
+
+  # Distinct from GoogleCloud's: the Developer API and Agent Platform each
+  # reject the other's signatures.
+  #--
+  #: () -> String
+  def reasoning_format
+    REASONING_FORMAT
   end
 
   # Gemini's own call ids are too short to stay unique across a session, so
@@ -384,7 +392,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
-    signature_parts = message.reasoning.select { |part| part.format == REASONING_FORMAT }
+    signature_parts = message.reasoning.select { |part| part.format == reasoning_format }
     text_signature = signature_parts.find { |part| part.id.nil? }&.data
     call_signatures = signature_parts.select(&:id).to_h { |part| [part.id, part.data] }
 
