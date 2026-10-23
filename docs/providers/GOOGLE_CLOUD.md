@@ -317,7 +317,7 @@ model_options labels: {cost_center: "cc_1234"}
 
 ## Claude Models (`anthropic_vertex`)
 
-Claude models use Agent Platform's Anthropic endpoints (`rawPredict` and `streamRawPredict`), which take the Anthropic Messages API body. Riffer builds the same body as the [Anthropic provider](ANTHROPIC.md), so the same [model options](ANTHROPIC.md#model-options) apply (`max_tokens`, defaulting to `4096`, `temperature`, `thinking`, `output_config`, `web_search`, ...). The model goes in the URL, and `anthropic_version: "vertex-2023-10-16"` goes in the body in place of the `anthropic-version` header. Enable each Claude model for your project in Model Garden before calling it.
+Claude models use Agent Platform's Anthropic endpoints (`rawPredict` and `streamRawPredict`), which take the Anthropic Messages API body. Riffer builds the same body as the [Anthropic provider](ANTHROPIC.md), so the same [model options](ANTHROPIC.md#model-options) apply (`max_tokens`, defaulting to `4096`, `thinking`, `output_config`, `web_search`, ...). The model goes in the URL, and `anthropic_version: "2026-10-21"`, the Anthropic provider's API version, goes in the body in place of the `anthropic-version` header. That version rejects `temperature`, `top_p` and `top_k`. Enable each Claude model for your project in Model Garden before calling it.
 
 ```ruby
 provider = Riffer::Providers::AnthropicVertex.new

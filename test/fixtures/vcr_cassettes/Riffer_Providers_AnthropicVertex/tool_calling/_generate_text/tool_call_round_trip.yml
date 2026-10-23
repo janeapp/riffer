@@ -5,7 +5,7 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"What
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
         is the weather in Toronto?"}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
         the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}'
@@ -25,26 +25,26 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Internal-Context-Length:
-      - '100000'
       Internal-Output-Tokens:
       - '51'
-      Content-Type:
-      - application/json
       Date:
-      - Thu, 22 Oct 2026 20:19:28 GMT
-      Internal-Weighted-Total-Tokens:
-      - '649'
-      Stream-Reported-Http-Code:
-      - '200'
-      Request-Id:
-      - req_vrtx_011CgHtrtKuPo7vNi1DspRNQ
-      X-Vertex-Ai-Internal-Prediction-Backend:
-      - harpoon
-      Pinnacle-Error-Category:
-      - no_error
+      - Fri, 23 Oct 2026 21:40:19 GMT
       Internal-Input-Tokens:
       - '394'
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Internal-Weighted-Total-Tokens:
+      - '649'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Request-Id:
+      - req_vrtx_011CgKtqNTnCZoSPLrDyzEpW
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Context-Length:
+      - '100000'
       Vary:
       - Origin
       - Referer
@@ -63,15 +63,15 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHtrtMtYAD4K3qmfojNE","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01SvnJhZgXsxvN9gN6s6N9pu","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":51,"output_tokens_details":{"thinking_tokens":0}}}'
-  recorded_at: Thu, 22 Oct 2026 20:19:28 GMT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgKtqNUXNN8HY7i2BQD4g","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01G2dRp2uvUPFRUPgPyaHVhG","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":51,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Fri, 23 Oct 2026 21:40:19 GMT
 - request:
     method: post
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"What
-        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01SvnJhZgXsxvN9gN6s6N9pu","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01SvnJhZgXsxvN9gN6s6N9pu","content":"The
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01G2dRp2uvUPFRUPgPyaHVhG","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01G2dRp2uvUPFRUPgPyaHVhG","content":"The
         weather in Toronto is 15 degrees Celsius."}]}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
         the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}'
@@ -91,26 +91,26 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Stream-Reported-Http-Code:
-      - '200'
-      Pinnacle-Error-Category:
-      - no_error
-      Internal-Input-Tokens:
-      - '470'
-      Date:
-      - Thu, 22 Oct 2026 20:19:30 GMT
-      X-Vertex-Ai-Internal-Prediction-Backend:
-      - harpoon
       Content-Type:
       - application/json
+      Internal-Input-Tokens:
+      - '470'
       Request-Id:
-      - req_vrtx_011CgHtrxjKS1vc4HYAeG8Ks
+      - req_vrtx_011CgKtqRoSVzdff1NUAPTUu
+      Stream-Reported-Http-Code:
+      - '200'
       Internal-Weighted-Total-Tokens:
       - '560'
-      Internal-Output-Tokens:
-      - '18'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
       Internal-Context-Length:
       - '100000'
+      Date:
+      - Fri, 23 Oct 2026 21:40:19 GMT
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Output-Tokens:
+      - '18'
       Vary:
       - Origin
       - Referer
@@ -130,6 +130,6 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ192cnR4XzAxMUNnSHRyeGs0QThMcVV6Q0hCM1lxNCIsInR5cGUiOiJtZXNzYWdlIiwicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOlt7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IlRoZSB3ZWF0aGVyIGluIFRvcm9udG8gaXMgY3VycmVudGx5IDE1wrBDLiJ9XSwiY29udGFpbmVyIjpudWxsLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjQ3MCwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE4LCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsidGhpbmtpbmdfdG9rZW5zIjowfX19
-  recorded_at: Thu, 22 Oct 2026 20:19:30 GMT
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ192cnR4XzAxMUNnS3RxUnBDNGFSUFM2eW1TOERxdyIsInR5cGUiOiJtZXNzYWdlIiwicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOlt7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IlRoZSB3ZWF0aGVyIGluIFRvcm9udG8gaXMgY3VycmVudGx5IDE1wrBDLiJ9XSwiY29udGFpbmVyIjpudWxsLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjQ3MCwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE4LCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsidGhpbmtpbmdfdG9rZW5zIjowfX19
+  recorded_at: Fri, 23 Oct 2026 21:40:19 GMT
 recorded_with: VCR 6.4.0

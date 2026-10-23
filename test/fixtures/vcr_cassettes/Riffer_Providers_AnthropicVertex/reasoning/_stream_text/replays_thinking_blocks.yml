@@ -5,7 +5,7 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"A
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"A
         bat and a ball cost 1.10 in total. The bat costs 1.00 more than the ball.
         What is 17 times the ball price plus 23 times the bat price? Reply with just
         the number."}],"max_tokens":4096,"thinking":{"type":"adaptive","display":"summarized"},"output_config":{"effort":"high"},"stream":true}'
@@ -29,14 +29,14 @@ http_interactions:
       - text/event-stream; charset=utf-8
       X-Accel-Buffering:
       - 'no'
+      Date:
+      - Fri, 23 Oct 2026 21:39:57 GMT
       X-Vertex-Ai-Received-Request-Id:
-      - bc9f3b44-5fa9-4b62-96c4-f4a10f39cb24
+      - bdf77169-357e-4af1-93c0-15900b114a7f
       Cache-Control:
       - no-cache
-      Date:
-      - Thu, 22 Oct 2026 20:19:30 GMT
       Request-Id:
-      - req_vrtx_011CgHts4pS4sYnFnFkdFaAh
+      - req_vrtx_011CgKtopcabUeiUNMSdiK3g
       Vary:
       - Origin,Accept-Encoding
       - Referer
@@ -59,89 +59,77 @@ http_interactions:
       encoding: UTF-8
       string: |+
         event: message_start
-        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHts4qfcR31sjJ7c4sFz","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":70,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3}}         }
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgKtopf4gEWJ7Pmyc4tpt","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":70,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5}}  }
 
         event: ping
         data: {"type": "ping"}
 
         event: content_block_start
-        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}             }
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}   }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Solving the class"}        }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Solving: "}     }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ic b"}             }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ball costs 0.05,"}           }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"at-and"}      }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" bat costs 1.05"}               }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"-ball equations"}}
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":". So"}    }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" gives ball ="}               }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" 17 bal"} }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" 0.05 and bat"}        }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ls = 0.85 "}       }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" = 1.05. Then"}   }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"and 23 bats = "}             }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" 17 bal"}  }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"24.15, totaling "}    }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ls c"}             }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"25.00."}         }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ost 0.85 and "} }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}              }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"23 bats cost 24"}           }
-
-        event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":".15, totaling 25"}            }
-
-        event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":".00."}  }
-
-        event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}             }
-
-        event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS3AQKEggTEAIYAjgBQgh0aGlua2luZxIMoSdrNQdCh0IlYFOrGgzOeTIGJR2jp6bTSwwiMJR+5jiV84sSELBtOKEdXw9xEB56xBb1FafPfjrzzvi63JS89AoDkSGP3rh8rTi1ICr3A+4dfFn5FQTGJ1ci1nwJSJ3yQWk6Xar1dB9RK6JJw8ym4Aoobrx0hrxEaymyKzAem+8fzHQy+2Srau2VFle8KWGNwfRzJvXtx+QYQS++KRFLJRrFd+9UWoB4SRISasWrqF4x6G4b8bKJQa1gasgXwPPy6dO31JlOxwTgWD4nFIEW9zK4+tbbpU3kvTF7TDM+0oZ/k0RFN5hxf1QKtO4korcKK4yUf6DSRqX8Uak4XhN8Rm7Wcuf4ohOJSAGNCV+9uhAHTghtENrFmGoFn8whTFTPlAivctkLlUOWYyZGSfzsJyS0KaS5W8nIsKEO1yUMqBDCTADZm2HlfDb9miZ8Z6fcrdD7KtQpCuaJp4shT1Ny4ovqGIbtv1SbuNPGrDDmojkwrvaUuoYhS5EVlRTTWsx5P9vHgAapTFbCL8RG38gBc90fLxYKwg6Vq0R2JURGta8j5V2lddeEtnK4DGGKA43BpZvj+NWfk+uTEtODoPuaJwjrQZB58AfLfSE/AQvQvlFoIFF6QhhoFMF1ydzDbXO0eP8XM45oiZWdZ/QDpGOKVUO0N577/engZrdUT9KDPpiSn3wx3GrUGXBflMWOldJ/Yy4GlJa94YBqiaXeRYCrFbzn/VzM1Azq3QO5SDnnO7kojetd8ls8cK6hLLhmXVpwz5n5OSWSGAE="}              }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS7QQKEggTEAIYAjgBQgh0aGlua2luZxIMqc72Amb8YidjRHJwGgxKGcaQYGZi+9wA8TwiMOTSS9jRYpwd/uYZJHwsxA4YY+WUbpHoKn0gWYfQnc/F487hVOoJjt4Yum3Pt5WpKSqIBCSI3z2XQBhN1egaodu+XX4z4m5RCLC2odUQoWVXwoEISLE4m0EUjayYtK4Hxe5fUgCweZkfIzWIZJyyYExwrICxriLpIgu1Qwl30WMNNh1ue39PGYEheJbB2u3CKhjgh9dtUTaK0Vc2t+4ZhEq3xDG1gvvimMNX64stAur3ISLm8zvV+EpqjRJoF+SARxdj3Ak5dScoDqaKku/66lqUBo4VN3O3n8HcWxZPB8ribKQcmjV3SSvvRyL/wDL714ONYjLwFCMUUHh3ZndTrpHRwh3WXD1vOKhYG8dToGpwbkm+S00u/I5VuaEgD5AhB25q3MlDuyShv8jK5ufQFb+PTWXbfIkmr/nz0hRMaEOYkgjQkOxK9ts74BwKXv3gZvauDQtq7clJGHlsHjEw8aEVrywCNah3x/chnSDWWlUI8EGjd8PepRu2yjW3V14TR2vwdbojaD01i1cJxirdQlAG32/k4uvKdL2HgetI1Xq81b9mMG65u2yqe8nFBjHbZy20BsXaYn14X6mdpH5DHq4rx6VWkm+TxKuFY/TW56WhlMduoezSM/QosaV4J9SpL/x22/IpEWdrM2ywCorqtPBRJFCvfr6ONjMI8QhqrMF1FelB0gSbxnnntcjjrlVM2wJjRh2JOBcgl3r1j6lLyhGSHr4VzyIbklxp0/SNVBu9meVbnufW+TjIaP4YAQ=="}             }
 
         event: content_block_stop
-        data: {"type":"content_block_stop","index":0       }
+        data: {"type":"content_block_stop","index":0    }
 
         event: content_block_start
-        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}    }
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}     }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"25"}   }
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"25"}               }
 
         event: content_block_stop
-        data: {"type":"content_block_stop","index":1              }
+        data: {"type":"content_block_stop","index":1     }
 
         event: message_delta
-        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":70,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":121,"output_tokens_details":{"thinking_tokens":118}}    }
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":70,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":120,"output_tokens_details":{"thinking_tokens":117}}    }
 
         event: message_stop
-        data: {"type":"message_stop"             }
+        data: {"type":"message_stop"         }
 
-  recorded_at: Thu, 22 Oct 2026 20:19:32 GMT
+  recorded_at: Fri, 23 Oct 2026 21:39:59 GMT
 - request:
     method: post
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"A
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"A
         bat and a ball cost 1.10 in total. The bat costs 1.00 more than the ball.
         What is 17 times the ball price plus 23 times the bat price? Reply with just
-        the number."},{"role":"assistant","content":[{"type":"thinking","thinking":"Solving
-        the classic bat-and-ball equations gives ball = 0.05 and bat = 1.05. Then
-        17 balls cost 0.85 and 23 bats cost 24.15, totaling 25.00.\n\n","signature":"CAQS3AQKEggTEAIYAjgBQgh0aGlua2luZxIMoSdrNQdCh0IlYFOrGgzOeTIGJR2jp6bTSwwiMJR+5jiV84sSELBtOKEdXw9xEB56xBb1FafPfjrzzvi63JS89AoDkSGP3rh8rTi1ICr3A+4dfFn5FQTGJ1ci1nwJSJ3yQWk6Xar1dB9RK6JJw8ym4Aoobrx0hrxEaymyKzAem+8fzHQy+2Srau2VFle8KWGNwfRzJvXtx+QYQS++KRFLJRrFd+9UWoB4SRISasWrqF4x6G4b8bKJQa1gasgXwPPy6dO31JlOxwTgWD4nFIEW9zK4+tbbpU3kvTF7TDM+0oZ/k0RFN5hxf1QKtO4korcKK4yUf6DSRqX8Uak4XhN8Rm7Wcuf4ohOJSAGNCV+9uhAHTghtENrFmGoFn8whTFTPlAivctkLlUOWYyZGSfzsJyS0KaS5W8nIsKEO1yUMqBDCTADZm2HlfDb9miZ8Z6fcrdD7KtQpCuaJp4shT1Ny4ovqGIbtv1SbuNPGrDDmojkwrvaUuoYhS5EVlRTTWsx5P9vHgAapTFbCL8RG38gBc90fLxYKwg6Vq0R2JURGta8j5V2lddeEtnK4DGGKA43BpZvj+NWfk+uTEtODoPuaJwjrQZB58AfLfSE/AQvQvlFoIFF6QhhoFMF1ydzDbXO0eP8XM45oiZWdZ/QDpGOKVUO0N577/engZrdUT9KDPpiSn3wx3GrUGXBflMWOldJ/Yy4GlJa94YBqiaXeRYCrFbzn/VzM1Azq3QO5SDnnO7kojetd8ls8cK6hLLhmXVpwz5n5OSWSGAE="},{"type":"text","text":"25"}]},{"role":"user","content":"Now
+        the number."},{"role":"assistant","content":[{"type":"thinking","thinking":"Solving:
+        ball costs 0.05, bat costs 1.05. So 17 balls = 0.85 and 23 bats = 24.15, totaling
+        25.00.\n\n","signature":"CAQS7QQKEggTEAIYAjgBQgh0aGlua2luZxIMqc72Amb8YidjRHJwGgxKGcaQYGZi+9wA8TwiMOTSS9jRYpwd/uYZJHwsxA4YY+WUbpHoKn0gWYfQnc/F487hVOoJjt4Yum3Pt5WpKSqIBCSI3z2XQBhN1egaodu+XX4z4m5RCLC2odUQoWVXwoEISLE4m0EUjayYtK4Hxe5fUgCweZkfIzWIZJyyYExwrICxriLpIgu1Qwl30WMNNh1ue39PGYEheJbB2u3CKhjgh9dtUTaK0Vc2t+4ZhEq3xDG1gvvimMNX64stAur3ISLm8zvV+EpqjRJoF+SARxdj3Ak5dScoDqaKku/66lqUBo4VN3O3n8HcWxZPB8ribKQcmjV3SSvvRyL/wDL714ONYjLwFCMUUHh3ZndTrpHRwh3WXD1vOKhYG8dToGpwbkm+S00u/I5VuaEgD5AhB25q3MlDuyShv8jK5ufQFb+PTWXbfIkmr/nz0hRMaEOYkgjQkOxK9ts74BwKXv3gZvauDQtq7clJGHlsHjEw8aEVrywCNah3x/chnSDWWlUI8EGjd8PepRu2yjW3V14TR2vwdbojaD01i1cJxirdQlAG32/k4uvKdL2HgetI1Xq81b9mMG65u2yqe8nFBjHbZy20BsXaYn14X6mdpH5DHq4rx6VWkm+TxKuFY/TW56WhlMduoezSM/QosaV4J9SpL/x22/IpEWdrM2ywCorqtPBRJFCvfr6ONjMI8QhqrMF1FelB0gSbxnnntcjjrlVM2wJjRh2JOBcgl3r1j6lLyhGSHr4VzyIbklxp0/SNVBu9meVbnufW+TjIaP4YAQ=="},{"type":"text","text":"25"}]},{"role":"user","content":"Now
         add 10. Reply with just the number."}],"max_tokens":4096,"thinking":{"type":"adaptive","display":"summarized"},"output_config":{"effort":"high"}}'
     headers:
       User-Agent:
@@ -159,24 +147,24 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Internal-Weighted-Total-Tokens:
-      - '224'
-      Stream-Reported-Http-Code:
-      - '200'
-      Internal-Context-Length:
-      - '100000'
-      Internal-Input-Tokens:
-      - '209'
-      Content-Type:
-      - application/json
-      Internal-Output-Tokens:
-      - '3'
-      Date:
-      - Thu, 22 Oct 2026 20:19:32 GMT
       X-Vertex-Ai-Internal-Prediction-Backend:
       - harpoon
+      Date:
+      - Fri, 23 Oct 2026 21:39:59 GMT
+      Internal-Output-Tokens:
+      - '3'
+      Internal-Weighted-Total-Tokens:
+      - '223'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '208'
+      Internal-Context-Length:
+      - '100000'
+      Content-Type:
+      - application/json
       Request-Id:
-      - req_vrtx_011CgHtsDhj611pL3ghP9NwR
+      - req_vrtx_011CgKtowzLsgV52kxgadiqp
       Pinnacle-Error-Category:
       - no_error
       Vary:
@@ -197,7 +185,7 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHtsDtskFg8J2CEgLudn","type":"message","role":"assistant","content":[{"type":"text","text":"35"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":209,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"output_tokens_details":{"thinking_tokens":0}}}'
-  recorded_at: Thu, 22 Oct 2026 20:19:32 GMT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgKtoxBFiMZmF9NMn6cFN","type":"message","role":"assistant","content":[{"type":"text","text":"35"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":208,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Fri, 23 Oct 2026 21:39:59 GMT
 recorded_with: VCR 6.4.0
 ...

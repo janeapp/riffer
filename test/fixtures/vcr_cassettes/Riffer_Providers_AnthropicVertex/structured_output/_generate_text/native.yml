@@ -5,7 +5,7 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"Analyze
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Analyze
         the sentiment of the following text: ''I love this product, it is amazing!''"}],"max_tokens":4096,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"sentiment":{"type":"string","enum":["positive","neutral","negative"]},"score":{"type":"number"}},"required":["sentiment","score"],"additionalProperties":false}}}}'
     headers:
       User-Agent:
@@ -25,24 +25,24 @@ http_interactions:
     headers:
       Pinnacle-Error-Category:
       - no_error
-      Stream-Reported-Http-Code:
-      - '200'
-      X-Vertex-Ai-Internal-Prediction-Backend:
-      - harpoon
-      Internal-Context-Length:
-      - '100000'
-      Request-Id:
-      - req_vrtx_011CgHtsH3tjPQTAAKJqKfSq
-      Date:
-      - Thu, 22 Oct 2026 20:19:34 GMT
-      Internal-Input-Tokens:
-      - '278'
-      Internal-Output-Tokens:
-      - '21'
-      Internal-Weighted-Total-Tokens:
-      - '383'
       Content-Type:
       - application/json
+      Date:
+      - Fri, 23 Oct 2026 21:40:02 GMT
+      Internal-Weighted-Total-Tokens:
+      - '383'
+      Internal-Context-Length:
+      - '100000'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '21'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '278'
+      Request-Id:
+      - req_vrtx_011CgKtp8hXDWvJQWwc97Sgn
       Vary:
       - Origin
       - Referer
@@ -61,7 +61,7 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHtsH4dYcdK5jZud2Fki","type":"message","role":"assistant","content":[{"type":"text","text":"{\"sentiment\":
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgKtp8iWSy9ek5UKWCRvi","type":"message","role":"assistant","content":[{"type":"text","text":"{\"sentiment\":
         \"positive\", \"score\": 0.95}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":278,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":21,"output_tokens_details":{"thinking_tokens":0}}}'
-  recorded_at: Thu, 22 Oct 2026 20:19:34 GMT
+  recorded_at: Fri, 23 Oct 2026 21:40:02 GMT
 recorded_with: VCR 6.4.0

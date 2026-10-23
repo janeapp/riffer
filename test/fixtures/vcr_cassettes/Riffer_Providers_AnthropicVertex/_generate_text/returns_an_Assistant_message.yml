@@ -5,7 +5,7 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"Say
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Say
         hello"}],"max_tokens":4096,"system":[{"type":"text","text":"Be concise"}]}'
     headers:
       User-Agent:
@@ -23,26 +23,26 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Internal-Output-Tokens:
-      - '6'
-      Stream-Reported-Http-Code:
-      - '200'
-      Date:
-      - Thu, 22 Oct 2026 20:19:25 GMT
-      Internal-Input-Tokens:
-      - '17'
-      Content-Type:
-      - application/json
-      Request-Id:
-      - req_vrtx_011CgHtred8urRWF79XC768v
-      X-Vertex-Ai-Internal-Prediction-Backend:
-      - harpoon
       Internal-Context-Length:
       - '100000'
-      Internal-Weighted-Total-Tokens:
-      - '47'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Output-Tokens:
+      - '6'
+      Request-Id:
+      - req_vrtx_011CgKtqB6QHM7y45bHFfBGj
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 23 Oct 2026 21:40:16 GMT
+      Internal-Input-Tokens:
+      - '17'
       Pinnacle-Error-Category:
       - no_error
+      Internal-Weighted-Total-Tokens:
+      - '47'
       Vary:
       - Origin
       - Referer
@@ -61,6 +61,6 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHtref8SUjTUDrhXKN4B","type":"message","role":"assistant","content":[{"type":"text","text":"Hello!"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":17,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"output_tokens_details":{"thinking_tokens":0}}}'
-  recorded_at: Thu, 22 Oct 2026 20:19:25 GMT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgKtqB79kSoWiDJuTFan2","type":"message","role":"assistant","content":[{"type":"text","text":"Hello!"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":17,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"output_tokens_details":{"thinking_tokens":0}}}'
+  recorded_at: Fri, 23 Oct 2026 21:40:16 GMT
 recorded_with: VCR 6.4.0
