@@ -132,7 +132,7 @@ describe Riffer::Providers::AnthropicVertex do
 
       expect(path).must_equal "publishers/anthropic/models/claude-haiku-5-5:rawPredict"
       expect(body).must_equal(
-        anthropic_version: "vertex-2023-10-16",
+        anthropic_version: "2026-10-21",
         messages: [{ role: "user", content: "Say hello" }],
         max_tokens: 4096,
         system: [{ type: "text", text: "Be brief" }],

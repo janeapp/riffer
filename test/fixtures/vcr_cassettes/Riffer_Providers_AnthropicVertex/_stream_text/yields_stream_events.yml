@@ -5,7 +5,7 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
     body:
       encoding: UTF-8
-      string: '{"anthropic_version":"vertex-2023-10-16","messages":[{"role":"user","content":"Say
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Say
         hello"}],"max_tokens":4096,"stream":true}'
     headers:
       User-Agent:
@@ -27,14 +27,14 @@ http_interactions:
       - text/event-stream; charset=utf-8
       Cache-Control:
       - no-cache
+      X-Vertex-Ai-Received-Request-Id:
+      - dbbb09e3-05d9-4c21-8115-1361544860b4
+      Date:
+      - Fri, 23 Oct 2026 21:40:15 GMT
+      Request-Id:
+      - req_vrtx_011CgKtq773vvnnEpCfoHEWo
       X-Accel-Buffering:
       - 'no'
-      X-Vertex-Ai-Received-Request-Id:
-      - 82da21a5-2416-444c-97dc-8185a2c8eb26
-      Request-Id:
-      - req_vrtx_011CgHtrauQN7ps57HfgMVaB
-      Date:
-      - Thu, 22 Oct 2026 20:19:23 GMT
       Vary:
       - Origin,Accept-Encoding
       - Referer
@@ -57,32 +57,29 @@ http_interactions:
       encoding: UTF-8
       string: |+
         event: message_start
-        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgHtrawdf5PMs3yzBABwn","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":12,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5}} }
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011CgKtq792cENxoA8DnEz1E","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":12,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5}}              }
 
         event: ping
         data: {"type": "ping"}
 
         event: content_block_start
-        data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}       }
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}        }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello! How"}            }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello! How"}}
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" are"}   }
-
-        event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" you doing today?"}  }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" can I help you today?"}     }
 
         event: content_block_stop
-        data: {"type":"content_block_stop","index":0   }
+        data: {"type":"content_block_stop","index":0            }
 
         event: message_delta
-        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":12,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":13,"output_tokens_details":{"thinking_tokens":0}}          }
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":12,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":13,"output_tokens_details":{"thinking_tokens":0}}   }
 
         event: message_stop
-        data: {"type":"message_stop"      }
+        data: {"type":"message_stop"  }
 
-  recorded_at: Thu, 22 Oct 2026 20:19:24 GMT
+  recorded_at: Fri, 23 Oct 2026 21:40:15 GMT
 recorded_with: VCR 6.4.0
 ...
