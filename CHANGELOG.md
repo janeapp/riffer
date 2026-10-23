@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.55.0](https://github.com/janeapp/riffer/compare/riffer/v0.54.0...riffer/v0.55.0) (2026-10-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **anthropic:** the anthropic gem is no longer used. config.anthropic.client takes a Riffer::Providers::Anthropic::Client; an Anthropic::Client raises a migration error. SDK error classes are replaced by Riffer::APIError and Faraday::Error. There are no default retries (the SDK retried twice); add them through connection:. ANTHROPIC_AUTH_TOKEN and ANTHROPIC_CUSTOM_HEADERS are no longer read. Streamed ToolCallDelta events carry the real item_id and name.
+* **gemini:** gemini-2.x models ignore responseFormat on the Developer API and return prose, so structured output needs gemini-3 or later.
+* **gemini:** Gemini::Client no longer accepts open_timeout, read_timeout, write_timeout, proxy_address or proxy_port; pass a connection: instead. The default read timeout is 600s (was 60s). Non-success responses raise Riffer::APIError (still a Riffer::Error), and transport failures are Faraday::Errors rather than Net::* errors. A missing API key raises Riffer::ArgumentError (an ::ArgumentError, not a Riffer::Error) instead of a 4xx Riffer::Error, and GEMINI_API_KEY is now read when config.gemini.api_key is unset.
+
+### Features
+
+* add Riffer::HTTP::Client Faraday transport and Riffer::APIError ([#503](https://github.com/janeapp/riffer/issues/503)) ([9ee2dfc](https://github.com/janeapp/riffer/commit/9ee2dfcd97fa74aba6ce61710f06b9df9c29f3c0))
+* **anthropic:** replace the anthropic gem with a hand-rolled Messages API client ([#506](https://github.com/janeapp/riffer/issues/506)) ([6388c44](https://github.com/janeapp/riffer/commit/6388c446d047b4e0a0f48dfd601eaa55eb6f4fc4))
+* **gemini:** add web search through Google Search grounding ([#510](https://github.com/janeapp/riffer/issues/510)) ([ee3c820](https://github.com/janeapp/riffer/commit/ee3c82098f514dd5b846f0cba521914a23eb7c4b))
+* **gemini:** move Gemini::Client onto Riffer::HTTP::Client ([#505](https://github.com/janeapp/riffer/issues/505)) ([1a6798c](https://github.com/janeapp/riffer/commit/1a6798c2ed12f5486ed80b61950c6bf8d2f77905))
+* **gemini:** send structured output as responseFormat and replay thought signatures ([#507](https://github.com/janeapp/riffer/issues/507)) ([a5299ef](https://github.com/janeapp/riffer/commit/a5299eff8166ff32b85e3d397844f08649b4dd84))
+* **params:** add primitive variants to `Riffer::Params::AnyOf` ([#508](https://github.com/janeapp/riffer/issues/508)) ([98483b4](https://github.com/janeapp/riffer/commit/98483b4d86aa4a3c9584bc008bbe7e2f1339d48e))
+
 ## [0.54.0](https://github.com/janeapp/riffer/compare/riffer/v0.53.0...riffer/v0.54.0) (2026-10-20)
 
 
