@@ -172,6 +172,18 @@ Files are sent inline as base64 (images and documents). A `FilePart.from_url` so
 
 Claude models use Agent Platform's Anthropic endpoints (`rawPredict` and `streamRawPredict`), which take the Anthropic Messages API body. Riffer builds the same body as the [Anthropic provider](ANTHROPIC.md), so the same [model options](ANTHROPIC.md#model-options) apply (`max_tokens`, defaulting to `4096`, `thinking`, `output_config`, `web_search`, ...). The model goes in the URL, and `anthropic_version: "2026-10-21"`, the Anthropic provider's API version, goes in the body in place of the `anthropic-version` header. That version rejects `temperature`, `top_p` and `top_k`. Enable each Claude model for your project in Model Garden before calling it.
 
+To send another version, subclass the provider, override `anthropic_version`, and register the subclass under `anthropic_vertex`. A registration replaces the built-in under the same identifier, so models and [catalog](../CATALOG.md) entries keep their `anthropic_vertex/...` names:
+
+```ruby
+class LegacyAnthropicVertex < Riffer::Providers::AnthropicVertex
+  private
+
+  def anthropic_version = "vertex-2023-10-16"
+end
+
+Riffer::Providers::Repository.register(:anthropic_vertex) { LegacyAnthropicVertex }
+```
+
 ```ruby
 provider = Riffer::Providers::AnthropicVertex.new
 

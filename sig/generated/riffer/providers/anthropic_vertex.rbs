@@ -4,9 +4,8 @@
 # its rawPredict endpoints. Shares config.google_cloud and GoogleCloud::Client
 # with the google_cloud provider.
 class Riffer::Providers::AnthropicVertex < Riffer::Providers::AnthropicCompatible::MessagesAPI
-  # Agent Platform takes the anthropic-version header's value in the body. It
-  # also accepts "vertex-2023-10-16"; this matches the Anthropic provider.
-  ANTHROPIC_VERSION: String
+  # Matches the Anthropic provider. Agent Platform also accepts "vertex-2023-10-16".
+  DEFAULT_ANTHROPIC_VERSION: String
 
   # Agent Platform model ids may carry an +@version+ suffix.
   VALID_MODEL_PATTERN: Regexp
@@ -24,6 +23,12 @@ class Riffer::Providers::AnthropicVertex < Riffer::Providers::AnthropicCompatibl
   # --
   # : () -> Riffer::Providers::GoogleCloud::Client
   def build_client: () -> Riffer::Providers::GoogleCloud::Client
+
+  # Agent Platform takes the API version in the body, in place of the
+  # anthropic-version header. Override in a subclass to send another version.
+  # --
+  # : () -> String
+  def anthropic_version: () -> String
 
   # The model goes in the URL rather than the body.
   # --
