@@ -1,13 +1,9 @@
 # Generated from lib/riffer/providers/anthropic_compatible/messages_api/stream.rb with RBS::Inline
 
-# Finish reason and token usage are left to the caller, read from #finish!, so
-# it can price the usage.
 class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   @completed: bool
 
   @web_search_query: String?
-
-  @text: String?
 
   @partial_json: Hash[Integer, String]
 
@@ -20,16 +16,15 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   def self.reasoning_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
 
   # --
-  # : (?tools: Array[singleton(Riffer::Tool)]) -> void
-  def initialize: (?tools: Array[singleton(Riffer::Tool)]) -> void
+  # : (tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (tools: Array[singleton(Riffer::Tool)]) -> void
 
   # Raises Riffer::APIError on a stream +error+ event.
   # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
-  # Returns the accumulated message body. Raises Riffer::IncompleteStreamError
-  # when the stream ended without +message_stop+.
+  # The caller reads finish reason and usage from here so it can price the usage.
   # --
   # : () -> Hash[Symbol, untyped]
   def finish!: () -> Hash[Symbol, untyped]
@@ -70,7 +65,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # : (String) -> Hash[String, untyped]?
   def parse_input: (String) -> Hash[String, untyped]?
 
-  # An error result carries an object, not a list, as its content.
   # --
   # : (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
   def web_search_sources: (Hash[Symbol, untyped]) -> Array[Hash[Symbol, String?]]
