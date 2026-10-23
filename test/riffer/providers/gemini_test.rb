@@ -575,7 +575,7 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "Read this order: 12 boxes, due on 2026-11-03",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: primitive_any_of_structured_output,
           )
           validated = primitive_any_of_structured_output.parse_and_validate(result.content)
@@ -592,13 +592,13 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "Read this order: several boxes, with no due date",
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3.5-flash-lite",
             structured_output: primitive_any_of_structured_output,
           )
           validated = primitive_any_of_structured_output.parse_and_validate(result.content)
 
           expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: "several", due: "none" })
+          expect(validated.object).must_equal({ quantity: "several boxes", due: "none" })
         end
       end
     end
