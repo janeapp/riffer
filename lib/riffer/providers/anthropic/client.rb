@@ -4,20 +4,18 @@
 class Riffer::Providers::Anthropic::Client < Riffer::HTTP::Client
   # @rbs @api_key: String
   # @rbs @base_url: String
-  # @rbs @anthropic_version: String
 
   DEFAULT_BASE_URL = "https://api.anthropic.com" #: String
 
-  # Version 2026-10-21 rejects temperature, top_p and top_k.
-  DEFAULT_ANTHROPIC_VERSION = "2023-06-01" #: String
+  # Override with an anthropic-version entry in +headers+.
+  DEFAULT_ANTHROPIC_VERSION = "2026-10-21" #: String
 
   #--
-  #: (api_key: String, ?base_url: String, ?anthropic_version: String, ?connection: Faraday::Connection?) -> void
-  def initialize(api_key:, base_url: DEFAULT_BASE_URL, anthropic_version: DEFAULT_ANTHROPIC_VERSION, connection: nil)
-    super(connection: connection)
+  #: (api_key: String, ?base_url: String, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize(api_key:, base_url: DEFAULT_BASE_URL, headers: {}, connection: nil)
+    super(headers: headers, connection: connection)
     @api_key = api_key
     @base_url = base_url.chomp("/")
-    @anthropic_version = anthropic_version
   end
 
   private
@@ -31,7 +29,7 @@ class Riffer::Providers::Anthropic::Client < Riffer::HTTP::Client
   #--
   #: () -> Hash[String, String]
   def headers
-    { "x-api-key" => @api_key, "anthropic-version" => @anthropic_version }
+    { "authorization" => "Bearer #{@api_key}", "anthropic-version" => DEFAULT_ANTHROPIC_VERSION }
   end
 
   #--

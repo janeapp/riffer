@@ -171,7 +171,7 @@ end
 
 ## Anthropic-Compatible Endpoints
 
-For a service that speaks the Anthropic Messages API, subclass `Riffer::Providers::AnthropicCompatible::MessagesAPI` instead of `Base`. It brings the request building, response parsing and streaming of the Anthropic provider; you supply the client. An endpoint that takes Anthropic's `x-api-key` header can use `Riffer::Providers::Anthropic::Client` with its own `base_url`. For other auth, subclass `Riffer::HTTP::Client`:
+For a service that speaks the Anthropic Messages API, subclass `Riffer::Providers::AnthropicCompatible::MessagesAPI` instead of `Base`. It brings the request building, response parsing and streaming of the Anthropic provider; you supply the client. An endpoint that takes a bearer key can use `Riffer::Providers::Anthropic::Client` with its own `base_url`. For other auth, subclass `Riffer::HTTP::Client`:
 
 ```ruby
 class AcmeClaude < Riffer::Providers::AnthropicCompatible::MessagesAPI
@@ -184,7 +184,7 @@ class AcmeClaude < Riffer::Providers::AnthropicCompatible::MessagesAPI
     private
 
     def url_for(path) = "https://llm.acme.example/#{path}"
-    def headers = { "authorization" => "Bearer #{@api_key}" }
+    def headers = { "api-key" => @api_key }
     def error_label = "Acme"
   end
 

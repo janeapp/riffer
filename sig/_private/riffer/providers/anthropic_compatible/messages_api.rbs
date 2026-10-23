@@ -1,7 +1,0 @@
-# Narrows the private `client` to riffer's HTTP transport, mirroring the
-# Gemini narrowing alongside it.
-class Riffer::Providers::AnthropicCompatible::MessagesAPI
-  private
-
-  def client: () -> Riffer::HTTP::Client
-end

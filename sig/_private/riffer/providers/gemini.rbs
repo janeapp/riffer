@@ -1,7 +1,0 @@
-# Narrows the private `client` to riffer's Gemini transport, mirroring the
-# SDK-typed narrowings alongside it.
-class Riffer::Providers::Gemini
-  private
-
-  def client: () -> Riffer::Providers::Gemini::Client
-end

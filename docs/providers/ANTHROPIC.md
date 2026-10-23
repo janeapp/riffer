@@ -14,7 +14,7 @@ end
 
 When `config.anthropic.api_key` is unset, the provider reads `ANTHROPIC_API_KEY`; with neither set it raises `Riffer::ArgumentError`. Set `config.anthropic.base_url` (or `ANTHROPIC_BASE_URL`) to send requests somewhere other than `https://api.anthropic.com`, such as a gateway or proxy.
 
-Riffer reads no other `ANTHROPIC_*` variables. The anthropic gem also read `ANTHROPIC_AUTH_TOKEN` (sent as `Authorization: Bearer`) and `ANTHROPIC_CUSTOM_HEADERS`; riffer does not. Put custom headers on a `connection:` (see [HTTP Client](#http-client)). For bearer auth, subclass `Riffer::Providers::Anthropic::Client` and override its private `headers` method.
+Riffer reads no other `ANTHROPIC_*` variables. The anthropic gem also read `ANTHROPIC_AUTH_TOKEN` and `ANTHROPIC_CUSTOM_HEADERS`; riffer does not. The key is already sent as `Authorization: Bearer`, and custom headers go in the client's `headers:` (see [HTTP Client](#http-client)).
 
 ## HTTP Client
 
@@ -29,16 +29,25 @@ Riffer.configure do |config|
 end
 ```
 
-| Option              | Default                                | Description                                                    |
-| ------------------- | -------------------------------------- | -------------------------------------------------------------- |
-| `api_key`           | required                               | Sent as the `x-api-key` header                                 |
-| `base_url`          | `https://api.anthropic.com`            | API origin; requests go to `<base_url>/v1/messages`            |
-| `anthropic_version` | `2023-06-01`                           | Sent as the `anthropic-version` header                         |
-| `connection`        | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections] |
+| Option       | Default                                | Description                                                         |
+| ------------ | -------------------------------------- | ------------------------------------------------------------------- |
+| `api_key`    | required                               | Sent as `Authorization: Bearer <api_key>`                           |
+| `base_url`   | `https://api.anthropic.com`            | API origin; requests go to `<base_url>/v1/messages`                 |
+| `headers`    | `{}`                                   | Sent on every request; replaces riffer's headers of the same name   |
+| `connection` | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections]      |
 
-Timeouts, retries, proxies, beta headers (`anthropic-beta` on the connection) and errors are covered in [Configuration → Connections][connections]. An API error becomes a `Riffer::APIError` whose message carries the Anthropic error type, e.g. `Anthropic API error (401): authentication_error: invalid x-api-key`. No requests are retried unless your connection adds retries.
+Timeouts, retries, proxies, beta headers and errors are covered in [Configuration → Connections][connections]. An API error becomes a `Riffer::APIError` whose message carries the Anthropic error type, e.g. `Anthropic API error (401): authentication_error: Invalid bearer token`. No requests are retried unless your connection adds retries.
 
-The `anthropic-version` header is pinned to `2023-06-01`. Pass `anthropic_version:` to use another version, but check which request fields it accepts first: version `2026-10-21` rejects `temperature`, `top_p` and `top_k` with a 400.
+The `anthropic-version` header is pinned to `2026-10-21`. To send another version, pass it in `headers:`:
+
+```ruby
+Riffer::Providers::Anthropic::Client.new(
+  api_key: ENV['ANTHROPIC_API_KEY'],
+  headers: {'anthropic-version' => '2023-06-01'}
+)
+```
+
+Version `2026-10-21` removed `temperature`, `top_p` and `top_k`; sending any of them returns a 400. Pin `2023-06-01` to keep using them. See Anthropic's [API versions](https://platform.claude.com/docs/en/api/versioning) for the other changes.
 
 The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients). An `Anthropic::Client` from the anthropic gem is not accepted and raises `Riffer::ArgumentError`.
 
@@ -56,36 +65,12 @@ model 'anthropic/claude-opus-4-5-20251101'
 
 ## Model Options
 
-### temperature
-
-Controls randomness:
-
-```ruby
-model_options temperature: 0.7
-```
-
 ### max_tokens
 
 Maximum tokens in response:
 
 ```ruby
 model_options max_tokens: 4096
-```
-
-### top_p
-
-Nucleus sampling parameter:
-
-```ruby
-model_options top_p: 0.95
-```
-
-### top_k
-
-Top-k sampling parameter:
-
-```ruby
-model_options top_k: 250
 ```
 
 ### thinking

@@ -34,6 +34,16 @@ describe Riffer::Providers::Gemini::Client do
       assert_requested stub
     end
 
+    it "sends the passed headers" do
+      stub = stub_request(:post, url).
+        with(headers: { "x-goog-api-key" => "test_api_key", "x-goog-user-project" => "my-project" }).
+        to_return(status: 200, body: "{}")
+      headers = { "x-goog-user-project" => "my-project" }
+      Riffer::Providers::Gemini::Client.new(api_key: "test_api_key", headers: headers).post(path, { contents: [] })
+
+      assert_requested stub
+    end
+
     it "ignores a trailing slash on base_url" do
       stub = stub_request(:post, "http://localhost:8080/#{path}").to_return(status: 200, body: "{}")
       custom = Riffer::Providers::Gemini::Client.new(api_key: "k", base_url: "http://localhost:8080/")

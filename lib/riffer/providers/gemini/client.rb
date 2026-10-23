@@ -10,9 +10,9 @@ class Riffer::Providers::Gemini::Client < Riffer::HTTP::Client
   DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com" #: String
 
   #--
-  #: (api_key: String, ?base_url: String, ?connection: Faraday::Connection?) -> void
-  def initialize(api_key:, base_url: DEFAULT_BASE_URL, connection: nil)
-    super(connection: connection)
+  #: (api_key: String, ?base_url: String, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize(api_key:, base_url: DEFAULT_BASE_URL, headers: {}, connection: nil)
+    super(headers: headers, connection: connection)
     @api_key = api_key
     @base_url = base_url.chomp("/")
   end

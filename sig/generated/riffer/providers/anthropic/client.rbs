@@ -5,16 +5,14 @@ class Riffer::Providers::Anthropic::Client < Riffer::HTTP::Client
 
   @base_url: String
 
-  @anthropic_version: String
-
   DEFAULT_BASE_URL: String
 
-  # Version 2026-10-21 rejects temperature, top_p and top_k.
+  # Override with an anthropic-version entry in +headers+.
   DEFAULT_ANTHROPIC_VERSION: String
 
   # --
-  # : (api_key: String, ?base_url: String, ?anthropic_version: String, ?connection: Faraday::Connection?) -> void
-  def initialize: (api_key: String, ?base_url: String, ?anthropic_version: String, ?connection: Faraday::Connection?) -> void
+  # : (api_key: String, ?base_url: String, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
+  def initialize: (api_key: String, ?base_url: String, ?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
 
   private
 

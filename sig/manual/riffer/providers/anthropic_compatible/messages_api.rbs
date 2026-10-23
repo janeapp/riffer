@@ -1,0 +1,8 @@
+# Narrows the private `client` to riffer's HTTP transport. It ships, since
+# consumers always have Riffer::HTTP::Client; rbs-inline can't generate it
+# because the class only inherits `client`.
+class Riffer::Providers::AnthropicCompatible::MessagesAPI
+  private
+
+  def client: () -> Riffer::HTTP::Client
+end

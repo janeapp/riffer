@@ -153,7 +153,7 @@ describe Riffer::Providers::Anthropic do
     it "builds a client from ANTHROPIC_API_KEY" do
       Riffer.config.anthropic.api_key = nil
       stub = stub_request(:post, "https://api.anthropic.com/v1/messages").
-        with(headers: { "x-api-key" => "env_key" }).
+        with(headers: { "authorization" => "Bearer env_key" }).
         to_return(status: 200, body: "{}")
 
       with_env("ANTHROPIC_API_KEY" => "env_key", "ANTHROPIC_BASE_URL" => nil) do
@@ -166,7 +166,7 @@ describe Riffer::Providers::Anthropic do
     it "prefers the configured api_key over ANTHROPIC_API_KEY" do
       Riffer.config.anthropic.api_key = "config_key"
       stub = stub_request(:post, "https://api.anthropic.com/v1/messages").
-        with(headers: { "x-api-key" => "config_key" }).
+        with(headers: { "authorization" => "Bearer config_key" }).
         to_return(status: 200, body: "{}")
 
       with_env("ANTHROPIC_API_KEY" => "env_key", "ANTHROPIC_BASE_URL" => nil) do

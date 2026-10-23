@@ -97,13 +97,15 @@ A credential you leave unset in riffer is omitted from the default client rather
 
 Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
 
-The Anthropic provider uses no vendor SDK. Riffer reads `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` itself when `config.anthropic.api_key` / `.base_url` are unset, and raises `Riffer::ArgumentError` when no key is found. Its client, `Riffer::Providers::Anthropic::Client`, takes a `connection:` (see [Connections](#connections) and [Anthropic](providers/ANTHROPIC.md)).
+The Anthropic provider uses no vendor SDK. Riffer reads `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` itself when `config.anthropic.api_key` / `.base_url` are unset, and raises `Riffer::ArgumentError` when no key is found. Its client, `Riffer::Providers::Anthropic::Client`, takes `headers:` and a `connection:` (see [Connections](#connections) and [Anthropic](providers/ANTHROPIC.md)).
 
 The Gemini provider has no vendor SDK, so riffer ships its own transport, `Riffer::Providers::Gemini::Client`, built on `Riffer::HTTP::Client` (see [Connections](#connections)). Its key falls back to `GEMINI_API_KEY` when `config.gemini.api_key` is unset, and raises `Riffer::ArgumentError` when neither is set. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 
 ### Connections
 
-Clients built on `Riffer::HTTP::Client` send requests through a [Faraday](https://lostisland.github.io/faraday/) connection. The default uses Faraday's `net_http` adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as `connection:`. Riffer's defaults don't carry over to a connection you pass in, so set its timeouts yourself, in the form its adapter reads them. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no `url:`, and any headers you set on it are sent as well.
+Clients built on `Riffer::HTTP::Client` send requests through a [Faraday](https://lostisland.github.io/faraday/) connection. The default uses Faraday's `net_http` adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as `connection:`. Riffer's defaults don't carry over to a connection you pass in, so set its timeouts yourself, in the form its adapter reads them. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no `url:`.
+
+To send extra headers, pass `headers:` to the client, or set them on the connection. Either way they go on every request and replace riffer's auth and version headers of the same name. A replaced auth header is sent as-is, never refreshed. Riffer always sets `content-type`, `accept` and `accept-encoding` itself.
 
 For example, to retry rate limits and server errors with [faraday-retry](https://github.com/lostisland/faraday-retry):
 
@@ -377,10 +379,7 @@ end
 
 | Option          | Description                                 |
 | --------------- | ------------------------------------------- |
-| `temperature`   | Sampling temperature                        |
 | `max_tokens`    | Maximum tokens in response                  |
-| `top_p`         | Nucleus sampling parameter                  |
-| `top_k`         | Top-k sampling parameter                    |
 | `thinking`      | Extended thinking config hash (Claude 3.7+) |
 | `output_config` | Output config hash (e.g. `effort`)          |
 | `web_search`    | Enable web search (`true` or config hash)   |
@@ -388,7 +387,7 @@ end
 ```ruby
 class MyAgent < Riffer::Agent
   model 'anthropic/claude-haiku-4-5-20251001'
-  model_options temperature: 0.7, max_tokens: 4096
+  model_options max_tokens: 4096
 end
 
 # With extended thinking (Claude 3.7+)

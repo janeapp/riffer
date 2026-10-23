@@ -5,20 +5,21 @@ require "test_helper"
 describe Riffer::Providers::Anthropic::Client do
   let(:url) { "https://api.anthropic.com/v1/messages" }
 
-  it "posts to the Messages API with the key and the pinned version" do
+  it "posts to the Messages API with a bearer key and the pinned version" do
     stub = stub_request(:post, url).
-      with(headers: { "x-api-key" => "secret", "anthropic-version" => "2023-06-01" }).
+      with(headers: { "authorization" => "Bearer secret", "anthropic-version" => "2026-10-21" }).
       to_return(status: 200, body: "{}")
     Riffer::Providers::Anthropic::Client.new(api_key: "secret").post("v1/messages", {})
 
     assert_requested stub
   end
 
-  it "sends an overridden anthropic_version" do
+  it "sends an anthropic-version passed in headers" do
     stub = stub_request(:post, url).
-      with(headers: { "anthropic-version" => "2026-10-21" }).
+      with(headers: { "authorization" => "Bearer secret", "anthropic-version" => "2023-06-01" }).
       to_return(status: 200, body: "{}")
-    Riffer::Providers::Anthropic::Client.new(api_key: "secret", anthropic_version: "2026-10-21").post("v1/messages", {})
+    headers = { "anthropic-version" => "2023-06-01" }
+    Riffer::Providers::Anthropic::Client.new(api_key: "secret", headers: headers).post("v1/messages", {})
 
     assert_requested stub
   end
