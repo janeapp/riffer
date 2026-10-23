@@ -181,6 +181,25 @@ describe Riffer::Agent::Serializer do
         must_match(/result must match one of the variants/)
     end
 
+    it "reconstructs a structured output with primitive AnyOf variants through JSON" do
+      klass = build_agent_class do
+        structured_output do
+          required :quantity, Riffer::Params::AnyOf do
+            variant Integer
+            variant String, format: "date"
+          end
+        end
+      end
+      wire = JSON.parse(klass.new.to_json, symbolize_names: true)
+      agent = Riffer::Agent.from_h(wire, context: nil)
+
+      expect(agent.structured_output.parse_and_validate('{"quantity":12}').object).must_equal({ quantity: 12 })
+      expect(agent.structured_output.parse_and_validate('{"quantity":"2026-11-03"}').object).
+        must_equal({ quantity: "2026-11-03" })
+      expect(agent.structured_output.parse_and_validate('{"quantity":"several"}').error).
+        must_match(/quantity must match one of the variants: .*variant 2 \(must be a valid date\)/)
+    end
+
     it "reconstructs a structured output with an array of enum values through JSON" do
       klass = build_agent_class do
         structured_output { required :tags, Array, of: String, enum: %w[urgent billing] }

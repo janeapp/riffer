@@ -1,13 +1,21 @@
 # Generated from lib/riffer/params/any_of.rb with RBS::Inline
 
 class Riffer::Params::AnyOf
-  attr_reader variants: Array[Riffer::Params]
+  @name: Symbol
+
+  attr_reader variants: Array[Riffer::Params | Riffer::Params::Param]
 
   # --
-  # : () -> void
-  def initialize: () -> void
+  # : (Symbol) -> void
+  def initialize: (Symbol) -> void
 
   # --
-  # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def variant: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (?Module?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def variant: (?Module?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+
+  private
+
+  # --
+  # : (Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
+  def primitive: (Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
 end

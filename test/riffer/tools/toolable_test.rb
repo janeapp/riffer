@@ -169,6 +169,28 @@ describe Riffer::Tools::Toolable do
       end
     end
 
+    describe "with an AnyOf param of primitive variants" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          identifier "set_quantity"
+          description "Sets a quantity"
+
+          params do
+            optional :quantity, Riffer::Params::AnyOf do
+              variant Integer
+              variant String
+            end
+          end
+        end
+      end
+
+      it "renders each variant and a null branch in strict mode" do
+        expect(tool_class.parameters_schema(strict: true)[:properties]["quantity"]).must_equal(
+          anyOf: [{ type: "integer" }, { type: "string" }, { type: "null" }],
+        )
+      end
+    end
+
     describe "with an array of enum values" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do

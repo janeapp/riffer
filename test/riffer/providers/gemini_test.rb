@@ -554,6 +554,55 @@ describe Riffer::Providers::Gemini do
       end
     end
 
+    describe "structured output with primitive any_of" do
+      let(:primitive_any_of_structured_output) do
+        params = Riffer::Params.new
+        params.required(:quantity, Riffer::Params::AnyOf, description: "A count, or a word when there is no count") do
+          variant Integer
+          variant String
+        end
+        params.optional(:due, Riffer::Params::AnyOf, description: "The due date, or none when there isn't one") do
+          variant String, format: "date"
+          variant String, enum: ["none"]
+        end
+        Riffer::Agent::StructuredOutput.new(params)
+      end
+
+      it "returns the integer and date variants when the order has both" do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/structured_output_primitive_any_of/returns_integer_and_date",
+        ) do
+          provider = Riffer::Providers::Gemini.new
+          result = provider.generate_text(
+            prompt: "Read this order: 12 boxes, due on 2026-11-03",
+            model: "gemini-2.5-flash-lite",
+            structured_output: primitive_any_of_structured_output,
+          )
+          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object).must_equal({ quantity: 12, due: "2026-11-03" })
+        end
+      end
+
+      it "returns the string and enum variants when the order has neither" do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/structured_output_primitive_any_of/returns_string_and_enum",
+        ) do
+          provider = Riffer::Providers::Gemini.new
+          result = provider.generate_text(
+            prompt: "Read this order: several boxes, with no due date",
+            model: "gemini-2.5-flash-lite",
+            structured_output: primitive_any_of_structured_output,
+          )
+          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
+
+          expect(validated.error).must_be_nil
+          expect(validated.object).must_equal({ quantity: "several", due: "none" })
+        end
+      end
+    end
+
     describe "structured output with enum array" do
       let(:ticket_tags) { %w[urgent billing technical account] }
 

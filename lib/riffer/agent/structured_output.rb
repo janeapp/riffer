@@ -58,7 +58,12 @@ class Riffer::Agent::StructuredOutput
   #: (Hash[Symbol, untyped]) -> untyped
   def placeholder(schema)
     return schema[:enum].join(" | ") if schema[:enum]
-    return placeholder(schema[:anyOf].first) if schema[:anyOf]
+
+    if schema[:anyOf]
+      examples = schema[:anyOf].map { |branch| placeholder(branch) }
+      # Showing one primitive branch would steer the model to that type only.
+      return examples.all?(String) ? examples.join(" | ") : examples.first
+    end
 
     case schema[:type]
     when "object" then (schema[:properties] || {}).transform_values { |property| placeholder(property) }

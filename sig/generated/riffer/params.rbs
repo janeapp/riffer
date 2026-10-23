@@ -50,8 +50,12 @@ class Riffer::Params
   def build_nested: (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
   # --
-  # : ((Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
-  def build_variants: ((Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params]
+  # : (Symbol, (Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
+  def build_variants: (Symbol, (Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
+
+  # --
+  # : (Riffer::Params::Param, untyped) -> String?
+  def value_error: (Riffer::Params::Param, untyped) -> String?
 
   # --
   # : (Riffer::Params::Param, untyped, Array[String]) -> untyped
@@ -62,8 +66,8 @@ class Riffer::Params
   def validate_nested_hash: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
-  def validate_any_of: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
+  # : (Riffer::Params::Param, untyped, Array[String]) -> untyped
+  def validate_any_of: (Riffer::Params::Param, untyped, Array[String]) -> untyped
 
   # Validation drops keys a Params doesn't declare, at any depth, so they are
   # the keys in the input that are missing from the output.

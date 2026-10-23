@@ -91,6 +91,19 @@ describe Riffer::Agent::StructuredOutput do
 
       expect(JSON.parse(example)).must_equal("contact" => { "email" => "<string>" })
     end
+
+    it "shows every primitive variant of an AnyOf field in the example" do
+      params = Riffer::Params.new
+      params.required(:quantity, Riffer::Params::AnyOf) do
+        variant Integer
+        variant String, enum: %w[some many]
+      end
+      so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
+
+      example = so.prompt_instructions[/^Example of the shape \(placeholder values\):\n(.+)$/, 1]
+
+      expect(JSON.parse(example)).must_equal("quantity" => "<integer> | some | many")
+    end
   end
 
   describe "#initialize" do

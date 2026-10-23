@@ -46,12 +46,12 @@ class Riffer::Params::Param
 
   attr_reader :nested_params #: Riffer::Params? # @dynamic nested_params
 
-  attr_reader :variants #: Array[Riffer::Params]? # @dynamic variants
+  attr_reader :variants #: Array[Riffer::Params | Riffer::Params::Param]? # @dynamic variants
 
   #--
   #: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema(name, schema, required:)
-    variants = resolve_variants(schema[:anyOf]) if schema.key?(:anyOf)
+    variants = resolve_variants(name, schema[:anyOf]) if schema.key?(:anyOf)
     ruby_type = variants ? Riffer::Params::AnyOf : json_type_to_ruby(schema[:type])
     nested = resolve_nested_params(ruby_type, schema)
     item_type, dimensions, items = resolve_typed_items(schema) if ruby_type == Array && !nested
@@ -72,15 +72,19 @@ class Riffer::Params::Param
   end
 
   #--
-  #: (Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params]
-  def self.resolve_variants(branches)
+  #: (Symbol, Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params | Riffer::Params::Param]
+  def self.resolve_variants(name, branches)
     # Strict schemas add a null branch to optional fields; nullability comes from +required+.
     variants = branches.reject { |branch| branch[:type] == "null" }.map do |branch|
-      raise Riffer::ArgumentError, "Unsupported anyOf branch: #{branch.to_json}" unless branch[:type] == "object"
-
-      Riffer::Params.from_json_schema(branch)
+      if branch[:type] == "object"
+        Riffer::Params.from_json_schema(branch)
+      elsif PRIMITIVE_TYPES.include?(JSON_TYPE_MAPPINGS[branch[:type]]) && !branch.key?(:anyOf)
+        from_json_schema(name, branch, required: true)
+      else
+        raise Riffer::ArgumentError, "Unsupported anyOf branch: #{branch.to_json}"
+      end
     end
-    raise Riffer::ArgumentError, "anyOf requires at least two object branches" if variants.size < 2
+    raise Riffer::ArgumentError, "anyOf requires at least two branches" if variants.size < 2
 
     variants
   end
@@ -133,13 +137,14 @@ class Riffer::Params::Param
   #--
   #: (untyped) -> Module
   def self.json_type_to_ruby(type)
-    key = type.is_a?(Array) ? type.find { |t| t != "null" } : type
-    JSON_TYPE_MAPPINGS.fetch(key) { raise Riffer::ArgumentError, "Unsupported JSON Schema type: #{type.inspect}" }
+    types = Array(type) - ["null"]
+    ruby_type = JSON_TYPE_MAPPINGS[types.first] if types.one?
+    ruby_type || raise(Riffer::ArgumentError, "Unsupported JSON Schema type: #{type.inspect}")
   end
   private_class_method :json_type_to_ruby
 
   #--
-  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params]?) -> void
+  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
   def initialize(name:, type:, required:, description: nil, enum: nil, format: nil, default: nil, item_type: nil,
                  dimensions: 1, nested_params: nil, variants: nil)
     if type == Riffer::Params::AnyOf && variants.nil?
@@ -158,8 +163,9 @@ class Riffer::Params::Param
     @dimensions = dimensions
     @nested_params = nested_params
     @variants = variants
-    # Checked here rather than in Params so from_json_schema enforces it too.
+    # Checked here rather than in Params so from_json_schema enforces them too.
     validate_format! if format
+    validate_variant_order! if variants
   end
 
   #--
@@ -172,7 +178,7 @@ class Riffer::Params::Param
     elsif type == Float
       value.is_a?(Numeric)
     elsif type == Riffer::Params::AnyOf
-      value.is_a?(Hash)
+      Array(variants).any? { |variant| variant.is_a?(Riffer::Params) ? value.is_a?(Hash) : variant.valid_type?(value) }
     else
       value.is_a?(type)
     end
@@ -181,7 +187,10 @@ class Riffer::Params::Param
   #--
   #: () -> String
   def type_name
-    return "object" if type == Riffer::Params::AnyOf
+    if type == Riffer::Params::AnyOf
+      names = Array(variants).map { |variant| variant.is_a?(Riffer::Params) ? "object" : variant.type_name }
+      return names.uniq.join(" or ")
+    end
 
     TYPE_MAPPINGS[type] || type.to_s.downcase
   end
@@ -251,6 +260,18 @@ class Riffer::Params::Param
     @variants = source.variants&.map(&:dup)
     @enum = Riffer::Helpers::DeepDup.call(source.enum)
     @default = Riffer::Helpers::DeepDup.call(source.default)
+  end
+
+  # The first matching variant wins, and a Float variant without an enum accepts any number.
+  #--
+  #: () -> void
+  def validate_variant_order!
+    primitives = Array(variants).grep(Riffer::Params::Param) #: Array[Riffer::Params::Param]
+    float = primitives.index { |variant| variant.type == Float && variant.enum.nil? }
+    integer = primitives.rindex { |variant| variant.type == Integer }
+    return unless float && integer && float < integer
+
+    raise Riffer::ArgumentError, "#{name}: an Integer variant after a Float variant without enum: can never match"
   end
 
   #--

@@ -1,0 +1,245 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Read this order: 12 boxes, due
+        on 2026-11-03"}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"quantity":{"anyOf":[{"type":"integer"},{"type":"string"}],"description":"A
+        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]},{"type":"null"}],"description":"The
+        due date, or none when there isn''t one"}},"required":["quantity","due"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '558'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 22 Oct 2026 18:45:06 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a4eaa82d488aa254-YUL
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '2189'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '180000000'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_23e6e3f8d22341d4988d287cdcb0c3f5
+      Set-Cookie:
+      - __cf_bm=nSqXHON8YWibwe35ip0njfh_ostMQtNiwRVyXWaB0uQ-1792694704.205439-1.0.1.1-TZOR6VvKrVtmG8l2GxqByoxsETMVLs5OaO.Few1AefeGocrRaxIvJTJMFsC3wd8nfrC3dv.BOJKFWzWtIGkHVMHZESWrBMkuiguzHZDZonOIz7F0f9cyZbzseUmbGDI4;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Thu,
+        22 Oct 2026 19:15:06 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0bfb5a3406675dfb016ada59b0524087d28ff06260c9c25281",
+          "object": "response",
+          "created_at": 1792694704,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1792694706,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini-2025-08-07",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0bfb5a3406675dfb016ada59b0c49887d2928ebbcb24b75def",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq2lmyT2e2QYFNZgEdcewk4gzT_pH9oei0KLQoA-7hlUxTB3ug40FMSmyzEs5oVm5faOZy6YRBCZ0sOV4uGJZ_JiuxIJBx2GG-xIhsGtdoEt30pqWy0FQstd2Iq-2IkRKzlf8uuJMGQf5Qd_Gm4MBXrcbk4aJkP8cH5NBQFeGa9r7W3iaA8szpx4sZ2DpU7nqToiONQcRg8g_3vnJRDleYjMzAluWzzX0hO-iIyyWxdWWHjNViOMrCTSzQwhNeYJXE6P7Qe9lRiu-l6EHonWge9G5bQss1e5_nHyw5BqxzbSSgsKSkNJGbKShjS9vPiF-96JBDzRRHuY23m2lmD5k-inQ1Rdfk6SGnpMnbZGP2FcywoCQ2fZ3Vf6yRYBskgNt73jd-rozyD5vbOA6knuleP5gQpeAMHjlXbVeo-wl-av6YNXZzSNY9P0qDzmFJNtSD-iYLPiGd4CGlh-nt2UStmyeMgLBZ0IyupBgTV2yFRBZSiloGuEXmGBBlb378fbM8Dhmjy7q_pMPuCNefjKiFyrbYYmYr2cvCmwFnuofnDzjQnbqxvaFnQ4HaXnFLrkyD4M7eiJrMTE-YRtc6efw_nJUuvEqlUuwnryl8-Es-coLHyY9V-yMXa7RnLZk3a9DEnTbvLY0gtjo5km1dk6f6yBeJkjzuGZKaQw6gGrXlsQ9akRobSFmXftQ4Z9eRzEUaAANIfnA2oRdV4b-4NrfhYCzNd9dwyKEpqvXHEWkJY4mpB9u7ESCkxwwvTs8nMlkWxifLGu4J1QBqZJmaYBgexby-gdpb1zo8tEw3z-M5FXVihooMuDJ2h_iQdAoG1xYHXcdsHJ73KSnL3PqKHKGe5EimqzBfaerBB4KAHfHomFF-XvliMg1guAkln3a2p8AafuTXa-q7ROcR_QLVluI_1i26iHSsgaqWjc5K5KHNF41puRU288jzjfw16AqCfXw2aW-B5xTlEuL_1xDD6js4DqjURXmIkgd333loR2P6KKXVr91kgTbHcSe4jV0skb0wTzQ6fp5rw_MzR5GtgmLQX93kBUkJsf9U3TjMbTv8ne0Ut2QRTMTNPxV3WANYlSt6vsT23GN1dgkna0yBVyycrzAJBm-tEURfz99hq_uWFSzyuiPYzBsSbztYO2j0GFOM28-qxnpMjHegA4WIM5qEIIsVtcDLyeY48S8_Fc5sz-DNBD1Fhm7SIU95ZVOHNGWbOqn_k-VQ_eXJaQGBRY5ma-fjuVzZrq67DgeOx5GYed7A4u7DcuVn3_hg1BhrD193bfLbBOC8sK_CV6sMy-ZQvE2Xktz6FgDXGtvcUTTJdAtUzmSTTMgXViWk6TBp9dwk2Jb7n5hRZyzJhBwuwL3OpUPW5uMxR7Mzd3YhF6Vp8N4RmbUJI4zypS4lrvBHxcPTXwComp2qxYBxLaaOO833wp0fNcszEINtvyvwsgDyTbs67O_5vZ8JgjNiew4ZbmsRZW1gauRNMez1okFW3UUWc0CAABESwu7MBCIOGW0B5za4Weo4RmiGe16a9w9_duKz1_i0ElOifJ1Yw7XLCxTJsnxMPvI1pgwjUhOID773kc3X38SwS-whhm29sQj6ICTN0g6fQy2zmdN7yByQXDS-TP_xJdCC8E2qfFyPIGBc_wFrUl_JXQ6GRUo6p-yW4ED31FWYUkmbB_k7L7KqKU-jAwXK-NAx-bT1UQ_ZolCoVQbfW0cw2oRolbUXU1VoRRKzAI7fPDVdqnbSwPTf-16JbjU1UIYuet84n9dUUB4Xi_CDq7n4jP12nWE6px3vP1RV1qO9RVdxEja9J3BSzDAJr9Thll5ZkMovttHX2jxpRJe6x7Sxg9sqqMpZVbPLE_4PYluCVIQbYSq7Q8kUm0zXTy1-dyY4fKMzB0OSKGNfmUW63F2CWUtHk2RLRN05re6NCBmQTHkW2-LiQiuQ_n4ZkfVIq6rYV03MbsoFepEsXsvxOGqoJ6ryNdV0ZuxB98HZYLABs88q3WOlC44LrBMBsLZr0iGH893Q4gDzEOQYvrayrhKUTbJQICzJu_Mh1dUYudxgj0d5uZNmCG5_k4MBHfiFZG85U9_gEiu-Uk33O8xIB6k17DiDbNnI-d3bQNZEQuol6G3gQTQVz_IrJz230Ef_1kFlqwlnpx7NPGKct9ENXXWMlKnR0iV7ZK_gdizecgZYqSteAomiq_LoyrNLZ9REsjDAV_LlU7RPlgF4JbY3JUU1JX2VspwTOyCIbxUN9msYQc5-ZmdwWoQaddhRK0VtKa4Xzu5aQ3J7EgwAt7VsmmO12lmcNebEUUZd4g6_brra9-lo2T4bCjlqS10aG6YAuGbb9pi7JJqjR8_st7OVQqmYi0CDPFFRNqCzZYGLyNdEtBNGesmGWT48zHNM97Q59QoPXGhRVNACPL1MgkScIAO8oyYIDIWgEey58uQjUu74W5jZRURyJGuGU3uDSWYy2HhG7omlsdYSbrqETuHucCvssYYEDulJ8m6sRgTDxsE5pQWyP0hYJFBX40g0ZgfJq8aRyU9ImA2N-fsqeryY2ImC8WaPdLhbO2mkeSPrsdvay_XcSMuyGcFJlZjinCFR7g4fVgmtbhVjud7FHamXGYuAfxoX88-aWSdTXwnQW8gKpAtXiR00IsS8RiPvwnOoxz09rYaVqy_8GX9KpJBcdRxZpEK8VlyMGJpqJfQz36NK0cSNyjvAa_Q5wus8RGRriNzoDCf0m1iWLvIXQxTKitZweQTlR2FnKHD35AHVi9EbeIqtH61WmT5aFGSibVGgEVuHkY8lXImFuMcZ_0iAjuNIJj-wxQ01w98WcaJxxQ620NpOq2kRss0uuyqFFeXkSPT1ZK5g83YYRyOQU4ek2Ti_CJqp86oSFzVVD3MBeGiL86QEZqkn3vpfD_4kmlrZBU0r4tRkR4h-9PSC15lu2rNUXA3heQc_08HVLXHSx4-UKztws0BY_O58BxHvxsR9oHvlMY_l98IU_C05etDZ8gyp4H1oBdAGw2qWgNtSrYD0OBJFXxtR9TKneRw3aAFlroZDu-yVpFSTqZ6E7nE59DsOJHm4tGloti_ba9-h4YJPigRl8bwaKRJ8FQRRmRtsDrUTuT9uDYaS1kTRgesLxbJDr6wUcPOcXaaVYt9EeIA-gqdMim-4km5DVix0LqJugPDab8uH11TNRfhYDZN36189Gp8I4FKLcMSXqTQ6EnBB",
+              "summary": []
+            },
+            {
+              "id": "msg_0bfb5a3406675dfb016ada59b23a1487d28998e5cb63d48c5a",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"quantity\":12,\"due\":\"2026-11-03\"}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "A count, or a word when there is no count"
+                  },
+                  "due": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "none"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "The due date, or none when there isn't one"
+                  }
+                },
+                "required": [
+                  "quantity",
+                  "due"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 105,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 169,
+            "output_tokens_details": {
+              "reasoning_tokens": 128
+            },
+            "total_tokens": 274
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Thu, 22 Oct 2026 18:45:06 GMT
+recorded_with: VCR 6.4.0
