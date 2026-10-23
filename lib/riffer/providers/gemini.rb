@@ -158,8 +158,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   # Gemini 3 needs each thoughtSignature back on the part it came on, and
-  # rejects a function call in the current turn that lost it. The reasoning
-  # part's id names the tool call it belongs to; nil means the text.
+  # rejects a function call in the current turn that lost it.
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def build_signature_part(part)
@@ -332,13 +331,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
-    signature_parts = message.reasoning.select { |part| part.format == REASONING_FORMAT }
-    text_signature = signature_parts.find { |part| part.id.nil? }&.data
-    call_signatures = signature_parts.select(&:id).to_h { |part| [part.id, part.data] }
+    signatures = message.reasoning.
+      select { |part| part.format == REASONING_FORMAT }.
+      to_h { |part| [part.id, part.data] }
 
     parts = [] #: Array[Hash[Symbol, untyped]]
     if message.content && !message.content.empty?
-      parts << { text: message.content, thoughtSignature: text_signature }.compact
+      parts << { text: message.content, thoughtSignature: signatures[nil] }.compact
     end
 
     message.tool_calls.each do |tc|
@@ -348,7 +347,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
         }.compact,
-        thoughtSignature: call_signatures[tc.call_id],
+        thoughtSignature: signatures[tc.call_id],
       }.compact
     end
 

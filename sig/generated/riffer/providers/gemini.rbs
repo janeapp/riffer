@@ -58,8 +58,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def extract_reasoning: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
 
   # Gemini 3 needs each thoughtSignature back on the part it came on, and
-  # rejects a function call in the current turn that lost it. The reasoning
-  # part's id names the tool call it belongs to; nil means the text.
+  # rejects a function call in the current turn that lost it.
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def build_signature_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
