@@ -114,11 +114,49 @@ describe Riffer::Providers::GoogleCloud do
   end
 
   describe "tags" do
-    it "does not pass tags through to API params" do
-      messages = [Riffer::Messages::User.new("Hello")]
-      params = provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", { tags: { "team" => "growth" } })
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    def labels_for(options)
+      provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", options)[:labels]
+    end
+
+    it "maps tags to labels" do
+      expect(labels_for(tags: { "team" => "growth", "user_id" => "u_1" })).
+        must_equal({ "team" => "growth", "user_id" => "u_1" })
+    end
+
+    it "omits labels without tags" do
+      params = provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", { tags: {} })
 
       expect(params.keys).must_equal %i[model contents]
+    end
+
+    it "rewrites keys and values into valid labels" do
+      labels = labels_for(tags: { "Team" => "Growth Hacking", "agent" => "support/triage_agent", "région" => "Zürich" })
+
+      expect(labels).must_equal({ "team" => "growth_hacking", "agent" => "support_triage_agent", "région" => "zürich" })
+    end
+
+    it "cuts keys and values to 63 characters" do
+      labels = labels_for(tags: { "k" * 70 => "v" * 70 })
+
+      expect(labels).must_equal({ "k" * 63 => "v" * 63 })
+    end
+
+    it "drops tags whose key doesn't start with a letter or whose value is nil" do
+      expect(labels_for(tags: { "1st" => "a", "_x" => "b", "team" => nil, "ok" => "c" })).must_equal({ "ok" => "c" })
+    end
+
+    it "merges tags over labels set in model options, a tag winning on a shared key" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-3.5-flash-lite",
+        { labels: { cost_center: "cc1", team: "ops" }, temperature: 0.5, tags: { "team" => "growth" } },
+      )
+
+      expect(params[:labels]).must_equal({ "cost_center" => "cc1", "team" => "growth" })
+      expect(params[:generationConfig]).must_equal({ temperature: 0.5 })
     end
   end
 
@@ -223,12 +261,13 @@ describe Riffer::Providers::GoogleCloud do
         end
       end
 
-      it "sends no tags on the wire, matching the untagged request" do
-        VCR.use_cassette(
-          "Riffer_Providers_GoogleCloud/gemini/_generate_text/returns_an_Assistant_message",
-          record: :none,
-        ) do
-          result = provider.generate_text(prompt: "Say hello", model: model, tags: { "team" => "growth" })
+      it "sends tags as labels" do
+        VCR.use_cassette("Riffer_Providers_GoogleCloud/gemini/_generate_text/sends_tags_as_labels") do
+          result = provider.generate_text(
+            prompt: "Say hello",
+            model: model,
+            tags: { "team" => "growth", "agent" => "support/triage_agent" },
+          )
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end

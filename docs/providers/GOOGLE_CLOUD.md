@@ -294,8 +294,17 @@ response = provider.generate_text(
 
 A `FilePart.from_url` source works too: riffer downloads and base64-encodes it before sending, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
 
+### Tags
+
+Per-call [tags](../AGENTS.md#per-call-tags) are sent as request `labels`, which show up in Google Cloud billing reports. Riffer rewrites each tag into a valid label: downcased, any character other than a letter, digit, `_` or `-` replaced with `_`, and cut to 63 characters. Tags whose key doesn't start with a letter are dropped. `agent: "support/triage_agent"` goes out as `agent: "support_triage_agent"`.
+
+To send fixed labels, set them as a model option; tags are merged over them:
+
+```ruby
+model_options labels: {cost_center: "cc_1234"}
+```
+
 ## Limitations
 
-- **Tags stay off requests** - per-call [tags](../AGENTS.md#per-call-tags) reach spans only; they are not yet sent as Agent Platform request `labels`
 - **No `gs://` file references** - files are always sent inline
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side

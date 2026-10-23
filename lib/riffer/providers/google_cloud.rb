@@ -10,6 +10,11 @@ class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
 
   REASONING_FORMAT = "google-cloud-generate-content-v1" #: String
 
+  # Agent Platform label keys and values: at most 63 characters of lowercase
+  # letters, digits, underscores and dashes; keys start with a letter.
+  LABEL_MAX_LENGTH = 63 #: Integer
+  LABEL_INVALID_CHARACTERS = /[^\p{Ll}\p{Lo}\p{N}_-]/ #: Regexp
+
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -28,6 +33,38 @@ class Riffer::Providers::GoogleCloud < Riffer::Providers::Gemini
   #: () -> untyped
   def build_client
     Riffer::Providers::GoogleCloud::Client.from_config(Riffer.config.google_cloud)
+  end
+
+  # Tags go out as request labels, merged over any +labels+ model option.
+  #--
+  #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params(messages, model, options)
+    params = super(messages, model, options.except(:labels))
+    labels = (options[:labels] || {}).transform_keys(&:to_s).merge(tag_labels(options[:tags] || {}))
+    params[:labels] = labels unless labels.empty?
+    params
+  end
+
+  # Rewrites tags into valid labels (downcased, invalid characters replaced by
+  # an underscore, cut to 63 characters) and drops keys that don't start with
+  # a letter, so a tag like agent: "support/triage_agent" can't fail the call.
+  #--
+  #: (Hash[untyped, untyped]) -> Hash[String, String]
+  def tag_labels(tags)
+    labels = {} #: Hash[String, String]
+    tags.each do |key, value|
+      next if value.nil?
+
+      label_key = to_label(key)
+      labels[label_key] = to_label(value) if label_key.match?(/\A\p{L}/)
+    end
+    labels
+  end
+
+  #--
+  #: (untyped) -> String
+  def to_label(value)
+    value.to_s.downcase.gsub(LABEL_INVALID_CHARACTERS, "_")[0, LABEL_MAX_LENGTH].to_s
   end
 
   #--
