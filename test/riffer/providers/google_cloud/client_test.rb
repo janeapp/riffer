@@ -191,6 +191,19 @@ describe Riffer::Providers::GoogleCloud::Client do
       assert_requested stub
     end
 
+    it "sends the passed headers alongside the token" do
+      stub = stub_request(:post, url).
+        with(headers: { "Authorization" => "Bearer token-1", "X-Goog-User-Project" => "billing-project" }).
+        to_return(status: 200, body: "{}")
+      custom = Riffer::Providers::GoogleCloud::Client.new(
+        project_id: "my-project", location: "global", credentials: credentials,
+        headers: { "x-goog-user-project" => "billing-project" },
+      )
+      custom.post(path, {})
+
+      assert_requested stub
+    end
+
     it "reuses a fresh token across requests" do
       stub_request(:post, url).to_return(status: 200, body: "{}")
       2.times { client.post(path, {}) }
