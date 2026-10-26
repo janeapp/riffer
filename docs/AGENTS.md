@@ -536,23 +536,26 @@ A tag you pass with the same key wins. The default tags count towards the provid
 
 ### Provider mapping
 
-| Provider              | Native request field          | `user_id` handling                      |
-| --------------------- | ----------------------------- | --------------------------------------- |
-| Amazon Bedrock        | `request_metadata` (all tags) | Ordinary entry; no dedicated user field |
-| OpenAI / Azure OpenAI | `metadata` (all tags)         | Also mapped to `safety_identifier`      |
-| OpenRouter            | `metadata` (all tags)         | Also mapped to `user`                   |
-| Anthropic             | `metadata.user_id` **only**   | The only tag forwarded                  |
-| Gemini                | _(none — observability only)_ | Tag only; no request field              |
+| Provider              | Native request field           | `user_id` handling                      |
+| --------------------- | ------------------------------ | --------------------------------------- |
+| Amazon Bedrock        | `request_metadata` (all tags)  | Ordinary entry; no dedicated user field |
+| OpenAI / Azure OpenAI | `metadata` (all tags)          | Also mapped to `safety_identifier`      |
+| OpenRouter            | `metadata` (all tags)          | Also mapped to `user`                   |
+| Anthropic             | `metadata.user_id` **only**    | The only tag forwarded                  |
+| Gemini                | _(none — observability only)_  | Tag only; no request field              |
+| Google Cloud          | `labels` (all tags, rewritten) | Ordinary entry; no dedicated user field |
 
-If `model_options` already sets the native field (`metadata` or `request_metadata`), the tags are merged into it; a tag wins on a shared key.
+If `model_options` already sets the native field (`metadata`, `request_metadata` or `labels`), the tags are merged into it; a tag wins on a shared key.
 
 **Anthropic silently drops non-`user_id` tags.** The Messages API has no free-form request-metadata field — only `metadata.user_id`. So for Anthropic, `user_id` is forwarded as `metadata: {user_id: …}` and **every other tag is dropped from the request** (it still appears on spans). This is intentional.
 
-**Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only. Native request labels (`labels`, lowercase `[a-z0-9_-]`, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.
+**Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only.
+
+**Google Cloud rewrites tags into valid labels.** Agent Platform `labels` keys and values take at most 63 lowercase letters, digits, underscores and dashes, and keys start with a letter. Riffer downcases each tag, replaces any other character with `_`, cuts it to 63 characters, and drops tags whose key doesn't start with a letter. `agent: "support/triage_agent"` goes out as `agent: "support_triage_agent"`. Labels set in `model_options` are sent as is. Labels show up in Google Cloud billing reports, so high-cardinality tags such as `user_id` add one label value per user.
 
 ### Provider limits (not enforced)
 
-Riffer does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock `requestMetadata` ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter `metadata` ≤16 pairs (OpenRouter: 64-char keys, 512-char values).
+Apart from the Google Cloud rewrite above, riffer does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock `requestMetadata` ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter `metadata` ≤16 pairs (OpenRouter: 64-char keys, 512-char values).
 
 ## Expand Your Agent
 
