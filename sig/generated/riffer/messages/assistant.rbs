@@ -20,6 +20,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
   attr_reader finish_reason_raw: String?
 
+  attr_reader request_id: String?
+
   # --
   # : (
   #     String,
@@ -29,9 +31,10 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #     ?token_usage: Riffer::Providers::TokenUsage?,
   #     ?structured_output: Hash[Symbol, untyped]?,
   #     ?finish_reason: Symbol?,
-  #     ?finish_reason_raw: String?
+  #     ?finish_reason_raw: String?,
+  #     ?request_id: String?
   #   ) -> void
-  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?) -> void
+  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?, ?request_id: String?) -> void
 
   # --
   # : () -> Symbol

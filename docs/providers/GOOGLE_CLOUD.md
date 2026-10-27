@@ -133,6 +133,8 @@ The class is a default implementation, not a required base: any object implement
 | `post(path, body)`                      | POST `body` as JSON to `path`; return the parsed response `Hash` (symbol keys); raise `Riffer::APIError` on a non-success status |
 | `post_stream(path, body) { \|chunk\| }` | POST `body` as JSON to `path`; yield raw response body chunks; raise `Riffer::APIError` on a non-success status                  |
 
+`anthropic_vertex` reads the request id from the client: `post` may yield it to its block, and `post_stream` may yield it as a second block argument with each chunk. A client that yields neither still works; messages then carry no `request_id`. `google_cloud` reads the id from the response body, so it needs neither.
+
 [connections]: ../CONFIGURATION.md#connections
 
 ## Supported Models

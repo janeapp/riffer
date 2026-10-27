@@ -216,6 +216,12 @@ describe Riffer::Providers::AnthropicVertex do
       expect(events.last.token_usage.to_h).must_equal({ input_tokens: 10, output_tokens: 3 })
     end
 
+    it "reports no request id from a client that yields none" do
+      transport.response = message_body
+
+      expect(provider.generate_text(prompt: "Say hello", model: model).request_id).must_be_nil
+    end
+
     it "raises IncompleteStreamError when the stream ends without message_stop" do
       transport.chunks = [sse(
         message_start(input_tokens: 1),
@@ -237,9 +243,36 @@ describe Riffer::Providers::AnthropicVertex do
         expect(result.token_usage).wont_be_nil
       end
     end
+
+    it "reports the request id header" do
+      VCR.use_cassette("Riffer_Providers_AnthropicVertex/_generate_text/returns_an_Assistant_message", record: :none) do
+        result = provider.generate_text(prompt: "Say hello", system: "Be concise", model: model)
+
+        expect(result.request_id).must_equal "req_vrtx_011CgKtqB6QHM7y45bHFfBGj"
+      end
+    end
+
+    it "raises Riffer::APIError with the request id header" do
+      VCR.use_cassette("Riffer_Providers_AnthropicVertex/_generate_text/raises_with_the_request_id") do
+        error = expect { provider.generate_text(prompt: "Say hello", model: model, temperature: 5) }.must_raise Riffer::APIError
+
+        expect(error.status).must_equal 400
+        expect(error.request_id).must_equal "req_vrtx_011CgTWy9QtvuDQJU1k3UdMk"
+      end
+    end
   end
 
   describe "#stream_text" do
+    it "emits the request id header once, first" do
+      VCR.use_cassette("Riffer_Providers_AnthropicVertex/_stream_text/yields_stream_events", record: :none) do
+        events = provider.stream_text(prompt: "Say hello", model: model).to_a
+
+        expect(events.first).must_be_instance_of Riffer::StreamEvents::RequestId
+        expect(events.first.request_id).must_equal "req_vrtx_011CgKtq773vvnnEpCfoHEWo"
+        expect(events.grep(Riffer::StreamEvents::RequestId).length).must_equal 1
+      end
+    end
+
     it "yields text, usage and finish reason events" do
       VCR.use_cassette("Riffer_Providers_AnthropicVertex/_stream_text/yields_stream_events") do
         events = provider.stream_text(prompt: "Say hello", model: model).to_a

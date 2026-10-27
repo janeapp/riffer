@@ -53,7 +53,18 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate(params)
-    client.post(messages_path(params[:model], stream: false), request_body(params, stream: false))
+    request_id = nil #: String?
+    response = client.post(messages_path(params[:model], stream: false), request_body(params, stream: false)) do |id|
+      request_id = id
+    end
+    # A success body has no request id; Anthropic sends it only as a header.
+    response.merge(request_id: request_id)
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> String?
+  def extract_request_id(response)
+    response[:request_id]
   end
 
   #--
@@ -61,9 +72,16 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def execute_stream(params, yielder)
     stream = Stream.new(tools: @current_tools)
     decoder = Riffer::Wire::SSE.new
+    request_id = nil #: String?
 
-    client.post_stream(messages_path(params[:model], stream: true), request_body(params, stream: true)) do |chunk|
-      decoder.feed(chunk) { |data, _event| stream.handle(JSON.parse(data, symbolize_names: true), yielder) }
+    client.post_stream(messages_path(params[:model], stream: true), request_body(params, stream: true)) do |chunk, id|
+      if request_id.nil? && id
+        request_id = id
+        yielder << Riffer::StreamEvents::RequestId.new(id)
+      end
+      decoder.feed(chunk) do |data, _event|
+        stream.handle(JSON.parse(data, symbolize_names: true), yielder, request_id: request_id)
+      end
     end
 
     message = stream.finish!

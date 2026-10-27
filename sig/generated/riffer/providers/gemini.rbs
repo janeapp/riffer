@@ -52,6 +52,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
+  # : (Hash[Symbol, untyped]) -> String?
+  def extract_request_id: (Hash[Symbol, untyped]) -> String?
+
+  # --
   # : (Hash[Symbol, untyped]) -> String
   def extract_content: (Hash[Symbol, untyped]) -> String
 

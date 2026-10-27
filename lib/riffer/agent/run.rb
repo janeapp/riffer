@@ -135,6 +135,7 @@ module Riffer::Agent::Run
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
     accumulated_finish_reason_raw = nil #: String?
+    accumulated_request_id = nil #: String?
 
     call_llm_stream(agent, tags).each do |event|
       stream_yielder << event
@@ -161,6 +162,8 @@ module Riffer::Agent::Run
       when Riffer::StreamEvents::FinishReasonDone
         accumulated_finish_reason = event.finish_reason
         accumulated_finish_reason_raw = event.raw_finish_reason
+      when Riffer::StreamEvents::RequestId
+        accumulated_request_id = event.request_id
       end
     end
 
@@ -171,6 +174,7 @@ module Riffer::Agent::Run
       token_usage: accumulated_token_usage,
       finish_reason: accumulated_finish_reason,
       finish_reason_raw: accumulated_finish_reason_raw,
+      request_id: accumulated_request_id,
     )
   end
 

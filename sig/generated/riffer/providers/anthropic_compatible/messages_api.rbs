@@ -34,6 +34,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
+  # : (Hash[Symbol, untyped]) -> String?
+  def extract_request_id: (Hash[Symbol, untyped]) -> String?
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 

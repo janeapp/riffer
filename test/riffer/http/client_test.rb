@@ -123,6 +123,36 @@ describe Riffer::HTTP::Client do
       expect(client.post("v1/messages", {})).must_equal({ content: [{ type: "text" }] })
     end
 
+    it "yields the request id header" do
+      stub_request(:post, url).to_return(status: 200, body: "{}", headers: { "Request-Id" => "req_1" })
+      request_ids = []
+      client.post("v1/messages", {}) { |request_id| request_ids << request_id }
+
+      expect(request_ids).must_equal ["req_1"]
+    end
+
+    it "yields nil when the response has no request id header" do
+      stub_request(:post, url).to_return(status: 200, body: "{}")
+      request_ids = []
+      client.post("v1/messages", {}) { |request_id| request_ids << request_id }
+
+      expect(request_ids).must_equal [nil]
+    end
+
+    it "raises Riffer::APIError with the request id header" do
+      stub_request(:post, url).to_return(status: 400, body: "{}", headers: { "Request-Id" => "req_1" })
+      error = expect { client.post("v1/messages", {}) }.must_raise Riffer::APIError
+
+      expect(error.request_id).must_equal "req_1"
+    end
+
+    it "raises Riffer::APIError without a request id when the response has none" do
+      stub_request(:post, url).to_return(status: 400, body: "{}")
+      error = expect { client.post("v1/messages", {}) }.must_raise Riffer::APIError
+
+      expect(error.request_id).must_be_nil
+    end
+
     it "raises Riffer::APIError with the status and raw body on a failing status" do
       body = '{"error":{"message":"bad request"}}'
       stub_request(:post, url).to_return(status: 400, body: body)
@@ -194,6 +224,22 @@ describe Riffer::HTTP::Client do
       expect(collect(client).join).must_equal "data: one\n\ndata: two\n\n"
     end
 
+    it "yields the request id header with every chunk" do
+      stub_request(:post, url).to_return(status: 200, body: "data: one\n\n", headers: { "Request-Id" => "req_1" })
+      request_ids = []
+      client.post_stream("v1/messages", {}) { |_chunk, request_id| request_ids << request_id }
+
+      expect(request_ids).wont_be_empty
+      expect(request_ids.uniq).must_equal ["req_1"]
+    end
+
+    it "raises Riffer::APIError with the request id header" do
+      stub_request(:post, url).to_return(status: 529, body: "{}", headers: { "Request-Id" => "req_1" })
+      error = expect { collect(client) }.must_raise Riffer::APIError
+
+      expect(error.request_id).must_equal "req_1"
+    end
+
     it "asks for an uncompressed event stream" do
       stub = stub_request(:post, url).
         with(headers: { "Accept" => "text/event-stream", "Accept-Encoding" => "identity", "x-api-key" => "secret" }).
@@ -239,6 +285,22 @@ describe Riffer::HTTP::Client do
       connection = Faraday.new(headers: { "x-status" => "200" }) { |f| f.adapter two_arg_adapter }
 
       expect(collect(client_class.new(connection: connection)).join).must_equal "data: a\n\ndata: b\n\n"
+    end
+
+    it "yields the request id header after the response when the adapter passes no env" do
+      adapter = Class.new(Faraday::Adapter) do
+        def call(env)
+          super
+          env.request.on_data.call("data: a\n\n", 9)
+          save_response(env, 200, "", { "request-id" => "req_1" })
+          @app.call(env)
+        end
+      end
+      connection = Faraday.new { |f| f.adapter adapter }
+      request_ids = []
+      client_class.new(connection: connection).post_stream("v1/messages", {}) { |_chunk, id| request_ids << id }
+
+      expect(request_ids).must_equal ["req_1"]
     end
 
     it "raises Riffer::APIError with every chunk when the adapter passes no env" do

@@ -40,8 +40,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
 
   # Raises Riffer::APIError on a stream +error+ event.
   #--
-  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def handle(event, yielder)
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, ?request_id: String?) -> void
+  def handle(event, yielder, request_id: nil)
     case event[:type]
     when "message_start" then start_message(event)
     when "content_block_start" then start_block(event)
@@ -49,7 +49,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     when "content_block_stop" then stop_block(event, yielder)
     when "message_delta" then apply_message_delta(event)
     when "message_stop" then stop_message(yielder)
-    when "error" then raise_stream_error(event)
+    when "error" then raise_stream_error(event, request_id)
     end
   end
 
@@ -165,10 +165,14 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> void
-  def raise_stream_error(event)
+  #: (Hash[Symbol, untyped], String?) -> void
+  def raise_stream_error(event, request_id)
     error = event[:error] || {}
-    raise Riffer::APIError.new("Anthropic stream error (#{error[:type]}): #{error[:message]}", body: event.to_json)
+    raise Riffer::APIError.new(
+      "Anthropic stream error (#{error[:type]}): #{error[:message]}",
+      body: event.to_json,
+      request_id: request_id,
+    )
   end
 
   # A response cut off by max_tokens can end a block mid-input, leaving JSON

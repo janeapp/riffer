@@ -240,6 +240,15 @@ describe Riffer::Providers::GoogleCloud do
         end
       end
 
+      it "reports the body's responseId as the request id" do
+        cassette = "Riffer_Providers_GoogleCloud/gemini/_generate_text/returns_an_Assistant_message"
+        VCR.use_cassette(cassette, record: :none) do
+          result = provider.generate_text(prompt: "Say hello", model: model)
+
+          expect(result.request_id).must_equal "M27aarvFCpegpucP-NqH6A0"
+        end
+      end
+
       it "returns an Assistant message for system and prompt" do
         VCR.use_cassette("Riffer_Providers_GoogleCloud/gemini/_generate_text/with_system_and_prompt") do
           result = provider.generate_text(system: "Be concise", prompt: "Say hello", model: model)
@@ -371,6 +380,16 @@ describe Riffer::Providers::GoogleCloud do
           expect(events.grep(Riffer::StreamEvents::TextDone).length).must_equal 1
           expect(events.grep(Riffer::StreamEvents::TokenUsageDone)).wont_be_empty
           expect(events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }.finish_reason).must_equal :stop
+        end
+      end
+
+      it "emits the body's responseId once, first" do
+        VCR.use_cassette("Riffer_Providers_GoogleCloud/gemini/_stream_text/yields_stream_events", record: :none) do
+          events = provider.stream_text(prompt: "Say hello", model: model).to_a
+
+          expect(events.first).must_be_instance_of Riffer::StreamEvents::RequestId
+          expect(events.first.request_id).must_equal "LG7aatbQKN-K9LsPt_yM4Ao"
+          expect(events.grep(Riffer::StreamEvents::RequestId).length).must_equal 1
         end
       end
     end

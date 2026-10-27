@@ -130,7 +130,7 @@ Streaming is tested with the default `net_http` adapter.
 
 #### Errors
 
-- A non-success status raises `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream) and `body` the raw response text.
+- A non-success status raises `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream), `body` the raw response text, and `request_id` the `request-id` response header, or `nil` when there is none (see [Messages — Request IDs](MESSAGES.md#request-ids)).
 - Transport failures are raised as Faraday's own errors, such as `Faraday::TimeoutError` and `Faraday::ConnectionFailed` (both `Faraday::Error`s).
 
 ### MCP (Model Context Protocol)

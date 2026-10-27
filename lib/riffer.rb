@@ -33,17 +33,20 @@ module Riffer
   class ValidationError < Error; end
 
   # A provider answered with a non-success status, or sent an in-stream error
-  # event (+status+ is nil then). +body+ is the raw response text.
+  # event (+status+ is nil then). +body+ is the raw response text;
+  # +request_id+ is the provider's id for the request, nil when it sent none.
   class APIError < Error
     attr_reader :status #: Integer? # @dynamic status
     attr_reader :body #: String? # @dynamic body
+    attr_reader :request_id #: String? # @dynamic request_id
 
     #--
-    #: (?String?, ?status: Integer?, ?body: String?) -> void
-    def initialize(message = nil, status: nil, body: nil)
+    #: (?String?, ?status: Integer?, ?body: String?, ?request_id: String?) -> void
+    def initialize(message = nil, status: nil, body: nil, request_id: nil)
       super(message)
       @status = status
       @body = body
+      @request_id = request_id
     end
   end
 

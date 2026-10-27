@@ -15,6 +15,8 @@ class Riffer::Tracing::StreamRecorder
 
   attr_reader raw_finish_reason: String?
 
+  attr_reader request_id: String?
+
   attr_reader content: String?
 
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]

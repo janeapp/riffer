@@ -9,21 +9,27 @@ class Riffer::HTTP::Client
 
   DEFAULT_READ_TIMEOUT: Integer
 
+  # Anthropic's header, on Vertex AI too. Gemini sends no request id header;
+  # its id is +responseId+ in the response body.
+  REQUEST_ID_HEADER: String
+
   # +headers+ are sent on every request and win over the subclass's auth and
   # version headers, as do headers set on the +connection+.
   # --
   # : (?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
   def initialize: (?headers: Hash[String, String], ?connection: Faraday::Connection?) -> void
 
-  # Raises Riffer::APIError on a non-success status.
+  # Yields the request id header, or nil. Raises Riffer::APIError on a
+  # non-success status.
   # --
-  # : (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def post: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  # : (String, Hash[Symbol, untyped]) ?{ (String?) -> void } -> Hash[Symbol, untyped]
+  def post: (String, Hash[Symbol, untyped]) ?{ (String?) -> void } -> Hash[Symbol, untyped]
 
-  # Raises Riffer::APIError on a non-success status; the error body is never yielded.
+  # Yields each chunk with the request id header, or nil. Raises
+  # Riffer::APIError on a non-success status; the error body is never yielded.
   # --
-  # : (String, Hash[Symbol, untyped]) { (String) -> void } -> void
-  def post_stream: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+  # : (String, Hash[Symbol, untyped]) { (String, String?) -> void } -> void
+  def post_stream: (String, Hash[Symbol, untyped]) { (String, String?) -> void } -> void
 
   private
 
@@ -54,6 +60,6 @@ class Riffer::HTTP::Client
   def request: (String, Hash[Symbol, untyped], ?on_data: Proc?) -> Faraday::Response
 
   # --
-  # : (Integer, String) -> bot
-  def raise_api_error!: (Integer, String) -> bot
+  # : (Integer, String, String?) -> bot
+  def raise_api_error!: (Integer, String, String?) -> bot
 end

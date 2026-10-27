@@ -74,6 +74,7 @@ describe Riffer::Messages::Assistant do
         structured_output: { answer: 42 },
         finish_reason: :tool_calls,
         finish_reason_raw: "tool_use",
+        request_id: "req_1",
       )
 
       assert_round_trips message

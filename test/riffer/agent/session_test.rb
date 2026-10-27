@@ -246,6 +246,13 @@ describe Riffer::Agent::Session do
       expect([result.finish_reason, result.finish_reason_raw]).must_equal [:length, "max_tokens"]
     end
 
+    it "preserves request_id on assistant" do
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", request_id: "req_1")
+      s = Riffer::Agent::Session.new(messages: [a])
+
+      expect(s.update(id: "a_x", content: "new").request_id).must_equal "req_1"
+    end
+
     it "preserves files on a user message" do
       file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: "x")
       u = Riffer::Messages::User.new("old", id: "u_x", files: [file])

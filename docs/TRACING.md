@@ -151,12 +151,15 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | `gen_ai.response.finish_reasons`           | string[] | When the provider reported a finish reason                                    |
 | `riffer.finish_reason.raw`                 | string   | When the raw value differs from the normalized one                            |
 | `gen_ai.response.time_to_first_chunk`      | float    | Streaming only — seconds from request issuance to the first stream event      |
+| `gen_ai.response.id`                       | string   | When the provider reported a [request id](MESSAGES.md#request-ids)            |
 | `gen_ai.input.messages`                    | string   | When `capture_messages` is on (JSON; see [capture](#message-content-capture)) |
 | `gen_ai.system_instructions`               | string   | When `capture_messages` is on and a system prompt exists                      |
 | `gen_ai.output.messages`                   | string   | When `capture_messages` is on (JSON)                                          |
 | `error.type`                               | string   | On an unhandled exception                                                     |
 
 `gen_ai.response.finish_reasons` is an array of exactly one normalized value, from the fixed vocabulary `stop`, `length`, `tool_calls`, `content_filter`, `context_window`, `malformed_output`, `error`, `other`. When the provider's raw wire value carries more nuance than the normalized one, the raw string is preserved on `riffer.finish_reason.raw`.
+
+`gen_ai.response.id` is the message's `request_id`. It is also set when the call fails with a `Riffer::APIError` that carries one, and when a stream breaks or is cancelled after the provider sent its id.
 
 ## `execute_tool {tool}` — the tool call span
 

@@ -10,6 +10,7 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
   attr_reader :time_to_first_chunk #: Float? # @dynamic time_to_first_chunk
   attr_reader :finish_reason #: Symbol? # @dynamic finish_reason
   attr_reader :raw_finish_reason #: String? # @dynamic raw_finish_reason
+  attr_reader :request_id #: String? # @dynamic request_id
   attr_reader :content #: String? # @dynamic content
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
 
@@ -50,6 +51,8 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
     when Riffer::StreamEvents::FinishReasonDone
       @finish_reason = event.finish_reason
       @raw_finish_reason = event.raw_finish_reason
+    when Riffer::StreamEvents::RequestId
+      @request_id = event.request_id
     end
   end
 end

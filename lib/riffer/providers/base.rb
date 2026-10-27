@@ -50,10 +50,12 @@ class Riffer::Providers::Base
       reasoning = extract_reasoning(response)
       token_usage = extract_token_usage(response)
       finish_reason = extract_finish_reason(response)
+      request_id = extract_request_id(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
 
       Riffer::Tracing.record_usage(span, token_usage)
       record_finish_reason(span, finish_reason&.reason, finish_reason&.raw)
+      record_request_id(span, request_id)
       capture_output(span, content: content, tool_calls: tool_calls, finish_reason: finish_reason&.reason)
 
       Riffer::Messages::Assistant.new(
@@ -64,6 +66,7 @@ class Riffer::Providers::Base
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
         finish_reason_raw: finish_reason&.raw,
+        request_id: request_id,
       )
     end
   end
@@ -89,7 +92,12 @@ class Riffer::Providers::Base
       Riffer::Tracing.with_context(trace_context) do
         in_chat_span(model, messages, options) do |span|
           sink = span.recording? ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
-          execute_stream(params, sink)
+          begin
+            execute_stream(params, sink)
+          ensure
+            # Also on a failed or cancelled stream, where the id matters most.
+            record_request_id(span, sink.request_id) if sink.is_a?(Riffer::Tracing::StreamRecorder)
+          end
           record_stream_outcome(span, sink) if sink.is_a?(Riffer::Tracing::StreamRecorder)
         end
       end
@@ -257,6 +265,13 @@ class Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> String?
+  def extract_request_id(_response)
+    # Optional hook, so providers that don't report a request id stay valid.
+    nil
+  end
+
+  #--
   #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
   def extract_reasoning(_response)
     # Optional hook, so providers that don't expose replayable reasoning stay valid.
@@ -303,6 +318,7 @@ class Riffer::Providers::Base
       # The backend records the exception and error status on the re-raise;
       # error.type is the one semconv attribute it doesn't set.
       span.set_attribute("error.type", e.class.name)
+      record_request_id(span, e.request_id) if e.is_a?(Riffer::APIError)
       raise
     end
   end
@@ -340,6 +356,12 @@ class Riffer::Providers::Base
 
     span.set_attribute("gen_ai.response.finish_reasons", [reason.to_s])
     span.set_attribute("riffer.finish_reason.raw", raw) if raw && raw != reason.to_s
+  end
+
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), String?) -> void
+  def record_request_id(span, request_id)
+    span.set_attribute("gen_ai.response.id", request_id) if request_id
   end
 
   #--

@@ -82,6 +82,21 @@ describe Riffer::Agent::Run do
       expect(agent.session.messages.last.finish_reason).must_equal :stop
     end
 
+    it "stamps the streamed request id on the accumulated assistant message" do
+      client = Object.new
+      def client.post_stream(_path, _body)
+        chunk = { candidates: [{ content: { parts: [{ text: "Hi" }] }, finishReason: "STOP" }], responseId: "r_1" }
+        yield "data: #{chunk.to_json}\n\n"
+      end
+      Riffer.config.google_cloud.client = client
+      agent = stub_agent("Agent") { model "google_cloud/gemini-test" }.new
+      Riffer::Agent::Run.stream(agent: agent, prompt: "hi").each { |_| }
+
+      expect(agent.session.messages.last.request_id).must_equal "r_1"
+    ensure
+      Riffer.config.google_cloud.client = nil
+    end
+
     it "raises when structured_output is configured" do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"

@@ -104,6 +104,10 @@ class Riffer::Providers::Base
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
   # --
+  # : (untyped) -> String?
+  def extract_request_id: (untyped) -> String?
+
+  # --
   # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
   def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
 
@@ -133,6 +137,10 @@ class Riffer::Providers::Base
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Symbol?, String?) -> void
   def record_finish_reason: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Symbol?, String?) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), String?) -> void
+  def record_request_id: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, String?) -> void
 
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tracing::StreamRecorder) -> void

@@ -210,6 +210,13 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream do
     expect([error.status, error.body]).must_equal [nil, event.to_json]
   end
 
+  it "raises Riffer::APIError with the request id on an error event" do
+    event = { type: "error", error: { type: "overloaded_error", message: "Overloaded" } }
+    error = expect { stream.handle(event, [], request_id: "req_1") }.must_raise Riffer::APIError
+
+    expect(error.request_id).must_equal "req_1"
+  end
+
   it "ignores ping events" do
     expect(feed({ type: "ping" })).must_be_empty
   end

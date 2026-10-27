@@ -19,6 +19,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
       structured_output: msg[:structured_output],
       finish_reason: msg[:finish_reason]&.to_sym,
       finish_reason_raw: msg[:finish_reason_raw],
+      request_id: msg[:request_id],
     )
   end
 
@@ -34,6 +35,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
   attr_reader :finish_reason_raw #: String? # @dynamic finish_reason_raw
 
+  attr_reader :request_id #: String? # @dynamic request_id
+
   #--
   #: (
   #    String,
@@ -43,7 +46,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?finish_reason: Symbol?,
-  #    ?finish_reason_raw: String?
+  #    ?finish_reason_raw: String?,
+  #    ?request_id: String?
   #  ) -> void
   def initialize(
     content,
@@ -53,7 +57,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     token_usage: nil,
     structured_output: nil,
     finish_reason: nil,
-    finish_reason_raw: nil
+    finish_reason_raw: nil,
+    request_id: nil
   )
     if finish_reason && !Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
       values = Riffer::Providers::FinishReason::VALUES.inspect
@@ -67,6 +72,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     @structured_output = structured_output
     @finish_reason = finish_reason
     @finish_reason_raw = finish_reason_raw
+    @request_id = request_id
   end
 
   #--
@@ -121,6 +127,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason
     hash[:finish_reason_raw] = finish_reason_raw if finish_reason_raw
+    hash[:request_id] = request_id if request_id
     hash
   end
 end

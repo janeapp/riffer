@@ -276,6 +276,19 @@ event.to_h               # => {role: :assistant, finish_reason: :length, raw_fin
 
 The agent loop stamps this value onto the accumulated assistant message's `finish_reason`.
 
+### RequestId
+
+Emitted at most once, with the first chunk that carries the provider's id for the call (see [Messages — Request IDs](MESSAGES.md#request-ids)), so a stream that stalls afterwards can still be traced:
+
+```ruby
+event = Riffer::StreamEvents::RequestId.new("req_011CgKtq773vvnnEpCfoHEWo")
+event.role        # => :assistant
+event.request_id  # => "req_011CgKtq773vvnnEpCfoHEWo"
+event.to_h        # => {role: :assistant, request_id: "req_011CgKtq773vvnnEpCfoHEWo"}
+```
+
+The agent loop stamps this value onto the accumulated assistant message's `request_id`.
+
 ## Incomplete Streams
 
 If a provider's stream ends before its terminal event, the enumerator raises `Riffer::IncompleteStreamError` (a `Riffer::Error` subclass) instead of finishing normally, so a truncated or empty response is never returned as a complete message. Events already yielded before the raise were delivered as usual, but nothing from the failed step is added to the session: there is no partial assistant message to resume from, and messages from earlier completed steps (tool calls and their results) are untouched.

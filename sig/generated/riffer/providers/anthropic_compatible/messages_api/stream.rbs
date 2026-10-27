@@ -21,8 +21,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
 
   # Raises Riffer::APIError on a stream +error+ event.
   # --
-  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
-  def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink, ?request_id: String?) -> void
+  def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink, ?request_id: String?) -> void
 
   # The caller reads finish reason and usage from here so it can price the usage.
   # --
@@ -56,8 +56,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   def stop_message: (Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (Hash[Symbol, untyped]) -> void
-  def raise_stream_error: (Hash[Symbol, untyped]) -> void
+  # : (Hash[Symbol, untyped], String?) -> void
+  def raise_stream_error: (Hash[Symbol, untyped], String?) -> void
 
   # A response cut off by max_tokens can end a block mid-input, leaving JSON
   # that does not parse.

@@ -200,6 +200,7 @@ class Riffer::Agent::Session
         structured_output: attrs.fetch(:structured_output, old.structured_output),
         finish_reason: attrs.fetch(:finish_reason, old.finish_reason),
         finish_reason_raw: attrs.fetch(:finish_reason_raw, old.finish_reason_raw),
+        request_id: attrs.fetch(:request_id, old.request_id),
       )
     when Riffer::Messages::Tool
       Riffer::Messages::Tool.new(

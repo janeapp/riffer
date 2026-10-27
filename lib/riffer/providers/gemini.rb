@@ -137,6 +137,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
+  #: (Hash[Symbol, untyped]) -> String?
+  def extract_request_id(response)
+    response[:responseId]
+  end
+
+  #--
   #: (Hash[Symbol, untyped]) -> String
   def extract_content(response)
     parts = response.dig(:candidates, 0, :content, :parts)
@@ -272,12 +278,17 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     full_text = +""
     raw_finish_reason = nil #: String?
     saw_function_call = false
+    request_id = nil #: String?
     decoder = Riffer::Wire::SSE.new
 
     process_data = lambda do |data|
       return if data.empty?
 
       parsed = JSON.parse(data, symbolize_names: true)
+      if request_id.nil? && parsed[:responseId]
+        request_id = parsed[:responseId]
+        yielder << Riffer::StreamEvents::RequestId.new(parsed[:responseId])
+      end
       parts = parsed.dig(:candidates, 0, :content, :parts)
 
       parts&.each do |part|

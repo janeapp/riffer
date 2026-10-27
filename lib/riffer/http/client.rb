@@ -11,6 +11,10 @@ class Riffer::HTTP::Client
   DEFAULT_OPEN_TIMEOUT = 10 #: Integer
   DEFAULT_READ_TIMEOUT = 600 #: Integer
 
+  # Anthropic's header, on Vertex AI too. Gemini sends no request id header;
+  # its id is +responseId+ in the response body.
+  REQUEST_ID_HEADER = "request-id" #: String
+
   # +headers+ are sent on every request and win over the subclass's auth and
   # version headers, as do headers set on the +connection+.
   #--
@@ -22,18 +26,22 @@ class Riffer::HTTP::Client
     )
   end
 
-  # Raises Riffer::APIError on a non-success status.
+  # Yields the request id header, or nil. Raises Riffer::APIError on a
+  # non-success status.
   #--
-  #: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  #: (String, Hash[Symbol, untyped]) ?{ (String?) -> void } -> Hash[Symbol, untyped]
   def post(path, body)
     response = request(path, body)
-    raise_api_error!(response.status, response.body) unless response.success?
+    request_id = response.headers[REQUEST_ID_HEADER]
+    raise_api_error!(response.status, response.body, request_id) unless response.success?
+    yield(request_id) if block_given?
     JSON.parse(response.body, symbolize_names: true)
   end
 
-  # Raises Riffer::APIError on a non-success status; the error body is never yielded.
+  # Yields each chunk with the request id header, or nil. Raises
+  # Riffer::APIError on a non-success status; the error body is never yielded.
   #--
-  #: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+  #: (String, Hash[Symbol, untyped]) { (String, String?) -> void } -> void
   def post_stream(path, body, &)
     streamed = false
     yielded = false
@@ -56,7 +64,7 @@ class Riffer::HTTP::Client
       if env&.success?
         unless chunk.empty?
           yielded = true
-          yield(chunk)
+          yield(chunk, env.response_headers[REQUEST_ID_HEADER])
         end
       else
         held << chunk
@@ -65,8 +73,9 @@ class Riffer::HTTP::Client
 
     response = request(path, body, on_data: on_data)
     unyielded = streamed ? held : response.body
-    raise_api_error!(response.status, unyielded) unless response.success?
-    yield(unyielded) unless unyielded.empty?
+    request_id = response.headers[REQUEST_ID_HEADER]
+    raise_api_error!(response.status, unyielded, request_id) unless response.success?
+    yield(unyielded, request_id) unless unyielded.empty?
   end
 
   private
@@ -124,8 +133,8 @@ class Riffer::HTTP::Client
   end
 
   #--
-  #: (Integer, String) -> bot
-  def raise_api_error!(status, raw)
+  #: (Integer, String, String?) -> bot
+  def raise_api_error!(status, raw, request_id)
     parsed = begin
       JSON.parse(raw, symbolize_names: true)
     rescue JSON::ParserError
@@ -136,6 +145,6 @@ class Riffer::HTTP::Client
     fields = parsed.is_a?(Hash) ? parsed : {} #: Hash[Symbol, untyped]
 
     message = "#{error_label} API error (#{status}): #{error_message(fields, raw)}"
-    raise Riffer::APIError.new(message, status: status, body: raw)
+    raise Riffer::APIError.new(message, status: status, body: raw, request_id: request_id)
   end
 end

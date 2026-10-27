@@ -51,6 +51,7 @@ msg.tool_calls     # => []
 msg.token_usage    # => nil or Riffer::Providers::TokenUsage
 msg.finish_reason      # => nil or a normalized Symbol (see below)
 msg.finish_reason_raw  # => nil or the provider's raw wire value (e.g. "max_tokens")
+msg.request_id         # => nil or the provider's id for the call (see Request IDs below)
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -114,6 +115,18 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 response = agent.generate("Summarize this document")
 retry_with_higher_limit if agent.session.messages.last.finish_reason == :length
 ```
+
+#### Request IDs
+
+`request_id` is the provider's own id for the call that produced the message. It round-trips through `to_h` / `from_hash`, arrives on the `RequestId` stream event, and is on `Riffer::APIError#request_id` when a call fails.
+
+| Provider                        | Source                             | On errors                          |
+| ------------------------------- | ---------------------------------- | ---------------------------------- |
+| `anthropic`, `anthropic_vertex` | The `request-id` response header   | Yes, when Anthropic sent the error |
+| `gemini`, `google_cloud`        | The `responseId` field of the body | No, Google sends no id             |
+| Other providers                 | Not reported (`nil`)               | No                                 |
+
+A request that never gets a response, such as one cancelled while waiting for headers, has no id from any provider.
 
 #### Structured Output on Messages
 

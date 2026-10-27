@@ -26,6 +26,34 @@ class ChatTracingSilentStreamProvider < Riffer::Providers::Mock
   def execute_stream(params, yielder); end
 end
 
+class ChatTracingRequestIdProvider < Riffer::Providers::Mock
+  private
+
+  def extract_request_id(_response) = "req_1"
+
+  def execute_stream(params, yielder)
+    yielder << Riffer::StreamEvents::RequestId.new("req_1")
+    super
+  end
+end
+
+class ChatTracingBrokenStreamProvider < Riffer::Providers::Mock
+  private
+
+  def execute_stream(_params, yielder)
+    yielder << Riffer::StreamEvents::RequestId.new("req_1")
+    raise Riffer::IncompleteStreamError, "cut off"
+  end
+end
+
+class ChatTracingAPIErrorProvider < Riffer::Providers::Mock
+  private
+
+  def execute_generate(_params)
+    raise Riffer::APIError.new("overloaded", status: 529, request_id: "req_1")
+  end
+end
+
 class NoDefaultReasoningProvider < Riffer::Providers::Mock
   private
 
@@ -548,6 +576,24 @@ describe Riffer::Providers::Base do
       expect(chat_span.attributes).wont_include "riffer.finish_reason.raw"
     end
 
+    it "stamps the request id" do
+      ChatTracingRequestIdProvider.new.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(chat_span.attributes["gen_ai.response.id"]).must_equal "req_1"
+    end
+
+    it "omits the request id when the provider reports none" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(chat_span.attributes).wont_include "gen_ai.response.id"
+    end
+
+    it "stamps the request id of an APIError" do
+      expect { ChatTracingAPIErrorProvider.new.generate_text(prompt: "Hello", model: "riffer-1") }.
+        must_raise(Riffer::APIError)
+      expect(chat_span.attributes["gen_ai.response.id"]).must_equal "req_1"
+    end
+
     it "stamps whitelisted request params" do
       provider.generate_text(prompt: "Hello", model: "riffer-1", temperature: 0.5, max_output_tokens: 128)
       params = chat_span.attributes.slice("gen_ai.request.temperature", "gen_ai.request.max_tokens")
@@ -655,6 +701,19 @@ describe Riffer::Providers::Base do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
 
       expect(chat_span.attributes["gen_ai.response.finish_reasons"]).must_equal ["stop"]
+    end
+
+    it "stamps the request id from the stream" do
+      ChatTracingRequestIdProvider.new.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
+      expect(chat_span.attributes["gen_ai.response.id"]).must_equal "req_1"
+    end
+
+    it "stamps the request id when the stream breaks after sending it" do
+      broken = ChatTracingBrokenStreamProvider.new
+
+      expect { broken.stream_text(prompt: "Hello", model: "riffer-1").each { |_| } }.must_raise(Riffer::IncompleteStreamError)
+      expect(chat_span.attributes["gen_ai.response.id"]).must_equal "req_1"
     end
 
     it "stamps the time to first chunk on the streamed span" do

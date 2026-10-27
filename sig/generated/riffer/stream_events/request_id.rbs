@@ -1,0 +1,15 @@
+# Generated from lib/riffer/stream_events/request_id.rb with RBS::Inline
+
+# Emitted at most once, with the first chunk that carries the id, so a stream
+# that stalls afterwards can still be traced.
+class Riffer::StreamEvents::RequestId < Riffer::StreamEvents::Base
+  attr_reader request_id: String
+
+  # --
+  # : (String, ?role: Symbol) -> void
+  def initialize: (String, ?role: Symbol) -> void
+
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end
