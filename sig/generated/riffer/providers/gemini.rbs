@@ -124,6 +124,11 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
+  # Gemini needs every result for one call turn in a single content, one part each.
+  # --
+  # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
+  def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
+
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]

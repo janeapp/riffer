@@ -1011,7 +1011,8 @@ describe Riffer::Providers::Gemini do
 
         contents = provider.send(:partition_messages, tool_calls.map { |tc| tool_result(tc) })[:contents]
 
-        expect(contents.map { |content| content[:parts].first[:functionResponse][:id] }).must_equal %w[call_1 call_2]
+        expect(contents.size).must_equal 1
+        expect(contents.first[:parts].map { |part| part[:functionResponse][:id] }).must_equal %w[call_1 call_2]
       end
 
       it "sends no call id for tool calls riffer did not get from Gemini" do

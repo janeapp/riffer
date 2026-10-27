@@ -371,22 +371,33 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       when Riffer::Messages::Assistant
         contents << convert_assistant_to_gemini_format(message)
       when Riffer::Messages::Tool
-        contents << {
-          role: "user",
-          parts: [{
-            functionResponse: {
-              id: gemini_call_id(message.tool_call_id),
-              name: message.name,
-              response: { result: message.content },
-            }.compact,
-          }],
-        }
+        append_tool_result(contents, message)
       end
     end
 
     result = { contents: contents } #: Hash[Symbol, untyped]
     result[:system_instruction] = { parts: system_parts } unless system_parts.empty?
     result
+  end
+
+  # Gemini needs every result for one call turn in a single content, one part each.
+  #--
+  #: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
+  def append_tool_result(contents, message)
+    part = {
+      functionResponse: {
+        id: gemini_call_id(message.tool_call_id),
+        name: message.name,
+        response: { result: message.content },
+      }.compact,
+    }
+
+    prev = contents.last
+    if prev && prev[:role] == "user" && prev[:parts].first&.key?(:functionResponse)
+      prev[:parts] << part
+    else
+      contents << { role: "user", parts: [part] }
+    end
   end
 
   #--

@@ -34,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Thu, 22 Oct 2026 23:14:57 GMT
+      - Tue, 27 Oct 2026 19:16:46 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=575
+      - gfet4t7; dur=660
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -63,9 +63,9 @@ http_interactions:
                       "args": {
                         "city": "Toronto"
                       },
-                      "id": "call_262269"
+                      "id": "call_2236830"
                     },
-                    "thoughtSignature": "EmAKXgFpFH0TbNXJDk4EBOALyi2fnThbscv3x2XnBDhiyGZorfFium5gDvvaDBD/VRbvtyUUueoRlsl0o1jS1OnPSrj4l6TESbxx+NU2UzZmIpQFo1wK+DqCG1zVYqZmKN0="
+                    "thoughtSignature": "EmAKXgFpFH0TbW3ffZbkr07+6WYcpVW9Vc07/UCKbduDzh4HrlRl/WBlBwK3EofqQx8nAI+fyCiTXuMgx9QHRFje+l0Swzc/01Db3DkLsArwrvyY4dlIYsEffGXAXkp82TM="
                   },
                   {
                     "functionCall": {
@@ -73,7 +73,7 @@ http_interactions:
                       "args": {
                         "city": "Paris"
                       },
-                      "id": "call_262270"
+                      "id": "call_2236831"
                     }
                   }
                 ],
@@ -97,17 +97,17 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "8Jjaar-TOoKfz7IPy7bq0Qs"
+          "responseId": "nfjgauSwNbDtjrEPjKOYiQU"
         }
-  recorded_at: Thu, 22 Oct 2026 23:14:57 GMT
+  recorded_at: Tue, 27 Oct 2026 19:16:46 GMT
 - request:
     method: post
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto and in Paris?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_262269","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TbNXJDk4EBOALyi2fnThbscv3x2XnBDhiyGZorfFium5gDvvaDBD/VRbvtyUUueoRlsl0o1jS1OnPSrj4l6TESbxx+NU2UzZmIpQFo1wK+DqCG1zVYqZmKN0="},{"functionCall":{"id":"call_262270","name":"get_weather","args":{"city":"Paris"}}}]},{"role":"user","parts":[{"functionResponse":{"id":"call_262269","name":"get_weather","response":{"result":"15
-        degrees Celsius."}}}]},{"role":"user","parts":[{"functionResponse":{"id":"call_262270","name":"get_weather","response":{"result":"22
+        Toronto and in Paris?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_2236830","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TbW3ffZbkr07+6WYcpVW9Vc07/UCKbduDzh4HrlRl/WBlBwK3EofqQx8nAI+fyCiTXuMgx9QHRFje+l0Swzc/01Db3DkLsArwrvyY4dlIYsEffGXAXkp82TM="},{"functionCall":{"id":"call_2236831","name":"get_weather","args":{"city":"Paris"}}}]},{"role":"user","parts":[{"functionResponse":{"id":"call_2236830","name":"get_weather","response":{"result":"15
+        degrees Celsius."}}},{"functionResponse":{"id":"call_2236831","name":"get_weather","response":{"result":"22
         degrees Celsius."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
@@ -136,7 +136,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Thu, 22 Oct 2026 23:14:58 GMT
+      - Tue, 27 Oct 2026 19:16:47 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -146,7 +146,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=791
+      - gfet4t7; dur=617
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -160,8 +160,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "The weather in Toronto is 15 degrees Celsius, and in Paris, it is 22 degrees Celsius.",
-                    "thoughtSignature": "EmAKXgFpFH0T5+JEB2ftiXKh8OK+PcIsal4kiPZ0qLkXvp6Axo+E8dkszPV4XLjU5aK0pheK3ivPTK9TknCNvhTLdqkwPZ3OP2d15cRTsfNXds701dnig7qb90DsYo0T2IA="
+                    "text": "The weather in Toronto is 15 degrees Celsius, and the weather in Paris is 22 degrees Celsius.",
+                    "thoughtSignature": "EmAKXgFpFH0TbgYoQ9HtpwFxOZXfwIhbV+EU3KI/+9xBSdalEFOT1FtGJ9FDh5UZr7Z7X/scGFbbezeKverYI+Rft6HQDDYKmgYnJnSy7DapFA1TLZTFkGp5popFyxWUbc0="
                   }
                 ],
                 "role": "model"
@@ -171,19 +171,19 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 130,
+            "promptTokenCount": 129,
             "candidatesTokenCount": 23,
-            "totalTokenCount": 153,
+            "totalTokenCount": 152,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 130
+                "tokenCount": 129
               }
             ],
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "8ZjaarW4LaHoz7IPsePTmQo"
+          "responseId": "nvjgaoHuI6XWjMcPoeO-qQ8"
         }
-  recorded_at: Thu, 22 Oct 2026 23:14:58 GMT
+  recorded_at: Tue, 27 Oct 2026 19:16:47 GMT
 recorded_with: VCR 6.4.0

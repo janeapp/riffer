@@ -419,6 +419,26 @@ describe Riffer::Providers::GoogleCloud do
         end
       end
 
+      it "sends parallel tool results back in one turn" do
+        VCR.use_cassette("Riffer_Providers_GoogleCloud/gemini/tool_calling/_generate_text/parallel_round_trip") do
+          question = Riffer::Messages::User.new("What is the weather in Toronto and in Paris?")
+          temperatures = { "Toronto" => "15", "Paris" => "22" }
+
+          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
+
+          expect(first.tool_calls.size).must_equal 2
+
+          results = first.tool_calls.map do |tc|
+            temperature = temperatures.fetch(JSON.parse(tc.arguments)["city"])
+            Riffer::Messages::Tool.new("#{temperature} degrees Celsius.", tool_call_id: tc.call_id, name: tc.name)
+          end
+          second = provider.generate_text(messages: [question, first, *results], model: model, tools: [weather_tool])
+
+          expect(second.content).must_include "15"
+          expect(second.content).must_include "22"
+        end
+      end
+
       it "yields ToolCallDone from #stream_text" do
         VCR.use_cassette("Riffer_Providers_GoogleCloud/gemini/tool_calling/_stream_text/yields_tool_call_done") do
           events = provider.stream_text(
