@@ -9,6 +9,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   WEB_SEARCH_TOOL_TYPE: String
 
+  # Gemini's documented stand-in for a function call it didn't sign, such as
+  # one another provider made. Without a signature it rejects the call.
+  PLACEHOLDER_SIGNATURE: String
+
   FINISH_REASONS: Hash[String, Symbol]
 
   # --

@@ -14,6 +14,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   WEB_SEARCH_TOOL_TYPE = "GOOGLE_SEARCH_WEB" #: String
 
+  # Gemini's documented stand-in for a function call it didn't sign, such as
+  # one another provider made. Without a signature it rejects the call.
+  PLACEHOLDER_SIGNATURE = "skip_thought_signature_validator" #: String
+
   FINISH_REASONS = {
     "STOP" => :stop,
     "MAX_TOKENS" => :length,
@@ -107,7 +111,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     # body fields, so :tags reach observability only.
     generation_config = options.except(:tools, :structured_output, :web_search, :tags)
 
-    generation_config.merge!(structured_output_config(structured_output.json_schema)) if structured_output
+    # Strict, so an optional field is nullable and the model can leave it
+    # empty instead of making a value up.
+    schema = structured_output&.json_schema(strict: true)
+    generation_config.merge!(structured_output_config(schema)) if schema
 
     params[:generationConfig] = generation_config unless generation_config.empty?
 
@@ -271,6 +278,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     full_text = +""
     raw_finish_reason = nil #: String?
+    usage = nil #: Hash[Symbol, untyped]?
     saw_function_call = false
     decoder = Riffer::Wire::SSE.new
 
@@ -310,16 +318,15 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
       raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
 
-      usage = parsed[:usageMetadata]
-      if usage && usage[:candidatesTokenCount]
-        yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
-      end
+      # Every chunk repeats the running totals; the last one holds the final count.
+      usage = parsed[:usageMetadata] || usage
     end
 
     path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
     client.post_stream(path, body) { |chunk| decoder.feed(chunk) { |data, _event| process_data.call(data) } }
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage)) if usage
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
   end
 
@@ -412,14 +419,17 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       parts << { text: message.content, thoughtSignature: text_signature }.compact
     end
 
-    message.tool_calls.each do |tc|
+    message.tool_calls.each_with_index do |tc, index|
+      signature = call_signatures[tc.call_id]
+      # Gemini requires a signature on the first call of a step.
+      signature ||= PLACEHOLDER_SIGNATURE if index.zero?
       parts << {
         functionCall: {
           id: gemini_call_id(tc.call_id),
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
         }.compact,
-        thoughtSignature: call_signatures[tc.call_id],
+        thoughtSignature: signature,
       }.compact
     end
 

@@ -8,8 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"List 2 items from an
         order: a book costing $12.99 and a pen costing $1.50"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
         identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
-        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":"integer","description":"Quantity
-        ordered"}},"required":["name","price"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}}}'
+        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":["integer","null"],"description":"Quantity
+        ordered"}},"required":["name","price","quantity"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -35,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Thu, 22 Oct 2026 19:19:23 GMT
+      - Wed, 28 Oct 2026 00:22:01 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -45,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=910
+      - gfet4t7; dur=680
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -60,7 +60,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\n  \"order_id\": \"ORD-12345\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99,\n      \"quantity\": 1\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50,\n      \"quantity\": 1\n    }\n  ]\n}",
-                    "thoughtSignature": "EmAKXgFpFH0Tq93958jD9FqQCfSsyZMih2nHpzClA3Cj6G9Xl2QLlNf3/PBBYH07j+u6MJauVOszQA1Ll/S3jlSFyNNgnOQPDYoY/OxzM9pIGd2zwDs0B1yVyqUbVXH88bY="
+                    "thoughtSignature": "EmAKXgFpFH0Tm69rTgshlefENVR0FHjj228NyONIsOqQPk1aR46n+IC5BwIbW/JiUxtA7fKF2y4WI50fYZEf1wdsglK2ck3lfVCGfRHOE7jdtmNGH8ZG7vKlXA9sfThOfGk="
                   }
                 ],
                 "role": "model"
@@ -82,7 +82,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "u2HaataXC7iKqtsPudaemQw"
+          "responseId": "KEDhatDIHu6O6dkPm-n9iA8"
         }
-  recorded_at: Thu, 22 Oct 2026 19:19:24 GMT
+  recorded_at: Wed, 28 Oct 2026 00:22:01 GMT
 recorded_with: VCR 6.4.0

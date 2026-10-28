@@ -7,8 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Read this order: several
         boxes, with no due date"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"quantity":{"anyOf":[{"type":"integer"},{"type":"string"}],"description":"A
-        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]}],"description":"The
-        due date, or none when there isn''t one"}},"required":["quantity"],"additionalProperties":false}}}}}'
+        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]},{"type":"null"}],"description":"The
+        due date, or none when there isn''t one"}},"required":["quantity","due"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -34,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Fri, 23 Oct 2026 21:09:34 GMT
+      - Wed, 28 Oct 2026 00:21:58 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=698
+      - gfet4t7; dur=623
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -58,8 +58,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"quantity\": \"several boxes\",\n  \"due\": \"none\"\n}",
-                    "thoughtSignature": "EmAKXgFpFH0T6Y6wtSs7Nu8JExoMA4QQPVrFPbUrtOan2J/BknK60qR1hiJrc+n2kBHggmGKar42nVNi9h024EJZUdI7N37H04CvOo68z+1ifwHy6n6pS3NfFJdDYAaqfI4="
+                    "text": "{\n  \"quantity\": \"several\",\n  \"due\": \"none\"\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TpZzbanPkN3/m6lkywBU38ja2uRK8ppkMUl4dXfx5qfR7grbHENKCS2Q4lHLH+Hz7gQYZ1B7dYly7j5TZspvv8iKooepiz9XvS+sqo9eJ0AgOsXRoihyUXiE="
                   }
                 ],
                 "role": "model"
@@ -70,8 +70,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 12,
-            "candidatesTokenCount": 20,
-            "totalTokenCount": 32,
+            "candidatesTokenCount": 19,
+            "totalTokenCount": 31,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -81,7 +81,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "Ds3bav33F9HU-sAPuYmU8As"
+          "responseId": "JUDhasGNNvahz7IPntbJ4Ag"
         }
-  recorded_at: Fri, 23 Oct 2026 21:09:34 GMT
+  recorded_at: Wed, 28 Oct 2026 00:21:58 GMT
 recorded_with: VCR 6.4.0

@@ -9,9 +9,9 @@ http_interactions:
         at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
         The patient gave no email."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"starts_at":{"type":"string","description":"Visit start,
-        with its UTC offset","format":"date-time"},"email":{"type":"string","description":"Patient
+        with its UTC offset","format":"date-time"},"email":{"type":["string","null"],"description":"Patient
         email, if given","format":"email"},"clinic_ids":{"type":"array","description":"Clinic
-        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","clinic_ids"],"additionalProperties":false}}}}}'
+        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","email","clinic_ids"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -37,7 +37,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Thu, 22 Oct 2026 19:19:29 GMT
+      - Wed, 28 Oct 2026 00:22:00 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,7 +47,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=925
+      - gfet4t7; dur=724
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -61,8 +61,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"visit_on\": \"2026-10-26\",\n  \"starts_at\": \"2026-10-26T09:30:00-04:00\",\n  \"clinic_ids\": [\n    \"550e8400-e29b-41d4-a716-446655440000\"\n  ]\n}",
-                    "thoughtSignature": "EmAKXgFpFH0TEc82gCE+i2z0Z1BvO459Y9ZvLHz2apJwF7a21GM6ybuDQqVzbyT/CI0iL0WeetOU63J+oQoIj3UcQjZW7Q0T2LX+T4WZSTP5LDZCxLitNQQTROWI+t0tfMU="
+                    "text": "{\n  \"visit_on\": \"2026-10-26\",\n  \"starts_at\": \"2026-10-26T09:30:00-04:00\",\n  \"email\": null,\n  \"clinic_ids\": [\n    \"550e8400-e29b-41d4-a716-446655440000\"\n  ]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TrFEaT+9oHLSPenfVtREW1SeHSCRN8FUtZ4WTerpDSIlbR/lMKdGgbmbj2r3+1mtSUMrGNH9KtJ5dWzZcC6wh3S/uXjkEG24rlQp9C6aWWjNE1T6OBdKUfVE="
                   }
                 ],
                 "role": "model"
@@ -73,8 +73,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 80,
-            "candidatesTokenCount": 107,
-            "totalTokenCount": 187,
+            "candidatesTokenCount": 114,
+            "totalTokenCount": 194,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -84,7 +84,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "wGHaaoLFGJCJqtsP8c_zuQk"
+          "responseId": "J0DhasKxJdCY_uMPo9PMmAE"
         }
-  recorded_at: Thu, 22 Oct 2026 19:19:29 GMT
+  recorded_at: Wed, 28 Oct 2026 00:22:00 GMT
 recorded_with: VCR 6.4.0
