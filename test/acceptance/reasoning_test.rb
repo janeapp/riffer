@@ -36,6 +36,30 @@ describe "Acceptance: reasoning" do
         end
       end
 
+      it "counts thinking tokens as output tokens" do
+        level = acceptance_setting(provider_name, :reasoning_levels).last
+        response = acceptance_cassette("#{cassette_prefix}/level_#{level}") do
+          reasoning_agent(level).generate("What is 17 times 23? Reply with just the number.")
+        end
+
+        # The answer is a few tokens; the rest of the output is thinking.
+        expect(response.token_usage.output_tokens).must_be :>, 20
+      end
+
+      it "streams reasoning before the finish" do
+        events = acceptance_cassette("#{cassette_prefix}/replay_stream") do
+          provider.stream_text(messages: [question], model: model, tools: [weather_tool]).to_a
+        end
+        done = events.grep(Riffer::StreamEvents::ReasoningDone)
+        deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
+        finish = events.grep(Riffer::StreamEvents::FinishReasonDone).last
+
+        expect(done).wont_be_empty
+        expect(done.all? { |event| event.part.format && (event.part.data || event.part.text) }).must_equal true
+        expect(deltas.all? { |delta| events.index(delta) < events.index(done.last) }).must_equal true
+        expect(events.index(done.last)).must_be :<, events.index(finish)
+      end
+
       it "streams an answer at a reasoning level" do
         response = acceptance_cassette("#{cassette_prefix}/level_low_stream") do
           run_agent(reasoning_agent(:low), :stream, "What is 17 times 23? Reply with just the number.")

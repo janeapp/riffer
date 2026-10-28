@@ -503,6 +503,23 @@ describe Riffer::Providers::Gemini do
 
       expect(provider.send(:extract_reasoning, response).map(&:data)).must_equal ["text-sig"]
     end
+
+    it "streams no reasoning for search toolCall and toolResponse parts" do
+      search = { toolType: "GOOGLE_SEARCH_WEB", id: "call_1" }
+      parts = [
+        { toolCall: search.merge(args: { queries: ["ruby"] }), thoughtSignature: "call-sig" },
+        { toolResponse: search.merge(response: {}), thoughtSignature: "response-sig" },
+        { text: "Ruby 4.0.", thoughtSignature: "text-sig" },
+      ]
+      chunks = parts.map { |part| "data: #{{ candidates: [{ content: { parts: [part] } }] }.to_json}\n\n" }
+      client = Object.new
+      client.define_singleton_method(:post_stream) { |_path, _body, &block| chunks.each(&block) }
+      Riffer.config.gemini.client = client
+
+      events = provider.stream_text(prompt: "Ruby?", model: model, web_search: true).to_a
+
+      expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |event| event.part.data }).must_equal ["text-sig"]
+    end
   end
 
   describe "reasoning level" do

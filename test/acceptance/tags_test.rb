@@ -11,16 +11,18 @@ describe "Acceptance: tags" do
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
       let(:model) { acceptance_setting(provider_name, :model) }
 
-      it "accepts per-call tags" do
-        message = acceptance_cassette("tags/#{provider_name}/per_call") do
-          provider.generate_text(
-            prompt: "Reply with the word pong and nothing else.",
-            model: model,
-            tags: { "team" => "growth", "agent" => "support/triage_agent", "user_id" => "u_1" },
-          )
-        end
+      ACCEPTANCE_MODES.each do |mode|
+        it "sends per-call tags the provider's way (#{mode})" do
+          prompt = "Reply with the word pong and nothing else."
+          message = acceptance_cassette("tags/#{provider_name}/per_call_#{mode}") do
+            call_provider(provider, mode, prompt: prompt, model: model)
+            call_provider(provider, mode, prompt: prompt, model: model, tags: ACCEPTANCE_TAGS)
+          end
+          untagged, tagged = acceptance_request_bodies
 
-        expect(message.content.downcase).must_include "pong"
+          expect(tagged).must_equal untagged.merge(acceptance_setting(provider_name, :wire_tags))
+          expect(message.content.downcase).must_include "pong"
+        end
       end
     end
   end

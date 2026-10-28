@@ -91,6 +91,20 @@ describe "Acceptance: web search" do
         expect(response.content).must_equal streamed
         expect(agent.session.messages.last.content).must_equal streamed
       end
+
+      it "continues the Agent session after a streamed search" do
+        agent = Class.new(Riffer::Agent) do
+          model acceptance_model_id(provider_name)
+          model_options web_search: true
+        end.new
+
+        first, follow_up = acceptance_cassette("#{cassette_prefix}/agent_follow_up") do
+          [stream_agent(agent, prompt).last, stream_agent(agent, "Repeat just the version number you gave.").last]
+        end
+
+        expect(follow_up.outcome.reason).must_equal :completed
+        expect(follow_up.content).must_include first.content[/\d+\.\d+(\.\d+)?/]
+      end
     end
   end
 end

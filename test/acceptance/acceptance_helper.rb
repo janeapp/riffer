@@ -16,16 +16,21 @@ ACCEPTANCE_MODES = %i[generate stream].freeze
 
 ACCEPTANCE_TEMPERATURES = { "Toronto" => 15, "Paris" => 22 }.freeze
 
+ACCEPTANCE_TAGS = { "team" => "growth", "agent" => "support/triage_agent", "user_id" => "u_1" }.freeze
+
 # Every acceptance file runs against each provider here unless it excludes it,
 # so a new provider joins every feature by default. An entry holds what the
 # tests can't derive: riffer passes model options and web_search options
-# through as-is, so their names are the provider's own.
+# through as-is, so their names are the provider's own, and wire_tags is what
+# ACCEPTANCE_TAGS adds to the request body.
 ACCEPTANCE_PROVIDERS = {
   gemini: {
     model: "gemini-3.5-flash-lite",
     reasoning_levels: %i[low medium high],
     max_tokens_option: :maxOutputTokens,
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
+    # The Developer API has no request field for tags, so none are sent.
+    wire_tags: {},
     configure: -> { Riffer.config.gemini.api_key = ENV.fetch("GEMINI_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.gemini.api_key = "invalid-api-key" },
     reset: -> { Riffer.config.gemini.api_key = nil },
@@ -35,6 +40,7 @@ ACCEPTANCE_PROVIDERS = {
     reasoning_levels: %i[low medium high],
     max_tokens_option: :maxOutputTokens,
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
+    wire_tags: { "labels" => { "team" => "growth", "agent" => "support_triage_agent", "user_id" => "u_1" } },
     configure: lambda do
       Riffer.config.google_cloud.project_id = ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project")
       Riffer.config.google_cloud.credentials = Google::Auth::BearerTokenCredentials.new(
@@ -103,6 +109,16 @@ def weather_result(tool_call)
     tool_call_id: tool_call.call_id,
     name: tool_call.name,
   )
+end
+
+# The JSON bodies of the requests the test sent, oldest first. WebMock counts
+# identical requests under one entry, so each is repeated by its count.
+def acceptance_request_bodies
+  bodies = []
+  WebMock::RequestRegistry.instance.requested_signatures.each do |signature, count|
+    count.times { bodies << JSON.parse(signature.body) }
+  end
+  bodies
 end
 
 def acceptance_file(name)

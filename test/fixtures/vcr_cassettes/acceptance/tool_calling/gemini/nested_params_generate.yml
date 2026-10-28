@@ -1,0 +1,117 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Book an online visit
+        on 2026-11-03 for Ada Lovelace (ada@example.com): a 30-minute checkup, then
+        a 15-minute vaccination. Any room is fine."}]}],"tools":[{"functionDeclarations":[{"name":"book_visit","description":"Book
+        a clinic visit","parametersJsonSchema":{"type":"object","properties":{"patient":{"type":"object","description":"The
+        patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":"string","description":"Email
+        address, if given","format":"email"}},"required":["name"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
+        the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"services":{"type":"array","description":"Services
+        to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any"]}],"description":"Room
+        number, or any when there is no preference"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 15:33:45 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=811
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "book_visit",
+                      "args": {
+                        "visit_on": "2026-11-03",
+                        "room": "any",
+                        "visit_type": "online",
+                        "services": [
+                          {
+                            "minutes": 30,
+                            "name": "checkup"
+                          },
+                          {
+                            "minutes": 15,
+                            "name": "vaccination"
+                          }
+                        ],
+                        "patient": {
+                          "email": "ada@example.com",
+                          "name": "Ada Lovelace"
+                        }
+                      },
+                      "id": "call_4125280"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0T704gIjZQG3gtyXb+wFG97Jd8NCfEPp2okju2WbpOuEkWiDkzvujtPI7//MKMEHOz2pHJz0UBh5fNi7OWDyzv2SWrGMCkkGTr8fnVu0NPuu+xM9VSfSoznEM="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 343,
+            "candidatesTokenCount": 88,
+            "totalTokenCount": 431,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 343
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "2RXiaufGEbmGz7IP9ciwuAQ"
+        }
+  recorded_at: Wed, 28 Oct 2026 15:33:46 GMT
+recorded_with: VCR 6.4.0

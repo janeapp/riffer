@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Book an online visit
+        on 2026-11-03 for Ada Lovelace (ada@example.com): a 30-minute checkup, then
+        a 15-minute vaccination. Any room is fine."}]}],"tools":[{"functionDeclarations":[{"name":"book_visit","description":"Book
+        a clinic visit","parametersJsonSchema":{"type":"object","properties":{"patient":{"type":"object","description":"The
+        patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":"string","description":"Email
+        address, if given","format":"email"}},"required":["name"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
+        the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"services":{"type":"array","description":"Services
+        to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any"]}],"description":"Room
+        number, or any when there is no preference"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 15:34:00 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=824
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"book_visit\",\"args\": {\"room\": \"any\",\"visit_type\": \"online\",\"patient\":
+        {\"name\": \"Ada Lovelace\",\"email\": \"ada@example.com\"},\"services\":
+        [{\"name\": \"checkup\",\"minutes\": 30},{\"name\": \"vaccination\",\"minutes\":
+        15}],\"visit_on\": \"2026-11-03\"},\"id\": \"call_1684109\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TdP8L2lvN9N2pFj6jw/6YwbIw8bXf+q+sRJlTPqeTVOxWU3gZetX1U+TnOyWHinZ0tKDf9FbGLY+uxzyJZyPhGf0waKjbGdoZqWf35e7PzOTMo+7UtaR5I2c=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 343,\"candidatesTokenCount\":
+        88,\"totalTokenCount\": 431,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        343}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"5xXiavHSHorx-8YP8LXrqQ8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 343,\"candidatesTokenCount\":
+        88,\"totalTokenCount\": 431,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        343}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"5xXiavHSHorx-8YP8LXrqQ8\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 15:34:00 GMT
+recorded_with: VCR 6.4.0
