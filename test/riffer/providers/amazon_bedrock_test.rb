@@ -1134,6 +1134,36 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
+    describe "a tool call without arguments" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new }
+
+      it "streams ToolCallDone with an empty JSON object" do
+        provider # force SDK load before constructing the Aws types below
+        events = [
+          Aws::BedrockRuntime::Types::ContentBlockStartEvent.new(
+            start: Aws::BedrockRuntime::Types::ContentBlockStart.new(
+              tool_use: Aws::BedrockRuntime::Types::ToolUseBlockStart.new(tool_use_id: "tooluse_1", name: "get_time"),
+            ),
+            content_block_index: 0,
+            event_type: :content_block_start,
+          ),
+          Aws::BedrockRuntime::Types::ContentBlockStopEvent.new(content_block_index: 0,
+                                                                event_type: :content_block_stop,),
+          Aws::BedrockRuntime::Types::MessageStopEvent.new(stop_reason: "tool_use", event_type: :message_stop),
+        ]
+        stream_double = Object.new
+        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+        client_double = Object.new
+        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+        provider.instance_variable_set(:@client, client_double)
+
+        done = provider.stream_text(prompt: "What time is it?", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").
+          to_a.grep(Riffer::StreamEvents::ToolCallDone)
+
+        expect(done.map(&:arguments)).must_equal ["{}"]
+      end
+    end
+
     describe "text delta accumulation" do
       let(:provider) { Riffer::Providers::AmazonBedrock.new }
 
@@ -2359,6 +2389,43 @@ describe Riffer::Providers::AmazonBedrock do
 
           expect(done).wont_be_nil
         end
+      end
+    end
+
+    describe "document names" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new }
+      let(:pdf_data) { Base64.strict_encode64("%PDF-1.4") }
+
+      def document(filename)
+        Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: filename)
+      end
+
+      def document_names(messages)
+        params = provider.send(:build_request_params, messages, "us.anthropic.claude-haiku-4-5-20251001-v1:0", {})
+        params[:messages].flat_map { |message| message[:content] }.filter_map { |block| block.dig(:document, :name) }
+      end
+
+      it "drops the extension and the characters Converse rejects" do
+        messages = [Riffer::Messages::User.new("Read these",
+                                               files: [document("invoice.pdf"), document("Q3_report  v2.final.pdf")],)]
+
+        expect(document_names(messages)).must_equal ["invoice", "Q3-report v2-final"]
+      end
+
+      it "names a document without a filename" do
+        messages = [Riffer::Messages::User.new("Read this", files: [document(nil)])]
+
+        expect(document_names(messages)).must_equal ["document"]
+      end
+
+      it "numbers repeated names across the conversation" do
+        messages = [
+          Riffer::Messages::User.new("Read these", files: [document("invoice.pdf"), document("invoice.txt")]),
+          Riffer::Messages::Assistant.new("Done."),
+          Riffer::Messages::User.new("And this one", files: [document("invoice.pdf")]),
+        ]
+
+        expect(document_names(messages)).must_equal ["invoice", "invoice (2)", "invoice (3)"]
       end
     end
 

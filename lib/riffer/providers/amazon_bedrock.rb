@@ -428,7 +428,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       item_id: tool_call[:id],
       call_id: tool_call[:id],
       name: tool_call[:name],
-      arguments: tool_call[:arguments],
+      # Converse streams no input delta for a call without arguments.
+      arguments: tool_call[:arguments].empty? ? "{}" : tool_call[:arguments],
     )
     state[:tool_call] = nil
   end
@@ -445,6 +446,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def partition_messages(messages)
     system_prompts = [] #: Array[Hash[Symbol, untyped]]
     conversation_messages = [] #: Array[Hash[Symbol, untyped]]
+    document_names = [] #: Array[String]
 
     messages.each do |message|
       case message
@@ -452,7 +454,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         system_prompts << { text: message.content }
       when Riffer::Messages::User
         content = [{ text: message.content }]
-        message.files.each { |file| content << convert_file_part_to_bedrock_format(file) }
+        message.files.each { |file| content << convert_file_part_to_bedrock_format(file, document_names) }
         conversation_messages << { role: "user", content: content }
       when Riffer::Messages::Assistant
         conversation_messages << convert_assistant_to_bedrock_format(message)
@@ -515,9 +517,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  # +document_names+ collects the names already used in the request, which
+  # Converse requires to be unique across every message.
   #--
-  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_bedrock_format(file)
+  #: (Riffer::Messages::User::FilePart, Array[String]) -> Hash[Symbol, untyped]
+  def convert_file_part_to_bedrock_format(file, document_names)
     format = bedrock_format(file.media_type)
 
     source = file.data_bytes ? { bytes: file.data_bytes } : { s3_location: { uri: file.url } }
@@ -525,8 +529,27 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     if file.image?
       { image: { format: format, source: source } }
     else
-      { document: { format: format, name: file.filename, source: source } }
+      { document: { format: format, name: document_name(file.filename, document_names), source: source } }
     end
+  end
+
+  # Converse allows only alphanumerics, single whitespace, hyphens, parentheses
+  # and square brackets in a document name, so +invoice.pdf+ is sent as
+  # +invoice+ and a repeated name gets a counter: +invoice (2)+.
+  #--
+  #: (String?, Array[String]) -> String
+  def document_name(filename, document_names)
+    base = File.basename(filename.to_s, File.extname(filename.to_s)).
+      gsub(/[^A-Za-z0-9\s\-()\[\]]+/, "-").
+      gsub(/\s+/, " ").
+      gsub(/\A[\s-]+|[\s-]+\z/, "")
+    base = "document" if base.empty?
+
+    name = base
+    count = 1
+    name = "#{base} (#{count += 1})" while document_names.include?(name)
+    document_names << name
+    name
   end
 
   BEDROCK_FORMAT_MAP = {
