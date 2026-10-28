@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
+        yoga class, in-person format."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:53:38 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=559
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
+        \ \\\"name\\\": \\\"yoga\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 14,\"candidatesTokenCount\": 8,\"totalTokenCount\":
+        22,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 14}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"gjnhaoy7HOasqtsPrfaS-Q4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" class\\\",\\n  \\\"session_type\\\": \\\"in_person\\\"\\n}\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 14,\"candidatesTokenCount\":
+        24,\"totalTokenCount\": 38,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        14}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"gjnhaoy7HOasqtsPrfaS-Q4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T0hHbGpdSv4cy3eHlOzqC9ow+91FRIu9JJPHrVWqGv+ITNBbBQhz8OMnBJI+IRfMzoTXOlDXQuu2QuJBcd7DWexFioLqSmd6ED2iLEd3OnuaaDPhG5GtSKLg=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        14,\"candidatesTokenCount\": 24,\"totalTokenCount\": 38,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 14}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"gjnhaoy7HOasqtsPrfaS-Q4\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:53:39 GMT
+recorded_with: VCR 6.4.0

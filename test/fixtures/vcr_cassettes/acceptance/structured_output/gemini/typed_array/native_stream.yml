@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"List 3 tags and 3 scores
+        (0.0-1.0) for: ''Ruby is a great programming language''"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Descriptive
+        tags","items":{"type":"string"}},"scores":{"type":"array","description":"Relevance
+        scores between 0 and 1","items":{"type":"number"}}},"required":["tags","scores"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:53:47 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=536
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
+        \ \\\"tags\\\": [\\\"ruby\\\", \\\"programming\\\", \\\"\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
+        12,\"totalTokenCount\": 40,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"iznhav_ZGortqtsPlbW7oAw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"software\\\"],\\n  \\\"scores\\\": [0.95, 0.9, 0.75]\\n}\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
+        38,\"totalTokenCount\": 66,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"iznhav_ZGortqtsPlbW7oAw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TgZgSbpAsIUADmDzmmpW04iyGZ+5tgL/z1kR5WtQJlbCBt/rH66yhFbmStNeQBEBway1OQKy7D4RjqHlIAN8MCgdx5/SRWtBv46ckqhXBr3BWMfL+BWnGeBE=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        28,\"candidatesTokenCount\": 38,\"totalTokenCount\": 66,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"iznhav_ZGortqtsPlbW7oAw\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:53:48 GMT
+recorded_with: VCR 6.4.0

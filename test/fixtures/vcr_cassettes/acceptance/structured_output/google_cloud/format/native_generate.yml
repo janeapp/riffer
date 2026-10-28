@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Book a visit on 2026-10-26
+        at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"starts_at":{"type":"string","description":"Visit start,
+        with its UTC offset","format":"date-time"},"email":{"type":"string","description":"Patient
+        email, if given","format":"email"},"clinic_ids":{"type":"array","description":"Clinic
+        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","clinic_ids"],"additionalProperties":false}}}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:04:28 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "{\n  \"visit_on\": \"2026-10-26\",\n  \"starts_at\": \"2026-10-26T09:30:00-04:00\",\n  \"clinic_ids\": [\n    \"550e8400-e29b-41d4-a716-446655440000\"\n  ]\n}",
+                    "thoughtSignature": "AY89a18FW0n3vHlkvYzZXOmWBrWEI2Tel0E+F5mQb92QniWotfEGlBpooFFsK22fZvk30rdBzhfzrBW4atojrznljKdn/km7OKcHSsvEf5n0y5gVG+fs0oNyPxM="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 288,
+            "candidatesTokenCount": 107,
+            "totalTokenCount": 395,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 288
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 107
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T00:04:27.312187Z",
+          "responseId": "CzzhavuGE6-Pq8YP8YCVuAw"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:04:28 GMT
+recorded_with: VCR 6.4.0

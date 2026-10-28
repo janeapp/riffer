@@ -1,0 +1,189 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto and in Paris?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:55:51 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=512
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_3106884"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TD/pYqyobG4WJYCJZfxi8T2gUuXGJCsA1alIXA5qWHEDjzeg15/KzcY+vpqzEYfLfrMHS9fM/jTEJwaMznP2Vd2kcp88nV6orTaT5nMqbn+bWQjwNjKQLa7A="
+                  },
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Paris"
+                      },
+                      "id": "call_3106885"
+                    }
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 63,
+            "candidatesTokenCount": 32,
+            "totalTokenCount": 95,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 63
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "BjrharDCPKbX-8YPj4GT0Ac"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:55:51 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto and in Paris?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3106884","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TD/pYqyobG4WJYCJZfxi8T2gUuXGJCsA1alIXA5qWHEDjzeg15/KzcY+vpqzEYfLfrMHS9fM/jTEJwaMznP2Vd2kcp88nV6orTaT5nMqbn+bWQjwNjKQLa7A="},{"functionCall":{"id":"call_3106885","name":"get_weather","args":{"city":"Paris"}}}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3106884","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}},{"functionResponse":{"id":"call_3106885","name":"get_weather","response":{"result":"It
+        is 22 degrees Celsius in Paris."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:55:52 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=571
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "The weather in Toronto is 15 degrees Celsius, and in Paris, it is 22 degrees Celsius.",
+                    "thoughtSignature": "EmAKXgFpFH0TNYQaJ3tvqRoo1pkEpaM80wxhVwhmBNUGdik1emvdovK7/Ztnrjp0+J985ZMWWkEktztsf0LtQVFHs0U01mmb4042oriIocnM+EQSfaK+EJzeyXriQCetf+E="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 139,
+            "candidatesTokenCount": 23,
+            "totalTokenCount": 162,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 139
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "BzrhaveeLdmtz7IPuPbiyQs"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:55:52 GMT
+recorded_with: VCR 6.4.0

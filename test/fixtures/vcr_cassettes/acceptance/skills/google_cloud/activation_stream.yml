@@ -1,0 +1,199 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]}],"systemInstruction":{"parts":[{"text":"You are
+        a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request matches
+        a skill description below, call the `skill_activate` tool with the skill name.
+        After activation, follow the skill''s instructions. If a skill''s instructions
+        already appear in your context (inside <skill_content> tags), follow them
+        instead of activating the skill again.\n\n- **code-review**: Reviews code
+        for quality, style, and potential issues.\n- **data-analysis**: Analyzes datasets
+        and generates summary reports."}]},"tools":[{"functionDeclarations":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:02:19 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"functionCall\": {\"name\": \"skill_activate\",\"args\": {\"name\": \"code-review\"},\"id\":
+        \"call_163609\"},\"thoughtSignature\": \"AY89a1+xGX4Mxg4R4MbVu3LgRTl8jWVzOunBnVgNUMSccodC0WI93mYPSp7eWFQI1XNoYKY37BDpUUxqmOPhEmPDouXzcZbSsC29BESjf+GtZPpmCunb0Ne7BKw=\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:18.679454Z\",\"responseId\": \"ijvhap68KfCC9LsPgoSH0Ao\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\"}]},\"finishReason\": \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\":
+        169,\"candidatesTokenCount\": 18,\"totalTokenCount\": 187,\"trafficType\":
+        \"ON_DEMAND\",\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        169}],\"candidatesTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        18}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:02:18.679454Z\",\"responseId\":
+        \"ijvhap68KfCC9LsPgoSH0Ao\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:02:19 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]},{"role":"model","parts":[{"functionCall":{"id":"call_163609","name":"skill_activate","args":{"name":"code-review"}},"thoughtSignature":"AY89a1+xGX4Mxg4R4MbVu3LgRTl8jWVzOunBnVgNUMSccodC0WI93mYPSp7eWFQI1XNoYKY37BDpUUxqmOPhEmPDouXzcZbSsC29BESjf+GtZPpmCunb0Ne7BKw="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_163609","name":"skill_activate","response":{"result":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}}}]}],"systemInstruction":{"parts":[{"text":"You
+        are a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request
+        matches a skill description below, call the `skill_activate` tool with the
+        skill name. After activation, follow the skill''s instructions. If a skill''s
+        instructions already appear in your context (inside <skill_content> tags),
+        follow them instead of activating the skill again.\n\n- **code-review**: Reviews
+        code for quality, style, and potential issues.\n- **data-analysis**: Analyzes
+        datasets and generates summary reports."}]},"tools":[{"functionDeclarations":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:02:19 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"Here is\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:02:19.477080Z\",\"responseId\":
+        \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \" a review of the Ruby code provided:\\n\\n```ruby\\ndef
+        add(a\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:02:19.477080Z\",\"responseId\":
+        \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \", b)\\n  a + b\\nend\\n```\\n\\n###
+        Style & Readability\\n* **Formatting:** While\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" Ruby allows single-line method definitions (`def add(a, b) a + b end`),
+        standard style guides (like the\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" Ruby Style Guide) prefer multi-line definitions for better readability:\\n
+        \ ```ruby\\n  def add(a,\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:02:19.477080Z\",\"responseId\":
+        \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \" b)\\n    a + b\\n  end\\n  ```\\n*
+        **Implicit Return:** Ruby automatically returns the value of the last\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" evaluated expression in a method, so omitting the `return` keyword is idiomatic
+        and correct here.\\n\\n### Potential Bugs & Type\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" Safety\\n* **Duck Typing:** Because Ruby is dynamically typed, `a + b`
+        will work for any objects that respond\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" to the `+` operator (e.g., numbers, strings, arrays). However, if incompatible
+        types are passed (like\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:02:19.477080Z\",\"responseId\":
+        \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \" an integer and a string, e.g.,
+        `add(1, \\\"2\\\")`), it will raise a `TypeError`.\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" If strict type safety is desired, type checking or refinement might be
+        added, though standard Ruby code usually relies on duck typing and\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" handles this at the caller level.\\n\\n### Performance\\n* **Optimal:**
+        This code is extremely efficient with $O(1)$ time and\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" space complexity, relying directly on native operator dispatch.\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a19q1HrWM4EZCofqzZ5y0MgoceeTisDmVttvFQQSTjwz7B22TOv6om7CpYY+Cg3z1EVi9zDg30eD/Qc4fQ71cDgjVGPWrl69YfjVfy15PPloUvt+v26wipY=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 230,\"candidatesTokenCount\":
+        285,\"totalTokenCount\": 515,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 230}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 285}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:02:19.477080Z\",\"responseId\": \"izvhapiPHbeV9LsPlufj8Qw\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:02:20 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,213 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"First find the city the
+        Eiffel Tower is in, then get the weather there."}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parametersJsonSchema":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}},{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:37 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=586
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"locate_landmark\",\"args\": {\"landmark\": \"Eiffel Tower\"},\"id\":
+        \"call_1334129\"},\"thoughtSignature\": \"EmAKXgFpFH0Th55KdvCl0DKDXblP5SL6J/OCdADhNHp+SFtEjizaoix5JubZXFitLZr+YnKFAVUivc1sH2AZkXYozsjisscP6wV5sEhWiH9sxYbsMPYCSLWyXCWuBAXaO+g=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 130,\"candidatesTokenCount\":
+        18,\"totalTokenCount\": 148,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        130}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"-TnhasO7D4i939IP1b6V4AU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 130,\"candidatesTokenCount\":
+        18,\"totalTokenCount\": 148,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        130}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"-TnhasO7D4i939IP1b6V4AU\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:37 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"First find the city the
+        Eiffel Tower is in, then get the weather there."}]},{"role":"model","parts":[{"functionCall":{"id":"call_1334129","name":"locate_landmark","args":{"landmark":"Eiffel
+        Tower"}},"thoughtSignature":"EmAKXgFpFH0Th55KdvCl0DKDXblP5SL6J/OCdADhNHp+SFtEjizaoix5JubZXFitLZr+YnKFAVUivc1sH2AZkXYozsjisscP6wV5sEhWiH9sxYbsMPYCSLWyXCWuBAXaO+g="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1334129","name":"locate_landmark","response":{"result":"The
+        Eiffel Tower is in Paris."}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parametersJsonSchema":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}},{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:38 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=563
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"get_weather\",\"args\": {\"city\": \"Paris\"},\"id\": \"call_973925\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TCqw4lWBxNhy7xpYUO8WUI5nh6jZcjX+zwWltDayljW3Ye/hYrSN7EH7PXiVdR19DBYI/RasUB3klI4rV8F0z6EfdSO3aHSVpS+nf3P/B4wUGo8BEaoauYcM=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 168,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 184,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        168}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"-jnhasBZpJzPsg-UiJrZDA\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 168,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 184,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        168}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"-jnhasBZpJzPsg-UiJrZDA\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:38 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"First find the city the
+        Eiffel Tower is in, then get the weather there."}]},{"role":"model","parts":[{"functionCall":{"id":"call_1334129","name":"locate_landmark","args":{"landmark":"Eiffel
+        Tower"}},"thoughtSignature":"EmAKXgFpFH0Th55KdvCl0DKDXblP5SL6J/OCdADhNHp+SFtEjizaoix5JubZXFitLZr+YnKFAVUivc1sH2AZkXYozsjisscP6wV5sEhWiH9sxYbsMPYCSLWyXCWuBAXaO+g="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1334129","name":"locate_landmark","response":{"result":"The
+        Eiffel Tower is in Paris."}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_973925","name":"get_weather","args":{"city":"Paris"}},"thoughtSignature":"EmAKXgFpFH0TCqw4lWBxNhy7xpYUO8WUI5nh6jZcjX+zwWltDayljW3Ye/hYrSN7EH7PXiVdR19DBYI/RasUB3klI4rV8F0z6EfdSO3aHSVpS+nf3P/B4wUGo8BEaoauYcM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_973925","name":"get_weather","response":{"result":"It
+        is 22 degrees Celsius in Paris."}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parametersJsonSchema":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}},{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:39 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=449
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"The
+        Eiffel\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        207,\"candidatesTokenCount\": 2,\"totalTokenCount\": 209,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 207}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"-jnhavykKu6nqtsP4Kf0-As\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" Tower is in Paris,
+        where the current weather is 22 degrees Celsius.\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 207,\"candidatesTokenCount\":
+        18,\"totalTokenCount\": 225,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        207}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"-jnhavykKu6nqtsP4Kf0-As\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tn/xtsbdleKoWCXxrjc19TTx16Tcmu4dlfb1Xky2I96cke1SBYSFfxmeXj8Mn/PteArJRdGppBLa4+r3e8n6pSB0fIH7kpHVlgtIX6LaiEVsN15HXI3onzxk=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        207,\"candidatesTokenCount\": 18,\"totalTokenCount\": 225,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 207}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"-jnhavykKu6nqtsP4Kf0-As\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:39 GMT
+recorded_with: VCR 6.4.0

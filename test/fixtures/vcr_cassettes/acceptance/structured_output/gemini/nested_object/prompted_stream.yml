@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
+        John lives at 123 Main St, Toronto, ON M5V 2T6, Canada\n\nWhen you give your
+        final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:53:01 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=597
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 236,\"candidatesTokenCount\":
+        2,\"totalTokenCount\": 238,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        236}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"XTnhaun-DsPpqtsPlsfS0As\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"  \\\"name\\\": \\\"John\\\",\\n  \\\"address\\\":
+        {\\n    \\\"street\\\":\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 236,\"candidatesTokenCount\": 20,\"totalTokenCount\":
+        256,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 236}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"XTnhaun-DsPpqtsPlsfS0As\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" \\\"123 Main St\\\",\\n    \\\"city\\\": \\\"Toronto\\\",\\n
+        \   \\\"postal_code\\\": \\\"M\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 236,\"candidatesTokenCount\": 44,\"totalTokenCount\":
+        280,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 236}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"XTnhaun-DsPpqtsPlsfS0As\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"5V 2T6\\\",\\n    \\\"country\\\": \\\"Canada\\\"\\n
+        \ }\\n}\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        236,\"candidatesTokenCount\": 64,\"totalTokenCount\": 300,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 236}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"XTnhaun-DsPpqtsPlsfS0As\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"\",\"thoughtSignature\":
+        \"EmAKXgFpFH0TkHIHAA3TjI2hXJFdqz3eI+dIWMP5pAkQSUxBRUWz3DIhMX3q4Taoia7W28LFe4S+7q1K6sam45dOBv2ccFS4K+cveHIGvz5CFSk/LT9E3EqSGu20O9icdyU=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        236,\"candidatesTokenCount\": 64,\"totalTokenCount\": 300,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 236}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"XTnhaun-DsPpqtsPlsfS0As\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:53:01 GMT
+recorded_with: VCR 6.4.0

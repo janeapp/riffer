@@ -1,0 +1,281 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]}],"systemInstruction":{"parts":[{"text":"Answer weather questions.
+        Always look the weather up with the tool."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:22 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=494
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_1421695"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TKqMrw3R3s6ZJWK0ZeGKpfvPC7tVLnKcyrRn8AXZutKGTFeA6KSBoUvH2E1nudox0hXmx8nOQdE23R7taim32kfseumC+sk7CDOLExB/o0qT5cbb4y/PbPpE="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 73,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 89,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 73
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "cjnhaqfND-vh_uMPjNuIyAM"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:22 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1421695","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TKqMrw3R3s6ZJWK0ZeGKpfvPC7tVLnKcyrRn8AXZutKGTFeA6KSBoUvH2E1nudox0hXmx8nOQdE23R7taim32kfseumC+sk7CDOLExB/o0qT5cbb4y/PbPpE="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1421695","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"systemInstruction":{"parts":[{"text":"Answer
+        weather questions. Always look the weather up with the tool."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:23 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=476
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_2959990"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TLK9Gu+kxZUbIgdvWX1tQJ1ZGznGCoFKIxiEJdHAm6mNpgvm8L5nXI7WoVEC9fkmmpR4FACs5JOxMpFzbldu5zYCl/ScABPU9sb7tqYRwjIFfKXC7Uy7JJiY="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 112,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 128,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 112
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "cjnhaoaVMqKd_uMPu6jEsAc"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:23 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1421695","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TKqMrw3R3s6ZJWK0ZeGKpfvPC7tVLnKcyrRn8AXZutKGTFeA6KSBoUvH2E1nudox0hXmx8nOQdE23R7taim32kfseumC+sk7CDOLExB/o0qT5cbb4y/PbPpE="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1421695","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_2959990","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TLK9Gu+kxZUbIgdvWX1tQJ1ZGznGCoFKIxiEJdHAm6mNpgvm8L5nXI7WoVEC9fkmmpR4FACs5JOxMpFzbldu5zYCl/ScABPU9sb7tqYRwjIFfKXC7Uy7JJiY="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_2959990","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"systemInstruction":{"parts":[{"text":"Answer
+        weather questions. Always look the weather up with the tool."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:23 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=560
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"city\": \"Toronto\",\n  \"celsius\": 15\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TJCdDOBOGR1UZ2u7KXJuB9+xrirOTdQp75E9il8y5j7rtbz1hEn8D8iYYFEsX8o8NBomrDll99BHeimHAdQROzjV5Wk9oJofipvL6/vDqtaygmA5bth7Mpqc="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 151,
+            "candidatesTokenCount": 20,
+            "totalTokenCount": 171,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 151
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "cznhavqJFN7Qz7IPsdj1sAs"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:23 GMT
+recorded_with: VCR 6.4.0

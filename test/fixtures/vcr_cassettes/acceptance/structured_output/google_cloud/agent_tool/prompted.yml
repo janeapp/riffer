@@ -1,0 +1,198 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?\n\nWhen you give your final answer, respond with only a JSON object
+        that conforms to the following JSON Schema, with no other text before or after
+        it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"systemInstruction":{"parts":[{"text":"Answer
+        weather questions. Always look the weather up with the tool."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:03:35 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_188628"
+                    },
+                    "thoughtSignature": "AY89a18JvdSgpX8JU76oxyI6Gl8oAnoif6aTdCY3yXCw5zS4gmVqaVA45U/9TBizNdp7Srl79idJz+yoXmE5gSRCCp2zjlLttO0jxsXmG2Ek934JvPL9Uib9yTA="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 176,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 192,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 176
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 16
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T00:03:34.753947Z",
+          "responseId": "1jvhapuCLoOVq8YPnPzPuA8"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:03:35 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?\n\nWhen you give your final answer, respond with only a JSON object
+        that conforms to the following JSON Schema, with no other text before or after
+        it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]},{"role":"model","parts":[{"functionCall":{"id":"call_188628","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a18JvdSgpX8JU76oxyI6Gl8oAnoif6aTdCY3yXCw5zS4gmVqaVA45U/9TBizNdp7Srl79idJz+yoXmE5gSRCCp2zjlLttO0jxsXmG2Ek934JvPL9Uib9yTA="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_188628","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"systemInstruction":{"parts":[{"text":"Answer
+        weather questions. Always look the weather up with the tool."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:03:35 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "{\"city\":\"Toronto\",\"celsius\":15}",
+                    "thoughtSignature": "AY89a1/wnbggF2Z7ynZhOiPCEL32nonSzgUUHh6rYIMyhUaaM1KACTwhPNAgcuYPs7BiWYSEbub8u1J96dxIcUvAZw7zAe9GCh8nrTGD7X8DkzoPvEuW0FSY15E="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 203,
+            "candidatesTokenCount": 11,
+            "totalTokenCount": 214,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 203
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 11
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T00:03:35.419929Z",
+          "responseId": "1zvhatnQGY6kq8YPg_fDsQ0"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:03:36 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,183 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto, and what is the latest Ruby version?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]},{"googleSearch":{}}],"toolConfig":{"includeServerSideToolInvocations":true}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:03:01 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"functionCall\": {\"name\": \"get_weather\",\"args\": {\"city\": \"Toronto\"},\"id\":
+        \"call_140042\"},\"thoughtSignature\": \"AY89a1+yh7A18VG3wEoWbaWV0wBja7PgOp8O8HHqj3NkY9fZWtqkdyAk4p1/NoMqxEWkqQ/WJyiSI6JBmvxg1TVT7BZCYqdja1keRqt/5KmoWtCdm07H6YVQkY4=\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:00.614339Z\",\"responseId\": \"tDvhasO_Je-R9LsPovS8gQM\"}\r\n\r\ndata:
+        {\"candidates\": [{\"finishReason\": \"STOP\",\"groundingMetadata\": {\"webSearchQueries\":
+        [\"latest Ruby version\",\"current ruby version release\"],\"searchEntryPoint\":
+        {\"renderedContent\": \"\\u003cstyle\\u003e\\n.container {\\n  align-items:
+        center;\\n  border-radius: 8px;\\n  display: flex;\\n  font-family: Google
+        Sans, Roboto, sans-serif;\\n  font-size: 14px;\\n  line-height: 20px;\\n  padding:
+        8px 12px;\\n}\\n.chip {\\n  display: inline-block;\\n  border: solid 1px;\\n
+        \ border-radius: 16px;\\n  min-width: 14px;\\n  padding: 5px 16px;\\n  text-align:
+        center;\\n  user-select: none;\\n  margin: 0 8px;\\n  -webkit-tap-highlight-color:
+        transparent;\\n}\\n.carousel {\\n  overflow: auto;\\n  scrollbar-width: none;\\n
+        \ white-space: nowrap;\\n  margin-right: -12px;\\n}\\n.headline {\\n  display:
+        flex;\\n  margin-right: 4px;\\n}\\n.gradient-container {\\n  position: relative;\\n}\\n.gradient
+        {\\n  position: absolute;\\n  transform: translate(3px, -9px);\\n  height:
+        36px;\\n  width: 9px;\\n}\\n@media (prefers-color-scheme: light) {\\n  .container
+        {\\n    background-color: #fafafa;\\n    box-shadow: 0 0 0 1px #0000000f;\\n
+        \ }\\n  .headline-label {\\n    color: #1f1f1f;\\n  }\\n  .chip {\\n    background-color:
+        #ffffff;\\n    border-color: #d2d2d2;\\n    color: #5e5e5e;\\n    text-decoration:
+        none;\\n  }\\n  .chip:hover {\\n    background-color: #f2f2f2;\\n  }\\n  .chip:focus
+        {\\n    background-color: #f2f2f2;\\n  }\\n  .chip:active {\\n    background-color:
+        #d8d8d8;\\n    border-color: #b6b6b6;\\n  }\\n  .logo-dark {\\n    display:
+        none;\\n  }\\n  .gradient {\\n    background: linear-gradient(90deg, #fafafa
+        15%, #fafafa00 100%);\\n  }\\n}\\n@media (prefers-color-scheme: dark) {\\n
+        \ .container {\\n    background-color: #1f1f1f;\\n    box-shadow: 0 0 0 1px
+        #ffffff26;\\n  }\\n  .headline-label {\\n    color: #fff;\\n  }\\n  .chip
+        {\\n    background-color: #2c2c2c;\\n    border-color: #3c4043;\\n    color:
+        #fff;\\n    text-decoration: none;\\n  }\\n  .chip:hover {\\n    background-color:
+        #353536;\\n  }\\n  .chip:focus {\\n    background-color: #353536;\\n  }\\n
+        \ .chip:active {\\n    background-color: #464849;\\n    border-color: #53575b;\\n
+        \ }\\n  .logo-light {\\n    display: none;\\n  }\\n  .gradient {\\n    background:
+        linear-gradient(90deg, #1f1f1f 15%, #1f1f1f00 100%);\\n  }\\n}\\n\\u003c/style\\u003e\\n\\u003cdiv
+        class=\\\"container\\\"\\u003e\\n  \\u003cdiv class=\\\"headline\\\"\\u003e\\n
+        \   \\u003csvg class=\\\"logo-light\\\" width=\\\"18\\\" height=\\\"18\\\"
+        viewBox=\\\"9 9 35 35\\\" fill=\\\"none\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\"\\u003e\\n
+        \     \\u003cpath fill-rule=\\\"evenodd\\\" clip-rule=\\\"evenodd\\\" d=\\\"M42.8622
+        27.0064C42.8622 25.7839 42.7525 24.6084 42.5487 23.4799H26.3109V30.1568H35.5897C35.1821
+        32.3041 33.9596 34.1222 32.1258 35.3448V39.6864H37.7213C40.9814 36.677 42.8622
+        32.2571 42.8622 27.0064V27.0064Z\\\" fill=\\\"#4285F4\\\"/\\u003e\\n      \\u003cpath
+        fill-rule=\\\"evenodd\\\" clip-rule=\\\"evenodd\\\" d=\\\"M26.3109 43.8555C30.9659
+        43.8555 34.8687 42.3195 37.7213 39.6863L32.1258 35.3447C30.5898 36.3792 28.6306
+        37.0061 26.3109 37.0061C21.8282 37.0061 18.0195 33.9811 16.6559 29.906H10.9194V34.3573C13.7563
+        39.9841 19.5712 43.8555 26.3109 43.8555V43.8555Z\\\" fill=\\\"#34A853\\\"/\\u003e\\n
+        \     \\u003cpath fill-rule=\\\"evenodd\\\" clip-rule=\\\"evenodd\\\" d=\\\"M16.6559
+        29.8904C16.3111 28.8559 16.1074 27.7588 16.1074 26.6146C16.1074 25.4704 16.3111
+        24.3733 16.6559 23.3388V18.8875H10.9194C9.74388 21.2072 9.06992 23.8247 9.06992
+        26.6146C9.06992 29.4045 9.74388 32.022 10.9194 34.3417L15.3864 30.8621L16.6559
+        29.8904V29.8904Z\\\" fill=\\\"#FBBC05\\\"/\\u003e\\n      \\u003cpath fill-rule=\\\"evenodd\\\"
+        clip-rule=\\\"evenodd\\\" d=\\\"M26.3109 16.2386C28.85 16.2386 31.107 17.1164
+        32.9095 18.8091L37.8466 13.8719C34.853 11.082 30.9659 9.3736 26.3109 9.3736C19.5712
+        9.3736 13.7563 13.245 10.9194 18.8875L16.6559 23.3388C18.0195 19.2636 21.8282
+        16.2386 26.3109 16.2386V16.2386Z\\\" fill=\\\"#EA4335\\\"/\\u003e\\n    \\u003c/svg\\u003e\\n
+        \   \\u003csvg class=\\\"logo-dark\\\" width=\\\"18\\\" height=\\\"18\\\"
+        viewBox=\\\"0 0 48 48\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\"\\u003e\\n
+        \     \\u003ccircle cx=\\\"24\\\" cy=\\\"23\\\" fill=\\\"#FFF\\\" r=\\\"22\\\"/\\u003e\\n
+        \     \\u003cpath d=\\\"M33.76 34.26c2.75-2.56 4.49-6.37 4.49-11.26 0-.89-.08-1.84-.29-3H24.01v5.99h8.03c-.4
+        2.02-1.5 3.56-3.07 4.56v.75l3.91 2.97h.88z\\\" fill=\\\"#4285F4\\\"/\\u003e\\n
+        \     \\u003cpath d=\\\"M15.58 25.77A8.845 8.845 0 0 0 24 31.86c1.92 0 3.62-.46
+        4.97-1.31l4.79 3.71C31.14 36.7 27.65 38 24 38c-5.93 0-11.01-3.4-13.45-8.36l.17-1.01
+        4.06-2.85h.8z\\\" fill=\\\"#34A853\\\"/\\u003e\\n      \\u003cpath d=\\\"M15.59
+        20.21a8.864 8.864 0 0 0 0 5.58l-5.03 3.86c-.98-2-1.53-4.25-1.53-6.64 0-2.39.55-4.64
+        1.53-6.64l1-.22 3.81 2.98.22 1.08z\\\" fill=\\\"#FBBC05\\\"/\\u003e\\n      \\u003cpath
+        d=\\\"M24 14.14c2.11 0 4.02.75 5.52 1.98l4.36-4.36C31.22 9.43 27.81 8 24 8c-5.93
+        0-11.01 3.4-13.45 8.36l5.03 3.85A8.86 8.86 0 0 1 24 14.14z\\\" fill=\\\"#EA4335\\\"/\\u003e\\n
+        \   \\u003c/svg\\u003e\\n    \\u003cdiv class=\\\"gradient-container\\\"\\u003e\\u003cdiv
+        class=\\\"gradient\\\"\\u003e\\u003c/div\\u003e\\u003c/div\\u003e\\n  \\u003c/div\\u003e\\n
+        \ \\u003cdiv class=\\\"carousel\\\"\\u003e\\n    \\u003ca class=\\\"chip\\\"
+        href=\\\"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF43PU20CCJg4KtRhsPx8DNocSEzhBwRShWXM3XH2fJ3iUnpag9vB-zskEc0TkpG_uiotwASRE1Eigmzi3dfOhUR4eXzcnd5AzMrqxe9RT5y88dQ38wUPZRg_DPLLw5K1WAWTeWZfM2lxHD7kRAToU6Zk2ZyitZ8eufG8LQJkos0JcoFm6p_CZaA-rrPT7FMz4JD0K_RA8=\\\"\\u003elatest
+        Ruby version\\u003c/a\\u003e\\n    \\u003ca class=\\\"chip\\\" href=\\\"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHjtb_JOSe1rN_YgXiuCp7FaAugbDrPYFKLvpY4wMvA2CFb8hGiOVCjMWStqZeqrNRBtqQ_lRTA-9HDN1DkKnXavb9vPdi_0keGL5jtVqtAz8LmgFohJXGmfZ0F3ZV2ohkrWjRfv4cVzLsAQ-GlQZpO5pUOBDIHSuH6vDaFlUn1IcfJGUaJU_08nI1U84x-tW9z4Tu7PkqrIF9aaGqe2O4=\\\"\\u003ecurrent
+        ruby version release\\u003c/a\\u003e\\n  \\u003c/div\\u003e\\n\\u003c/div\\u003e\\n\"},\"retrievalMetadata\":
+        {}}}],\"usageMetadata\": {\"promptTokenCount\": 68,\"candidatesTokenCount\":
+        37,\"totalTokenCount\": 105,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 68}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 37}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:00.614339Z\",\"responseId\": \"tDvhasO_Je-R9LsPovS8gQM\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:03:01 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto, and what is the latest Ruby version?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_140042","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a1+yh7A18VG3wEoWbaWV0wBja7PgOp8O8HHqj3NkY9fZWtqkdyAk4p1/NoMqxEWkqQ/WJyiSI6JBmvxg1TVT7BZCYqdja1keRqt/5KmoWtCdm07H6YVQkY4="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_140042","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]},{"googleSearch":{}}],"toolConfig":{"includeServerSideToolInvocations":true}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:03:03 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicm9sZSI6ICJtb2RlbCIsInBhcnRzIjogW3sidGV4dCI6ICIqICoqIn1dfX1dLCJ1c2FnZU1ldGFkYXRhIjogeyJ0cmFmZmljVHlwZSI6ICJPTl9ERU1BTkQifSwibW9kZWxWZXJzaW9uIjogImdlbWluaS0zLjUtZmxhc2gtbGl0ZSIsImNyZWF0ZVRpbWUiOiAiMjAyNi0xMC0yOFQwMDowMzowMS45NjUwNTZaIiwicmVzcG9uc2VJZCI6ICJ0VHZoYXNEek90V1Y5THNQNXJYUzZRYyJ9DQoNCmRhdGE6IHsiY2FuZGlkYXRlcyI6IFt7ImNvbnRlbnQiOiB7InJvbGUiOiAibW9kZWwiLCJwYXJ0cyI6IFt7InRleHQiOiAiV2VhdGhlciBpbiBUb3JvbnRvOioqIEl0IGlzIGN1cnJlbnRseSAxNcKwQy5cbiogKipMYXRlc3QifV19fV0sInVzYWdlTWV0YWRhdGEiOiB7InRyYWZmaWNUeXBlIjogIk9OX0RFTUFORCJ9LCJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwiY3JlYXRlVGltZSI6ICIyMDI2LTEwLTI4VDAwOjAzOjAxLjk2NTA1NloiLCJyZXNwb25zZUlkIjogInRUdmhhc0R6T3RXVjlMc1A1clhTNlFjIn0NCg0KZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicm9sZSI6ICJtb2RlbCIsInBhcnRzIjogW3sidGV4dCI6ICIgUnVieSBWZXJzaW9uOioqIFRoZSBjdXJyZW50IHN0YWJsZSB2ZXJzaW9uIGJyYW5jaCBpcyBSdWJ5IDQuMCAod2l0aCAqKlJ1YnkgNC4wLjkifV19fV0sInVzYWdlTWV0YWRhdGEiOiB7InRyYWZmaWNUeXBlIjogIk9OX0RFTUFORCJ9LCJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwiY3JlYXRlVGltZSI6ICIyMDI2LTEwLTI4VDAwOjAzOjAxLjk2NTA1NloiLCJyZXNwb25zZUlkIjogInRUdmhhc0R6T3RXVjlMc1A1clhTNlFjIn0NCg0KZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicm9sZSI6ICJtb2RlbCIsInBhcnRzIjogW3sidGV4dCI6ICIqKiBiZWluZyB0aGUgbGF0ZXN0IHBhdGNoIHJlbGVhc2UpLiBUaGVyZSBpcyBhbHNvIGEifV19fV0sInVzYWdlTWV0YWRhdGEiOiB7InRyYWZmaWNUeXBlIjogIk9OX0RFTUFORCJ9LCJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwiY3JlYXRlVGltZSI6ICIyMDI2LTEwLTI4VDAwOjAzOjAxLjk2NTA1NloiLCJyZXNwb25zZUlkIjogInRUdmhhc0R6T3RXVjlMc1A1clhTNlFjIn0NCg0KZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicm9sZSI6ICJtb2RlbCIsInBhcnRzIjogW3sidGV4dCI6ICIgcHJldmlldyByZWxlYXNlIGF2YWlsYWJsZSBmb3IgdGhlIHVwY29taW5nIHZlcnNpb24gKGBSdWJ5IDQuMS4wLXByZXZpZXcxYCkifV19fV0sInVzYWdlTWV0YWRhdGEiOiB7InRyYWZmaWNUeXBlIjogIk9OX0RFTUFORCJ9LCJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwiY3JlYXRlVGltZSI6ICIyMDI2LTEwLTI4VDAwOjAzOjAxLjk2NTA1NloiLCJyZXNwb25zZUlkIjogInRUdmhhc0R6T3RXVjlMc1A1clhTNlFjIn0NCg0KZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicm9sZSI6ICJtb2RlbCIsInBhcnRzIjogW3sidGV4dCI6ICIuIn1dfX1dLCJ1c2FnZU1ldGFkYXRhIjogeyJ0cmFmZmljVHlwZSI6ICJPTl9ERU1BTkQifSwibW9kZWxWZXJzaW9uIjogImdlbWluaS0zLjUtZmxhc2gtbGl0ZSIsImNyZWF0ZVRpbWUiOiAiMjAyNi0xMC0yOFQwMDowMzowMS45NjUwNTZaIiwicmVzcG9uc2VJZCI6ICJ0VHZoYXNEek90V1Y5THNQNXJYUzZRYyJ9DQoNCmRhdGE6IHsiY2FuZGlkYXRlcyI6IFt7ImNvbnRlbnQiOiB7InJvbGUiOiAibW9kZWwiLCJwYXJ0cyI6IFt7InRleHQiOiAiIiwidGhvdWdodFNpZ25hdHVyZSI6ICJBWTg5YTErQTFReTJ0YjBBY0NFWW4vVHY2cmM2VS90NG5meHZSWm00WTBpTktrV2hZQS82VVk5VkJ3RHcwOXZVdHE4YUFEcUJNOHo2UlA1VzN5YllIS3BtaG5xYkhkL2VyOUU4SUJoT2lLNWs0dFh6S25HTE43cXZ0cEk9In1dfSwiZmluaXNoUmVhc29uIjogIlNUT1AiLCJncm91bmRpbmdNZXRhZGF0YSI6IHsid2ViU2VhcmNoUXVlcmllcyI6IFsibGF0ZXN0IFJ1YnkgdmVyc2lvbiAyMDI2IiwiY3VycmVudCBzdGFibGUgUnVieSB2ZXJzaW9uIl0sInNlYXJjaEVudHJ5UG9pbnQiOiB7InJlbmRlcmVkQ29udGVudCI6ICJcdTAwM2NzdHlsZVx1MDAzZVxuLmNvbnRhaW5lciB7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGJvcmRlci1yYWRpdXM6IDhweDtcbiAgZGlzcGxheTogZmxleDtcbiAgZm9udC1mYW1pbHk6IEdvb2dsZSBTYW5zLCBSb2JvdG8sIHNhbnMtc2VyaWY7XG4gIGZvbnQtc2l6ZTogMTRweDtcbiAgbGluZS1oZWlnaHQ6IDIwcHg7XG4gIHBhZGRpbmc6IDhweCAxMnB4O1xufVxuLmNoaXAge1xuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIGJvcmRlcjogc29saWQgMXB4O1xuICBib3JkZXItcmFkaXVzOiAxNnB4O1xuICBtaW4td2lkdGg6IDE0cHg7XG4gIHBhZGRpbmc6IDVweCAxNnB4O1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIHVzZXItc2VsZWN0OiBub25lO1xuICBtYXJnaW46IDAgOHB4O1xuICAtd2Via2l0LXRhcC1oaWdobGlnaHQtY29sb3I6IHRyYW5zcGFyZW50O1xufVxuLmNhcm91c2VsIHtcbiAgb3ZlcmZsb3c6IGF1dG87XG4gIHNjcm9sbGJhci13aWR0aDogbm9uZTtcbiAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcbiAgbWFyZ2luLXJpZ2h0OiAtMTJweDtcbn1cbi5oZWFkbGluZSB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIG1hcmdpbi1yaWdodDogNHB4O1xufVxuLmdyYWRpZW50LWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbn1cbi5ncmFkaWVudCB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoM3B4LCAtOXB4KTtcbiAgaGVpZ2h0OiAzNnB4O1xuICB3aWR0aDogOXB4O1xufVxuQG1lZGlhIChwcmVmZXJzLWNvbG9yLXNjaGVtZTogbGlnaHQpIHtcbiAgLmNvbnRhaW5lciB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI2ZhZmFmYTtcbiAgICBib3gtc2hhZG93OiAwIDAgMCAxcHggIzAwMDAwMDBmO1xuICB9XG4gIC5oZWFkbGluZS1sYWJlbCB7XG4gICAgY29sb3I6ICMxZjFmMWY7XG4gIH1cbiAgLmNoaXAge1xuICAgIGJhY2tncm91bmQtY29sb3I6ICNmZmZmZmY7XG4gICAgYm9yZGVyLWNvbG9yOiAjZDJkMmQyO1xuICAgIGNvbG9yOiAjNWU1ZTVlO1xuICAgIHRleHQtZGVjb3JhdGlvbjogbm9uZTtcbiAgfVxuICAuY2hpcDpob3ZlciB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI2YyZjJmMjtcbiAgfVxuICAuY2hpcDpmb2N1cyB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI2YyZjJmMjtcbiAgfVxuICAuY2hpcDphY3RpdmUge1xuICAgIGJhY2tncm91bmQtY29sb3I6ICNkOGQ4ZDg7XG4gICAgYm9yZGVyLWNvbG9yOiAjYjZiNmI2O1xuICB9XG4gIC5sb2dvLWRhcmsge1xuICAgIGRpc3BsYXk6IG5vbmU7XG4gIH1cbiAgLmdyYWRpZW50IHtcbiAgICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQoOTBkZWcsICNmYWZhZmEgMTUlLCAjZmFmYWZhMDAgMTAwJSk7XG4gIH1cbn1cbkBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHtcbiAgLmNvbnRhaW5lciB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzFmMWYxZjtcbiAgICBib3gtc2hhZG93OiAwIDAgMCAxcHggI2ZmZmZmZjI2O1xuICB9XG4gIC5oZWFkbGluZS1sYWJlbCB7XG4gICAgY29sb3I6ICNmZmY7XG4gIH1cbiAgLmNoaXAge1xuICAgIGJhY2tncm91bmQtY29sb3I6ICMyYzJjMmM7XG4gICAgYm9yZGVyLWNvbG9yOiAjM2M0MDQzO1xuICAgIGNvbG9yOiAjZmZmO1xuICAgIHRleHQtZGVjb3JhdGlvbjogbm9uZTtcbiAgfVxuICAuY2hpcDpob3ZlciB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzM1MzUzNjtcbiAgfVxuICAuY2hpcDpmb2N1cyB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzM1MzUzNjtcbiAgfVxuICAuY2hpcDphY3RpdmUge1xuICAgIGJhY2tncm91bmQtY29sb3I6ICM0NjQ4NDk7XG4gICAgYm9yZGVyLWNvbG9yOiAjNTM1NzViO1xuICB9XG4gIC5sb2dvLWxpZ2h0IHtcbiAgICBkaXNwbGF5OiBub25lO1xuICB9XG4gIC5ncmFkaWVudCB7XG4gICAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDkwZGVnLCAjMWYxZjFmIDE1JSwgIzFmMWYxZjAwIDEwMCUpO1xuICB9XG59XG5cdTAwM2Mvc3R5bGVcdTAwM2Vcblx1MDAzY2RpdiBjbGFzcz1cImNvbnRhaW5lclwiXHUwMDNlXG4gIFx1MDAzY2RpdiBjbGFzcz1cImhlYWRsaW5lXCJcdTAwM2VcbiAgICBcdTAwM2NzdmcgY2xhc3M9XCJsb2dvLWxpZ2h0XCIgd2lkdGg9XCIxOFwiIGhlaWdodD1cIjE4XCIgdmlld0JveD1cIjkgOSAzNSAzNVwiIGZpbGw9XCJub25lXCIgeG1sbnM9XCJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Z1wiXHUwMDNlXG4gICAgICBcdTAwM2NwYXRoIGZpbGwtcnVsZT1cImV2ZW5vZGRcIiBjbGlwLXJ1bGU9XCJldmVub2RkXCIgZD1cIk00Mi44NjIyIDI3LjAwNjRDNDIuODYyMiAyNS43ODM5IDQyLjc1MjUgMjQuNjA4NCA0Mi41NDg3IDIzLjQ3OTlIMjYuMzEwOVYzMC4xNTY4SDM1LjU4OTdDMzUuMTgyMSAzMi4zMDQxIDMzLjk1OTYgMzQuMTIyMiAzMi4xMjU4IDM1LjM0NDhWMzkuNjg2NEgzNy43MjEzQzQwLjk4MTQgMzYuNjc3IDQyLjg2MjIgMzIuMjU3MSA0Mi44NjIyIDI3LjAwNjRWMjcuMDA2NFpcIiBmaWxsPVwiIzQyODVGNFwiL1x1MDAzZVxuICAgICAgXHUwMDNjcGF0aCBmaWxsLXJ1bGU9XCJldmVub2RkXCIgY2xpcC1ydWxlPVwiZXZlbm9kZFwiIGQ9XCJNMjYuMzEwOSA0My44NTU1QzMwLjk2NTkgNDMuODU1NSAzNC44Njg3IDQyLjMxOTUgMzcuNzIxMyAzOS42ODYzTDMyLjEyNTggMzUuMzQ0N0MzMC41ODk4IDM2LjM3OTIgMjguNjMwNiAzNy4wMDYxIDI2LjMxMDkgMzcuMDA2MUMyMS44MjgyIDM3LjAwNjEgMTguMDE5NSAzMy45ODExIDE2LjY1NTkgMjkuOTA2SDEwLjkxOTRWMzQuMzU3M0MxMy43NTYzIDM5Ljk4NDEgMTkuNTcxMiA0My44NTU1IDI2LjMxMDkgNDMuODU1NVY0My44NTU1WlwiIGZpbGw9XCIjMzRBODUzXCIvXHUwMDNlXG4gICAgICBcdTAwM2NwYXRoIGZpbGwtcnVsZT1cImV2ZW5vZGRcIiBjbGlwLXJ1bGU9XCJldmVub2RkXCIgZD1cIk0xNi42NTU5IDI5Ljg5MDRDMTYuMzExMSAyOC44NTU5IDE2LjEwNzQgMjcuNzU4OCAxNi4xMDc0IDI2LjYxNDZDMTYuMTA3NCAyNS40NzA0IDE2LjMxMTEgMjQuMzczMyAxNi42NTU5IDIzLjMzODhWMTguODg3NUgxMC45MTk0QzkuNzQzODggMjEuMjA3MiA5LjA2OTkyIDIzLjgyNDcgOS4wNjk5MiAyNi42MTQ2QzkuMDY5OTIgMjkuNDA0NSA5Ljc0Mzg4IDMyLjAyMiAxMC45MTk0IDM0LjM0MTdMMTUuMzg2NCAzMC44NjIxTDE2LjY1NTkgMjkuODkwNFYyOS44OTA0WlwiIGZpbGw9XCIjRkJCQzA1XCIvXHUwMDNlXG4gICAgICBcdTAwM2NwYXRoIGZpbGwtcnVsZT1cImV2ZW5vZGRcIiBjbGlwLXJ1bGU9XCJldmVub2RkXCIgZD1cIk0yNi4zMTA5IDE2LjIzODZDMjguODUgMTYuMjM4NiAzMS4xMDcgMTcuMTE2NCAzMi45MDk1IDE4LjgwOTFMMzcuODQ2NiAxMy44NzE5QzM0Ljg1MyAxMS4wODIgMzAuOTY1OSA5LjM3MzYgMjYuMzEwOSA5LjM3MzZDMTkuNTcxMiA5LjM3MzYgMTMuNzU2MyAxMy4yNDUgMTAuOTE5NCAxOC44ODc1TDE2LjY1NTkgMjMuMzM4OEMxOC4wMTk1IDE5LjI2MzYgMjEuODI4MiAxNi4yMzg2IDI2LjMxMDkgMTYuMjM4NlYxNi4yMzg2WlwiIGZpbGw9XCIjRUE0MzM1XCIvXHUwMDNlXG4gICAgXHUwMDNjL3N2Z1x1MDAzZVxuICAgIFx1MDAzY3N2ZyBjbGFzcz1cImxvZ28tZGFya1wiIHdpZHRoPVwiMThcIiBoZWlnaHQ9XCIxOFwiIHZpZXdCb3g9XCIwIDAgNDggNDhcIiB4bWxucz1cImh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnXCJcdTAwM2VcbiAgICAgIFx1MDAzY2NpcmNsZSBjeD1cIjI0XCIgY3k9XCIyM1wiIGZpbGw9XCIjRkZGXCIgcj1cIjIyXCIvXHUwMDNlXG4gICAgICBcdTAwM2NwYXRoIGQ9XCJNMzMuNzYgMzQuMjZjMi43NS0yLjU2IDQuNDktNi4zNyA0LjQ5LTExLjI2IDAtLjg5LS4wOC0xLjg0LS4yOS0zSDI0LjAxdjUuOTloOC4wM2MtLjQgMi4wMi0xLjUgMy41Ni0zLjA3IDQuNTZ2Ljc1bDMuOTEgMi45N2guODh6XCIgZmlsbD1cIiM0Mjg1RjRcIi9cdTAwM2VcbiAgICAgIFx1MDAzY3BhdGggZD1cIk0xNS41OCAyNS43N0E4Ljg0NSA4Ljg0NSAwIDAgMCAyNCAzMS44NmMxLjkyIDAgMy42Mi0uNDYgNC45Ny0xLjMxbDQuNzkgMy43MUMzMS4xNCAzNi43IDI3LjY1IDM4IDI0IDM4Yy01LjkzIDAtMTEuMDEtMy40LTEzLjQ1LTguMzZsLjE3LTEuMDEgNC4wNi0yLjg1aC44elwiIGZpbGw9XCIjMzRBODUzXCIvXHUwMDNlXG4gICAgICBcdTAwM2NwYXRoIGQ9XCJNMTUuNTkgMjAuMjFhOC44NjQgOC44NjQgMCAwIDAgMCA1LjU4bC01LjAzIDMuODZjLS45OC0yLTEuNTMtNC4yNS0xLjUzLTYuNjQgMC0yLjM5LjU1LTQuNjQgMS41My02LjY0bDEtLjIyIDMuODEgMi45OC4yMiAxLjA4elwiIGZpbGw9XCIjRkJCQzA1XCIvXHUwMDNlXG4gICAgICBcdTAwM2NwYXRoIGQ9XCJNMjQgMTQuMTRjMi4xMSAwIDQuMDIuNzUgNS41MiAxLjk4bDQuMzYtNC4zNkMzMS4yMiA5LjQzIDI3LjgxIDggMjQgOGMtNS45MyAwLTExLjAxIDMuNC0xMy40NSA4LjM2bDUuMDMgMy44NUE4Ljg2IDguODYgMCAwIDEgMjQgMTQuMTR6XCIgZmlsbD1cIiNFQTQzMzVcIi9cdTAwM2VcbiAgICBcdTAwM2Mvc3ZnXHUwMDNlXG4gICAgXHUwMDNjZGl2IGNsYXNzPVwiZ3JhZGllbnQtY29udGFpbmVyXCJcdTAwM2VcdTAwM2NkaXYgY2xhc3M9XCJncmFkaWVudFwiXHUwMDNlXHUwMDNjL2Rpdlx1MDAzZVx1MDAzYy9kaXZcdTAwM2VcbiAgXHUwMDNjL2Rpdlx1MDAzZVxuICBcdTAwM2NkaXYgY2xhc3M9XCJjYXJvdXNlbFwiXHUwMDNlXG5cdTAwM2NhIGNsYXNzPVwiY2hpcFwiIGhyZWY9XCJodHRwczovL3d3dy5nb29nbGUuY29tL3NlYXJjaD9xPWxhdGVzdCtSdWJ5K3ZlcnNpb24rMjAyNiZjbGllbnQ9YXBwLXZlcnRleC1ncm91bmRpbmcmc2FmZXNlYXJjaD1hY3RpdmVcIlx1MDAzZWxhdGVzdCBSdWJ5IHZlcnNpb24gMjAyNlx1MDAzYy9hXHUwMDNlXG5cdTAwM2NhIGNsYXNzPVwiY2hpcFwiIGhyZWY9XCJodHRwczovL3d3dy5nb29nbGUuY29tL3NlYXJjaD9xPWN1cnJlbnQrc3RhYmxlK1J1YnkrdmVyc2lvbiZjbGllbnQ9YXBwLXZlcnRleC1ncm91bmRpbmcmc2FmZXNlYXJjaD1hY3RpdmVcIlx1MDAzZWN1cnJlbnQgc3RhYmxlIFJ1YnkgdmVyc2lvblx1MDAzYy9hXHUwMDNlXG4gIFx1MDAzYy9kaXZcdTAwM2Vcblx1MDAzYy9kaXZcdTAwM2UifSwiZ3JvdW5kaW5nQ2h1bmtzIjogW3sid2ViIjogeyJ1cmkiOiAiaHR0cHM6Ly92ZXJ0ZXhhaXNlYXJjaC5jbG91ZC5nb29nbGUuY29tL2dyb3VuZGluZy1hcGktcmVkaXJlY3QvQVVaSVlRRW5rMkNTcXlnSDVPVVJSeWJOdE03eDN2MlJVbXNvWHUwTnZ1cHU2OEFsbGNvVTVBQ0dqdlRXN2kzNzhfdFAwZE9wZFo2NnkxQl9pa2V3M1EyNkpEd3MwTEE3UWRCLUhmcm9vUFBDOXJBcWtmT2ljRVo3UVQxMkVQaFZkdDFYMnZBUTFBPT0iLCJ0aXRsZSI6ICJydWJ5LWxhbmcub3JnIiwiZG9tYWluIjogInJ1YnktbGFuZy5vcmcifX0seyJ3ZWIiOiB7InVyaSI6ICJodHRwczovL3ZlcnRleGFpc2VhcmNoLmNsb3VkLmdvb2dsZS5jb20vZ3JvdW5kaW5nLWFwaS1yZWRpcmVjdC9BVVpJWVFHY1BsVENzcXlnWEJzbDBEZ0VDM2dLTTBCcE9Id1dKcmVEbTRsNHAzZGxBazdEdHhDSjlkYlpOVldYTlZ2RVhyN3dNelhocWhKdld6MFFSb0RVeWV4V05STWR6VjY0R3hrYjVWM3diV0M0bFEwT3k2S0xXYnRmMWRiREV6d3lGR2pNZDhDOFk0SjlBSkwtZHNmX1hQLVVhU2FKX1RqaHZUUkJCV0xYIiwidGl0bGUiOiAicnVieS1sYW5nLm9yZyIsImRvbWFpbiI6ICJydWJ5LWxhbmcub3JnIn19LHsid2ViIjogeyJ1cmkiOiAiaHR0cHM6Ly92ZXJ0ZXhhaXNlYXJjaC5jbG91ZC5nb29nbGUuY29tL2dyb3VuZGluZy1hcGktcmVkaXJlY3QvQVVaSVlRR1pKRmgwRWhOeE50Z18xaERuQ0xvM3pCbjdJeEFzQXg1ZkctLXoydEQ5QUVuRW5ac2dGazF1VHJCMWtBMzJYU0Y1QXRwNmFyeG5WS25OWkNhWkFCM3NlQUg5N25tRmRKVURTMUI1Z1h6cTdPRlFjTHpmb0tNRWpkbDZIM3lKUzJMWThBPT0iLCJ0aXRsZSI6ICJydWJ5LWxhbmcub3JnIiwiZG9tYWluIjogInJ1YnktbGFuZy5vcmcifX1dLCJncm91bmRpbmdTdXBwb3J0cyI6IFt7InNlZ21lbnQiOiB7InN0YXJ0SW5kZXgiOiA1MSwiZW5kSW5kZXgiOiAxNzQsInRleHQiOiAiKipMYXRlc3QgUnVieSBWZXJzaW9uOioqIFRoZSBjdXJyZW50IHN0YWJsZSB2ZXJzaW9uIGJyYW5jaCBpcyBSdWJ5IDQuMCAod2l0aCAqKlJ1YnkgNC4wLjkqKiBiZWluZyB0aGUgbGF0ZXN0IHBhdGNoIHJlbGVhc2UpIn0sImdyb3VuZGluZ0NodW5rSW5kaWNlcyI6IFswLDFdfSx7InNlZ21lbnQiOiB7InN0YXJ0SW5kZXgiOiAxNzYsImVuZEluZGV4IjogMjY2LCJ0ZXh0IjogIlRoZXJlIGlzIGFsc28gYSBwcmV2aWV3IHJlbGVhc2UgYXZhaWxhYmxlIGZvciB0aGUgdXBjb21pbmcgdmVyc2lvbiAoYFJ1YnkgNC4xLjAtcHJldmlldzFgKSJ9LCJncm91bmRpbmdDaHVua0luZGljZXMiOiBbMCwyXX1dfX1dLCJ1c2FnZU1ldGFkYXRhIjogeyJwcm9tcHRUb2tlbkNvdW50IjogOTUsImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMTAxLCJ0b3RhbFRva2VuQ291bnQiOiAxOTYsInRyYWZmaWNUeXBlIjogIk9OX0RFTUFORCIsInByb21wdFRva2Vuc0RldGFpbHMiOiBbeyJtb2RhbGl0eSI6ICJURVhUIiwidG9rZW5Db3VudCI6IDk1fV0sImNhbmRpZGF0ZXNUb2tlbnNEZXRhaWxzIjogW3sibW9kYWxpdHkiOiAiVEVYVCIsInRva2VuQ291bnQiOiAxMDF9XX0sIm1vZGVsVmVyc2lvbiI6ICJnZW1pbmktMy41LWZsYXNoLWxpdGUiLCJjcmVhdGVUaW1lIjogIjIwMjYtMTAtMjhUMDA6MDM6MDEuOTY1MDU2WiIsInJlc3BvbnNlSWQiOiAidFR2aGFzRHpPdFdWOUxzUDVyWFM2UWMifQ0KDQo=
+  recorded_at: Wed, 28 Oct 2026 00:03:03 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,105 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Row 1 has seats 1, 2
+        and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o
+        x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x.\n\nWhen you give
+        your final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":\"array\",\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"rows\":[[\"<integer>\"]],\"boards\":[[[\"x
+        | o\"]]]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:53:34 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=453
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"```json\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 245,\"candidatesTokenCount\":
+        2,\"totalTokenCount\": 247,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        245}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\n{\\n  \\\"rows\\\": [\\n    [1, 2, 3],\\n\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 245,\"candidatesTokenCount\":
+        22,\"totalTokenCount\": 267,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        245}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"    [4, 5]\\n  ],\\n  \\\"boards\\\": [\\n    [\\n
+        \     [\\\"x\\\",\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 245,\"candidatesTokenCount\": 46,\"totalTokenCount\":
+        291,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 245}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" \\\"o\\\", \\\"x\\\"],\\n      [\\\"o\\\", \\\"x\\\",
+        \\\"o\\\"],\\n      [\\\"o\\\", \\\"x\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 245,\"candidatesTokenCount\":
+        70,\"totalTokenCount\": 315,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        245}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\\", \\\"x\\\"]\\n    ],\\n    [\\n      [\\\"o\\\",
+        \\\"o\\\", \\\"x\\\"],\\n      [\\\"\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 245,\"candidatesTokenCount\": 94,\"totalTokenCount\":
+        339,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 245}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"x\\\", \\\"x\\\", \\\"o\\\"],\\n      [\\\"o\\\",
+        \\\"x\\\", \\\"x\\\"]\\n    ]\\n  \"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 245,\"candidatesTokenCount\": 118,\"totalTokenCount\":
+        363,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 245}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"]\\n}\\n```\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 245,\"candidatesTokenCount\":
+        123,\"totalTokenCount\": 368,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        245}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TyKyp//Iet90Fh8XNxx1DJjsMp1fmUzvpMhoBBwExIAkiavxhSQiYx3ifpc7fV8tfKAsfRVljTC58ecIHFFcNhjQjMz/Juvz0uPi5r5Mw6CPY8HKXxYamKr0=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        245,\"candidatesTokenCount\": 123,\"totalTokenCount\": 368,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 245}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"fTnhat_GN7zZ_uMPqPWR-Qc\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:53:34 GMT
+recorded_with: VCR 6.4.0

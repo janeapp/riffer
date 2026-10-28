@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Write a 500-word essay
+        about the sea."}]}],"generationConfig":{"maxOutputTokens":20}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:58:43 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=443
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"The
+        sea is perhaps the most powerful and captivating expanse on Earth, covering\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 14,\"candidatesTokenCount\":
+        14,\"totalTokenCount\": 28,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        14}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"szrhavH1Dfuhz7IP8YzDwQ4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" over seventy\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 14,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 30,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        14}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"szrhavH1Dfuhz7IP8YzDwQ4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TWufAlMknnlFa9Q2nAaF7BcOx4gJu3UBjXH/9EAL/UsfRb5jUx627amPDceAZd6XqrNRUMr3IUnO0UO3OMVqcLG4H2hw4/ZBT+CxZ4zdtRpRsy1tJdy53Qo0=\"}],\"role\":
+        \"model\"},\"finishReason\": \"MAX_TOKENS\",\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 14,\"candidatesTokenCount\": 16,\"totalTokenCount\":
+        30,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 14}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"szrhavH1Dfuhz7IP8YzDwQ4\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:58:43 GMT
+recorded_with: VCR 6.4.0

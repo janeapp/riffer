@@ -1,0 +1,81 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Order A-17 has 2 items:
+        a book costing $12.99 and a pen costing $1.50\n\nWhen you give your final
+        answer, respond with only a JSON object that conforms to the following JSON
+        Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order
+        identifier\"},\"items\":{\"type\":\"array\",\"description\":\"Line items\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Product
+        name\"},\"price\":{\"type\":\"number\",\"description\":\"Price in dollars\"},\"quantity\":{\"type\":\"integer\",\"description\":\"Quantity
+        ordered\"}},\"required\":[\"name\",\"price\"],\"additionalProperties\":false}}},\"required\":[\"order_id\",\"items\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"order_id\":\"<string>\",\"items\":[{\"name\":\"<string>\",\"price\":\"<number>\",\"quantity\":\"<integer>\"}]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:53:28 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=411
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\\"\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 227,\"candidatesTokenCount\":
+        1,\"totalTokenCount\": 228,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        227}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"dznhavfzOKya_uMPqs_58A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"order_id\\\":\\\"A-17\\\",\\\"items\\\":[{\\\"name\\\":\\\"book\\\",\\\"price\\\":1\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 227,\"candidatesTokenCount\":
+        19,\"totalTokenCount\": 246,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        227}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"dznhavfzOKya_uMPqs_58A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"2.99,\\\"quantity\\\":1},{\\\"name\\\":\\\"pen\\\",\\\"price\\\":1.50,\\\"quantity\\\":1}]}\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 227,\"candidatesTokenCount\":
+        43,\"totalTokenCount\": 270,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        227}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"dznhavfzOKya_uMPqs_58A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T0r48jLEwHAMKaIN3BCzRtEMCBrogONikTlTKiZFIz31rFGfj3fa3VCdXNXWXYzuEG3ZsPc7Pbu9x73ZNfy4C1JgkMMhm97axxcvAaliA81djbz40p0vLThA=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        227,\"candidatesTokenCount\": 43,\"totalTokenCount\": 270,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 227}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"dznhavfzOKya_uMPqs_58A4\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:53:28 GMT
+recorded_with: VCR 6.4.0
