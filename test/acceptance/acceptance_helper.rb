@@ -10,57 +10,69 @@ ACCEPTANCE_RECORD_MODE = ENV.fetch("RIFFER_RECORD", "none").to_sym
 
 ACCEPTANCE_FIXTURES_PATH = File.expand_path("fixtures", __dir__)
 
-ACCEPTANCE_MODELS = {
-  gemini: "gemini-3.5-flash-lite",
-  google_cloud: "gemini-3.5-flash-lite",
-}.freeze
+ACCEPTANCE_CATALOG_PATH = File.join(ACCEPTANCE_FIXTURES_PATH, "catalog.json")
 
 ACCEPTANCE_MODES = %i[generate stream].freeze
 
-# Riffer passes model options through as-is, so each provider names its
-# output token limit its own way.
-ACCEPTANCE_MAX_TOKENS_OPTION = {
-  gemini: :maxOutputTokens,
-  google_cloud: :maxOutputTokens,
+# Every acceptance file runs against each provider here unless it excludes it,
+# so a new provider joins every feature by default. An entry holds what the
+# tests can't derive: riffer passes model options and web_search options
+# through as-is, so their names are the provider's own.
+ACCEPTANCE_PROVIDERS = {
+  gemini: {
+    model: "gemini-3.5-flash-lite",
+    max_tokens_option: :maxOutputTokens,
+    web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
+    configure: -> { Riffer.config.gemini.api_key = ENV.fetch("GEMINI_API_KEY", "test_api_key") },
+    break_credentials: -> { Riffer.config.gemini.api_key = "invalid-api-key" },
+    reset: -> { Riffer.config.gemini.api_key = nil },
+  },
+  google_cloud: {
+    model: "gemini-3.5-flash-lite",
+    max_tokens_option: :maxOutputTokens,
+    web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
+    configure: lambda do
+      Riffer.config.google_cloud.project_id = ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project")
+      Riffer.config.google_cloud.credentials = Google::Auth::BearerTokenCredentials.new(
+        token: ENV.fetch("GOOGLE_CLOUD_ACCESS_TOKEN", "test_access_token"),
+      )
+    end,
+    break_credentials: lambda do
+      Riffer.config.google_cloud.credentials = Google::Auth::BearerTokenCredentials.new(token: "invalid-access-token")
+    end,
+    reset: lambda do
+      Riffer.config.google_cloud.project_id = nil
+      Riffer.config.google_cloud.credentials = nil
+    end,
+  },
 }.freeze
 
 def acceptance_cassette(name, &)
   VCR.use_cassette("acceptance/#{name}", record: ACCEPTANCE_RECORD_MODE, &)
 end
 
+# +except+ maps each excluded provider to the reason it can't run the feature.
+def acceptance_providers(except: {})
+  unknown = except.keys - ACCEPTANCE_PROVIDERS.keys
+  raise ArgumentError, "Unknown acceptance providers: #{unknown.inspect}" unless unknown.empty?
+
+  ACCEPTANCE_PROVIDERS.keys - except.keys
+end
+
+def acceptance_setting(provider_name, key)
+  ACCEPTANCE_PROVIDERS.fetch(provider_name).fetch(key)
+end
+
 def configure_acceptance_provider(provider_name)
-  case provider_name
-  when :gemini
-    Riffer.config.gemini.api_key = ENV.fetch("GEMINI_API_KEY", "test_api_key")
-  when :google_cloud
-    Riffer.config.google_cloud.project_id = ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project")
-    Riffer.config.google_cloud.credentials = Google::Auth::BearerTokenCredentials.new(
-      token: ENV.fetch("GOOGLE_CLOUD_ACCESS_TOKEN", "test_access_token"),
-    )
-  else
-    raise ArgumentError, "No acceptance setup for #{provider_name.inspect}"
-  end
+  acceptance_setting(provider_name, :configure).call
 end
 
 def configure_invalid_acceptance_credentials(provider_name)
-  case provider_name
-  when :gemini
-    Riffer.config.gemini.api_key = "invalid-api-key"
-  when :google_cloud
-    Riffer.config.google_cloud.credentials = Google::Auth::BearerTokenCredentials.new(token: "invalid-access-token")
-  else
-    raise ArgumentError, "No acceptance setup for #{provider_name.inspect}"
-  end
+  acceptance_setting(provider_name, :break_credentials).call
 end
 
 def reset_acceptance_provider(provider_name)
-  case provider_name
-  when :gemini
-    Riffer.config.gemini.api_key = nil
-  when :google_cloud
-    Riffer.config.google_cloud.project_id = nil
-    Riffer.config.google_cloud.credentials = nil
-  end
+  acceptance_setting(provider_name, :reset).call
 end
 
 def acceptance_file(name)

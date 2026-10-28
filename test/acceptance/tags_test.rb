@@ -3,13 +3,13 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: tags" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
 
       it "accepts per-call tags" do
         message = acceptance_cassette("tags/#{provider_name}/per_call") do

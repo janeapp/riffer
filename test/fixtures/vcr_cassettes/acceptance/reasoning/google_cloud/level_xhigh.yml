@@ -5,8 +5,9 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"What is 17 times 23?"}]}],"systemInstruction":{"parts":[{"text":"Be
-        concise."}]},"generationConfig":{"thinkingConfig":{"thinkingLevel":"xhigh"}},"labels":{"kind":"agent","agent":""}}'
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"systemInstruction":{"parts":[{"text":"Be
+        concise."}]},"generationConfig":{"thinkingConfig":{"thinkingLevel":"high"}},"labels":{"kind":"agent","agent":""}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -20,17 +21,17 @@ http_interactions:
       - "*/*"
   response:
     status:
-      code: 400
-      message: Bad Request
+      code: 200
+      message: OK
     headers:
+      Content-Type:
+      - application/json; charset=UTF-8
       Vary:
       - Origin
       - Referer
       - X-Origin
-      Content-Type:
-      - application/json; charset=UTF-8
       Date:
-      - Wed, 28 Oct 2026 00:26:32 GMT
+      - Wed, 28 Oct 2026 00:45:31 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,22 +48,42 @@ http_interactions:
       encoding: ASCII-8BIT
       string: |
         {
-          "error": {
-            "code": 400,
-            "message": "Invalid value at 'generation_config.thinking_config.thinking_level' (type.googleapis.com/google.cloud.aiplatform.v1.GenerationConfig.ThinkingConfig.ThinkingLevel), ",
-            "status": "INVALID_ARGUMENT",
-            "details": [
-              {
-                "@type": "type.googleapis.com/google.rpc.BadRequest",
-                "fieldViolations": [
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
                   {
-                    "field": "generation_config.thinking_config.thinking_level",
-                    "description": "Invalid value at 'generation_config.thinking_config.thinking_level' (type.googleapis.com/google.cloud.aiplatform.v1.GenerationConfig.ThinkingConfig.ThinkingLevel), "
+                    "text": "391",
+                    "thoughtSignature": "AY89a18EeFCwqqr2/JIeTEHBXjB1i73ZbjbWFaPXG/aU8JJ24+/+K877VJGZyiNuImbu55utVr6lcM6GbuFy3WD1Buwv/LSbvmb1QBlej03OG3lXuHI0fJ24L/jBL752jxPVDYwlQ5YP+S0qzuN1SKwBBwPqAI8z0u0GZvd1W2abEnqU3zL6yeKps7+KBS5RoeSNvj+yL/b9lK4iJwrsasehl35w4wl+KF/YydHDPYTi4ru4iXoOwMMUjNah93E7aZ8Wac3ce9DL63YkgI0JkSp2vqoGHbQcPW54Xh5AiJtBhQVihR6zJjPP8bV5ebb3ENDskO1wTWTDUQaJZMCD3yITrQuX1l31VlfWWSmSpdT2LKObY9wAgJRHqhGdnX/xJafq+SZfwU/xAcrWLTCBO9+u6s7xkhlShk2CFgKzLGn+YHdqgjlnXACgq3Spf7o5fQuIc4qVzbh4RyuO5jlZxSIdwuiOvK11IGVdOtFm3tynOyHaD85pJl6AiqqnOxrAV0KQ3JnQxySFYcyYQl0nvSyforaXGEdFj//E/SBSxGxEqsc6yZqBG2QoUrO9E2WF6qDrdjTmYDg1Nk8GWzic98yUEitQuFXusk3jcTDyPU59hTyRbmvHcjc9HP4Ui7U5/vuuVSahYFDbMPrOswnOTA/mAuPtjtOCYmyF"
                   }
                 ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 19,
+            "candidatesTokenCount": 3,
+            "totalTokenCount": 199,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 19
               }
-            ]
-          }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 3
+              }
+            ],
+            "thoughtsTokenCount": 177
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T00:45:30.693228Z",
+          "responseId": "qkXhauynKsSpq8YP-pWK0Ag"
         }
-  recorded_at: Wed, 28 Oct 2026 00:26:32 GMT
+  recorded_at: Wed, 28 Oct 2026 00:45:31 GMT
 recorded_with: VCR 6.4.0

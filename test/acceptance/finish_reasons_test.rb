@@ -3,15 +3,15 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: finish reasons" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "finish_reasons/#{provider_name}" }
-      let(:token_limit) { { ACCEPTANCE_MAX_TOKENS_OPTION.fetch(provider_name) => 20 } }
+      let(:token_limit) { { acceptance_setting(provider_name, :max_tokens_option) => 20 } }
 
       let(:note_tool) do
         stub_tool("SaveNote") do

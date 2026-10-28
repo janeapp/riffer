@@ -3,7 +3,7 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: skills" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
@@ -11,7 +11,7 @@ describe "Acceptance: skills" do
       let(:cassette_prefix) { "skills/#{provider_name}" }
       let(:prompt) { "Review this Ruby code: def add(a, b) a + b end" }
       let(:agent) do
-        model_id = "#{provider_name}/#{ACCEPTANCE_MODELS.fetch(provider_name)}"
+        model_id = "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
         Class.new(Riffer::Agent) do
           model model_id
           instructions "You are a helpful assistant."

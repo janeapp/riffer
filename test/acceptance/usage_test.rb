@@ -3,14 +3,32 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: usage" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
-      before { configure_acceptance_provider(provider_name) }
-      after { reset_acceptance_provider(provider_name) }
+      before do
+        configure_acceptance_provider(provider_name)
+        Riffer.config.catalog_files = [ACCEPTANCE_CATALOG_PATH]
+      end
+
+      after do
+        reset_acceptance_provider(provider_name)
+        Riffer.config.catalog_files = []
+      end
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "usage/#{provider_name}" }
+
+      # The catalog's prices per million tokens, applied by hand so the check
+      # doesn't reuse riffer's own formula.
+      def expected_cost(usage)
+        rates = Riffer.config.catalog.rates_for(catalog_key)
+        cached = usage.cache_read_tokens.to_i
+        uncached = (usage.input_tokens - cached) * rates.input
+        (uncached + (cached * rates.cache_read) + (usage.output_tokens * rates.output)) / 1_000_000
+      end
+
+      let(:catalog_key) { "#{provider_name}/#{model}" }
 
       ACCEPTANCE_MODES.each do |mode|
         it "reports input and output tokens (#{mode})" do
@@ -20,6 +38,7 @@ describe "Acceptance: usage" do
 
           expect(message.token_usage.input_tokens).must_be :>, 0
           expect(message.token_usage.output_tokens).must_be :>, 0
+          expect(message.token_usage.cost).must_be_within_delta expected_cost(message.token_usage), 1e-12
         end
 
         it "reports cached input tokens on a repeated prompt (#{mode})" do
@@ -32,7 +51,10 @@ describe "Acceptance: usage" do
           end
 
           # Implicit caching is best-effort: a warm cache can hit on the first call.
-          expect(messages.map { |message| message.token_usage.cache_read_tokens.to_i }.max).must_be :>, 0
+          cached = messages.max_by { |message| message.token_usage.cache_read_tokens.to_i }.token_usage
+
+          expect(cached.cache_read_tokens.to_i).must_be :>, 0
+          expect(cached.cost).must_be_within_delta expected_cost(cached), 1e-12
         end
       end
 
@@ -67,6 +89,7 @@ describe "Acceptance: usage" do
         expect(response.steps).must_equal per_step.size
         expect(response.token_usage.input_tokens).must_equal per_step.sum(&:input_tokens)
         expect(response.token_usage.output_tokens).must_equal per_step.sum(&:output_tokens)
+        expect(response.token_usage.cost).must_be_within_delta per_step.sum(&:cost), 1e-12
       end
     end
   end

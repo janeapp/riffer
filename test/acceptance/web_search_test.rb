@@ -3,13 +3,13 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: web search" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "web_search/#{provider_name}" }
       let(:prompt) { "What is the latest stable Ruby version? Answer in one sentence." }
 
@@ -31,7 +31,7 @@ describe "Acceptance: web search" do
         end
 
         it "passes web_search options through (#{mode})" do
-          options = { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } }
+          options = acceptance_setting(provider_name, :web_search_options)
           message = acceptance_cassette("#{cassette_prefix}/options_#{mode}") do
             call_provider(provider, mode, prompt: prompt, model: model, web_search: options)
           end

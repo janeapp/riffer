@@ -3,15 +3,13 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: reasoning" do
-  supported_levels = %i[low medium high]
-
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "reasoning/#{provider_name}" }
       let(:question) { Riffer::Messages::User.new("What is the weather in Toronto?") }
 
@@ -41,36 +39,21 @@ describe "Acceptance: reasoning" do
         end.new
       end
 
-      supported_levels.each do |level|
-        it "answers at reasoning level #{level}" do
-          response = acceptance_cassette("#{cassette_prefix}/level_#{level}") do
-            reasoning_agent(level).generate("What is 17 times 23? Reply with just the number.")
-          end
-
-          expect(response.outcome.reason).must_equal :completed
-          expect(response.content).must_include "391"
-        end
-      end
-
-      it "raises the provider's error for a level the model rejects" do
-        error = acceptance_cassette("#{cassette_prefix}/level_xhigh") do
-          expect { reasoning_agent(:xhigh).generate("What is 17 times 23?") }.must_raise Riffer::APIError
-        end
-
-        expect(error.status).must_equal 400
-        expect(error.message).must_include "thinking_level"
-      end
-
-      describe "with a catalog entry" do
-        before { Riffer.config.catalog_files = [File.join(ACCEPTANCE_FIXTURES_PATH, "catalog.json")] }
+      describe "with the test catalog" do
+        before { Riffer.config.catalog_files = [ACCEPTANCE_CATALOG_PATH] }
         after { Riffer.config.catalog_files = [] }
 
-        it "sends the catalog's params for the level" do
-          response = acceptance_cassette("#{cassette_prefix}/level_max_catalog") do
-            reasoning_agent(:max).generate("What is 17 times 23? Reply with just the number.")
-          end
+        # The catalog maps only the levels a model's provider default can't
+        # serve, so the other levels exercise the default.
+        Riffer::Agent::Config::REASONING_LEVELS.each do |level|
+          it "answers at reasoning level #{level}" do
+            response = acceptance_cassette("#{cassette_prefix}/level_#{level}") do
+              reasoning_agent(level).generate("What is 17 times 23? Reply with just the number.")
+            end
 
-          expect(response.content).must_include "391"
+            expect(response.outcome.reason).must_equal :completed
+            expect(response.content).must_include "391"
+          end
         end
       end
 
@@ -99,7 +82,7 @@ describe "Acceptance: reasoning" do
           foreign = Riffer::Messages::Assistant::ReasoningPart.new(
             type: :encrypted,
             data: "not-a-valid-signature",
-            format: "anthropic-messages-v1",
+            format: "acceptance-foreign-v1",
           )
           messages = [
             Riffer::Messages::User.new("My name is Ada."),

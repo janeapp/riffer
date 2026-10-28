@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-0-does-not-exist:streamGenerateContent?alt=sse
+    uri: https://generativelanguage.googleapis.com/v1beta/models/riffer-unknown-model:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
@@ -29,11 +29,11 @@ http_interactions:
       Content-Type:
       - text/event-stream
       Date:
-      - Tue, 27 Oct 2026 23:59:40 GMT
+      - Wed, 28 Oct 2026 00:45:34 GMT
       Server:
       - scaffolding on HTTPServer2
       Content-Length:
-      - '285'
+      - '282'
       X-Xss-Protection:
       - '0'
       X-Frame-Options:
@@ -41,7 +41,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=87
+      - gfet4t7; dur=99
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -50,9 +50,9 @@ http_interactions:
         {
           "error": {
             "code": 404,
-            "message": "models/gemini-0-does-not-exist is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.",
+            "message": "models/riffer-unknown-model is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.",
             "status": "NOT_FOUND"
           }
         }
-  recorded_at: Tue, 27 Oct 2026 23:59:40 GMT
+  recorded_at: Wed, 28 Oct 2026 00:45:34 GMT
 recorded_with: VCR 6.4.0

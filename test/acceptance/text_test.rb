@@ -3,13 +3,13 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: text" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
 
       ACCEPTANCE_MODES.each do |mode|
         it "answers a prompt (#{mode})" do
@@ -94,7 +94,7 @@ describe "Acceptance: text" do
 
       it "answers through an Agent" do
         agent = Class.new(Riffer::Agent) do
-          model "#{provider_name}/#{ACCEPTANCE_MODELS.fetch(provider_name)}"
+          model "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
           instructions "Be concise."
         end.new
 

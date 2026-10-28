@@ -5,13 +5,13 @@ require "acceptance/acceptance_helper"
 describe "Acceptance: structured output" do
   strategies = %i[native prompted]
 
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "structured_output/#{provider_name}" }
 
       # Each scenario's let(:params) and let(:prompt) feed this.
@@ -344,7 +344,7 @@ describe "Acceptance: structured output" do
         strategies.each do |strategy|
           it "returns the validated object (#{strategy})" do
             agent = Class.new(Riffer::Agent) do
-              model "#{provider_name}/#{ACCEPTANCE_MODELS.fetch(provider_name)}"
+              model "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
               instructions "Analyze the sentiment of the given text."
               structured_output strategy: strategy do
                 required :sentiment, String, enum: %w[positive neutral negative], description: "The sentiment"
@@ -369,7 +369,7 @@ describe "Acceptance: structured output" do
               end
             end
             agent = Class.new(Riffer::Agent) do
-              model "#{provider_name}/#{ACCEPTANCE_MODELS.fetch(provider_name)}"
+              model "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
               instructions "Answer weather questions. Always look the weather up with the tool."
               uses_tools [weather_tool]
               structured_output strategy: strategy do

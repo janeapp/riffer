@@ -3,13 +3,13 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: errors" do
-  %i[gemini google_cloud].each do |provider_name|
+  acceptance_providers.each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }
 
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
-      let(:model) { ACCEPTANCE_MODELS.fetch(provider_name) }
+      let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "errors/#{provider_name}" }
 
       def api_error(scenario, mode, **options)
@@ -29,10 +29,10 @@ describe "Acceptance: errors" do
         end
 
         it "raises an APIError for an unknown model (#{mode})" do
-          error = api_error("unknown_model", mode, model: "gemini-0-does-not-exist")
+          error = api_error("unknown_model", mode, model: "riffer-unknown-model")
 
-          expect(error.status).must_equal 404
-          expect(error.message).must_include "404"
+          expect(400..404).must_include error.status
+          expect(error.message).must_include error.status.to_s
         end
 
         it "raises an APIError for an invalid option (#{mode})" do
