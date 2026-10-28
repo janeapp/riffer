@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Say good morning."}]}],"systemInstruction":{"parts":[{"text":"Always
+        answer in French, in one short sentence."}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:02:39 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicm9sZSI6ICJtb2RlbCIsInBhcnRzIjogW3sidGV4dCI6ICJCb25qb3VyLCJ9XX19XSwidXNhZ2VNZXRhZGF0YSI6IHsidHJhZmZpY1R5cGUiOiAiT05fREVNQU5EIn0sIm1vZGVsVmVyc2lvbiI6ICJnZW1pbmktMy41LWZsYXNoLWxpdGUiLCJjcmVhdGVUaW1lIjogIjIwMjYtMTAtMjhUMDA6MDI6MzguNzc3NTkxWiIsInJlc3BvbnNlSWQiOiAibmp2aGF2ZTZMOGlIOUxzUG81X0QwUWcifQ0KDQpkYXRhOiB7ImNhbmRpZGF0ZXMiOiBbeyJjb250ZW50IjogeyJyb2xlIjogIm1vZGVsIiwicGFydHMiOiBbeyJ0ZXh0IjogIiBib25uZSBtYXRpbsOpZSAhIn1dfX1dLCJ1c2FnZU1ldGFkYXRhIjogeyJ0cmFmZmljVHlwZSI6ICJPTl9ERU1BTkQifSwibW9kZWxWZXJzaW9uIjogImdlbWluaS0zLjUtZmxhc2gtbGl0ZSIsImNyZWF0ZVRpbWUiOiAiMjAyNi0xMC0yOFQwMDowMjozOC43Nzc1OTFaIiwicmVzcG9uc2VJZCI6ICJuanZoYXZlNkw4aUg5THNQbzVfRDBRZyJ9DQoNCmRhdGE6IHsiY2FuZGlkYXRlcyI6IFt7ImNvbnRlbnQiOiB7InJvbGUiOiAibW9kZWwiLCJwYXJ0cyI6IFt7InRleHQiOiAiIiwidGhvdWdodFNpZ25hdHVyZSI6ICJBWTg5YTErUHBvZWo4SWIwRklIL2FLMi9hYW11aWZGeVp6bzZHWDllSXVpTk1xb3BDaEFDajVNVjNpSXRjY3czNGYwL1FKZisramQxVkhzOVlkSzdVb3krdnpnV1JFTTFUWmh4V2xMMG9wKzNCckxkbGdvYzdpOE54L289In1dfSwiZmluaXNoUmVhc29uIjogIlNUT1AifV0sInVzYWdlTWV0YWRhdGEiOiB7InByb21wdFRva2VuQ291bnQiOiAxNCwiY2FuZGlkYXRlc1Rva2VuQ291bnQiOiA2LCJ0b3RhbFRva2VuQ291bnQiOiAyMCwidHJhZmZpY1R5cGUiOiAiT05fREVNQU5EIiwicHJvbXB0VG9rZW5zRGV0YWlscyI6IFt7Im1vZGFsaXR5IjogIlRFWFQiLCJ0b2tlbkNvdW50IjogMTR9XSwiY2FuZGlkYXRlc1Rva2Vuc0RldGFpbHMiOiBbeyJtb2RhbGl0eSI6ICJURVhUIiwidG9rZW5Db3VudCI6IDZ9XX0sIm1vZGVsVmVyc2lvbiI6ICJnZW1pbmktMy41LWZsYXNoLWxpdGUiLCJjcmVhdGVUaW1lIjogIjIwMjYtMTAtMjhUMDA6MDI6MzguNzc3NTkxWiIsInJlc3BvbnNlSWQiOiAibmp2aGF2ZTZMOGlIOUxzUG81X0QwUWcifQ0KDQo=
+  recorded_at: Wed, 28 Oct 2026 00:02:39 GMT
+recorded_with: VCR 6.4.0

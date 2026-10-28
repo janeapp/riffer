@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Read this order: 12 boxes,
+        due on 2026-11-03"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"quantity":{"anyOf":[{"type":"integer"},{"type":"string"}],"description":"A
+        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]},{"type":"null"}],"description":"The
+        due date, or none when there isn''t one"}},"required":["quantity","due"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:26:00 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=454
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
+        \ \\\"quantity\\\": \"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 23,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        30,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 23}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"GEHhauySFYO-qtsPltnswQ0\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"12,\\n  \\\"due\\\": \\\"2026-11-03\\\"\\n}\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 23,\"candidatesTokenCount\":
+        29,\"totalTokenCount\": 52,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        23}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"GEHhauySFYO-qtsPltnswQ0\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T+ek0hYWiZ5D+WQgoa2A1b42EEUQroSM8E41rJoRvknDa1CP4k8j+w5pZZTEU71WNJA4ZlaX/O9wiYbZ52h6/lBHKvFbqUvJNn4MBHEXhhIz5nLHiNhkIIz0=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        23,\"candidatesTokenCount\": 29,\"totalTokenCount\": 52,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 23}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"GEHhauySFYO-qtsPltnswQ0\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:00 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"I love this product,
+        it is amazing!\n\nWhen you give your final answer, respond with only a JSON
+        object that conforms to the following JSON Schema, with no other text before
+        or after it:\n\n{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]}},\"required\":[\"sentiment\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"sentiment\":\"positive | neutral |
+        negative\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"systemInstruction":{"parts":[{"text":"Analyze
+        the sentiment of the given text."}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:24 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=907
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\"sentiment\": \"positive\"}",
+                    "thoughtSignature": "EmAKXgFpFH0TtomHXREnQqH1d/widPH+av4lRi7ZBJFTsk7yDZXGRW1/2EOj+OhJ7+1E8iPwVMD44Ov43WlijoEUeiMMRld4Jc44P6VHOkFPBNxoRn22b+4c6FvyoifSGEg="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 130,
+            "candidatesTokenCount": 6,
+            "totalTokenCount": 136,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 130
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "dDnhat_0Af_K_uMPp8Sv4Q4"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:24 GMT
+recorded_with: VCR 6.4.0

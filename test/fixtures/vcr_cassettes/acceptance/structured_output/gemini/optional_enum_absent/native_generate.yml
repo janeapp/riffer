@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
+        yoga class, underwater format. The session_type enum does not cover this,
+        so return null for session_type."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:26:29 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=782
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"name\": \"Yoga class, underwater format\",\n  \"session_type\": null\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TnMocmZLqZpa/pEOj5TJOqbSuXd3D0cg5OcdIQOdumfCfC53P4HcIFkTj2yt4mZ6kbSDSLf/QjLbqrkiJ13jWwfwTXkiDGwsd9aq1URl5FwsT1PW5mkFaIWw="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 30,
+            "candidatesTokenCount": 23,
+            "totalTokenCount": 53,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 30
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "NEHhasP4IOe8qtsP5qe40Ao"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:26:29 GMT
+recorded_with: VCR 6.4.0

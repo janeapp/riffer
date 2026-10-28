@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
+        John lives at 123 Main St, Toronto"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"}},"required":["street","city"],"additionalProperties":false},{"type":"object","properties":{"error_code":{"type":"string","description":"Why
+        no address","enum":["no_address","multiple_addresses"]},"error_message":{"type":"string","description":"Explanation
+        of the error"}},"required":["error_code","error_message"],"additionalProperties":false}],"description":"The
+        address, or why none was found"}},"required":["result"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:26:16 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=671
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
+        \ \\\"result\\\": {\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 17,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        24,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 17}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"KEHhaqH3D-PT_PUPne2SoQc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\n    \\\"street\\\": \\\"123 Main St\\\",\\n    \\\"city\\\":
+        \\\"Toronto\\\"\\n  }\\n}\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 17,\"candidatesTokenCount\": 32,\"totalTokenCount\":
+        49,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 17}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"KEHhaqH3D-PT_PUPne2SoQc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tv/PSCDbcDvrLJdVf8t/9b5KQ8VxMOZStTBR7dVD6h2KcF6rH8ulvZuAAPbEypfqw5Qbr39XvjNfcUcGbmAB+oOeW0lxcwL533aacRrZYf0Wjxlzx6ubsibM=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        17,\"candidatesTokenCount\": 32,\"totalTokenCount\": 49,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 17}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"KEHhaqH3D-PT_PUPne2SoQc\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:16 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,137 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]}],"systemInstruction":{"parts":[{"text":"Use the tools to answer.
+        Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:49 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=512
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"get_weather\",\"args\": {\"city\": \"Toronto\"},\"id\": \"call_1081234\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0T7YrQKKOThsXxEcR5wOpHvaiPUgDhNwBgs7yAyAW7LmdjXuJJig8VV8nvnYquoPpcU0AhPhFkmF7IiJfMTmrrtOqDh+TAKskJQNlPEZvwg2XmHxFDjXjrBQc=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 69,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 85,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        69}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"BDrhaqPLOtTQz7IP2e2ggA0\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 69,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 85,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        69}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"BDrhaqPLOtTQz7IP2e2ggA0\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:49 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1081234","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0T7YrQKKOThsXxEcR5wOpHvaiPUgDhNwBgs7yAyAW7LmdjXuJJig8VV8nvnYquoPpcU0AhPhFkmF7IiJfMTmrrtOqDh+TAKskJQNlPEZvwg2XmHxFDjXjrBQc="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1081234","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:50 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=604
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"It\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 108,\"candidatesTokenCount\":
+        1,\"totalTokenCount\": 109,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        108}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"BTrhas2mI86Gz7IPgcCZqQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" is 15 degrees Celsius in Toronto.\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 108,\"candidatesTokenCount\":
+        10,\"totalTokenCount\": 118,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        108}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"BTrhas2mI86Gz7IPgcCZqQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T+dZmNSmrxn6U7u/w86q8dSqBoYxVGhv/ZvKVWmQjZ4DH53lEHvinUfYZ2YlbcAtovoWGlY6preuMJID5VVVww8rlG6lq8ETz+UzZg1W4fI8IQ37k2o0M9fQ=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        108,\"candidatesTokenCount\": 10,\"totalTokenCount\": 118,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 108}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"BTrhas2mI86Gz7IPgcCZqQs\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:50 GMT
+recorded_with: VCR 6.4.0

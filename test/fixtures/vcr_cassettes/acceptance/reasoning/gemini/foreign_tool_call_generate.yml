@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"skip_thought_signature_validator"}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:26:03 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=523
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "The current weather in Toronto is 15 degrees Celsius.",
+                    "thoughtSignature": "EmAKXgFpFH0T2anlke704yrDCkDZHia4yPPCViIWG4R/I470PFbVOMS9TFVvGyybVn2HQvcQFh5PAE8Q6p2y5HfEKyDIwPye6RMZTvuA4UmfU4jDs7PkS8/nZdDAFEk1fVE="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 99,
+            "candidatesTokenCount": 12,
+            "totalTokenCount": 111,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 99
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "G0HhaujdFKrUz7IPqrXisQ4"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:26:03 GMT
+recorded_with: VCR 6.4.0

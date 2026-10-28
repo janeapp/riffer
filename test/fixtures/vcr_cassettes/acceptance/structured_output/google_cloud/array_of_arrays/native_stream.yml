@@ -1,0 +1,86 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Row 1 has seats 1, 2
+        and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o
+        x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":["array","null"],"description":"Tic-tac-toe
+        boards","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows","boards"],"additionalProperties":false}}}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:26:27 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"{\\n  \\\"rows\\\": [\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:27.445080Z\",\"responseId\": \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\\n    [1, 2, 3],\\n    [4, 5]\\n  ],\\n  \"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:27.445080Z\",\"responseId\": \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\\\"boards\\\": [\\n    [\\n      [\\\"x\\\", \\\"o\\\", \\\"x\\\"],\\n
+        \     [\\\"o\\\", \\\"\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:26:27.445080Z\",\"responseId\":
+        \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"x\\\", \\\"o\\\"],\\n      [\\\"o\\\",
+        \\\"x\\\", \\\"x\\\"]\\n    ],\\n    [\\n      \"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:27.445080Z\",\"responseId\": \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"[\\\"o\\\", \\\"o\\\", \\\"x\\\"],\\n      [\\\"x\\\", \\\"x\\\", \\\"o\\\"],\\n
+        \     [\\\"o\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:26:27.445080Z\",\"responseId\":
+        \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"\\\", \\\"x\\\", \\\"x\\\"]\\n
+        \   ]\\n  ]\\n}\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:26:27.445080Z\",\"responseId\":
+        \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"AY89a1+sbUeIwoWCOBdFS325cwarOdCTUpMFnZCtg1FHAR3bUAOMJVQHFRo/yvU/6TeJj5RsleCp6e9OvECD1IWIVL0BydJGOOQn3Rrut7nzXrfVlDM/+ZCQUT4=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 270,\"candidatesTokenCount\":
+        118,\"totalTokenCount\": 388,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 270}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 118}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:27.445080Z\",\"responseId\": \"M0HhapiVG7eV9LsPlufj8Qw\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:28 GMT
+recorded_with: VCR 6.4.0

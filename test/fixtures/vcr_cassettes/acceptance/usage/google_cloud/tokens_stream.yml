@@ -1,0 +1,86 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Count from 1 to 40, separated
+        by commas."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:03:16 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"1,\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:03:16.374702Z\",\"responseId\":
+        \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \" 2, 3, 4, 5, 6, 7,\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:16.374702Z\",\"responseId\": \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" 8, 9, 10, 11, 12, 13, 1\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:03:16.374702Z\",\"responseId\":
+        \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"4, 15, 16, 17, 18, 19, 2\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:16.374702Z\",\"responseId\": \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"0, 21, 22, 23, 24, 25, 2\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:03:16.374702Z\",\"responseId\":
+        \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"6, 27, 28, 29, 30, 31, 3\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:16.374702Z\",\"responseId\": \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"2, 33, 34, 35, 36, 37, 3\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:03:16.374702Z\",\"responseId\":
+        \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"8, 39, 40\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:16.374702Z\",\"responseId\": \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a1+69mTnI750uPC6dpT3AUzzirulw8xfrDhsLMuiXvI/bYQaOYdKRUJk/4Gfgbf+F7LoIxjsra7O9WLzRk+qar1Ii1M/WFx21i0QUqUYrwtLbIl+Mn3fO5w=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 13,\"candidatesTokenCount\":
+        149,\"totalTokenCount\": 162,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 13}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 149}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:03:16.374702Z\",\"responseId\": \"xDvhaq7vFsSpq8YP-pWK0Ag\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:03:17 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,84 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
+        John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:26:02 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=733
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
+        \ \\\"name\\\": \\\"John\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 28,\"candidatesTokenCount\": 8,\"totalTokenCount\":
+        36,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\\",\\n  \\\"address\\\": {\\n    \\\"street\\\":
+        \\\"123 Main St\\\",\\n    \\\"city\\\":\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
+        32,\"totalTokenCount\": 60,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" \\\"Toronto\\\",\\n    \\\"postal_code\\\": \\\"M5V
+        2T6\\\",\\n    \\\"country\\\":\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 28,\"candidatesTokenCount\": 56,\"totalTokenCount\":
+        84,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" \\\"Canada\\\"\\n  }\\n}\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
+        64,\"totalTokenCount\": 92,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tm4udeyubkEWvuDB8+VmwAakTUP481/ycJKeSK3e79ql9nG3wUKealtZKD5ZuD++1digOri3zpFzLpP2qJy/rEsRz5C0VB1Oi+mLfhMjwVHIpu8uuHb+v3U4=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        28,\"candidatesTokenCount\": 64,\"totalTokenCount\": 92,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:02 GMT
+recorded_with: VCR 6.4.0

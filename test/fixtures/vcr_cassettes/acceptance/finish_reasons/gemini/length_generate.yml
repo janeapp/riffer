@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Write a 500-word essay
+        about the sea."}]}],"generationConfig":{"maxOutputTokens":20}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:58:41 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=659
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJjYW5kaWRhdGVzIjogWwogICAgewogICAgICAiY29udGVudCI6IHsKICAgICAgICAicGFydHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJ0ZXh0IjogIkNvdmVyaW5nIG92ZXIgc2V2ZW50eSBwZXJjZW50IG9mIHRoZSBFYXJ0aOKAmXMgc3VyZmFjZSwgdGhlIHNlYSBpcyBhIiwKICAgICAgICAgICAgInRob3VnaHRTaWduYXR1cmUiOiAiRW1BS1hnRnBGSDBUZmJRVk56QXFnQ0xHYTFFZmozeEZHTE9FSlBFUkVub2MrZElGTWhXOWtrZWF5MFFsOEFMR2I4UWM2a0g3Q3B1OFNqT1N4d2hpcDJESVlvZHY3OWZsNEhtcTlmc1hOQ0czYnl5U2cweVdMVURFbVJnY1dCa0ZaN2s9IgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgInJvbGUiOiAibW9kZWwiCiAgICAgIH0sCiAgICAgICJmaW5pc2hSZWFzb24iOiAiTUFYX1RPS0VOUyIsCiAgICAgICJpbmRleCI6IDAKICAgIH0KICBdLAogICJ1c2FnZU1ldGFkYXRhIjogewogICAgInByb21wdFRva2VuQ291bnQiOiAxNCwKICAgICJjYW5kaWRhdGVzVG9rZW5Db3VudCI6IDE2LAogICAgInRvdGFsVG9rZW5Db3VudCI6IDMwLAogICAgInByb21wdFRva2Vuc0RldGFpbHMiOiBbCiAgICAgIHsKICAgICAgICAibW9kYWxpdHkiOiAiVEVYVCIsCiAgICAgICAgInRva2VuQ291bnQiOiAxNAogICAgICB9CiAgICBdLAogICAgInNlcnZpY2VUaWVyIjogInN0YW5kYXJkIgogIH0sCiAgIm1vZGVsVmVyc2lvbiI6ICJnZW1pbmktMy41LWZsYXNoLWxpdGUiLAogICJyZXNwb25zZUlkIjogInNEcmhhb251TGN1Y3o3SVA1T0ctdUFzIgp9Cg==
+  recorded_at: Tue, 27 Oct 2026 23:58:41 GMT
+recorded_with: VCR 6.4.0

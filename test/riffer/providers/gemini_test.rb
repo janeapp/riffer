@@ -81,23 +81,6 @@ describe Riffer::Providers::Gemini do
     it "returns nil without a finish reason" do
       expect(provider.send(:build_finish_reason, nil, tool_calls: false)).must_be_nil
     end
-
-    it "extracts the finish reason when generating" do
-      VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
-        result = provider.generate_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
-
-        expect(result.finish_reason).must_equal :stop
-      end
-    end
-
-    it "emits a FinishReasonDone event when streaming" do
-      VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
-        events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
-        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
-
-        expect(done.finish_reason).must_equal :stop
-      end
-    end
   end
 
   describe "#initialize" do
@@ -224,547 +207,6 @@ describe Riffer::Providers::Gemini do
     end
   end
 
-  describe "#generate_text" do
-    describe "when prompt is provided" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "when system and prompt are provided" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          params = { system: "Be concise", prompt: "Say hello", model: "gemini-3.5-flash-lite" }
-          result = provider.generate_text(**params)
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a hash messages array" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          messages = [
-            { role: "system", content: "Be concise" },
-            { role: "user", content: "Say hello" },
-          ]
-          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a User message" do
-      it "returns an Assistant" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_a_User_message/returns_an_Assistant") do
-          provider = Riffer::Providers::Gemini.new
-          messages = [Riffer::Messages::User.new("Say hello")]
-          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a System message" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_a_System_message/returns_an_Assistant_message") do
-          provider = Riffer::Providers::Gemini.new
-          messages = [
-            Riffer::Messages::System.new("Be concise"),
-            Riffer::Messages::User.new("Say hello"),
-          ]
-          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with an Assistant message" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          messages = [
-            Riffer::Messages::User.new("Say hello"),
-            Riffer::Messages::Assistant.new("Hello!"),
-            Riffer::Messages::User.new("How are you?"),
-          ]
-          result = provider.generate_text(messages: messages, model: "gemini-3.5-flash-lite")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "structured output" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-3.5-flash-lite",
-            structured_output: structured_output,
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns non-empty content" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-3.5-flash-lite",
-            structured_output: structured_output,
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-
-      it "returns valid JSON content" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-3.5-flash-lite",
-            structured_output: structured_output,
-          )
-          JSON.parse(result.content)
-        end
-      end
-
-      it "includes sentiment key" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-3.5-flash-lite",
-            structured_output: structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed.key?("sentiment")).must_equal true
-        end
-      end
-
-      it "includes score key" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gemini-3.5-flash-lite",
-            structured_output: structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed.key?("score")).must_equal true
-        end
-      end
-    end
-
-    describe "structured output with nested object" do
-      let(:nested_object_prompt) { "Extract the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada" }
-
-      let(:nested_object_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Person name")
-        params.required(:address, Hash, description: "Mailing address") do
-          required :street, String, description: "Street address"
-          required :city, String, description: "City"
-          optional :postal_code, String, description: "Postal or zip code"
-          optional :country, String, description: "Country"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with nested object keys" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_nested_object/returns_nested_json",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: nested_object_prompt,
-            model: "gemini-3.5-flash-lite",
-            structured_output: nested_object_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_include "John"
-          expect(parsed["address"]).must_be_instance_of Hash
-          expect(parsed["address"]["street"]).must_include "123 Main"
-          expect(parsed["address"]["city"]).must_include "Toronto"
-        end
-      end
-    end
-
-    describe "structured output with typed array" do
-      let(:typed_array_prompt) { "List 3 tags and 3 scores (0.0-1.0) for: 'Ruby is a great programming language'" }
-
-      let(:typed_array_structured_output) do
-        params = Riffer::Params.new
-        params.required(:tags, Array, of: String, description: "Descriptive tags")
-        params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with typed array content" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output_typed_array/returns_typed_arrays") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: typed_array_prompt,
-            model: "gemini-3.5-flash-lite",
-            structured_output: typed_array_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["tags"].length).must_equal 3
-          expect(parsed["scores"].length).must_equal 3
-          parsed["tags"].each { |tag| expect(tag).must_be_instance_of String }
-          parsed["scores"].each { |score| expect(score).must_be_instance_of Float }
-        end
-      end
-    end
-
-    describe "structured output with array of objects" do
-      let(:array_of_objects_prompt) { "List 2 items from an order: a book costing $12.99 and a pen costing $1.50" }
-
-      let(:array_of_objects_structured_output) do
-        params = Riffer::Params.new
-        params.required(:order_id, String, description: "Order identifier")
-        params.required(:items, Array, description: "Line items") do
-          required :name, String, description: "Product name"
-          required :price, Float, description: "Price in dollars"
-          optional :quantity, Integer, description: "Quantity ordered"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with array of objects content" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: array_of_objects_prompt,
-            model: "gemini-3.5-flash-lite",
-            structured_output: array_of_objects_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["order_id"]).must_be_instance_of String
-          expect(parsed["items"].length).must_equal 2
-          parsed["items"].each do |item|
-            expect(item["name"]).must_be_instance_of String
-            expect(item["price"]).must_be_instance_of Float
-          end
-        end
-      end
-    end
-
-    describe "structured output with any_of" do
-      let(:any_of_structured_output) do
-        params = Riffer::Params.new
-        params.required(:result, Riffer::Params::AnyOf, description: "The address, or why none was found") do
-          variant do
-            required :street, String, description: "Street address"
-            required :city, String, description: "City"
-          end
-          variant do
-            required :error_code, String, enum: %w[no_address multiple_addresses], description: "Why no address"
-            required :error_message, String, description: "Explanation of the error"
-          end
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns the first variant when it applies" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_any_of/returns_first_variant",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Extract the address from: John lives at 123 Main St, Toronto",
-            model: "gemini-3.5-flash-lite",
-            structured_output: any_of_structured_output,
-          )
-          validated = any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:result][:street]).must_include "123 Main"
-          expect(validated.object[:result][:city]).must_equal "Toronto"
-        end
-      end
-
-      it "returns the second variant when the first does not apply" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_any_of/returns_second_variant",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Extract the address from: John likes long walks by the lake",
-            model: "gemini-3.5-flash-lite",
-            structured_output: any_of_structured_output,
-          )
-          validated = any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:result][:error_code]).must_equal "no_address"
-          expect(validated.object[:result][:error_message]).must_be_instance_of String
-        end
-      end
-    end
-
-    describe "structured output with primitive any_of" do
-      let(:primitive_any_of_structured_output) do
-        params = Riffer::Params.new
-        params.required(:quantity, Riffer::Params::AnyOf, description: "A count, or a word when there is no count") do
-          variant Integer
-          variant String
-        end
-        params.optional(:due, Riffer::Params::AnyOf, description: "The due date, or none when there isn't one") do
-          variant String, format: "date"
-          variant String, enum: ["none"]
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns the integer and date variants when the order has both" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_primitive_any_of/returns_integer_and_date",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Read this order: 12 boxes, due on 2026-11-03",
-            model: "gemini-3.5-flash-lite",
-            structured_output: primitive_any_of_structured_output,
-          )
-          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: 12, due: "2026-11-03" })
-        end
-      end
-
-      it "returns the string and enum variants when the order has neither" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_primitive_any_of/returns_string_and_enum",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Read this order: several boxes, with no due date",
-            model: "gemini-3.5-flash-lite",
-            structured_output: primitive_any_of_structured_output,
-          )
-          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: "several", due: "none" })
-        end
-      end
-    end
-
-    describe "structured output with enum array" do
-      let(:ticket_tags) { %w[urgent billing technical account] }
-
-      let(:enum_array_structured_output) do
-        params = Riffer::Params.new
-        params.required(:tags, Array, of: String, enum: ticket_tags, description: "Ticket tags")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns values from the enum" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_enum_array/returns_values_from_the_enum",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Tag this support ticket: 'I was charged twice this month and need it fixed today.'",
-            model: "gemini-3.5-flash-lite",
-            structured_output: enum_array_structured_output,
-          )
-          validated = enum_array_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:tags]).must_include "billing"
-        end
-      end
-    end
-
-    describe "structured output with format" do
-      let(:clinic_id) { "550e8400-e29b-41d4-a716-446655440000" }
-
-      let(:format_structured_output) do
-        params = Riffer::Params.new
-        params.required(:visit_on, String, format: "date", description: "Visit date")
-        params.required(:starts_at, String, format: "date-time", description: "Visit start, with its UTC offset")
-        params.optional(:email, String, format: "email", description: "Patient email, if given")
-        params.required(:clinic_ids, Array, of: String, format: "uuid", description: "Clinic IDs")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns values in the format" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_format/returns_values_in_the_format",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Book a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic #{clinic_id}. " \
-                    "The patient gave no email.",
-            model: "gemini-3.5-flash-lite",
-            structured_output: format_structured_output,
-          )
-          validated = format_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:visit_on]).must_equal "2026-10-26"
-          expect(validated.object[:starts_at]).must_equal "2026-10-26T09:30:00-04:00"
-          expect(validated.object[:email]).must_be_nil
-          expect(validated.object[:clinic_ids]).must_equal [clinic_id]
-        end
-      end
-    end
-
-    describe "structured output with an array of arrays" do
-      let(:nested_structured_output) do
-        params = Riffer::Params.new
-        params.required(:rows, Array, of: [Integer], description: "Seat numbers, one array per row")
-        params.optional(:boards, Array, of: [[String]], enum: %w[x o], description: "Tic-tac-toe boards, one per game")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns nested arrays" do
-        VCR.use_cassette(
-          "Riffer_Providers_Gemini/_generate_text/structured_output_array_of_arrays/returns_nested_arrays",
-        ) do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "Row 1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. " \
-                    "Game 1's tic-tac-toe board rows are: x o x, o x o, o x x. " \
-                    "Game 2's rows are: o o x, x x o, o x x.",
-            model: "gemini-3.5-flash-lite",
-            structured_output: nested_structured_output,
-          )
-          validated = nested_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:rows]).must_equal [[1, 2, 3], [4, 5]]
-          expect(validated.object[:boards]).must_equal [
-            [%w[x o x], %w[o x o], %w[o x x]],
-            [%w[o o x], %w[x x o], %w[o x x]],
-          ]
-        end
-      end
-    end
-  end
-
-  describe "#stream_text" do
-    describe "when prompt is provided" do
-      it "returns an Enumerator" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
-
-          expect(result).must_be_instance_of Enumerator
-        end
-      end
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDelta events" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
-          deltas = events.grep(Riffer::StreamEvents::TextDelta)
-
-          expect(deltas).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    describe "when messages are provided" do
-      it "returns an Enumerator" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.stream_text(
-            messages: [{ role: "user", content: "Say hello" }],
-            model: "gemini-3.5-flash-lite",
-          )
-
-          expect(result).must_be_instance_of Enumerator
-        end
-      end
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(
-            messages: [{ role: "user", content: "Say hello" }],
-            model: "gemini-3.5-flash-lite",
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-    end
-  end
-
   describe "structured output" do
     it "sends the strict JSON schema in responseFormat" do
       provider = Riffer::Providers::Gemini.new
@@ -877,27 +319,6 @@ describe Riffer::Providers::Gemini do
     end
   end
 
-  describe "per-call tags (end-to-end)" do
-    let(:provider) { Riffer::Providers::Gemini.new }
-
-    # Gemini drops tags, so a tagged call must match the untagged cassette's
-    # request body; record: :none makes any leak fail the :body matcher.
-    it "sends no tags on the wire, matching the untagged request" do
-      VCR.use_cassette(
-        "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
-        record: :none,
-      ) do
-        result = provider.generate_text(
-          prompt: "Say hello",
-          model: "gemini-3.5-flash-lite",
-          tags: { "user_id" => "u_1", "team" => "growth" },
-        )
-
-        expect(result).must_be_instance_of Riffer::Messages::Assistant
-      end
-    end
-  end
-
   describe "tool calling" do
     let(:weather_tool) do
       stub_tool("GetWeather") do
@@ -923,79 +344,9 @@ describe Riffer::Providers::Gemini do
       }]
     end
 
-    describe "#generate_text with tools" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns tool_calls" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls).wont_be_empty
-        end
-      end
-
-      it "returns correct tool name" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.name).must_equal "get_weather"
-        end
-      end
-
-      it "parses tool call arguments correctly" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/parses_arguments") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          )
-          args = JSON.parse(result.tool_calls.first.arguments)
-
-          expect(args["city"]).must_equal "Toronto"
-        end
-      end
-
-      it "includes tool call id" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.call_id).wont_be_nil
-        end
-      end
-    end
-
     describe "thought signatures" do
       let(:provider) { Riffer::Providers::Gemini.new }
-      let(:model) { "gemini-3.5-flash-lite" }
       let(:format) { Riffer::Providers::Gemini::REASONING_FORMAT }
-      let(:question) { Riffer::Messages::User.new("What is the weather in Toronto?") }
       let(:signed_response) do
         toronto = { id: "call_1", name: "get_weather", args: { city: "Toronto" } }
         paris = { id: "call_2", name: "get_weather", args: { city: "Paris" } }
@@ -1103,117 +454,12 @@ describe Riffer::Providers::Gemini do
           { functionCall: { id: "call_2", name: "get_weather", args: { "city" => "Paris" } } },
         ]
       end
-
-      it "replays the signature across a tool call round trip" do
-        VCR.use_cassette("Riffer_Providers_Gemini/thought_signatures/_generate_text/tool_call_round_trip") do
-          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
-          tool_call = first.tool_calls.first
-
-          expect(first.reasoning.find { |part| part.id == tool_call.call_id }&.data).wont_be_nil
-
-          history = [question, first, tool_result(tool_call)]
-          second = provider.generate_text(messages: history, model: model, tools: [weather_tool])
-
-          expect(second.content).must_include "15"
-        end
-      end
-
-      it "matches each result to its call across a parallel tool call round trip" do
-        VCR.use_cassette("Riffer_Providers_Gemini/thought_signatures/_generate_text/parallel_tool_call_round_trip") do
-          question = Riffer::Messages::User.new("What is the weather in Toronto and in Paris?")
-          temperatures = { "Toronto" => "15", "Paris" => "22" }
-
-          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool])
-
-          expect(first.tool_calls.size).must_equal 2
-
-          results = first.tool_calls.map do |tc|
-            temperature = temperatures.fetch(JSON.parse(tc.arguments)["city"])
-            Riffer::Messages::Tool.new("#{temperature} degrees Celsius.", tool_call_id: tc.call_id, name: tc.name)
-          end
-          second = provider.generate_text(messages: [question, first, *results], model: model, tools: [weather_tool])
-
-          expect(second.content).must_include "15"
-          expect(second.content).must_include "22"
-        end
-      end
-
-      it "replays a streamed signature across a tool call round trip" do
-        VCR.use_cassette("Riffer_Providers_Gemini/thought_signatures/_stream_text/tool_call_round_trip") do
-          events = provider.stream_text(messages: [question], model: model, tools: [weather_tool]).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-          parts = events.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
-          tool_call = Riffer::Messages::Assistant::ToolCall.new(
-            call_id: tool_done.call_id,
-            name: tool_done.name,
-            arguments: tool_done.arguments,
-          )
-
-          expect(parts.find { |part| part.id == tool_call.call_id }&.data).wont_be_nil
-
-          history = [
-            question,
-            Riffer::Messages::Assistant.new("", tool_calls: [tool_call], reasoning: parts),
-            tool_result(tool_call),
-          ]
-          second = provider.stream_text(messages: history, model: model, tools: [weather_tool]).to_a
-          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(text_done.content).must_include "15"
-        end
-      end
-    end
-
-    describe "#stream_text with tools" do
-      it "yields ToolCallDone event" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_stream_text/yields_tool_call_done") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-
-          expect(tool_done).wont_be_nil
-        end
-      end
-
-      it "includes tool name in ToolCallDone" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_stream_text/tool_call_done_has_name") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-
-          expect(tool_done.name).must_equal "get_weather"
-        end
-      end
-
-      it "includes arguments in ToolCallDone" do
-        VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_stream_text/tool_call_done_has_arguments") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gemini-3.5-flash-lite",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-          args = JSON.parse(tool_done.arguments)
-
-          expect(args["city"]).must_equal "Toronto"
-        end
-      end
     end
   end
 
   describe "web search" do
     let(:provider) { Riffer::Providers::Gemini.new }
     let(:model) { "gemini-3.5-flash-lite" }
-    let(:prompt) { "What is the latest Ruby version? Answer in one sentence." }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
     let(:weather_tool) do
       stub_tool("GetWeather") do
@@ -1258,97 +504,26 @@ describe Riffer::Providers::Gemini do
       expect(provider.send(:extract_reasoning, response).map(&:data)).must_equal ["text-sig"]
     end
 
-    describe "#generate_text with web_search" do
-      it "returns the grounded answer" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_generate_text/returns_the_grounded_answer") do
-          result = provider.generate_text(prompt: prompt, model: model, web_search: true)
+    it "streams no reasoning for search toolCall and toolResponse parts" do
+      search = { toolType: "GOOGLE_SEARCH_WEB", id: "call_1" }
+      parts = [
+        { toolCall: search.merge(args: { queries: ["ruby"] }), thoughtSignature: "call-sig" },
+        { toolResponse: search.merge(response: {}), thoughtSignature: "response-sig" },
+        { text: "Ruby 4.0.", thoughtSignature: "text-sig" },
+      ]
+      chunks = parts.map { |part| "data: #{{ candidates: [{ content: { parts: [part] } }] }.to_json}\n\n" }
+      client = Object.new
+      client.define_singleton_method(:post_stream) { |_path, _body, &block| chunks.each(&block) }
+      Riffer.config.gemini.client = client
 
-          expect(result.content).must_include "Ruby"
-        end
-      end
+      events = provider.stream_text(prompt: "Ruby?", model: model, web_search: true).to_a
 
-      it "accepts hash web_search options" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_generate_text/accepts_hash_web_search_options") do
-          result = provider.generate_text(
-            prompt: prompt,
-            model: model,
-            web_search: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
-          )
-
-          expect(result.content).must_include "Ruby"
-        end
-      end
-
-      it "completes a tool call round trip with search enabled" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_generate_text/tool_call_round_trip") do
-          question = Riffer::Messages::User.new("What is the weather in Toronto, and what is the latest Ruby version?")
-          first = provider.generate_text(messages: [question], model: model, tools: [weather_tool], web_search: true)
-          tool_call = first.tool_calls.first
-
-          expect(tool_call.name).must_equal "get_weather"
-
-          result = Riffer::Messages::Tool.new(
-            "15 degrees Celsius and sunny.",
-            tool_call_id: tool_call.call_id,
-            name: tool_call.name,
-          )
-          second = provider.generate_text(
-            messages: [question, first, result],
-            model: model,
-            tools: [weather_tool],
-            web_search: true,
-          )
-
-          expect(second.content).must_include "15"
-        end
-      end
-    end
-
-    describe "#stream_text with web_search" do
-      it "yields WebSearchStatus events with the queries" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
-          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
-          searching = events.grep(Riffer::StreamEvents::WebSearchStatus).select { |e| e.status == "searching" }
-
-          expect(searching).wont_be_empty
-          expect(searching).must_be(:all?) { |e| !e.query.to_s.empty? }
-        end
-      end
-
-      it "yields a WebSearchDone event with sources" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
-          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
-          done = events.grep(Riffer::StreamEvents::WebSearchDone)
-
-          expect(done.size).must_equal 1
-          expect(done.first.query).wont_be_empty
-          expect(done.first.sources).wont_be_empty
-          expect(done.first.sources.first.keys).must_equal %i[title url]
-        end
-      end
-
-      it "streams the grounded answer" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
-          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
-          text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(text_done.content).must_include "Ruby"
-        end
-      end
-
-      it "yields no reasoning for the search parts" do
-        VCR.use_cassette("Riffer_Providers_Gemini/web_search/_stream_text/yields_web_search_events") do
-          events = provider.stream_text(prompt: prompt, model: model, web_search: true).to_a
-
-          expect(events.grep(Riffer::StreamEvents::ReasoningDone).size).must_equal 1
-        end
-      end
+      expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |event| event.part.data }).must_equal ["text-sig"]
     end
   end
 
   describe "reasoning level" do
     let(:provider) { Riffer::Providers::Gemini.new }
-    let(:prompt) { "What is 17 times 23? Reply with just the number." }
 
     it "passes every level through as the thinking level" do
       Riffer::Agent::Config::REASONING_LEVELS.each do |level|
@@ -1358,24 +533,23 @@ describe Riffer::Providers::Gemini do
       end
     end
 
-    it "reasons at a thinking level on a live model" do
-      VCR.use_cassette("Riffer_Providers_Gemini/reasoning_level/gemini-3-flash-preview/low") do
-        result = provider.generate_text(prompt: prompt, model: "gemini-3-flash-preview", riffer_reasoning_level: :low)
-
-        expect(result.content).must_include "391"
-      end
-    end
-
     describe "with a catalog entry" do
       before { Riffer.config.catalog_files = [REASONING_CATALOG_PATH] }
       after { Riffer.config.catalog_files = [] }
 
-      it "reasons with a thinking budget on a live model" do
-        VCR.use_cassette("Riffer_Providers_Gemini/reasoning_level/gemini-2_5-flash-lite/low") do
-          result = provider.generate_text(prompt: prompt, model: "gemini-2.5-flash-lite", riffer_reasoning_level: :low)
-
-          expect(result.content).must_include "391"
+      it "sends the catalog's thinking budget instead of a thinking level" do
+        client = Object.new
+        client.define_singleton_method(:post) do |path, body|
+          @request = [path, body]
+          { candidates: [{ content: { parts: [{ text: "391" }] }, finishReason: "STOP" }] }
         end
+        Riffer.config.gemini.client = client
+
+        provider.generate_text(prompt: "17 * 23?", model: "gemini-2.5-flash-lite", riffer_reasoning_level: :low)
+        path, body = client.instance_variable_get(:@request)
+
+        expect(path).must_equal "v1beta/models/gemini-2.5-flash-lite:generateContent"
+        expect(body[:generationConfig]).must_equal({ thinkingConfig: { thinkingBudget: 1024 } })
       end
     end
   end
@@ -1398,29 +572,6 @@ describe Riffer::Providers::Gemini do
 
       expect(usage.size).must_equal 1
       expect([usage.first.token_usage.input_tokens, usage.first.token_usage.output_tokens]).must_equal [14, 20]
-    end
-
-    describe "#generate_text returns usage" do
-      it "includes usage in the response" do
-        VCR.use_cassette("Riffer_Providers_Gemini/usage/_generate_text/includes_usage") do
-          provider = Riffer::Providers::Gemini.new
-          result = provider.generate_text(prompt: "Say hello", model: "gemini-3.5-flash-lite")
-
-          expect(result.token_usage).wont_be_nil
-        end
-      end
-    end
-
-    describe "#stream_text yields TokenUsageDone" do
-      it "yields TokenUsageDone event" do
-        VCR.use_cassette("Riffer_Providers_Gemini/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::Gemini.new
-          events = provider.stream_text(prompt: "Say hello", model: "gemini-3.5-flash-lite").to_a
-          usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
-
-          expect(usage_done).wont_be_nil
-        end
-      end
     end
 
     describe "cache read tokens" do
@@ -1464,36 +615,6 @@ describe Riffer::Providers::Gemini do
         )
 
         expect(usage.output_tokens).must_equal 20
-      end
-    end
-  end
-
-  describe "file handling" do
-    let(:image_base64) do
-      <<~BASE64.chomp
-        iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg==
-      BASE64
-    end
-
-    describe "#generate_text with image" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::Gemini.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "gemini-3.5-flash-lite", files: [file])
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::Gemini.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "gemini-3.5-flash-lite", files: [file])
-
-          expect(result.content).wont_be_empty
-        end
       end
     end
   end

@@ -1,0 +1,75 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract info from: Jane
+        works at 42 King St in Vancouver. No other details are known. Return null
+        for any unknown fields."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:25:53 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"{\\n  \\\"name\\\":\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:25:52.561774Z\",\"responseId\": \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \" \\\"Jane\\\",\\n  \\\"address\\\": {\\n    \\\"street\\\": \\\"42 King
+        St\\\",\\n    \\\"city\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:25:52.561774Z\",\"responseId\":
+        \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"\\\": \\\"Vancouver\\\",\\n
+        \   \\\"postal_code\\\": null,\\n    \\\"country\\\": null\\n  }\\n}\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:25:52.561774Z\",\"responseId\": \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a19fQJcKk+e9GXK+6IIbyv1SVlCMB/l/KyNhglESBwbooVsSP5IBLCTkgvGQTV8M+2AbTawjuLp2dH9a3FxWSTQRn5FnBH2R/HHcVUiChXXHlu/YxbrQWyo=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 252,\"candidatesTokenCount\":
+        54,\"totalTokenCount\": 306,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 252}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 54}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:25:52.561774Z\",\"responseId\": \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:25:53 GMT
+recorded_with: VCR 6.4.0

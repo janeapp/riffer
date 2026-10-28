@@ -1,0 +1,91 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
+        yoga class, in-person format.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:39 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=542
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\"name\":\"yoga class\",\"session_type\":\"in_person\"}",
+                    "thoughtSignature": "EmAKXgFpFH0Tb9seZM8DQN2gDvfdr8mcguRfYC4fD96V39XdOpjk1LWkQOB5e710JogTFsStVl08DiP5rX8MBkMdjXLql2mjICNO1CdtOkvKN8NqAyY0+lf0uuliS739YLc="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 153,
+            "candidatesTokenCount": 14,
+            "totalTokenCount": 167,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 153
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "gznhaqXkCYihz7IPkIOpkAk"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:39 GMT
+recorded_with: VCR 6.4.0

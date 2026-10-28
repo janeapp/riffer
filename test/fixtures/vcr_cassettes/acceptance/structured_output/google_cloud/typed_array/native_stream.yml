@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"List 3 tags and 3 scores
+        (0.0-1.0) for: ''Ruby is a great programming language''"}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Descriptive
+        tags","items":{"type":"string"}},"scores":{"type":"array","description":"Relevance
+        scores between 0 and 1","items":{"type":"number"}}},"required":["tags","scores"],"additionalProperties":false}}}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 28 Oct 2026 00:26:11 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"{\\n  \\\"tags\\\": [\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:10.733464Z\",\"responseId\": \"IkHhapjiLMiH9LsPo5_D0Qg\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\\n    \\\"Ruby\\\",\\n    \\\"Programming\\\",\\n    \\\"Technology\\\"\\n
+        \ ],\\n  \\\"scores\\\": [\\n    0\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:10.733464Z\",\"responseId\": \"IkHhapjiLMiH9LsPo5_D0Qg\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \".95,\\n    0.85,\\n    0.70\\n  ]\\n}\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:10.733464Z\",\"responseId\": \"IkHhapjiLMiH9LsPo5_D0Qg\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a1/+z2Kp7r6SmxDb9rt2iiOP5zgHUa3E7FS8EoPRLqtCVUgX22l7ERV9fp16h1pYoqYAOnUIN5X7jaiA4xRMmhd0hejdxUw8vZwupyTVSq/s8ydgOH6wRX4=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 152,\"candidatesTokenCount\":
+        56,\"totalTokenCount\": 208,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 152}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 56}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:10.733464Z\",\"responseId\": \"IkHhapjiLMiH9LsPo5_D0Qg\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:11 GMT
+recorded_with: VCR 6.4.0

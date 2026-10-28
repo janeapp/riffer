@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract info from: Jane
+        works at 42 King St in Vancouver. No other details are known. Return null
+        for any unknown fields."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:26:08 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=809
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"name\": \"Jane\",\n  \"address\": {\n    \"street\": \"42 King St\",\n    \"city\": \"Vancouver\",\n    \"postal_code\": null,\n    \"country\": null\n  }\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TyRINSYidHfu0mJEZxt+LNiLLIlzFTVSi+wVal7/JS8+tBEKo1w8hi7K9Yrs5ebCiF8ZUFqkoJkvYKBH4LJyDL3TlhqbhUbjOnXs1OL32x2w2Lkl6Frv/cGY="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 29,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 83,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 29
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "IEHhatChA8ucz7IPqOK-uAs"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:26:08 GMT
+recorded_with: VCR 6.4.0

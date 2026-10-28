@@ -1,0 +1,212 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]}],"systemInstruction":{"parts":[{"text":"You are
+        a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request matches
+        a skill description below, call the `skill_activate` tool with the skill name.
+        After activation, follow the skill''s instructions. If a skill''s instructions
+        already appear in your context (inside <skill_content> tags), follow them
+        instead of activating the skill again.\n\n- **code-review**: Reviews code
+        for quality, style, and potential issues.\n- **data-analysis**: Analyzes datasets
+        and generates summary reports."}]},"tools":[{"functionDeclarations":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:59:42 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=730
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"skill_activate\",\"args\": {\"name\": \"code-review\"},\"id\":
+        \"call_1160520\"},\"thoughtSignature\": \"EmAKXgFpFH0TG11n1+8VoSVtnHW5/R9v1Hzqy19/Iri0NHOuPxho/8/aPChzote/e/gIdapiRHzkdSBaCpBdEznALzFroUCGrLlVpVJN2efyBFMOvEOxvxnQ/co/tkzXE+A=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 194,\"candidatesTokenCount\":
+        18,\"totalTokenCount\": 212,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        194}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7Trhap-nNu7SjMcP7ZyW-A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 194,\"candidatesTokenCount\":
+        18,\"totalTokenCount\": 212,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        194}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7Trhap-nNu7SjMcP7ZyW-A8\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:59:42 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1160520","name":"skill_activate","args":{"name":"code-review"}},"thoughtSignature":"EmAKXgFpFH0TG11n1+8VoSVtnHW5/R9v1Hzqy19/Iri0NHOuPxho/8/aPChzote/e/gIdapiRHzkdSBaCpBdEznALzFroUCGrLlVpVJN2efyBFMOvEOxvxnQ/co/tkzXE+A="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1160520","name":"skill_activate","response":{"result":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}}}]}],"systemInstruction":{"parts":[{"text":"You
+        are a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request
+        matches a skill description below, call the `skill_activate` tool with the
+        skill name. After activation, follow the skill''s instructions. If a skill''s
+        instructions already appear in your context (inside <skill_content> tags),
+        follow them instead of activating the skill again.\n\n- **code-review**: Reviews
+        code for quality, style, and potential issues.\n- **data-analysis**: Analyzes
+        datasets and generates summary reports."}]},"tools":[{"functionDeclarations":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:59:43 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=436
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"Here
+        is\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        267,\"candidatesTokenCount\": 2,\"totalTokenCount\": 269,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 267}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" a review of your
+        Ruby code (`def add(a, b) a + b end\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 267,\"candidatesTokenCount\": 20,\"totalTokenCount\":
+        287,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 267}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"`):\\n\\n### Style & Readability\\n* **Formatting:**
+        While this is valid single-line syntax in Ruby, multi\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        45,\"totalTokenCount\": 312,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"-line formatting is much more idiomatic and readable
+        for method definitions, especially as they grow.\\n* **Documentation:** For\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        70,\"totalTokenCount\": 337,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" public methods or library code, adding a brief
+        YARD/RDoc comment describing what the method does, its parameters, and its\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        96,\"totalTokenCount\": 363,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" return value is good practice.\\n\\n### Potential
+        Bugs\\n* **Type Safety:** Ruby is dynamically typed. If `a` and `b\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        124,\"totalTokenCount\": 391,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"` are incompatible types (e.g., trying to add a
+        `String` and an `Integer` like `add\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 267,\"candidatesTokenCount\": 148,\"totalTokenCount\":
+        415,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 267}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"(\\\"hello\\\", 5)`), this will raise a `TypeError`.
+        Depending on your use case, you may want to handle or\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        174,\"totalTokenCount\": 441,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" guard against unexpected types.\\n\\n### Suggested
+        Refactoring\\n\\nHere is the standard, idiomatic way to write this in Ruby:\\n\\n```ruby\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        202,\"totalTokenCount\": 469,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\n# Adds two numbers together.\\n# \\n# @param
+        a [Numeric] the first number\\n# @param b [\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        229,\"totalTokenCount\": 496,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"Numeric] the second number\\n# @return [Numeric]
+        the sum of a and b\\ndef add(a, b)\\n  \"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        257,\"totalTokenCount\": 524,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"a + b\\nend\\n```\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 267,\"candidatesTokenCount\":
+        264,\"totalTokenCount\": 531,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        267}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TUjncxr69l5K5HWmpE+WdVIuKtjvisyW95i7iR4cH+xrGRWlIdDcAq30n/emYNLTukSzN2TKWAzQEso4dceKq2mxuAjBTwkFNe42JkVKz+Y2GBETZIDN16HU=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        267,\"candidatesTokenCount\": 264,\"totalTokenCount\": 531,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 267}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"7jrharWlLdqU_uMPjKeF4A8\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:59:43 GMT
+recorded_with: VCR 6.4.0

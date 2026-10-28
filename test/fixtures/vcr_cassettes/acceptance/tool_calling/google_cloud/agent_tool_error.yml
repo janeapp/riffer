@@ -1,0 +1,184 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is tomorrow''s forecast
+        for Toronto? If the tool fails, say so."}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:04:08 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_forecast",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_162647"
+                    },
+                    "thoughtSignature": "AY89a1+Hyn2AMrexLC0B5U62n3ZP3PO+OvZwZMchj85DHgXcT2ZGn40YAfDoMyiNJ+iIIMjvNNzMimbKMaRqOuuyxVQiqJe5OfatCznAl+9WjmNicVJY4a6JaGY="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 55,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 71,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 55
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 16
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T00:04:07.901263Z",
+          "responseId": "9zvhao-BN6-Pq8YP8YCVuAw"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:04:08 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is tomorrow''s forecast
+        for Toronto? If the tool fails, say so."}]},{"role":"model","parts":[{"functionCall":{"id":"call_162647","name":"get_forecast","args":{"city":"Toronto"}},"thoughtSignature":"AY89a1+Hyn2AMrexLC0B5U62n3ZP3PO+OvZwZMchj85DHgXcT2ZGn40YAfDoMyiNJ+iIIMjvNNzMimbKMaRqOuuyxVQiqJe5OfatCznAl+9WjmNicVJY4a6JaGY="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_162647","name":"get_forecast","response":{"result":"The
+        forecast service for Toronto is down"}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:04:09 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "The forecast service for Toronto is down.",
+                    "thoughtSignature": "AY89a1/UvtZzY5FmnSV8CZBl+i9IXkY04jdjvOJVGw/fEQXtl0BGQoQUeBgU8T6ZLGG+CgxO0N9FB1WgYGlUeY+BHPq+Zhc69ndeJ5y3/II5gpUAjbjUzNU7C4E="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 79,
+            "candidatesTokenCount": 8,
+            "totalTokenCount": 87,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 79
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T00:04:08.715826Z",
+          "responseId": "-DvharLYK62Oq8YPvvCB-Qk"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:04:09 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto and in Paris?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:42 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=526
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"get_weather\",\"args\": {\"city\": \"Toronto\"},\"id\": \"call_2955439\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TRMMC+jw4L33pyYI2fAiIOes927XHXydNaG/3ZmE3UWGfiU8e1mLoJkdXZ+7j/0kQ+yBSHegPqHJ6+qDlylsj78nY1klp9qL8aa35fOFVXbF0GI6EG8VQDh0=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 63,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 79,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        63}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"_TnhavCfMvahz7IPntbJ4Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"functionCall\": {\"name\": \"get_weather\",\"args\": {\"city\":
+        \"Paris\"},\"id\": \"call_2955442\"}}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 63,\"candidatesTokenCount\": 32,\"totalTokenCount\":
+        95,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 63}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"_TnhavCfMvahz7IPntbJ4Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 63,\"candidatesTokenCount\":
+        32,\"totalTokenCount\": 95,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        63}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"_TnhavCfMvahz7IPntbJ4Ag\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:42 GMT
+recorded_with: VCR 6.4.0

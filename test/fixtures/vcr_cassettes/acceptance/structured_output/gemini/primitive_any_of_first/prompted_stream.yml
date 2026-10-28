@@ -1,0 +1,80 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Read this order: 12 boxes,
+        due on 2026-11-03\n\nWhen you give your final answer, respond with only a
+        JSON object that conforms to the following JSON Schema, with no other text
+        before or after it:\n\n{\"type\":\"object\",\"properties\":{\"quantity\":{\"anyOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}],\"description\":\"A
+        count, or a word when there is no count\"},\"due\":{\"anyOf\":[{\"type\":\"string\",\"format\":\"date\"},{\"type\":\"string\",\"enum\":[\"none\"]}],\"description\":\"The
+        due date, or none when there isn''t one\"}},\"required\":[\"quantity\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"quantity\":\"<integer> | <string>\",\"due\":\"<string>
+        | none\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:53:17 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=553
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"```json\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 192,\"candidatesTokenCount\":
+        2,\"totalTokenCount\": 194,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        192}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"bTnhar7LHZPL-8YPj7HM-QI\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\n{\\\"quantity\\\": 12, \\\"due\\\": \\\"2026-1\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 192,\"candidatesTokenCount\":
+        20,\"totalTokenCount\": 212,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        192}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"bTnhar7LHZPL-8YPj7HM-QI\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"1-03\\\"}\\n```\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 192,\"candidatesTokenCount\":
+        27,\"totalTokenCount\": 219,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        192}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"bTnhar7LHZPL-8YPj7HM-QI\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tq3NA1S4xE6RMvlVaoeHWo/rbOrJzRg6si9ch/AirRdXrkJImwcEJ0c4QE2244RVIQZg6DEoiJIMiUzOp9CTV4Gqx8IwVtBj8nmvFiO3lgZb+4XYEUEUqbhg=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        192,\"candidatesTokenCount\": 27,\"totalTokenCount\": 219,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 192}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"bTnhar7LHZPL-8YPj7HM-QI\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:53:18 GMT
+recorded_with: VCR 6.4.0

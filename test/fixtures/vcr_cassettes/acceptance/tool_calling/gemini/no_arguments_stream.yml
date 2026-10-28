@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What time is it?"}]}],"tools":[{"functionDeclarations":[{"name":"get_time","description":"Get
+        the current time in UTC","parametersJsonSchema":{"type":"object","properties":{},"required":[],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:55:48 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=421
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"get_time\",\"args\": {},\"id\": \"call_2296035\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TrVLCwVP4B/AjGXwQykHM1y4f7ebtP7BJYkJbrQbCrbBmNM2bVJ/2oABr/p2rjB93tRg9dVbkZNLY3B7qHkuI8q4HNiQzEpNq12y0WyGO1KJEB0KStLAQcFE=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 33,\"candidatesTokenCount\":
+        10,\"totalTokenCount\": 43,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        33}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"BDrhasT9F73T_PUP3LbqsAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 33,\"candidatesTokenCount\":
+        10,\"totalTokenCount\": 43,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        33}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"BDrhasT9F73T_PUP3LbqsAc\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:55:48 GMT
+recorded_with: VCR 6.4.0

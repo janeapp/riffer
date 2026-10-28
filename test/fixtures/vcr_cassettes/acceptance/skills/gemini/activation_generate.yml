@@ -1,0 +1,196 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]}],"systemInstruction":{"parts":[{"text":"You are
+        a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request matches
+        a skill description below, call the `skill_activate` tool with the skill name.
+        After activation, follow the skill''s instructions. If a skill''s instructions
+        already appear in your context (inside <skill_content> tags), follow them
+        instead of activating the skill again.\n\n- **code-review**: Reviews code
+        for quality, style, and potential issues.\n- **data-analysis**: Analyzes datasets
+        and generates summary reports."}]},"tools":[{"functionDeclarations":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:59:44 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=566
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "skill_activate",
+                      "args": {
+                        "name": "code-review"
+                      },
+                      "id": "call_3422346"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TD1uFirDsz6qCvSrVVwA/fTsTmJX5feylYzB0ZjUGHg3ulCmN7FrrZbvx5+36pFe7G2ziKefsgQATGRAIuOgdl/a2FRQ/c6fTtAFR7gnQQ0sfWZ37P1c5JQI="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 194,
+            "candidatesTokenCount": 18,
+            "totalTokenCount": 212,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 194
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "7zrhatz6O6Csz7IPwbuEuQ4"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:59:44 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3422346","name":"skill_activate","args":{"name":"code-review"}},"thoughtSignature":"EmAKXgFpFH0TD1uFirDsz6qCvSrVVwA/fTsTmJX5feylYzB0ZjUGHg3ulCmN7FrrZbvx5+36pFe7G2ziKefsgQATGRAIuOgdl/a2FRQ/c6fTtAFR7gnQQ0sfWZ37P1c5JQI="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3422346","name":"skill_activate","response":{"result":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}}}]}],"systemInstruction":{"parts":[{"text":"You
+        are a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request
+        matches a skill description below, call the `skill_activate` tool with the
+        skill name. After activation, follow the skill''s instructions. If a skill''s
+        instructions already appear in your context (inside <skill_content> tags),
+        follow them instead of activating the skill again.\n\n- **code-review**: Reviews
+        code for quality, style, and potential issues.\n- **data-analysis**: Analyzes
+        datasets and generates summary reports."}]},"tools":[{"functionDeclarations":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:59:45 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=1208
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "Here is a review of your Ruby code (`def add(a, b) a + b end`):\n\n### **Style**\n* **Formatting:** While a single-line method definition is valid in Ruby, it is more idiomatic for multi-word or multi-parameter methods to be laid out over multiple lines with standard indentation for better readability.\n  ```ruby\n  def add(a, b)\n    a + b\n  end\n  ```\n* **Documentation:** For public methods or library code, adding a brief comment or YARD documentation describing what the method does, its parameters, and its return value is good practice.\n\n### **Potential Bugs**\n* **Type Safety / Duck Typing:** Because Ruby is dynamically typed, passing objects that do not support the `+` operator (e.g., passing an integer and a string) will raise a `NoMethodError`. Depending on your use case, you may want to handle or guard against unexpected types.\n\n### **Performance**\n* **Efficiency:** The method uses the native `+` operator, which is extremely fast and has zero unnecessary overhead. There are no performance concerns here.",
+                    "thoughtSignature": "EmAKXgFpFH0TVNtitTBPKVRJFAhK779zKg2n6xuDxWkArm0e7p0mjE3nSkk8vfTeJ0zSeaVYN2sCxBtiApgwcxvK7phl5GWWtPBD37MTGyyqua6uhXI0w25EDijAFNEUaz8="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 267,
+            "candidatesTokenCount": 239,
+            "totalTokenCount": 506,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 267
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "8DrhaoDmKPmr-8YPn6e1mQM"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:59:45 GMT
+recorded_with: VCR 6.4.0

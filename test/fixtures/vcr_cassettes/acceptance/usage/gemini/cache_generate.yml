@@ -1,0 +1,738 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Who opens on day 3? Name
+        one."}]}],"systemInstruction":{"parts":[{"text":"You answer questions about
+        this handbook.\n\nRule 1: staff member 1 opens the clinic on day 1.\nRule
+        2: staff member 2 opens the clinic on day 2.\nRule 3: staff member 3 opens
+        the clinic on day 3.\nRule 4: staff member 4 opens the clinic on day 4.\nRule
+        5: staff member 5 opens the clinic on day 5.\nRule 6: staff member 6 opens
+        the clinic on day 6.\nRule 7: staff member 7 opens the clinic on day 0.\nRule
+        8: staff member 8 opens the clinic on day 1.\nRule 9: staff member 9 opens
+        the clinic on day 2.\nRule 10: staff member 10 opens the clinic on day 3.\nRule
+        11: staff member 11 opens the clinic on day 4.\nRule 12: staff member 12 opens
+        the clinic on day 5.\nRule 13: staff member 13 opens the clinic on day 6.\nRule
+        14: staff member 14 opens the clinic on day 0.\nRule 15: staff member 15 opens
+        the clinic on day 1.\nRule 16: staff member 16 opens the clinic on day 2.\nRule
+        17: staff member 17 opens the clinic on day 3.\nRule 18: staff member 18 opens
+        the clinic on day 4.\nRule 19: staff member 19 opens the clinic on day 5.\nRule
+        20: staff member 20 opens the clinic on day 6.\nRule 21: staff member 21 opens
+        the clinic on day 0.\nRule 22: staff member 22 opens the clinic on day 1.\nRule
+        23: staff member 23 opens the clinic on day 2.\nRule 24: staff member 24 opens
+        the clinic on day 3.\nRule 25: staff member 25 opens the clinic on day 4.\nRule
+        26: staff member 26 opens the clinic on day 5.\nRule 27: staff member 27 opens
+        the clinic on day 6.\nRule 28: staff member 28 opens the clinic on day 0.\nRule
+        29: staff member 29 opens the clinic on day 1.\nRule 30: staff member 30 opens
+        the clinic on day 2.\nRule 31: staff member 31 opens the clinic on day 3.\nRule
+        32: staff member 32 opens the clinic on day 4.\nRule 33: staff member 33 opens
+        the clinic on day 5.\nRule 34: staff member 34 opens the clinic on day 6.\nRule
+        35: staff member 35 opens the clinic on day 0.\nRule 36: staff member 36 opens
+        the clinic on day 1.\nRule 37: staff member 37 opens the clinic on day 2.\nRule
+        38: staff member 38 opens the clinic on day 3.\nRule 39: staff member 39 opens
+        the clinic on day 4.\nRule 40: staff member 40 opens the clinic on day 5.\nRule
+        41: staff member 41 opens the clinic on day 6.\nRule 42: staff member 42 opens
+        the clinic on day 0.\nRule 43: staff member 43 opens the clinic on day 1.\nRule
+        44: staff member 44 opens the clinic on day 2.\nRule 45: staff member 45 opens
+        the clinic on day 3.\nRule 46: staff member 46 opens the clinic on day 4.\nRule
+        47: staff member 47 opens the clinic on day 5.\nRule 48: staff member 48 opens
+        the clinic on day 6.\nRule 49: staff member 49 opens the clinic on day 0.\nRule
+        50: staff member 50 opens the clinic on day 1.\nRule 51: staff member 51 opens
+        the clinic on day 2.\nRule 52: staff member 52 opens the clinic on day 3.\nRule
+        53: staff member 53 opens the clinic on day 4.\nRule 54: staff member 54 opens
+        the clinic on day 5.\nRule 55: staff member 55 opens the clinic on day 6.\nRule
+        56: staff member 56 opens the clinic on day 0.\nRule 57: staff member 57 opens
+        the clinic on day 1.\nRule 58: staff member 58 opens the clinic on day 2.\nRule
+        59: staff member 59 opens the clinic on day 3.\nRule 60: staff member 60 opens
+        the clinic on day 4.\nRule 61: staff member 61 opens the clinic on day 5.\nRule
+        62: staff member 62 opens the clinic on day 6.\nRule 63: staff member 63 opens
+        the clinic on day 0.\nRule 64: staff member 64 opens the clinic on day 1.\nRule
+        65: staff member 65 opens the clinic on day 2.\nRule 66: staff member 66 opens
+        the clinic on day 3.\nRule 67: staff member 67 opens the clinic on day 4.\nRule
+        68: staff member 68 opens the clinic on day 5.\nRule 69: staff member 69 opens
+        the clinic on day 6.\nRule 70: staff member 70 opens the clinic on day 0.\nRule
+        71: staff member 71 opens the clinic on day 1.\nRule 72: staff member 72 opens
+        the clinic on day 2.\nRule 73: staff member 73 opens the clinic on day 3.\nRule
+        74: staff member 74 opens the clinic on day 4.\nRule 75: staff member 75 opens
+        the clinic on day 5.\nRule 76: staff member 76 opens the clinic on day 6.\nRule
+        77: staff member 77 opens the clinic on day 0.\nRule 78: staff member 78 opens
+        the clinic on day 1.\nRule 79: staff member 79 opens the clinic on day 2.\nRule
+        80: staff member 80 opens the clinic on day 3.\nRule 81: staff member 81 opens
+        the clinic on day 4.\nRule 82: staff member 82 opens the clinic on day 5.\nRule
+        83: staff member 83 opens the clinic on day 6.\nRule 84: staff member 84 opens
+        the clinic on day 0.\nRule 85: staff member 85 opens the clinic on day 1.\nRule
+        86: staff member 86 opens the clinic on day 2.\nRule 87: staff member 87 opens
+        the clinic on day 3.\nRule 88: staff member 88 opens the clinic on day 4.\nRule
+        89: staff member 89 opens the clinic on day 5.\nRule 90: staff member 90 opens
+        the clinic on day 6.\nRule 91: staff member 91 opens the clinic on day 0.\nRule
+        92: staff member 92 opens the clinic on day 1.\nRule 93: staff member 93 opens
+        the clinic on day 2.\nRule 94: staff member 94 opens the clinic on day 3.\nRule
+        95: staff member 95 opens the clinic on day 4.\nRule 96: staff member 96 opens
+        the clinic on day 5.\nRule 97: staff member 97 opens the clinic on day 6.\nRule
+        98: staff member 98 opens the clinic on day 0.\nRule 99: staff member 99 opens
+        the clinic on day 1.\nRule 100: staff member 100 opens the clinic on day 2.\nRule
+        101: staff member 101 opens the clinic on day 3.\nRule 102: staff member 102
+        opens the clinic on day 4.\nRule 103: staff member 103 opens the clinic on
+        day 5.\nRule 104: staff member 104 opens the clinic on day 6.\nRule 105: staff
+        member 105 opens the clinic on day 0.\nRule 106: staff member 106 opens the
+        clinic on day 1.\nRule 107: staff member 107 opens the clinic on day 2.\nRule
+        108: staff member 108 opens the clinic on day 3.\nRule 109: staff member 109
+        opens the clinic on day 4.\nRule 110: staff member 110 opens the clinic on
+        day 5.\nRule 111: staff member 111 opens the clinic on day 6.\nRule 112: staff
+        member 112 opens the clinic on day 0.\nRule 113: staff member 113 opens the
+        clinic on day 1.\nRule 114: staff member 114 opens the clinic on day 2.\nRule
+        115: staff member 115 opens the clinic on day 3.\nRule 116: staff member 116
+        opens the clinic on day 4.\nRule 117: staff member 117 opens the clinic on
+        day 5.\nRule 118: staff member 118 opens the clinic on day 6.\nRule 119: staff
+        member 119 opens the clinic on day 0.\nRule 120: staff member 120 opens the
+        clinic on day 1.\nRule 121: staff member 121 opens the clinic on day 2.\nRule
+        122: staff member 122 opens the clinic on day 3.\nRule 123: staff member 123
+        opens the clinic on day 4.\nRule 124: staff member 124 opens the clinic on
+        day 5.\nRule 125: staff member 125 opens the clinic on day 6.\nRule 126: staff
+        member 126 opens the clinic on day 0.\nRule 127: staff member 127 opens the
+        clinic on day 1.\nRule 128: staff member 128 opens the clinic on day 2.\nRule
+        129: staff member 129 opens the clinic on day 3.\nRule 130: staff member 130
+        opens the clinic on day 4.\nRule 131: staff member 131 opens the clinic on
+        day 5.\nRule 132: staff member 132 opens the clinic on day 6.\nRule 133: staff
+        member 133 opens the clinic on day 0.\nRule 134: staff member 134 opens the
+        clinic on day 1.\nRule 135: staff member 135 opens the clinic on day 2.\nRule
+        136: staff member 136 opens the clinic on day 3.\nRule 137: staff member 137
+        opens the clinic on day 4.\nRule 138: staff member 138 opens the clinic on
+        day 5.\nRule 139: staff member 139 opens the clinic on day 6.\nRule 140: staff
+        member 140 opens the clinic on day 0.\nRule 141: staff member 141 opens the
+        clinic on day 1.\nRule 142: staff member 142 opens the clinic on day 2.\nRule
+        143: staff member 143 opens the clinic on day 3.\nRule 144: staff member 144
+        opens the clinic on day 4.\nRule 145: staff member 145 opens the clinic on
+        day 5.\nRule 146: staff member 146 opens the clinic on day 6.\nRule 147: staff
+        member 147 opens the clinic on day 0.\nRule 148: staff member 148 opens the
+        clinic on day 1.\nRule 149: staff member 149 opens the clinic on day 2.\nRule
+        150: staff member 150 opens the clinic on day 3.\nRule 151: staff member 151
+        opens the clinic on day 4.\nRule 152: staff member 152 opens the clinic on
+        day 5.\nRule 153: staff member 153 opens the clinic on day 6.\nRule 154: staff
+        member 154 opens the clinic on day 0.\nRule 155: staff member 155 opens the
+        clinic on day 1.\nRule 156: staff member 156 opens the clinic on day 2.\nRule
+        157: staff member 157 opens the clinic on day 3.\nRule 158: staff member 158
+        opens the clinic on day 4.\nRule 159: staff member 159 opens the clinic on
+        day 5.\nRule 160: staff member 160 opens the clinic on day 6.\nRule 161: staff
+        member 161 opens the clinic on day 0.\nRule 162: staff member 162 opens the
+        clinic on day 1.\nRule 163: staff member 163 opens the clinic on day 2.\nRule
+        164: staff member 164 opens the clinic on day 3.\nRule 165: staff member 165
+        opens the clinic on day 4.\nRule 166: staff member 166 opens the clinic on
+        day 5.\nRule 167: staff member 167 opens the clinic on day 6.\nRule 168: staff
+        member 168 opens the clinic on day 0.\nRule 169: staff member 169 opens the
+        clinic on day 1.\nRule 170: staff member 170 opens the clinic on day 2.\nRule
+        171: staff member 171 opens the clinic on day 3.\nRule 172: staff member 172
+        opens the clinic on day 4.\nRule 173: staff member 173 opens the clinic on
+        day 5.\nRule 174: staff member 174 opens the clinic on day 6.\nRule 175: staff
+        member 175 opens the clinic on day 0.\nRule 176: staff member 176 opens the
+        clinic on day 1.\nRule 177: staff member 177 opens the clinic on day 2.\nRule
+        178: staff member 178 opens the clinic on day 3.\nRule 179: staff member 179
+        opens the clinic on day 4.\nRule 180: staff member 180 opens the clinic on
+        day 5.\nRule 181: staff member 181 opens the clinic on day 6.\nRule 182: staff
+        member 182 opens the clinic on day 0.\nRule 183: staff member 183 opens the
+        clinic on day 1.\nRule 184: staff member 184 opens the clinic on day 2.\nRule
+        185: staff member 185 opens the clinic on day 3.\nRule 186: staff member 186
+        opens the clinic on day 4.\nRule 187: staff member 187 opens the clinic on
+        day 5.\nRule 188: staff member 188 opens the clinic on day 6.\nRule 189: staff
+        member 189 opens the clinic on day 0.\nRule 190: staff member 190 opens the
+        clinic on day 1.\nRule 191: staff member 191 opens the clinic on day 2.\nRule
+        192: staff member 192 opens the clinic on day 3.\nRule 193: staff member 193
+        opens the clinic on day 4.\nRule 194: staff member 194 opens the clinic on
+        day 5.\nRule 195: staff member 195 opens the clinic on day 6.\nRule 196: staff
+        member 196 opens the clinic on day 0.\nRule 197: staff member 197 opens the
+        clinic on day 1.\nRule 198: staff member 198 opens the clinic on day 2.\nRule
+        199: staff member 199 opens the clinic on day 3.\nRule 200: staff member 200
+        opens the clinic on day 4.\nRule 201: staff member 201 opens the clinic on
+        day 5.\nRule 202: staff member 202 opens the clinic on day 6.\nRule 203: staff
+        member 203 opens the clinic on day 0.\nRule 204: staff member 204 opens the
+        clinic on day 1.\nRule 205: staff member 205 opens the clinic on day 2.\nRule
+        206: staff member 206 opens the clinic on day 3.\nRule 207: staff member 207
+        opens the clinic on day 4.\nRule 208: staff member 208 opens the clinic on
+        day 5.\nRule 209: staff member 209 opens the clinic on day 6.\nRule 210: staff
+        member 210 opens the clinic on day 0.\nRule 211: staff member 211 opens the
+        clinic on day 1.\nRule 212: staff member 212 opens the clinic on day 2.\nRule
+        213: staff member 213 opens the clinic on day 3.\nRule 214: staff member 214
+        opens the clinic on day 4.\nRule 215: staff member 215 opens the clinic on
+        day 5.\nRule 216: staff member 216 opens the clinic on day 6.\nRule 217: staff
+        member 217 opens the clinic on day 0.\nRule 218: staff member 218 opens the
+        clinic on day 1.\nRule 219: staff member 219 opens the clinic on day 2.\nRule
+        220: staff member 220 opens the clinic on day 3.\nRule 221: staff member 221
+        opens the clinic on day 4.\nRule 222: staff member 222 opens the clinic on
+        day 5.\nRule 223: staff member 223 opens the clinic on day 6.\nRule 224: staff
+        member 224 opens the clinic on day 0.\nRule 225: staff member 225 opens the
+        clinic on day 1.\nRule 226: staff member 226 opens the clinic on day 2.\nRule
+        227: staff member 227 opens the clinic on day 3.\nRule 228: staff member 228
+        opens the clinic on day 4.\nRule 229: staff member 229 opens the clinic on
+        day 5.\nRule 230: staff member 230 opens the clinic on day 6.\nRule 231: staff
+        member 231 opens the clinic on day 0.\nRule 232: staff member 232 opens the
+        clinic on day 1.\nRule 233: staff member 233 opens the clinic on day 2.\nRule
+        234: staff member 234 opens the clinic on day 3.\nRule 235: staff member 235
+        opens the clinic on day 4.\nRule 236: staff member 236 opens the clinic on
+        day 5.\nRule 237: staff member 237 opens the clinic on day 6.\nRule 238: staff
+        member 238 opens the clinic on day 0.\nRule 239: staff member 239 opens the
+        clinic on day 1.\nRule 240: staff member 240 opens the clinic on day 2.\nRule
+        241: staff member 241 opens the clinic on day 3.\nRule 242: staff member 242
+        opens the clinic on day 4.\nRule 243: staff member 243 opens the clinic on
+        day 5.\nRule 244: staff member 244 opens the clinic on day 6.\nRule 245: staff
+        member 245 opens the clinic on day 0.\nRule 246: staff member 246 opens the
+        clinic on day 1.\nRule 247: staff member 247 opens the clinic on day 2.\nRule
+        248: staff member 248 opens the clinic on day 3.\nRule 249: staff member 249
+        opens the clinic on day 4.\nRule 250: staff member 250 opens the clinic on
+        day 5.\nRule 251: staff member 251 opens the clinic on day 6.\nRule 252: staff
+        member 252 opens the clinic on day 0.\nRule 253: staff member 253 opens the
+        clinic on day 1.\nRule 254: staff member 254 opens the clinic on day 2.\nRule
+        255: staff member 255 opens the clinic on day 3.\nRule 256: staff member 256
+        opens the clinic on day 4.\nRule 257: staff member 257 opens the clinic on
+        day 5.\nRule 258: staff member 258 opens the clinic on day 6.\nRule 259: staff
+        member 259 opens the clinic on day 0.\nRule 260: staff member 260 opens the
+        clinic on day 1.\nRule 261: staff member 261 opens the clinic on day 2.\nRule
+        262: staff member 262 opens the clinic on day 3.\nRule 263: staff member 263
+        opens the clinic on day 4.\nRule 264: staff member 264 opens the clinic on
+        day 5.\nRule 265: staff member 265 opens the clinic on day 6.\nRule 266: staff
+        member 266 opens the clinic on day 0.\nRule 267: staff member 267 opens the
+        clinic on day 1.\nRule 268: staff member 268 opens the clinic on day 2.\nRule
+        269: staff member 269 opens the clinic on day 3.\nRule 270: staff member 270
+        opens the clinic on day 4.\nRule 271: staff member 271 opens the clinic on
+        day 5.\nRule 272: staff member 272 opens the clinic on day 6.\nRule 273: staff
+        member 273 opens the clinic on day 0.\nRule 274: staff member 274 opens the
+        clinic on day 1.\nRule 275: staff member 275 opens the clinic on day 2.\nRule
+        276: staff member 276 opens the clinic on day 3.\nRule 277: staff member 277
+        opens the clinic on day 4.\nRule 278: staff member 278 opens the clinic on
+        day 5.\nRule 279: staff member 279 opens the clinic on day 6.\nRule 280: staff
+        member 280 opens the clinic on day 0.\nRule 281: staff member 281 opens the
+        clinic on day 1.\nRule 282: staff member 282 opens the clinic on day 2.\nRule
+        283: staff member 283 opens the clinic on day 3.\nRule 284: staff member 284
+        opens the clinic on day 4.\nRule 285: staff member 285 opens the clinic on
+        day 5.\nRule 286: staff member 286 opens the clinic on day 6.\nRule 287: staff
+        member 287 opens the clinic on day 0.\nRule 288: staff member 288 opens the
+        clinic on day 1.\nRule 289: staff member 289 opens the clinic on day 2.\nRule
+        290: staff member 290 opens the clinic on day 3.\nRule 291: staff member 291
+        opens the clinic on day 4.\nRule 292: staff member 292 opens the clinic on
+        day 5.\nRule 293: staff member 293 opens the clinic on day 6.\nRule 294: staff
+        member 294 opens the clinic on day 0.\nRule 295: staff member 295 opens the
+        clinic on day 1.\nRule 296: staff member 296 opens the clinic on day 2.\nRule
+        297: staff member 297 opens the clinic on day 3.\nRule 298: staff member 298
+        opens the clinic on day 4.\nRule 299: staff member 299 opens the clinic on
+        day 5.\nRule 300: staff member 300 opens the clinic on day 6.\nRule 301: staff
+        member 301 opens the clinic on day 0.\nRule 302: staff member 302 opens the
+        clinic on day 1.\nRule 303: staff member 303 opens the clinic on day 2.\nRule
+        304: staff member 304 opens the clinic on day 3.\nRule 305: staff member 305
+        opens the clinic on day 4.\nRule 306: staff member 306 opens the clinic on
+        day 5.\nRule 307: staff member 307 opens the clinic on day 6.\nRule 308: staff
+        member 308 opens the clinic on day 0.\nRule 309: staff member 309 opens the
+        clinic on day 1.\nRule 310: staff member 310 opens the clinic on day 2.\nRule
+        311: staff member 311 opens the clinic on day 3.\nRule 312: staff member 312
+        opens the clinic on day 4.\nRule 313: staff member 313 opens the clinic on
+        day 5.\nRule 314: staff member 314 opens the clinic on day 6.\nRule 315: staff
+        member 315 opens the clinic on day 0.\nRule 316: staff member 316 opens the
+        clinic on day 1.\nRule 317: staff member 317 opens the clinic on day 2.\nRule
+        318: staff member 318 opens the clinic on day 3.\nRule 319: staff member 319
+        opens the clinic on day 4.\nRule 320: staff member 320 opens the clinic on
+        day 5.\nRule 321: staff member 321 opens the clinic on day 6.\nRule 322: staff
+        member 322 opens the clinic on day 0.\nRule 323: staff member 323 opens the
+        clinic on day 1.\nRule 324: staff member 324 opens the clinic on day 2.\nRule
+        325: staff member 325 opens the clinic on day 3.\nRule 326: staff member 326
+        opens the clinic on day 4.\nRule 327: staff member 327 opens the clinic on
+        day 5.\nRule 328: staff member 328 opens the clinic on day 6.\nRule 329: staff
+        member 329 opens the clinic on day 0.\nRule 330: staff member 330 opens the
+        clinic on day 1.\nRule 331: staff member 331 opens the clinic on day 2.\nRule
+        332: staff member 332 opens the clinic on day 3.\nRule 333: staff member 333
+        opens the clinic on day 4.\nRule 334: staff member 334 opens the clinic on
+        day 5.\nRule 335: staff member 335 opens the clinic on day 6.\nRule 336: staff
+        member 336 opens the clinic on day 0.\nRule 337: staff member 337 opens the
+        clinic on day 1.\nRule 338: staff member 338 opens the clinic on day 2.\nRule
+        339: staff member 339 opens the clinic on day 3.\nRule 340: staff member 340
+        opens the clinic on day 4.\nRule 341: staff member 341 opens the clinic on
+        day 5.\nRule 342: staff member 342 opens the clinic on day 6.\nRule 343: staff
+        member 343 opens the clinic on day 0.\nRule 344: staff member 344 opens the
+        clinic on day 1.\nRule 345: staff member 345 opens the clinic on day 2.\nRule
+        346: staff member 346 opens the clinic on day 3.\nRule 347: staff member 347
+        opens the clinic on day 4.\nRule 348: staff member 348 opens the clinic on
+        day 5.\nRule 349: staff member 349 opens the clinic on day 6.\nRule 350: staff
+        member 350 opens the clinic on day 0.\nRule 351: staff member 351 opens the
+        clinic on day 1.\nRule 352: staff member 352 opens the clinic on day 2.\nRule
+        353: staff member 353 opens the clinic on day 3.\nRule 354: staff member 354
+        opens the clinic on day 4.\nRule 355: staff member 355 opens the clinic on
+        day 5.\nRule 356: staff member 356 opens the clinic on day 6.\nRule 357: staff
+        member 357 opens the clinic on day 0.\nRule 358: staff member 358 opens the
+        clinic on day 1.\nRule 359: staff member 359 opens the clinic on day 2.\nRule
+        360: staff member 360 opens the clinic on day 3.\nRule 361: staff member 361
+        opens the clinic on day 4.\nRule 362: staff member 362 opens the clinic on
+        day 5.\nRule 363: staff member 363 opens the clinic on day 6.\nRule 364: staff
+        member 364 opens the clinic on day 0.\nRule 365: staff member 365 opens the
+        clinic on day 1.\nRule 366: staff member 366 opens the clinic on day 2.\nRule
+        367: staff member 367 opens the clinic on day 3.\nRule 368: staff member 368
+        opens the clinic on day 4.\nRule 369: staff member 369 opens the clinic on
+        day 5.\nRule 370: staff member 370 opens the clinic on day 6.\nRule 371: staff
+        member 371 opens the clinic on day 0.\nRule 372: staff member 372 opens the
+        clinic on day 1.\nRule 373: staff member 373 opens the clinic on day 2.\nRule
+        374: staff member 374 opens the clinic on day 3.\nRule 375: staff member 375
+        opens the clinic on day 4.\nRule 376: staff member 376 opens the clinic on
+        day 5.\nRule 377: staff member 377 opens the clinic on day 6.\nRule 378: staff
+        member 378 opens the clinic on day 0.\nRule 379: staff member 379 opens the
+        clinic on day 1.\nRule 380: staff member 380 opens the clinic on day 2.\nRule
+        381: staff member 381 opens the clinic on day 3.\nRule 382: staff member 382
+        opens the clinic on day 4.\nRule 383: staff member 383 opens the clinic on
+        day 5.\nRule 384: staff member 384 opens the clinic on day 6.\nRule 385: staff
+        member 385 opens the clinic on day 0.\nRule 386: staff member 386 opens the
+        clinic on day 1.\nRule 387: staff member 387 opens the clinic on day 2.\nRule
+        388: staff member 388 opens the clinic on day 3.\nRule 389: staff member 389
+        opens the clinic on day 4.\nRule 390: staff member 390 opens the clinic on
+        day 5.\nRule 391: staff member 391 opens the clinic on day 6.\nRule 392: staff
+        member 392 opens the clinic on day 0.\nRule 393: staff member 393 opens the
+        clinic on day 1.\nRule 394: staff member 394 opens the clinic on day 2.\nRule
+        395: staff member 395 opens the clinic on day 3.\nRule 396: staff member 396
+        opens the clinic on day 4.\nRule 397: staff member 397 opens the clinic on
+        day 5.\nRule 398: staff member 398 opens the clinic on day 6.\nRule 399: staff
+        member 399 opens the clinic on day 0.\nRule 400: staff member 400 opens the
+        clinic on day 1."}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:58:34 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=604
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "Based on the handbook, staff member 3 opens the clinic on day 3 (as well as staff member 10, 17, 24, etc.). \n\nTherefore, one staff member who opens on day 3 is **staff member 3**.",
+                    "thoughtSignature": "EmAKXgFpFH0TthX+SZmaSkm0kGzFJ/Gge/blwwAOL5yjgV48cLnmsMa0jP60H2ESX+cwLf+CuJKSe2T390noUxQtEjUxXpx5UvnDQveyM7dFuJSh5IRL+4HnAVKWSTMPLQo="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8202,
+            "candidatesTokenCount": 56,
+            "totalTokenCount": 8258,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8202
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "qjrhatTYDrTmz7IP2NLyqAs"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:58:34 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Who opens on day 3? Name
+        one."}]}],"systemInstruction":{"parts":[{"text":"You answer questions about
+        this handbook.\n\nRule 1: staff member 1 opens the clinic on day 1.\nRule
+        2: staff member 2 opens the clinic on day 2.\nRule 3: staff member 3 opens
+        the clinic on day 3.\nRule 4: staff member 4 opens the clinic on day 4.\nRule
+        5: staff member 5 opens the clinic on day 5.\nRule 6: staff member 6 opens
+        the clinic on day 6.\nRule 7: staff member 7 opens the clinic on day 0.\nRule
+        8: staff member 8 opens the clinic on day 1.\nRule 9: staff member 9 opens
+        the clinic on day 2.\nRule 10: staff member 10 opens the clinic on day 3.\nRule
+        11: staff member 11 opens the clinic on day 4.\nRule 12: staff member 12 opens
+        the clinic on day 5.\nRule 13: staff member 13 opens the clinic on day 6.\nRule
+        14: staff member 14 opens the clinic on day 0.\nRule 15: staff member 15 opens
+        the clinic on day 1.\nRule 16: staff member 16 opens the clinic on day 2.\nRule
+        17: staff member 17 opens the clinic on day 3.\nRule 18: staff member 18 opens
+        the clinic on day 4.\nRule 19: staff member 19 opens the clinic on day 5.\nRule
+        20: staff member 20 opens the clinic on day 6.\nRule 21: staff member 21 opens
+        the clinic on day 0.\nRule 22: staff member 22 opens the clinic on day 1.\nRule
+        23: staff member 23 opens the clinic on day 2.\nRule 24: staff member 24 opens
+        the clinic on day 3.\nRule 25: staff member 25 opens the clinic on day 4.\nRule
+        26: staff member 26 opens the clinic on day 5.\nRule 27: staff member 27 opens
+        the clinic on day 6.\nRule 28: staff member 28 opens the clinic on day 0.\nRule
+        29: staff member 29 opens the clinic on day 1.\nRule 30: staff member 30 opens
+        the clinic on day 2.\nRule 31: staff member 31 opens the clinic on day 3.\nRule
+        32: staff member 32 opens the clinic on day 4.\nRule 33: staff member 33 opens
+        the clinic on day 5.\nRule 34: staff member 34 opens the clinic on day 6.\nRule
+        35: staff member 35 opens the clinic on day 0.\nRule 36: staff member 36 opens
+        the clinic on day 1.\nRule 37: staff member 37 opens the clinic on day 2.\nRule
+        38: staff member 38 opens the clinic on day 3.\nRule 39: staff member 39 opens
+        the clinic on day 4.\nRule 40: staff member 40 opens the clinic on day 5.\nRule
+        41: staff member 41 opens the clinic on day 6.\nRule 42: staff member 42 opens
+        the clinic on day 0.\nRule 43: staff member 43 opens the clinic on day 1.\nRule
+        44: staff member 44 opens the clinic on day 2.\nRule 45: staff member 45 opens
+        the clinic on day 3.\nRule 46: staff member 46 opens the clinic on day 4.\nRule
+        47: staff member 47 opens the clinic on day 5.\nRule 48: staff member 48 opens
+        the clinic on day 6.\nRule 49: staff member 49 opens the clinic on day 0.\nRule
+        50: staff member 50 opens the clinic on day 1.\nRule 51: staff member 51 opens
+        the clinic on day 2.\nRule 52: staff member 52 opens the clinic on day 3.\nRule
+        53: staff member 53 opens the clinic on day 4.\nRule 54: staff member 54 opens
+        the clinic on day 5.\nRule 55: staff member 55 opens the clinic on day 6.\nRule
+        56: staff member 56 opens the clinic on day 0.\nRule 57: staff member 57 opens
+        the clinic on day 1.\nRule 58: staff member 58 opens the clinic on day 2.\nRule
+        59: staff member 59 opens the clinic on day 3.\nRule 60: staff member 60 opens
+        the clinic on day 4.\nRule 61: staff member 61 opens the clinic on day 5.\nRule
+        62: staff member 62 opens the clinic on day 6.\nRule 63: staff member 63 opens
+        the clinic on day 0.\nRule 64: staff member 64 opens the clinic on day 1.\nRule
+        65: staff member 65 opens the clinic on day 2.\nRule 66: staff member 66 opens
+        the clinic on day 3.\nRule 67: staff member 67 opens the clinic on day 4.\nRule
+        68: staff member 68 opens the clinic on day 5.\nRule 69: staff member 69 opens
+        the clinic on day 6.\nRule 70: staff member 70 opens the clinic on day 0.\nRule
+        71: staff member 71 opens the clinic on day 1.\nRule 72: staff member 72 opens
+        the clinic on day 2.\nRule 73: staff member 73 opens the clinic on day 3.\nRule
+        74: staff member 74 opens the clinic on day 4.\nRule 75: staff member 75 opens
+        the clinic on day 5.\nRule 76: staff member 76 opens the clinic on day 6.\nRule
+        77: staff member 77 opens the clinic on day 0.\nRule 78: staff member 78 opens
+        the clinic on day 1.\nRule 79: staff member 79 opens the clinic on day 2.\nRule
+        80: staff member 80 opens the clinic on day 3.\nRule 81: staff member 81 opens
+        the clinic on day 4.\nRule 82: staff member 82 opens the clinic on day 5.\nRule
+        83: staff member 83 opens the clinic on day 6.\nRule 84: staff member 84 opens
+        the clinic on day 0.\nRule 85: staff member 85 opens the clinic on day 1.\nRule
+        86: staff member 86 opens the clinic on day 2.\nRule 87: staff member 87 opens
+        the clinic on day 3.\nRule 88: staff member 88 opens the clinic on day 4.\nRule
+        89: staff member 89 opens the clinic on day 5.\nRule 90: staff member 90 opens
+        the clinic on day 6.\nRule 91: staff member 91 opens the clinic on day 0.\nRule
+        92: staff member 92 opens the clinic on day 1.\nRule 93: staff member 93 opens
+        the clinic on day 2.\nRule 94: staff member 94 opens the clinic on day 3.\nRule
+        95: staff member 95 opens the clinic on day 4.\nRule 96: staff member 96 opens
+        the clinic on day 5.\nRule 97: staff member 97 opens the clinic on day 6.\nRule
+        98: staff member 98 opens the clinic on day 0.\nRule 99: staff member 99 opens
+        the clinic on day 1.\nRule 100: staff member 100 opens the clinic on day 2.\nRule
+        101: staff member 101 opens the clinic on day 3.\nRule 102: staff member 102
+        opens the clinic on day 4.\nRule 103: staff member 103 opens the clinic on
+        day 5.\nRule 104: staff member 104 opens the clinic on day 6.\nRule 105: staff
+        member 105 opens the clinic on day 0.\nRule 106: staff member 106 opens the
+        clinic on day 1.\nRule 107: staff member 107 opens the clinic on day 2.\nRule
+        108: staff member 108 opens the clinic on day 3.\nRule 109: staff member 109
+        opens the clinic on day 4.\nRule 110: staff member 110 opens the clinic on
+        day 5.\nRule 111: staff member 111 opens the clinic on day 6.\nRule 112: staff
+        member 112 opens the clinic on day 0.\nRule 113: staff member 113 opens the
+        clinic on day 1.\nRule 114: staff member 114 opens the clinic on day 2.\nRule
+        115: staff member 115 opens the clinic on day 3.\nRule 116: staff member 116
+        opens the clinic on day 4.\nRule 117: staff member 117 opens the clinic on
+        day 5.\nRule 118: staff member 118 opens the clinic on day 6.\nRule 119: staff
+        member 119 opens the clinic on day 0.\nRule 120: staff member 120 opens the
+        clinic on day 1.\nRule 121: staff member 121 opens the clinic on day 2.\nRule
+        122: staff member 122 opens the clinic on day 3.\nRule 123: staff member 123
+        opens the clinic on day 4.\nRule 124: staff member 124 opens the clinic on
+        day 5.\nRule 125: staff member 125 opens the clinic on day 6.\nRule 126: staff
+        member 126 opens the clinic on day 0.\nRule 127: staff member 127 opens the
+        clinic on day 1.\nRule 128: staff member 128 opens the clinic on day 2.\nRule
+        129: staff member 129 opens the clinic on day 3.\nRule 130: staff member 130
+        opens the clinic on day 4.\nRule 131: staff member 131 opens the clinic on
+        day 5.\nRule 132: staff member 132 opens the clinic on day 6.\nRule 133: staff
+        member 133 opens the clinic on day 0.\nRule 134: staff member 134 opens the
+        clinic on day 1.\nRule 135: staff member 135 opens the clinic on day 2.\nRule
+        136: staff member 136 opens the clinic on day 3.\nRule 137: staff member 137
+        opens the clinic on day 4.\nRule 138: staff member 138 opens the clinic on
+        day 5.\nRule 139: staff member 139 opens the clinic on day 6.\nRule 140: staff
+        member 140 opens the clinic on day 0.\nRule 141: staff member 141 opens the
+        clinic on day 1.\nRule 142: staff member 142 opens the clinic on day 2.\nRule
+        143: staff member 143 opens the clinic on day 3.\nRule 144: staff member 144
+        opens the clinic on day 4.\nRule 145: staff member 145 opens the clinic on
+        day 5.\nRule 146: staff member 146 opens the clinic on day 6.\nRule 147: staff
+        member 147 opens the clinic on day 0.\nRule 148: staff member 148 opens the
+        clinic on day 1.\nRule 149: staff member 149 opens the clinic on day 2.\nRule
+        150: staff member 150 opens the clinic on day 3.\nRule 151: staff member 151
+        opens the clinic on day 4.\nRule 152: staff member 152 opens the clinic on
+        day 5.\nRule 153: staff member 153 opens the clinic on day 6.\nRule 154: staff
+        member 154 opens the clinic on day 0.\nRule 155: staff member 155 opens the
+        clinic on day 1.\nRule 156: staff member 156 opens the clinic on day 2.\nRule
+        157: staff member 157 opens the clinic on day 3.\nRule 158: staff member 158
+        opens the clinic on day 4.\nRule 159: staff member 159 opens the clinic on
+        day 5.\nRule 160: staff member 160 opens the clinic on day 6.\nRule 161: staff
+        member 161 opens the clinic on day 0.\nRule 162: staff member 162 opens the
+        clinic on day 1.\nRule 163: staff member 163 opens the clinic on day 2.\nRule
+        164: staff member 164 opens the clinic on day 3.\nRule 165: staff member 165
+        opens the clinic on day 4.\nRule 166: staff member 166 opens the clinic on
+        day 5.\nRule 167: staff member 167 opens the clinic on day 6.\nRule 168: staff
+        member 168 opens the clinic on day 0.\nRule 169: staff member 169 opens the
+        clinic on day 1.\nRule 170: staff member 170 opens the clinic on day 2.\nRule
+        171: staff member 171 opens the clinic on day 3.\nRule 172: staff member 172
+        opens the clinic on day 4.\nRule 173: staff member 173 opens the clinic on
+        day 5.\nRule 174: staff member 174 opens the clinic on day 6.\nRule 175: staff
+        member 175 opens the clinic on day 0.\nRule 176: staff member 176 opens the
+        clinic on day 1.\nRule 177: staff member 177 opens the clinic on day 2.\nRule
+        178: staff member 178 opens the clinic on day 3.\nRule 179: staff member 179
+        opens the clinic on day 4.\nRule 180: staff member 180 opens the clinic on
+        day 5.\nRule 181: staff member 181 opens the clinic on day 6.\nRule 182: staff
+        member 182 opens the clinic on day 0.\nRule 183: staff member 183 opens the
+        clinic on day 1.\nRule 184: staff member 184 opens the clinic on day 2.\nRule
+        185: staff member 185 opens the clinic on day 3.\nRule 186: staff member 186
+        opens the clinic on day 4.\nRule 187: staff member 187 opens the clinic on
+        day 5.\nRule 188: staff member 188 opens the clinic on day 6.\nRule 189: staff
+        member 189 opens the clinic on day 0.\nRule 190: staff member 190 opens the
+        clinic on day 1.\nRule 191: staff member 191 opens the clinic on day 2.\nRule
+        192: staff member 192 opens the clinic on day 3.\nRule 193: staff member 193
+        opens the clinic on day 4.\nRule 194: staff member 194 opens the clinic on
+        day 5.\nRule 195: staff member 195 opens the clinic on day 6.\nRule 196: staff
+        member 196 opens the clinic on day 0.\nRule 197: staff member 197 opens the
+        clinic on day 1.\nRule 198: staff member 198 opens the clinic on day 2.\nRule
+        199: staff member 199 opens the clinic on day 3.\nRule 200: staff member 200
+        opens the clinic on day 4.\nRule 201: staff member 201 opens the clinic on
+        day 5.\nRule 202: staff member 202 opens the clinic on day 6.\nRule 203: staff
+        member 203 opens the clinic on day 0.\nRule 204: staff member 204 opens the
+        clinic on day 1.\nRule 205: staff member 205 opens the clinic on day 2.\nRule
+        206: staff member 206 opens the clinic on day 3.\nRule 207: staff member 207
+        opens the clinic on day 4.\nRule 208: staff member 208 opens the clinic on
+        day 5.\nRule 209: staff member 209 opens the clinic on day 6.\nRule 210: staff
+        member 210 opens the clinic on day 0.\nRule 211: staff member 211 opens the
+        clinic on day 1.\nRule 212: staff member 212 opens the clinic on day 2.\nRule
+        213: staff member 213 opens the clinic on day 3.\nRule 214: staff member 214
+        opens the clinic on day 4.\nRule 215: staff member 215 opens the clinic on
+        day 5.\nRule 216: staff member 216 opens the clinic on day 6.\nRule 217: staff
+        member 217 opens the clinic on day 0.\nRule 218: staff member 218 opens the
+        clinic on day 1.\nRule 219: staff member 219 opens the clinic on day 2.\nRule
+        220: staff member 220 opens the clinic on day 3.\nRule 221: staff member 221
+        opens the clinic on day 4.\nRule 222: staff member 222 opens the clinic on
+        day 5.\nRule 223: staff member 223 opens the clinic on day 6.\nRule 224: staff
+        member 224 opens the clinic on day 0.\nRule 225: staff member 225 opens the
+        clinic on day 1.\nRule 226: staff member 226 opens the clinic on day 2.\nRule
+        227: staff member 227 opens the clinic on day 3.\nRule 228: staff member 228
+        opens the clinic on day 4.\nRule 229: staff member 229 opens the clinic on
+        day 5.\nRule 230: staff member 230 opens the clinic on day 6.\nRule 231: staff
+        member 231 opens the clinic on day 0.\nRule 232: staff member 232 opens the
+        clinic on day 1.\nRule 233: staff member 233 opens the clinic on day 2.\nRule
+        234: staff member 234 opens the clinic on day 3.\nRule 235: staff member 235
+        opens the clinic on day 4.\nRule 236: staff member 236 opens the clinic on
+        day 5.\nRule 237: staff member 237 opens the clinic on day 6.\nRule 238: staff
+        member 238 opens the clinic on day 0.\nRule 239: staff member 239 opens the
+        clinic on day 1.\nRule 240: staff member 240 opens the clinic on day 2.\nRule
+        241: staff member 241 opens the clinic on day 3.\nRule 242: staff member 242
+        opens the clinic on day 4.\nRule 243: staff member 243 opens the clinic on
+        day 5.\nRule 244: staff member 244 opens the clinic on day 6.\nRule 245: staff
+        member 245 opens the clinic on day 0.\nRule 246: staff member 246 opens the
+        clinic on day 1.\nRule 247: staff member 247 opens the clinic on day 2.\nRule
+        248: staff member 248 opens the clinic on day 3.\nRule 249: staff member 249
+        opens the clinic on day 4.\nRule 250: staff member 250 opens the clinic on
+        day 5.\nRule 251: staff member 251 opens the clinic on day 6.\nRule 252: staff
+        member 252 opens the clinic on day 0.\nRule 253: staff member 253 opens the
+        clinic on day 1.\nRule 254: staff member 254 opens the clinic on day 2.\nRule
+        255: staff member 255 opens the clinic on day 3.\nRule 256: staff member 256
+        opens the clinic on day 4.\nRule 257: staff member 257 opens the clinic on
+        day 5.\nRule 258: staff member 258 opens the clinic on day 6.\nRule 259: staff
+        member 259 opens the clinic on day 0.\nRule 260: staff member 260 opens the
+        clinic on day 1.\nRule 261: staff member 261 opens the clinic on day 2.\nRule
+        262: staff member 262 opens the clinic on day 3.\nRule 263: staff member 263
+        opens the clinic on day 4.\nRule 264: staff member 264 opens the clinic on
+        day 5.\nRule 265: staff member 265 opens the clinic on day 6.\nRule 266: staff
+        member 266 opens the clinic on day 0.\nRule 267: staff member 267 opens the
+        clinic on day 1.\nRule 268: staff member 268 opens the clinic on day 2.\nRule
+        269: staff member 269 opens the clinic on day 3.\nRule 270: staff member 270
+        opens the clinic on day 4.\nRule 271: staff member 271 opens the clinic on
+        day 5.\nRule 272: staff member 272 opens the clinic on day 6.\nRule 273: staff
+        member 273 opens the clinic on day 0.\nRule 274: staff member 274 opens the
+        clinic on day 1.\nRule 275: staff member 275 opens the clinic on day 2.\nRule
+        276: staff member 276 opens the clinic on day 3.\nRule 277: staff member 277
+        opens the clinic on day 4.\nRule 278: staff member 278 opens the clinic on
+        day 5.\nRule 279: staff member 279 opens the clinic on day 6.\nRule 280: staff
+        member 280 opens the clinic on day 0.\nRule 281: staff member 281 opens the
+        clinic on day 1.\nRule 282: staff member 282 opens the clinic on day 2.\nRule
+        283: staff member 283 opens the clinic on day 3.\nRule 284: staff member 284
+        opens the clinic on day 4.\nRule 285: staff member 285 opens the clinic on
+        day 5.\nRule 286: staff member 286 opens the clinic on day 6.\nRule 287: staff
+        member 287 opens the clinic on day 0.\nRule 288: staff member 288 opens the
+        clinic on day 1.\nRule 289: staff member 289 opens the clinic on day 2.\nRule
+        290: staff member 290 opens the clinic on day 3.\nRule 291: staff member 291
+        opens the clinic on day 4.\nRule 292: staff member 292 opens the clinic on
+        day 5.\nRule 293: staff member 293 opens the clinic on day 6.\nRule 294: staff
+        member 294 opens the clinic on day 0.\nRule 295: staff member 295 opens the
+        clinic on day 1.\nRule 296: staff member 296 opens the clinic on day 2.\nRule
+        297: staff member 297 opens the clinic on day 3.\nRule 298: staff member 298
+        opens the clinic on day 4.\nRule 299: staff member 299 opens the clinic on
+        day 5.\nRule 300: staff member 300 opens the clinic on day 6.\nRule 301: staff
+        member 301 opens the clinic on day 0.\nRule 302: staff member 302 opens the
+        clinic on day 1.\nRule 303: staff member 303 opens the clinic on day 2.\nRule
+        304: staff member 304 opens the clinic on day 3.\nRule 305: staff member 305
+        opens the clinic on day 4.\nRule 306: staff member 306 opens the clinic on
+        day 5.\nRule 307: staff member 307 opens the clinic on day 6.\nRule 308: staff
+        member 308 opens the clinic on day 0.\nRule 309: staff member 309 opens the
+        clinic on day 1.\nRule 310: staff member 310 opens the clinic on day 2.\nRule
+        311: staff member 311 opens the clinic on day 3.\nRule 312: staff member 312
+        opens the clinic on day 4.\nRule 313: staff member 313 opens the clinic on
+        day 5.\nRule 314: staff member 314 opens the clinic on day 6.\nRule 315: staff
+        member 315 opens the clinic on day 0.\nRule 316: staff member 316 opens the
+        clinic on day 1.\nRule 317: staff member 317 opens the clinic on day 2.\nRule
+        318: staff member 318 opens the clinic on day 3.\nRule 319: staff member 319
+        opens the clinic on day 4.\nRule 320: staff member 320 opens the clinic on
+        day 5.\nRule 321: staff member 321 opens the clinic on day 6.\nRule 322: staff
+        member 322 opens the clinic on day 0.\nRule 323: staff member 323 opens the
+        clinic on day 1.\nRule 324: staff member 324 opens the clinic on day 2.\nRule
+        325: staff member 325 opens the clinic on day 3.\nRule 326: staff member 326
+        opens the clinic on day 4.\nRule 327: staff member 327 opens the clinic on
+        day 5.\nRule 328: staff member 328 opens the clinic on day 6.\nRule 329: staff
+        member 329 opens the clinic on day 0.\nRule 330: staff member 330 opens the
+        clinic on day 1.\nRule 331: staff member 331 opens the clinic on day 2.\nRule
+        332: staff member 332 opens the clinic on day 3.\nRule 333: staff member 333
+        opens the clinic on day 4.\nRule 334: staff member 334 opens the clinic on
+        day 5.\nRule 335: staff member 335 opens the clinic on day 6.\nRule 336: staff
+        member 336 opens the clinic on day 0.\nRule 337: staff member 337 opens the
+        clinic on day 1.\nRule 338: staff member 338 opens the clinic on day 2.\nRule
+        339: staff member 339 opens the clinic on day 3.\nRule 340: staff member 340
+        opens the clinic on day 4.\nRule 341: staff member 341 opens the clinic on
+        day 5.\nRule 342: staff member 342 opens the clinic on day 6.\nRule 343: staff
+        member 343 opens the clinic on day 0.\nRule 344: staff member 344 opens the
+        clinic on day 1.\nRule 345: staff member 345 opens the clinic on day 2.\nRule
+        346: staff member 346 opens the clinic on day 3.\nRule 347: staff member 347
+        opens the clinic on day 4.\nRule 348: staff member 348 opens the clinic on
+        day 5.\nRule 349: staff member 349 opens the clinic on day 6.\nRule 350: staff
+        member 350 opens the clinic on day 0.\nRule 351: staff member 351 opens the
+        clinic on day 1.\nRule 352: staff member 352 opens the clinic on day 2.\nRule
+        353: staff member 353 opens the clinic on day 3.\nRule 354: staff member 354
+        opens the clinic on day 4.\nRule 355: staff member 355 opens the clinic on
+        day 5.\nRule 356: staff member 356 opens the clinic on day 6.\nRule 357: staff
+        member 357 opens the clinic on day 0.\nRule 358: staff member 358 opens the
+        clinic on day 1.\nRule 359: staff member 359 opens the clinic on day 2.\nRule
+        360: staff member 360 opens the clinic on day 3.\nRule 361: staff member 361
+        opens the clinic on day 4.\nRule 362: staff member 362 opens the clinic on
+        day 5.\nRule 363: staff member 363 opens the clinic on day 6.\nRule 364: staff
+        member 364 opens the clinic on day 0.\nRule 365: staff member 365 opens the
+        clinic on day 1.\nRule 366: staff member 366 opens the clinic on day 2.\nRule
+        367: staff member 367 opens the clinic on day 3.\nRule 368: staff member 368
+        opens the clinic on day 4.\nRule 369: staff member 369 opens the clinic on
+        day 5.\nRule 370: staff member 370 opens the clinic on day 6.\nRule 371: staff
+        member 371 opens the clinic on day 0.\nRule 372: staff member 372 opens the
+        clinic on day 1.\nRule 373: staff member 373 opens the clinic on day 2.\nRule
+        374: staff member 374 opens the clinic on day 3.\nRule 375: staff member 375
+        opens the clinic on day 4.\nRule 376: staff member 376 opens the clinic on
+        day 5.\nRule 377: staff member 377 opens the clinic on day 6.\nRule 378: staff
+        member 378 opens the clinic on day 0.\nRule 379: staff member 379 opens the
+        clinic on day 1.\nRule 380: staff member 380 opens the clinic on day 2.\nRule
+        381: staff member 381 opens the clinic on day 3.\nRule 382: staff member 382
+        opens the clinic on day 4.\nRule 383: staff member 383 opens the clinic on
+        day 5.\nRule 384: staff member 384 opens the clinic on day 6.\nRule 385: staff
+        member 385 opens the clinic on day 0.\nRule 386: staff member 386 opens the
+        clinic on day 1.\nRule 387: staff member 387 opens the clinic on day 2.\nRule
+        388: staff member 388 opens the clinic on day 3.\nRule 389: staff member 389
+        opens the clinic on day 4.\nRule 390: staff member 390 opens the clinic on
+        day 5.\nRule 391: staff member 391 opens the clinic on day 6.\nRule 392: staff
+        member 392 opens the clinic on day 0.\nRule 393: staff member 393 opens the
+        clinic on day 1.\nRule 394: staff member 394 opens the clinic on day 2.\nRule
+        395: staff member 395 opens the clinic on day 3.\nRule 396: staff member 396
+        opens the clinic on day 4.\nRule 397: staff member 397 opens the clinic on
+        day 5.\nRule 398: staff member 398 opens the clinic on day 6.\nRule 399: staff
+        member 399 opens the clinic on day 0.\nRule 400: staff member 400 opens the
+        clinic on day 1."}]}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:58:35 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=572
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "According to Rule 3, staff member 3 opens the clinic on day 3. (Other options include staff member 10, 17, 24, etc.)",
+                    "thoughtSignature": "EmAKXgFpFH0T6G7ONw1Wk6w1TVtMkQvx4PP2Hqbr9akvQsW/z+PsWdwQOTFs/C489YquQnOo+cE/K5PmLLa1d1Z12LkQfp5NVD35nhZW7Io/bp4tDU6gYc1c19uZvcE3VwU="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8202,
+            "candidatesTokenCount": 38,
+            "totalTokenCount": 8240,
+            "cachedContentTokenCount": 6116,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8202
+              }
+            ],
+            "cacheTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 6116
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "qjrhariFOO2fz7IP57D56Ag"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:58:35 GMT
+recorded_with: VCR 6.4.0

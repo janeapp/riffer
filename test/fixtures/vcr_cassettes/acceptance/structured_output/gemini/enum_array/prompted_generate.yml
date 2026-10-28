@@ -1,0 +1,90 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Tag this support ticket:
+        ''I was charged twice this month and need it fixed today.''\n\nWhen you give
+        your final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Tags\",\"items\":{\"type\":\"string\",\"enum\":[\"urgent\",\"billing\",\"technical\",\"account\"]}}},\"required\":[\"tags\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"tags\":[\"urgent | billing | technical
+        | account\"]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:42 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=540
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\"tags\":[\"urgent\",\"billing\"]}",
+                    "thoughtSignature": "EmAKXgFpFH0TbtYpvxMLmZXdcigW5hco1L3YHRR7NhiywXVPWU2Ad7dIBI4ZlPRj8B4KvsY3WewPMavyBLJIkWyVflAi1PuppvIIEzWYWpjlDzQ7DG/1w+MVPdobMqOwyEU="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 140,
+            "candidatesTokenCount": 7,
+            "totalTokenCount": 147,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 140
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "hTnhasmxOLuhz7IP6ZyEuQ4"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:42 GMT
+recorded_with: VCR 6.4.0

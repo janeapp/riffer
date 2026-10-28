@@ -1,0 +1,181 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is tomorrow''s forecast
+        for Toronto? If the tool fails, say so."}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:55:45 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=538
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_forecast",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_1182545"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TDFUezl322mY/i7Tc8OnJCUgBVbABEL+5lmyhm6uU+ggZcyGS5JwRyGBANNE3MMQ/8Bdk2FIAZbDzZtbBbc8xKJCa6jm/TKwGbOamPrHEPgRGiTsSWn9GSVc="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 80,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 96,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 80
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "ATrhauPEDPCLqtsPi7yeiAo"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:55:45 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is tomorrow''s forecast
+        for Toronto? If the tool fails, say so."}]},{"role":"model","parts":[{"functionCall":{"id":"call_1182545","name":"get_forecast","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TDFUezl322mY/i7Tc8OnJCUgBVbABEL+5lmyhm6uU+ggZcyGS5JwRyGBANNE3MMQ/8Bdk2FIAZbDzZtbBbc8xKJCa6jm/TKwGbOamPrHEPgRGiTsSWn9GSVc="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1182545","name":"get_forecast","response":{"result":"The
+        forecast service for Toronto is down"}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:55:46 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=492
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "The forecast service for Toronto is down.",
+                    "thoughtSignature": "EmAKXgFpFH0T3uA7lCDB/whzeLVNdLkVwPDaVG9vQiDPMCnW1EEzEBgcu3qnu3vlOnv1GJw3hPQi6365WW2cUGtBLPccjzrhyBsNxeN37Le7rTHU4WK9ipDboicQKXKNbOs="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 116,
+            "candidatesTokenCount": 8,
+            "totalTokenCount": 124,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 116
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "ATrhaoqtNafoz7IPgdWXmAs"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:55:46 GMT
+recorded_with: VCR 6.4.0

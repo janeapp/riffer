@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"Repeat this
+        exactly, with nothing else: ¿Qué tal? 日本語のテキスト \U0001F680\U0001F389 Ünïcödé\"}]}]}"
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:51:19 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=540
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJjYW5kaWRhdGVzIjogWwogICAgewogICAgICAiY29udGVudCI6IHsKICAgICAgICAicGFydHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJ0ZXh0IjogIsK/UXXDqSB0YWw/IOaXpeacrOiqnuOBruODhuOCreOCueODiCDwn5qA8J+OiSDDnG7Dr2PDtmTDqSIsCiAgICAgICAgICAgICJ0aG91Z2h0U2lnbmF0dXJlIjogIkVtQUtYZ0ZwRkgwVDZaQVIzbjEyaUJpOVBCM1JsVVViWGtlcVl0TlNFVkFaT2ZDdTIxeFpQYm81MW9IdVVkbDdXOU9pUUFoY05MbXVMNTA1eUx0ZExNNmlkTWJFUDlKN1hoeWN1WERhdEZQNHJJa1BnUjZpT05wRnNOTEZoU0U1WEk0PSIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJyb2xlIjogIm1vZGVsIgogICAgICB9LAogICAgICAiZmluaXNoUmVhc29uIjogIlNUT1AiLAogICAgICAiaW5kZXgiOiAwCiAgICB9CiAgXSwKICAidXNhZ2VNZXRhZGF0YSI6IHsKICAgICJwcm9tcHRUb2tlbkNvdW50IjogMjYsCiAgICAiY2FuZGlkYXRlc1Rva2VuQ291bnQiOiAxNywKICAgICJ0b3RhbFRva2VuQ291bnQiOiA0MywKICAgICJwcm9tcHRUb2tlbnNEZXRhaWxzIjogWwogICAgICB7CiAgICAgICAgIm1vZGFsaXR5IjogIlRFWFQiLAogICAgICAgICJ0b2tlbkNvdW50IjogMjYKICAgICAgfQogICAgXSwKICAgICJzZXJ2aWNlVGllciI6ICJzdGFuZGFyZCIKICB9LAogICJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwKICAicmVzcG9uc2VJZCI6ICI5ampoYXZ5dkxvSFV6N0lQN29YMnNBdyIKfQo=
+  recorded_at: Tue, 27 Oct 2026 23:51:19 GMT
+recorded_with: VCR 6.4.0

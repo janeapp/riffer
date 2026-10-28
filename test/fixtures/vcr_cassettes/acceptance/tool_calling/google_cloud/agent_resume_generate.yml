@@ -1,0 +1,370 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]}],"systemInstruction":{"parts":[{"text":"Use the tools to answer.
+        Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 15:34:45 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_337196"
+                    },
+                    "thoughtSignature": "AY89a19FeW5Rav5wuOmQgCfNTjy5RTS8zaCiMB1mi0LMZNHg61L0G0H/+vet86pozcVArUKEjlKTgNAYAuznV20XPsON9oiQvmLBkubm5tojDEgeDI1BDQpoXJ4="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 44,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 60,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 44
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 16
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T15:34:44.891457Z",
+          "responseId": "FBbiasG0NsWV9LsPqNCZ6AI"
+        }
+  recorded_at: Wed, 28 Oct 2026 15:34:45 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_337196","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a19FeW5Rav5wuOmQgCfNTjy5RTS8zaCiMB1mi0LMZNHg61L0G0H/+vet86pozcVArUKEjlKTgNAYAuznV20XPsON9oiQvmLBkubm5tojDEgeDI1BDQpoXJ4="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_337196","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 15:34:46 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "It is 15 degrees Celsius in Toronto.",
+                    "thoughtSignature": "AY89a19rqU9VI+Rhw7pT/3Iw3RPNllVtVQiiC6+FQRJ/69MrrAK25sx0zZmKW8ZBSoy8KUbGEezE0vo9aCSNbPLMPJsx6ju2AZ+lA/QSiKkOHbUWnaEz/XwdIzc="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 71,
+            "candidatesTokenCount": 10,
+            "totalTokenCount": 81,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 71
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 10
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T15:34:45.713598Z",
+          "responseId": "FRbiav7GK8WV9LsPqNCZ6AI"
+        }
+  recorded_at: Wed, 28 Oct 2026 15:34:46 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_337196","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a19FeW5Rav5wuOmQgCfNTjy5RTS8zaCiMB1mi0LMZNHg61L0G0H/+vet86pozcVArUKEjlKTgNAYAuznV20XPsON9oiQvmLBkubm5tojDEgeDI1BDQpoXJ4="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_337196","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]},{"role":"model","parts":[{"text":"It
+        is 15 degrees Celsius in Toronto.","thoughtSignature":"AY89a19rqU9VI+Rhw7pT/3Iw3RPNllVtVQiiC6+FQRJ/69MrrAK25sx0zZmKW8ZBSoy8KUbGEezE0vo9aCSNbPLMPJsx6ju2AZ+lA/QSiKkOHbUWnaEz/XwdIzc="}]},{"role":"user","parts":[{"text":"And
+        in Paris?"}]}],"systemInstruction":{"parts":[{"text":"Use the tools to answer.
+        Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 15:34:47 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Paris"
+                      },
+                      "id": "call_1006973"
+                    },
+                    "thoughtSignature": "AY89a18aZn0TRdb2iTDoLgx1kzGb7VTeKwRznesYDeXD9LOYgXSRneKsUJxJQlyFT9Wvp2M3v2ApChc+6I3XXAOVNySs1rjnNgOkzuF+jMqKSBghQi810pihi6A="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 85,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 101,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 85
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 16
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T15:34:46.492263Z",
+          "responseId": "FhbiaueFHq6N9LsP24-4oA8"
+        }
+  recorded_at: Wed, 28 Oct 2026 15:34:47 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_337196","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a19FeW5Rav5wuOmQgCfNTjy5RTS8zaCiMB1mi0LMZNHg61L0G0H/+vet86pozcVArUKEjlKTgNAYAuznV20XPsON9oiQvmLBkubm5tojDEgeDI1BDQpoXJ4="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_337196","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]},{"role":"model","parts":[{"text":"It
+        is 15 degrees Celsius in Toronto.","thoughtSignature":"AY89a19rqU9VI+Rhw7pT/3Iw3RPNllVtVQiiC6+FQRJ/69MrrAK25sx0zZmKW8ZBSoy8KUbGEezE0vo9aCSNbPLMPJsx6ju2AZ+lA/QSiKkOHbUWnaEz/XwdIzc="}]},{"role":"user","parts":[{"text":"And
+        in Paris?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1006973","name":"get_weather","args":{"city":"Paris"}},"thoughtSignature":"AY89a18aZn0TRdb2iTDoLgx1kzGb7VTeKwRznesYDeXD9LOYgXSRneKsUJxJQlyFT9Wvp2M3v2ApChc+6I3XXAOVNySs1rjnNgOkzuF+jMqKSBghQi810pihi6A="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1006973","name":"get_weather","response":{"result":"It
+        is 22 degrees Celsius in Paris."}}}]}],"systemInstruction":{"parts":[{"text":"Use
+        the tools to answer. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Authorization:
+      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 15:34:47 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "It is 22 degrees Celsius in Paris."
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 112,
+            "candidatesTokenCount": 10,
+            "totalTokenCount": 122,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 112
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 10
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-10-28T15:34:47.341348Z",
+          "responseId": "FxbiauTqFMWV9LsPqNCZ6AI"
+        }
+  recorded_at: Wed, 28 Oct 2026 15:34:47 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,122 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:56:24 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=621
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"get_weather\",\"args\": {\"city\": \"Toronto\"},\"id\": \"call_1720933\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TokNDgBLn49n0fwbefBtD3EREX6Wsd4aDjsFQDpzEEDn7FUz+VmnYo46RfZIqpJzpXyAU6kPw5blz2M8AtqzeDYJ6J3b+pd25vbuE4u7pSbIR6g0HUo8AWMc=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 60,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 76,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        60}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"JzrhaqPGNKHh_uMPpOy72A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 60,\"candidatesTokenCount\":
+        16,\"totalTokenCount\": 76,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        60}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"JzrhaqPGNKHh_uMPpOy72A4\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:56:24 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1720933","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"EmAKXgFpFH0TokNDgBLn49n0fwbefBtD3EREX6Wsd4aDjsFQDpzEEDn7FUz+VmnYo46RfZIqpJzpXyAU6kPw5blz2M8AtqzeDYJ6J3b+pd25vbuE4u7pSbIR6g0HUo8AWMc="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1720933","name":"get_weather","response":{"result":"It
+        is 15 degrees Celsius in Toronto."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:56:25 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=434
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicGFydHMiOiBbeyJ0ZXh0IjogIkl0IGlzIn1dLCJyb2xlIjogIm1vZGVsIn0sImluZGV4IjogMH1dLCJ1c2FnZU1ldGFkYXRhIjogeyJwcm9tcHRUb2tlbkNvdW50IjogOTksImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMiwidG90YWxUb2tlbkNvdW50IjogMTAxLCJwcm9tcHRUb2tlbnNEZXRhaWxzIjogW3sibW9kYWxpdHkiOiAiVEVYVCIsInRva2VuQ291bnQiOiA5OX1dLCJzZXJ2aWNlVGllciI6ICJzdGFuZGFyZCJ9LCJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMuNS1mbGFzaC1saXRlIiwicmVzcG9uc2VJZCI6ICJLRHJoYXIySUxOcnB6N0lQMFlHam9RNCJ9DQoNCmRhdGE6IHsiY2FuZGlkYXRlcyI6IFt7ImNvbnRlbnQiOiB7InBhcnRzIjogW3sidGV4dCI6ICIgY3VycmVudGx5IDE1wrBDIGluIFRvcm9udG8uIn1dLCJyb2xlIjogIm1vZGVsIn0sImluZGV4IjogMH1dLCJ1c2FnZU1ldGFkYXRhIjogeyJwcm9tcHRUb2tlbkNvdW50IjogOTksImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMTEsInRvdGFsVG9rZW5Db3VudCI6IDExMCwicHJvbXB0VG9rZW5zRGV0YWlscyI6IFt7Im1vZGFsaXR5IjogIlRFWFQiLCJ0b2tlbkNvdW50IjogOTl9XSwic2VydmljZVRpZXIiOiAic3RhbmRhcmQifSwibW9kZWxWZXJzaW9uIjogImdlbWluaS0zLjUtZmxhc2gtbGl0ZSIsInJlc3BvbnNlSWQiOiAiS0RyaGFyMklMTnJwejdJUDBZR2pvUTQifQ0KDQpkYXRhOiB7ImNhbmRpZGF0ZXMiOiBbeyJjb250ZW50IjogeyJwYXJ0cyI6IFt7InRleHQiOiAiIiwidGhvdWdodFNpZ25hdHVyZSI6ICJFbUFLWGdGcEZIMFRjRXUwY3VpK3NsUDdSc1N0aVlXTkxaTkVnS2t5aFdrZjR4YVZhOWYrU09Bci8ySHQzTWpUNEdHRWZFR1JnNTd6TnEzdlV2bTVCMHFydmlSUG85S0VXbmo1UEdCa1RtcDJzZjFJYkk2dWJpSHAvajNpOFdsd3Rvcz0ifV0sInJvbGUiOiAibW9kZWwifSwiZmluaXNoUmVhc29uIjogIlNUT1AiLCJpbmRleCI6IDB9XSwidXNhZ2VNZXRhZGF0YSI6IHsicHJvbXB0VG9rZW5Db3VudCI6IDk5LCJjYW5kaWRhdGVzVG9rZW5Db3VudCI6IDExLCJ0b3RhbFRva2VuQ291bnQiOiAxMTAsInByb21wdFRva2Vuc0RldGFpbHMiOiBbeyJtb2RhbGl0eSI6ICJURVhUIiwidG9rZW5Db3VudCI6IDk5fV0sInNlcnZpY2VUaWVyIjogInN0YW5kYXJkIn0sIm1vZGVsVmVyc2lvbiI6ICJnZW1pbmktMy41LWZsYXNoLWxpdGUiLCJyZXNwb25zZUlkIjogIktEcmhhcjJJTE5ycHo3SVAwWUdqb1E0In0NCg0K
+  recorded_at: Tue, 27 Oct 2026 23:56:25 GMT
+recorded_with: VCR 6.4.0

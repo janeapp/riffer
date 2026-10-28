@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"systemInstruction":{"parts":[{"text":"Be
+        concise."}]},"generationConfig":{"thinkingConfig":{"thinkingLevel":"low"}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Tue, 27 Oct 2026 23:56:23 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=546
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"391\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 20,\"candidatesTokenCount\":
+        3,\"totalTokenCount\": 23,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        20}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"JjrhatLrNeep_uMPmZiSsAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TpDizttp6Zkdx41B0NQYgIboWbx0MqUzt2CnXwNsBZFFt6lccP3sf9SsXPAOV+D60w5DOj4XRN55CrlJCV7avkW09mpvtVApF1ivcHiQoLQn9PnoF1VmST6w=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        20,\"candidatesTokenCount\": 3,\"totalTokenCount\": 23,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 20}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"JjrhatLrNeep_uMPmZiSsAc\"}\r\n\r\n"
+  recorded_at: Tue, 27 Oct 2026 23:56:23 GMT
+recorded_with: VCR 6.4.0

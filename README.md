@@ -113,6 +113,7 @@ Create a `.env` file in the project root (it is gitignored):
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 AWS_BEDROCK_API_TOKEN=...
+GEMINI_API_KEY=...
 GOOGLE_CLOUD_PROJECT=my-project
 ```
 
@@ -123,12 +124,24 @@ bundle exec ruby -Itest test/riffer/providers/open_ai_test.rb
 bundle exec ruby -Itest test/riffer/providers/anthropic_test.rb
 bundle exec ruby -Itest test/riffer/providers/amazon_bedrock_test.rb
 GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
-  bundle exec ruby -Itest test/riffer/providers/google_cloud_test.rb
-GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
   bundle exec ruby -Itest test/riffer/providers/anthropic_vertex_test.rb
 ```
 
 Google Cloud tests take a short-lived access token rather than a key, so pass it on the command line instead of storing it in `.env`.
+
+#### Acceptance tests
+
+`test/acceptance/` runs every riffer feature against each provider it lists, one file per feature. Its cassettes live under `test/fixtures/vcr_cassettes/acceptance/` and only replay. To record, set `RIFFER_RECORD` to a VCR record mode: `once` records missing cassettes, `all` re-records every cassette the run touches. Narrow the run to one provider with `-n`:
+
+```bash
+RIFFER_RECORD=once bin/test test/acceptance/tool_calling_test.rb -n "/::gemini/"
+GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
+  RIFFER_RECORD=once bin/test test/acceptance/tool_calling_test.rb -n "/::google_cloud/"
+```
+
+A test that fails while recording leaves a partial cassette behind; delete it before recording again.
+
+To add a provider, add its entry to `ACCEPTANCE_PROVIDERS` in `test/acceptance/acceptance_helper.rb`, including the reasoning levels its model accepts, and its model's pricing to `test/acceptance/fixtures/catalog.json`. Every feature file then runs against it. A feature the provider can't support excludes it with a reason: `acceptance_providers(except: { amazon_bedrock: "Converse has no web search tool" })`.
 
 VCR records the HTTP interactions to `test/fixtures/vcr_cassettes/` on the first run. Subsequent runs replay from the cassettes without hitting the API. API keys are automatically filtered from recorded cassettes.
 

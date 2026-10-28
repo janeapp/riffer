@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Analyze the sentiment
+        of: ''I love this product, it is amazing!''\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]},\"score\":{\"type\":\"number\",\"description\":\"Confidence
+        between 0 and 1\"}},\"required\":[\"sentiment\",\"score\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"sentiment\":\"positive | neutral |
+        negative\",\"score\":\"<number>\"}\n\nOnly call tools when the request needs
+        them. If you can answer directly, reply with the JSON object right away."}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 27 Oct 2026 23:53:05 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=734
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\"sentiment\":\"positive\",\"score\":1.0}",
+                    "thoughtSignature": "EmAKXgFpFH0Ti/aAQRDVgsGwbjgHo+rwoPe9c++9EmWABE476IDT6v5lYTB4TGRVq1XFYvyU60zfkUifh25g9PdGSa9VR1KnJBbOk4fDjAgv8NYGdpysRjLflwcly5em61k="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 153,
+            "candidatesTokenCount": 11,
+            "totalTokenCount": 164,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 153
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "YDnhaq_3H5KhqtsPvK3NwQg"
+        }
+  recorded_at: Tue, 27 Oct 2026 23:53:05 GMT
+recorded_with: VCR 6.4.0
