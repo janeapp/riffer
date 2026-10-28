@@ -7,7 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
         yoga class, in-person format."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
-        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}}}'
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -33,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 27 Oct 2026 23:53:38 GMT
+      - Wed, 28 Oct 2026 00:25:41 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -43,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=687
+      - gfet4t7; dur=622
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -58,7 +59,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\n  \"name\": \"yoga class\",\n  \"session_type\": \"in_person\"\n}",
-                    "thoughtSignature": "EmAKXgFpFH0TQOH7wSsJcp8i9q8+0hUnDBXhByVBdpCAJ9bGxRsHcWV9Y3oBn0yEOGnsqxWiVsULWc1iJnnwh567PluDugj5kcHkwYgRwmpnvBtnCifiDpRCoAbPlHSBp2k="
+                    "thoughtSignature": "EmAKXgFpFH0TUYy5g05nxNHW6RSt9XFIwymAOUCUMiH+1c36WAtox3FGFYhIPLLP1Iwvrg9x+t+NGpYZCaTUamy/wPlNLYwsBtYkfHXTXYs0vOMVlF9msO9KC7HGKHqu9+0="
                   }
                 ],
                 "role": "model"
@@ -80,7 +81,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "gTnhatWdJu2fz7IP57D56Ag"
+          "responseId": "BUHharuvHpqaqtsP9ZjF6Ak"
         }
-  recorded_at: Tue, 27 Oct 2026 23:53:38 GMT
+  recorded_at: Wed, 28 Oct 2026 00:25:42 GMT
 recorded_with: VCR 6.4.0

@@ -36,7 +36,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:47 GMT
+      - Wed, 28 Oct 2026 00:25:46 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,26 +46,32 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=536
+      - gfet4t7; dur=675
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
-        \ \\\"tags\\\": [\\\"ruby\\\", \\\"programming\\\", \\\"\"}],\"role\": \"model\"},\"index\":
+        \ \\\"tags\\\": [\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 28,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        35,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"CUHharmqHufL_uMP_KGcoQM\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\n    \\\"Ruby\\\",\\n    \\\"Programming\\\",\\n
+        \   \\\"Language\\\"\\n  ],\\n  \\\"scores\\\": [\\n    0\"}],\"role\": \"model\"},\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
-        12,\"totalTokenCount\": 40,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        34,\"totalTokenCount\": 62,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"iznhav_ZGortqtsPlbW7oAw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"software\\\"],\\n  \\\"scores\\\": [0.95, 0.9, 0.75]\\n}\"}],\"role\":
+        \"CUHharmqHufL_uMP_KGcoQM\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \".95,\\n    0.85,\\n    0.75\\n  ]\\n}\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
-        38,\"totalTokenCount\": 66,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        56,\"totalTokenCount\": 84,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"iznhav_ZGortqtsPlbW7oAw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TgZgSbpAsIUADmDzmmpW04iyGZ+5tgL/z1kR5WtQJlbCBt/rH66yhFbmStNeQBEBway1OQKy7D4RjqHlIAN8MCgdx5/SRWtBv46ckqhXBr3BWMfL+BWnGeBE=\"}],\"role\":
+        \"CUHharmqHufL_uMP_KGcoQM\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TgO0kGhP5BQZvu1KzLezG03eg083lcEDureCxDGoRADhQlNWlSrh0rfjmG/aeRbJd4+/HNtS4fVeYudBjPoN3uC+MA9p/1wqB/w1bc8Az0GEzs4QD1aCjfZc=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        28,\"candidatesTokenCount\": 38,\"totalTokenCount\": 66,\"promptTokensDetails\":
+        28,\"candidatesTokenCount\": 56,\"totalTokenCount\": 84,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"iznhav_ZGortqtsPlbW7oAw\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:48 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"CUHharmqHufL_uMP_KGcoQM\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:25:46 GMT
 recorded_with: VCR 6.4.0

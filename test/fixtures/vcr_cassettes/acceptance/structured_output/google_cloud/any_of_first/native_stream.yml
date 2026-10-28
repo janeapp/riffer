@@ -38,7 +38,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 00:03:45 GMT
+      - Wed, 28 Oct 2026 00:26:22 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -52,19 +52,23 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
-        [{\"text\": \"{\\n  \\\"result\\\": {\\n    \\\"\"}]}}],\"usageMetadata\":
-        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:44.390629Z\",\"responseId\": \"4DvhauXrF4ebq8YPg7ywwAw\"}\r\n\r\ndata:
+        [{\"text\": \"{\\n  \\\"result\\\":\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:22.254751Z\",\"responseId\": \"LkHhap_GD8WV9LsPqNCZ6AI\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \"street\\\": \\\"123 Main St\\\",\\n    \\\"city\\\": \\\"Toronto\\\"\\n
-        \ }\\n}\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:03:44.390629Z\",\"responseId\":
-        \"4DvhauXrF4ebq8YPg7ywwAw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"role\": \"model\",\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"AY89a1//S4b3GFdgZhaclnR4HCPR9gm3UBaaxMTxAXrVRlB/4DS2gHuRD+CM84uWA0WwVn2Gi3XrglcpGj6cdtm9XkUMBrEzClJ3lT7QG0wwWTGy2rvDrvWQFT8=\"}]},\"finishReason\":
+        \" {\\n    \\\"street\\\": \\\"123 Main St\\\",\\n    \\\"city\\\": \\\"Toronto\\\"\\n
+        \ }\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:26:22.254751Z\",\"responseId\":
+        \"LkHhap_GD8WV9LsPqNCZ6AI\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"\\n}\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:22.254751Z\",\"responseId\": \"LkHhap_GD8WV9LsPqNCZ6AI\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a1834Qc70jN36p2xxrKLPZvNXjy3+c2s5kJ72jD5Oqt6TBu08E2UP9DpP2LQACWt7JVEEDozNs9m2QwO0V6jbIma2v7+rblhk0JUAjL1srsF3DWYJO+J2aI=\"}]},\"finishReason\":
         \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 283,\"candidatesTokenCount\":
         32,\"totalTokenCount\": 315,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 283}],\"candidatesTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 32}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:44.390629Z\",\"responseId\": \"4DvhauXrF4ebq8YPg7ywwAw\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 00:03:45 GMT
+        \"2026-10-28T00:26:22.254751Z\",\"responseId\": \"LkHhap_GD8WV9LsPqNCZ6AI\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:23 GMT
 recorded_with: VCR 6.4.0

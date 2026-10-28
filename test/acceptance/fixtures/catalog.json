@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "models": {
+    "gemini/gemini-3.5-flash-lite": {
+      "aliases": ["google_cloud/gemini-3.5-flash-lite"],
+      "reasoning": {
+        "max": { "thinkingConfig": { "thinkingLevel": "high" } }
+      }
+    }
+  }
+}

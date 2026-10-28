@@ -8,7 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
         yoga class, underwater format. The session_type enum does not cover this,
         so return null for session_type."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
-        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}]}}'
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -36,7 +37,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 00:03:41 GMT
+      - Wed, 28 Oct 2026 00:26:35 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -50,19 +51,19 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
-        [{\"text\": \"{\\n  \\\"name\\\": \\\"Yoga class\"}]}}],\"usageMetadata\":
-        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:40.976418Z\",\"responseId\": \"3DvhaqLMO4ebq8YPg7ywwAw\"}\r\n\r\ndata:
+        [{\"text\": \"{\\n  \\\"name\\\": \\\"\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:35.313655Z\",\"responseId\": \"O0HhareSE8iL9LsP0872wQI\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \", underwater format\\\",\\n  \\\"session_type\\\": \\\"both\\\"\\n}\"}]}}],\"usageMetadata\":
+        \"yoga class, underwater format\\\",\\n  \\\"session_type\\\": null\\n}\"}]}}],\"usageMetadata\":
         {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:40.976418Z\",\"responseId\": \"3DvhaqLMO4ebq8YPg7ywwAw\"}\r\n\r\ndata:
+        \"2026-10-28T00:26:35.313655Z\",\"responseId\": \"O0HhareSE8iL9LsP0872wQI\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \"\",\"thoughtSignature\": \"AY89a18egPCZoSak4dkMr6kbU0NQJqVmBzQB5nSONYEj3c/G9tK4xqLu2mhnllxwVARQG8EPk7CHrJcIK/fTQ1SuphIS7RQP2vfY+6YX++L6T2GWac7XsVhhNbw=\"}]},\"finishReason\":
-        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 136,\"candidatesTokenCount\":
-        25,\"totalTokenCount\": 161,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 136}],\"candidatesTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 25}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:40.976418Z\",\"responseId\": \"3DvhaqLMO4ebq8YPg7ywwAw\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 00:03:41 GMT
+        \"\",\"thoughtSignature\": \"AY89a1+6BDZ6DDWk5gcbszyDUy8M5OVVP3IuAAUw8PuDiI0w3YTuTmM/eC9vHchKvQZJIsTfJpCPZGs5/0Qs01hQN1REsK/wI40/7n+QPwGHWeVghzpDKX0XUCE=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 171,\"candidatesTokenCount\":
+        23,\"totalTokenCount\": 194,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 171}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 23}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:35.313655Z\",\"responseId\": \"O0HhareSE8iL9LsP0872wQI\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:35 GMT
 recorded_with: VCR 6.4.0

@@ -9,9 +9,9 @@ http_interactions:
         at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
         The patient gave no email."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"starts_at":{"type":"string","description":"Visit start,
-        with its UTC offset","format":"date-time"},"email":{"type":"string","description":"Patient
+        with its UTC offset","format":"date-time"},"email":{"type":["string","null"],"description":"Patient
         email, if given","format":"email"},"clinic_ids":{"type":"array","description":"Clinic
-        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","clinic_ids"],"additionalProperties":false}}}]}}'
+        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","email","clinic_ids"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -35,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:04:28 GMT
+      - Wed, 28 Oct 2026 00:25:50 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -58,8 +58,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "{\n  \"visit_on\": \"2026-10-26\",\n  \"starts_at\": \"2026-10-26T09:30:00-04:00\",\n  \"clinic_ids\": [\n    \"550e8400-e29b-41d4-a716-446655440000\"\n  ]\n}",
-                    "thoughtSignature": "AY89a18FW0n3vHlkvYzZXOmWBrWEI2Tel0E+F5mQb92QniWotfEGlBpooFFsK22fZvk30rdBzhfzrBW4atojrznljKdn/km7OKcHSsvEf5n0y5gVG+fs0oNyPxM="
+                    "text": "{\n  \"visit_on\": \"2026-10-26\",\n  \"starts_at\": \"2026-10-26T09:30:00-04:00\",\n  \"email\": null,\n  \"clinic_ids\": [\n    \"550e8400-e29b-41d4-a716-446655440000\"\n  ]\n}",
+                    "thoughtSignature": "AY89a19UxduZU8KgumyzvR05Z92riMWo+TxN8XNTVz9SehJfo/jjS6i2J6qZfwV9224hNgXFvjhMl16oTA0oD8qB3/AjLbGjHokdUHQyJXeCWYHGATPoOeOQti0="
                   }
                 ]
               },
@@ -67,26 +67,26 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 288,
-            "candidatesTokenCount": 107,
-            "totalTokenCount": 395,
+            "promptTokenCount": 294,
+            "candidatesTokenCount": 114,
+            "totalTokenCount": 408,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 288
+                "tokenCount": 294
               }
             ],
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 107
+                "tokenCount": 114
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:04:27.312187Z",
-          "responseId": "CzzhavuGE6-Pq8YP8YCVuAw"
+          "createTime": "2026-10-28T00:25:49.678626Z",
+          "responseId": "DUHhauK1Ke-R9LsPovS8gQM"
         }
-  recorded_at: Wed, 28 Oct 2026 00:04:28 GMT
+  recorded_at: Wed, 28 Oct 2026 00:25:50 GMT
 recorded_with: VCR 6.4.0

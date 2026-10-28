@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is 17 times 23?
         Reply with just the number."}]}],"systemInstruction":{"parts":[{"text":"Be
-        concise."}]},"generationConfig":{"thinkingConfig":{"thinkingLevel":"max"}},"labels":{"kind":"agent","agent":""}}'
+        concise."}]},"generationConfig":{"thinkingConfig":{"thinkingLevel":"high"}},"labels":{"kind":"agent","agent":""}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -31,7 +31,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:02:32 GMT
+      - Wed, 28 Oct 2026 00:26:19 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -55,7 +55,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "391",
-                    "thoughtSignature": "AY89a1/VDmFOj485OFOvaHHO/OsHVEh8YHSF/zVd2T49afNt4fEwrjDsbwK9GmSP6YE+/XX6uT4TQzFmn4xdxGcuaTk/W7ClEgISJnP9aR+nwOL0/MOnx9foqMI="
+                    "thoughtSignature": "AY89a1+SQnn9weUpuhRGut53ICFQ0yDY2kf+C0ENSS7a9QXPNOZiIZgHNAMwGVEwxoF8QrmRgT2mhmUZxMaj+xAlrZW8MkULyf39r9FDja7ywopEW80lzmFR2CWaP0ck4pncDWkbSRiooKZlQ+MmMpDlgUsx3rlAVhh853XPyJQGiERlToTHMnH2yDnbqEcMWTkiI46Cb2xzVvbyQ/g6k9yrj8gfWI9cMaN0u0+LH3fWfO93TS1VRhGksAFkP9oM/Awx6bYaeLOSz/Rit55gQoRmTK1nrOmJhFZiOHwUz4bPfuAGAvB5XlGsto820dep5U9SUwskWQh0snBOHBl8UdPqee155Srtqg0mUSoPFakOkRquZwI/pIFBOb/uIBy17XnGyktQ550AaALTtO1Z6buxcXZsJyRsQ4+sFFCuuqGcYp+cM2UbToHPcyd9rIwdm5JWfeePeKIkhyNmq+Itr3UVlV5a7oBc3KwSpD4kTn1FhLyIys6RVCCS/8aWrRLk83xl9uzVQ41gD1qbzL8K4clYeuLqlxOSAdACrJOtfXDvTbzlYji5EAxuz8kTliM="
                   }
                 ]
               },
@@ -65,7 +65,7 @@ http_interactions:
           "usageMetadata": {
             "promptTokenCount": 19,
             "candidatesTokenCount": 3,
-            "totalTokenCount": 22,
+            "totalTokenCount": 169,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
@@ -78,11 +78,12 @@ http_interactions:
                 "modality": "TEXT",
                 "tokenCount": 3
               }
-            ]
+            ],
+            "thoughtsTokenCount": 147
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:02:31.945375Z",
-          "responseId": "lzvhat_ZOfCC9LsPgoSH0Ao"
+          "createTime": "2026-10-28T00:26:18.624805Z",
+          "responseId": "KkHhaqWRJs31tAKK-fWgDQ"
         }
-  recorded_at: Wed, 28 Oct 2026 00:02:32 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:19 GMT
 recorded_with: VCR 6.4.0

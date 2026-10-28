@@ -3,6 +3,8 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: reasoning" do
+  supported_levels = %i[low medium high]
+
   %i[gemini google_cloud].each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
@@ -39,13 +41,35 @@ describe "Acceptance: reasoning" do
         end.new
       end
 
-      Riffer::Agent::Config::REASONING_LEVELS.each do |level|
+      supported_levels.each do |level|
         it "answers at reasoning level #{level}" do
           response = acceptance_cassette("#{cassette_prefix}/level_#{level}") do
             reasoning_agent(level).generate("What is 17 times 23? Reply with just the number.")
           end
 
           expect(response.outcome.reason).must_equal :completed
+          expect(response.content).must_include "391"
+        end
+      end
+
+      it "raises the provider's error for a level the model rejects" do
+        error = acceptance_cassette("#{cassette_prefix}/level_xhigh") do
+          expect { reasoning_agent(:xhigh).generate("What is 17 times 23?") }.must_raise Riffer::APIError
+        end
+
+        expect(error.status).must_equal 400
+        expect(error.message).must_include "thinking_level"
+      end
+
+      describe "with a catalog entry" do
+        before { Riffer.config.catalog_files = [File.join(ACCEPTANCE_FIXTURES_PATH, "catalog.json")] }
+        after { Riffer.config.catalog_files = [] }
+
+        it "sends the catalog's params for the level" do
+          response = acceptance_cassette("#{cassette_prefix}/level_max_catalog") do
+            reasoning_agent(:max).generate("What is 17 times 23? Reply with just the number.")
+          end
+
           expect(response.content).must_include "391"
         end
       end

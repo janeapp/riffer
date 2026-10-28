@@ -8,8 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
         John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
-        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":"string","description":"Postal
-        or zip code"},"country":{"type":"string","description":"Country"}},"required":["street","city"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}}}'
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -37,7 +37,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:03 GMT
+      - Wed, 28 Oct 2026 00:26:02 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,7 +47,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=673
+      - gfet4t7; dur=733
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -57,28 +57,28 @@ http_interactions:
         {\"promptTokenCount\": 28,\"candidatesTokenCount\": 8,\"totalTokenCount\":
         36,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"XjnhavbGMrTmz7IPzdTyqAs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \"\\\",\\n  \\\"address\\\": {\\n    \\\"street\\\":
         \\\"123 Main St\\\",\\n    \\\"city\\\":\"}],\"role\": \"model\"},\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
         32,\"totalTokenCount\": 60,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"XjnhavbGMrTmz7IPzdTyqAs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \" \\\"Toronto\\\",\\n    \\\"country\\\": \\\"Canada\\\",\\n
-        \   \\\"postal_code\\\": \\\"M5V 2\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" \\\"Toronto\\\",\\n    \\\"postal_code\\\": \\\"M5V
+        2T6\\\",\\n    \\\"country\\\":\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
         {\"promptTokenCount\": 28,\"candidatesTokenCount\": 56,\"totalTokenCount\":
         84,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"XjnhavbGMrTmz7IPzdTyqAs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"T6\\\"\\n  }\\n}\"}],\"role\": \"model\"},\"index\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" \\\"Canada\\\"\\n  }\\n}\"}],\"role\": \"model\"},\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 28,\"candidatesTokenCount\":
         64,\"totalTokenCount\": 92,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         28}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"XjnhavbGMrTmz7IPzdTyqAs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TrFPY4yXiLfXJmsFNUKraI2BnVCUrBx/MbRTZ7yDgM97ucKPMNow8AYrPpIT3aBGgIHRSoem+j1rGm2P2SUVSP5X1QJLIfKR2dPuPC1a9hwtSZHCK/wWiL44=\"}],\"role\":
+        \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tm4udeyubkEWvuDB8+VmwAakTUP481/ycJKeSK3e79ql9nG3wUKealtZKD5ZuD++1digOri3zpFzLpP2qJy/rEsRz5C0VB1Oi+mLfhMjwVHIpu8uuHb+v3U4=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         28,\"candidatesTokenCount\": 64,\"totalTokenCount\": 92,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 28}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"XjnhavbGMrTmz7IPzdTyqAs\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:03 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"GUHhav_5NeTK_uMP1uTyuAc\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:02 GMT
 recorded_with: VCR 6.4.0

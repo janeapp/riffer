@@ -8,8 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
         John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
-        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":"string","description":"Postal
-        or zip code"},"country":{"type":"string","description":"Country"}},"required":["street","city"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -33,7 +33,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:02:48 GMT
+      - Wed, 28 Oct 2026 00:26:25 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -56,8 +56,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "{\n  \"name\": \"John\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\",\n    \"postal_code\": \"M5V 2T6\"\n    }\n}",
-                    "thoughtSignature": "AY89a1/hXgE9InMdifzAn+s5e1Xj121JBUks7H30ELCEPM4nFYkHBaGLfaFAMIvqjpJvEMh6A/VhYssjRaPfg3nYAbk4SCZzoa21Om1itZyNazg0hkygJERpj/M="
+                    "text": "{\n  \"name\": \"John\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\",\n    \"postal_code\": \"M5V 2T6\",\n    \"country\": \"Canada\"\n  }\n}",
+                    "thoughtSignature": "AY89a1+VciBVP6qNT0hWxMd2TEBx4mEOBHRX1dsy9ByENVzqcxHFiqclYnn66WSanst54dTMhQKEPYPgZCV6F+WdBVutZDkvd4sZWAo3gD+0r/t4U1k6FtYSEqE="
                   }
                 ]
               },
@@ -65,26 +65,26 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 237,
-            "candidatesTokenCount": 56,
-            "totalTokenCount": 293,
+            "promptTokenCount": 251,
+            "candidatesTokenCount": 64,
+            "totalTokenCount": 315,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 237
+                "tokenCount": 251
               }
             ],
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 56
+                "tokenCount": 64
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:02:47.413919Z",
-          "responseId": "pzvhat-hGcWV9LsPqNCZ6AI"
+          "createTime": "2026-10-28T00:26:24.725112Z",
+          "responseId": "MEHhavigLOuL9LsPkYCFsAI"
         }
-  recorded_at: Wed, 28 Oct 2026 00:02:48 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:25 GMT
 recorded_with: VCR 6.4.0

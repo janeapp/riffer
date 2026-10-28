@@ -34,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 27 Oct 2026 23:53:47 GMT
+      - Wed, 28 Oct 2026 00:25:45 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=702
+      - gfet4t7; dur=499
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -58,8 +58,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"tags\": [\"Ruby\", \"programming language\", \"software development\"],\n  \"scores\": [0.95, 0.90, 0.85]\n}",
-                    "thoughtSignature": "EmAKXgFpFH0Trwb3qYgLZdKcwtAIWt2Wts7b35su6iy8Vh8dmRwQC1qs9sceWbxqam71MUtJzn0w+Thd/u8ts8DJrz2iF+SGXuuyiF/3RAfrBXEZQrdZZoNZpux8SwMr0zE="
+                    "text": "{\n  \"tags\": [\n    \"Ruby\",\n    \"Programming\",\n    \"Technology\"\n  ],\n  \"scores\": [\n    0.95,\n    0.88,\n    0.72\n  ]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TfSRgcmceXU2XT25xHxgz0AIysMfmnD3wfSR00e9GZEJyKLNcrBNLBUUfLAcw64jTKtiyrtOnEWKQ67rIUCmRdFl42rtay6vbb+MGU8DvowtwiH/7M4F0UQQ="
                   }
                 ],
                 "role": "model"
@@ -70,8 +70,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 28,
-            "candidatesTokenCount": 42,
-            "totalTokenCount": 70,
+            "candidatesTokenCount": 56,
+            "totalTokenCount": 84,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -81,7 +81,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "ijnhaoqIG-Shz7IPjJPN0Q4"
+          "responseId": "CEHhavXeL6uUmtkPiobS8A4"
         }
-  recorded_at: Tue, 27 Oct 2026 23:53:47 GMT
+  recorded_at: Wed, 28 Oct 2026 00:25:45 GMT
 recorded_with: VCR 6.4.0

@@ -8,7 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
         yoga class, underwater format. The session_type enum does not cover this,
         so return null for session_type."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
-        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}]}}'
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -32,7 +33,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:03:40 GMT
+      - Wed, 28 Oct 2026 00:26:35 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -55,8 +56,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "{\n  \"name\": \"Yoga class, underwater format\",\n  \"session_type\": \"both\"\n}",
-                    "thoughtSignature": "AY89a1/fxHgMX8205HUL6YbUt3fgwh823VFGWqpmcbx4hRItD35fL8y48xA+xes9XtxH1HSigaGj5xb//ELxHlW4bCCknQtTPbSNuiiZtmQZT/LtvKHyd3x6SpM="
+                    "text": "{\n  \"name\": \"Yoga class, underwater format\",\n  \"session_type\": null\n}",
+                    "thoughtSignature": "AY89a19ZhinjTtGVaNN6AVb67n2nsUALImqyseefH8a6F86bZK7P4SiXjIrpgWLVN4A7zQy4XPGQT2G2r33sATavdJ2ixx0v1rDZyXAgOw6hWDGwSNXBTYT86Bs="
                   }
                 ]
               },
@@ -64,26 +65,26 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 136,
-            "candidatesTokenCount": 25,
-            "totalTokenCount": 161,
+            "promptTokenCount": 171,
+            "candidatesTokenCount": 23,
+            "totalTokenCount": 194,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 136
+                "tokenCount": 171
               }
             ],
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 25
+                "tokenCount": 23
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:03:39.460598Z",
-          "responseId": "2zvharaOHK2Oq8YPvvCB-Qk"
+          "createTime": "2026-10-28T00:26:34.504811Z",
+          "responseId": "OkHhauvnHpOA9LsPxZ_f8QM"
         }
-  recorded_at: Wed, 28 Oct 2026 00:03:40 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:35 GMT
 recorded_with: VCR 6.4.0

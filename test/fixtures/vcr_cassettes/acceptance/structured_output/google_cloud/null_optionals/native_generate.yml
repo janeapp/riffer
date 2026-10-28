@@ -9,8 +9,8 @@ http_interactions:
         works at 42 King St in Vancouver. No other details are known. Return null
         for any unknown fields."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
-        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":"string","description":"Postal
-        or zip code"},"country":{"type":"string","description":"Country"}},"required":["street","city"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -34,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:04:23 GMT
+      - Wed, 28 Oct 2026 00:25:52 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -57,8 +57,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "{\n  \"name\": \"Jane\",\n  \"address\": {\n    \"street\": \"42 King St\",\n    \"city\": \"Vancouver\",\n    \"country\": \"Canada\",\n    \"postal_code\": \"V6B 1A1\"\n  }\n}",
-                    "thoughtSignature": "AY89a1+E5ge+6hsmf9ZNeTqG5suiEs343wN2YvxUKJqyll9kvvx01qPBKYMEc3cmWFPdhYTbnAb1P0+ipijn3ybvU1JONWhg2aAv97vqd+aKkZbyuHSKs3YnXAA="
+                    "text": "{\n  \"name\": \"Jane\",\n  \"address\": {\n    \"street\": \"42 King St\",\n    \"city\": \"Vancouver\",\n    \"postal_code\": null,\n    \"country\": null\n  }\n}",
+                    "thoughtSignature": "AY89a1+I6l6j1XWdlPYLDkN6gjPRFyU45NEHgL2CvM1JQC5M5iEwfaTOxaonNzC+1JxlS9Dr8WBYd7tjC6p2nqePFfM41AAJqgk5m57OFwcThb8uCxPqGv8npAQ="
                   }
                 ]
               },
@@ -66,26 +66,26 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 238,
-            "candidatesTokenCount": 63,
-            "totalTokenCount": 301,
+            "promptTokenCount": 252,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 306,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 238
+                "tokenCount": 252
               }
             ],
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 63
+                "tokenCount": 54
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:04:22.939865Z",
-          "responseId": "BjzhatmuOa2Oq8YPvvCB-Qk"
+          "createTime": "2026-10-28T00:25:51.692535Z",
+          "responseId": "D0HhareiKuuL9LsPkYCFsAI"
         }
-  recorded_at: Wed, 28 Oct 2026 00:04:23 GMT
+  recorded_at: Wed, 28 Oct 2026 00:25:52 GMT
 recorded_with: VCR 6.4.0

@@ -9,9 +9,9 @@ http_interactions:
         at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
         The patient gave no email."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"starts_at":{"type":"string","description":"Visit start,
-        with its UTC offset","format":"date-time"},"email":{"type":"string","description":"Patient
+        with its UTC offset","format":"date-time"},"email":{"type":["string","null"],"description":"Patient
         email, if given","format":"email"},"clinic_ids":{"type":"array","description":"Clinic
-        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","clinic_ids"],"additionalProperties":false}}}}}'
+        IDs","items":{"type":"string","format":"uuid"}}},"required":["visit_on","starts_at","email","clinic_ids"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -39,7 +39,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:16 GMT
+      - Wed, 28 Oct 2026 00:26:05 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -49,46 +49,42 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=527
+      - gfet4t7; dur=564
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
-        \ \\\"visit_\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        80,\"candidatesTokenCount\": 6,\"totalTokenCount\": 86,\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 80}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"on\\\": \\\"2026-10-26\\\",\\n
-        \ \\\"starts_at\\\": \\\"20\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 80,\"candidatesTokenCount\": 30,\"totalTokenCount\":
-        110,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 80}],\"serviceTier\":
+        \ \\\"visit_on\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 80,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        87,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 80}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"26-10-26T09:30:00-04:00\\\",\"}],\"role\": \"model\"},\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 80,\"candidatesTokenCount\":
-        54,\"totalTokenCount\": 134,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        80}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\\n  \\\"clinic_ids\\\": [\\n    \\\"550e8400-e29b\"}],\"role\":
+        \"HUHhavKkHK3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\\": \\\"2026-10-26\\\",\\n  \\\"starts_at\\\":
+        \\\"202\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        80,\"candidatesTokenCount\": 31,\"totalTokenCount\": 111,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 80}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"HUHhavKkHK3oz7IPxbqcuA4\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"6-10-26T09:30:00-04:00\\\",\\n
+        \ \\\"email\\\": null,\\n  \\\"clinic_ids\\\": [\\n    \\\"550e840\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 80,\"candidatesTokenCount\":
-        78,\"totalTokenCount\": 158,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        79,\"totalTokenCount\": 159,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         80}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"-41d4-a716-446655440000\\\"\"}],\"role\": \"model\"},\"index\":
+        \"HUHhavKkHK3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"0-e29b-41d4-a716-4466554\"}],\"role\": \"model\"},\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 80,\"candidatesTokenCount\":
-        102,\"totalTokenCount\": 182,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        103,\"totalTokenCount\": 183,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         80}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\\n  ]\\n}\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 80,\"candidatesTokenCount\": 107,\"totalTokenCount\":
-        187,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 80}],\"serviceTier\":
-        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TBOb114gB6mSz8oAv3+bjwz5fROvEX7M0EQtCbLBAxvcpi5ys5KsdkwXsKPDkLvI1xCAMeLH9QVGtp5f5S+NflrVV3mPp+SF64o/ow6pQBGk2Lv6rf8LYSa8=\"}],\"role\":
+        \"HUHhavKkHK3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"40000\\\"\\n  ]\\n}\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 80,\"candidatesTokenCount\":
+        114,\"totalTokenCount\": 194,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        80}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"HUHhavKkHK3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T275ciELtPpgUn1vp/urwqZ2xzytxWIDm/plfpCbO/LuX0nZZy/QL4JYTXKF6kgVeptciV/e6jt/HxKJRjmypQ7Mf4pZQHqvJ9B1m166HSZygPlOOTO7znfw=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        80,\"candidatesTokenCount\": 107,\"totalTokenCount\": 187,\"promptTokensDetails\":
+        80,\"candidatesTokenCount\": 114,\"totalTokenCount\": 194,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 80}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"aznhas-1JZ3Vz7IP7KfHkQs\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:16 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"HUHhavKkHK3oz7IPxbqcuA4\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:06 GMT
 recorded_with: VCR 6.4.0

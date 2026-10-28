@@ -7,8 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Read this order: 12 boxes,
         due on 2026-11-03"}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"quantity":{"anyOf":[{"type":"integer"},{"type":"string"}],"description":"A
-        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]}],"description":"The
-        due date, or none when there isn''t one"}},"required":["quantity"],"additionalProperties":false}}}]}}'
+        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]},{"type":"null"}],"description":"The
+        due date, or none when there isn''t one"}},"required":["quantity","due"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -32,7 +32,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:04:20 GMT
+      - Wed, 28 Oct 2026 00:26:20 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -56,7 +56,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\n  \"quantity\": 12,\n  \"due\": \"2026-11-03\"\n}",
-                    "thoughtSignature": "AY89a18qtkOc+01QifpT9pqBWnVn3E+ecp7kLUY/jPmtAV/BupLnsKnkJcksB66dqum9Go9Bw0b4xxZtOkdUyaW85TFCzquqpVVEp3JgKn/vh/BpoYnk5fmsPDY="
+                    "thoughtSignature": "AY89a1+2S93/9cjpFeLke5YszPkE+W7o00apBx25Vs7fhSiEi00oYcGjeR6e480srcbD3iJx7Zx/SE9eyw6+JN0HrbOjefLERSs31E2WytnADtFMSs36jh5lg78="
                   }
                 ]
               },
@@ -64,14 +64,14 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 205,
+            "promptTokenCount": 222,
             "candidatesTokenCount": 29,
-            "totalTokenCount": 234,
+            "totalTokenCount": 251,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 205
+                "tokenCount": 222
               }
             ],
             "candidatesTokensDetails": [
@@ -82,8 +82,8 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:04:19.745042Z",
-          "responseId": "AzzhatK8La2Oq8YPvvCB-Qk"
+          "createTime": "2026-10-28T00:26:19.691109Z",
+          "responseId": "K0HhaqWXKsiH9LsPo5_D0Qg"
         }
-  recorded_at: Wed, 28 Oct 2026 00:04:20 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:20 GMT
 recorded_with: VCR 6.4.0

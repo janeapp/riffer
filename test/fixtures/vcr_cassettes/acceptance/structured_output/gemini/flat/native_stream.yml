@@ -36,7 +36,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:07 GMT
+      - Wed, 28 Oct 2026 00:25:56 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,26 +46,26 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=702
+      - gfet4t7; dur=628
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
-        \ \\\"sentiment\\\":\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 16,\"candidatesTokenCount\": 6,\"totalTokenCount\":
-        22,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 16}],\"serviceTier\":
+        \ \\\"sentiment\\\": \\\"\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 16,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        23,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 16}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"YznhaqwviNz-4w-0jLLJDw\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
-        [{\"text\": \" \\\"positive\\\",\\n  \\\"score\\\": 1.0\\n}\"}],\"role\":
+        \"FEHhasCSAs6Gz7IPgcCZqQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"positive\\\",\\n  \\\"score\\\": 1.0\\n}\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 16,\"candidatesTokenCount\":
         20,\"totalTokenCount\": 36,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         16}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"YznhaqwviNz-4w-0jLLJDw\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
-        [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TbDtNyiZC1EWCeVoMdcZpcR9bFhZj6+iWjUXFfC249dnDm5g8QOBBct0l86Yal1DACTUqtpeSljMA5jmp7jwBuISidIXRIDWx8GoQysnYa/ijNUONCzGBbVY=\"}],\"role\":
+        \"FEHhasCSAs6Gz7IPgcCZqQs\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TJBxUgMftSXyccAAZ1Bo0LTU2pbgueCB6MIBL0arU/wgOm0ZlY+GaGIwYf6GVMhYZKUnGlvUX51FKwv8133wveMQGw7vGgvVmNuJpqBExCnpcxImuoOb83tY=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         16,\"candidatesTokenCount\": 20,\"totalTokenCount\": 36,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 16}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"YznhaqwviNz-4w-0jLLJDw\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:07 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"FEHhasCSAs6Gz7IPgcCZqQs\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:25:56 GMT
 recorded_with: VCR 6.4.0

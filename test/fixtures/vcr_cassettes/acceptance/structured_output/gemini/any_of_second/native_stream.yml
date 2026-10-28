@@ -38,7 +38,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:32 GMT
+      - Wed, 28 Oct 2026 00:25:44 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -48,7 +48,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=467
+      - gfet4t7; dur=623
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -58,22 +58,22 @@ http_interactions:
         {\"promptTokenCount\": 13,\"candidatesTokenCount\": 6,\"totalTokenCount\":
         19,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 13}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"fDnharziIfiV_uMP54fWyAU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        \"B0Hhav30OauUmtkPiobS8A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \" {\\n    \\\"error_code\\\": \\\"no_address\\\",\\n
         \   \\\"error_message\\\": \\\"No address was\"}],\"role\": \"model\"},\"index\":
         0}],\"usageMetadata\": {\"promptTokenCount\": 13,\"candidatesTokenCount\":
         30,\"totalTokenCount\": 43,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         13}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"fDnharziIfiV_uMP54fWyAU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        \"B0Hhav30OauUmtkPiobS8A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \" found in the provided text.\\\"\\n  }\\n}\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 13,\"candidatesTokenCount\":
         41,\"totalTokenCount\": 54,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         13}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"fDnharziIfiV_uMP54fWyAU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tr20b6QZSJfWBVyOBlQrvGlkhlsRUpHv3uSlA+AR40VwWIjkjWq7csT65JVEzuBvWHc8ZVvSqk0wgFd7Mmhi707NahyMSx1hSdxA7fMS06ZUx5c1ongdrJUY=\"}],\"role\":
+        \"B0Hhav30OauUmtkPiobS8A4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TTl6BMH9WHkTcoagI42XtTow+oQnTwASQ2APtJwVgZse3k3AESit72Pw7P0O0U5+dw/69C1fqMWh9qdcCX8BmwEeewH9NLfXPG7b3kbpa+dIExeIG7seG1Dg=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         13,\"candidatesTokenCount\": 41,\"totalTokenCount\": 54,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 13}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"fDnharziIfiV_uMP54fWyAU\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:33 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"B0Hhav30OauUmtkPiobS8A4\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:25:44 GMT
 recorded_with: VCR 6.4.0

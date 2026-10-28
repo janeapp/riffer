@@ -7,7 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
         yoga class, in-person format."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
-        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}}}'
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -35,7 +36,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:38 GMT
+      - Wed, 28 Oct 2026 00:25:42 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -45,26 +46,26 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=559
+      - gfet4t7; dur=593
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
-        \ \\\"name\\\": \\\"yoga\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 14,\"candidatesTokenCount\": 8,\"totalTokenCount\":
-        22,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 14}],\"serviceTier\":
+        \ \\\"name\\\": \\\"yoga class\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 14,\"candidatesTokenCount\": 9,\"totalTokenCount\":
+        23,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 14}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"gjnhaoy7HOasqtsPrfaS-Q4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \" class\\\",\\n  \\\"session_type\\\": \\\"in_person\\\"\\n}\"}],\"role\":
+        \"BkHhas6-FMLg8QH0yOaACQ\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \"\\\",\\n  \\\"session_type\\\": \\\"in_person\\\"\\n}\"}],\"role\":
         \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 14,\"candidatesTokenCount\":
         24,\"totalTokenCount\": 38,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         14}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"gjnhaoy7HOasqtsPrfaS-Q4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T0hHbGpdSv4cy3eHlOzqC9ow+91FRIu9JJPHrVWqGv+ITNBbBQhz8OMnBJI+IRfMzoTXOlDXQuu2QuJBcd7DWexFioLqSmd6ED2iLEd3OnuaaDPhG5GtSKLg=\"}],\"role\":
+        \"BkHhas6-FMLg8QH0yOaACQ\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T3eS8q16KQyGQr1u9LgguY3vL41NUSqgqN2Q0hqOmRaOdeW4b1BMhnCw9D67FhqFUlyw6CReM1JjBSJ8ouODN0ScPbYV3aIQccLlJxh+YCA2Ib2F7+HGe9yc=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         14,\"candidatesTokenCount\": 24,\"totalTokenCount\": 38,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 14}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"gjnhaoy7HOasqtsPrfaS-Q4\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:39 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"BkHhas6-FMLg8QH0yOaACQ\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:25:42 GMT
 recorded_with: VCR 6.4.0

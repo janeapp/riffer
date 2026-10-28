@@ -8,7 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
         yoga class, underwater format. The session_type enum does not cover this,
         so return null for session_type."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
-        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}}}'
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -36,7 +37,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:12 GMT
+      - Wed, 28 Oct 2026 00:26:29 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,27 +47,27 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=634
+      - gfet4t7; dur=525
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
-        \ \\\"name\\\": \\\"yoga\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 30,\"candidatesTokenCount\": 8,\"totalTokenCount\":
-        38,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 30}],\"serviceTier\":
+        \ \\\"name\\\": \\\"\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 30,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        37,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 30}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aDnhasaZFfGW_uMPhoOQ8QU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \" class, underwater format\\\",\\n  \\\"session_type\\\":
-        \\\"both\\\"\\n}\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 30,\"candidatesTokenCount\": 25,\"totalTokenCount\":
-        55,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 30}],\"serviceTier\":
-        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"aDnhasaZFfGW_uMPhoOQ8QU\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TzjaouDhQk5CnlM5Orb80ykda9MEpzm7oQnv9JUcpJpEm6r532OmFSZbcVgIJuXrpelIDjjQ7D7OmDAv2F6HS2PNIFXGuXp+h20Nf2QLfYgB0Gm9783gXa/c=\"}],\"role\":
-        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        30,\"candidatesTokenCount\": 25,\"totalTokenCount\": 55,\"promptTokensDetails\":
+        \"NUHharX6F6bn_uMPlIL-kAM\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"yoga class, underwater format\\\",\\n  \\\"session_type\\\":
+        null\\n}\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        30,\"candidatesTokenCount\": 23,\"totalTokenCount\": 53,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 30}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"aDnhasaZFfGW_uMPhoOQ8QU\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:12 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"NUHharX6F6bn_uMPlIL-kAM\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"\",\"thoughtSignature\":
+        \"EmAKXgFpFH0T3F4gJfxVa+R//d0O7hG7gxbHVcDnwSKAAYE3DVOlRNuyE+gX7cl5YO5ftrlSl38gi7ODtBbmjyLI59LU3rA2OOmjxvjMCalzII5GN80w7Tk0h6vD1LBsLco=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        30,\"candidatesTokenCount\": 23,\"totalTokenCount\": 53,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 30}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"NUHharX6F6bn_uMPlIL-kAM\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:29 GMT
 recorded_with: VCR 6.4.0

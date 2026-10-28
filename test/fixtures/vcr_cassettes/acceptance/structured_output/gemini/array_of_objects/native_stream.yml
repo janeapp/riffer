@@ -8,8 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Order A-17 has 2 items:
         a book costing $12.99 and a pen costing $1.50"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
         identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
-        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":"integer","description":"Quantity
-        ordered"}},"required":["name","price"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}}}'
+        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":["integer","null"],"description":"Quantity
+        ordered"}},"required":["name","price","quantity"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -37,7 +37,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:29 GMT
+      - Wed, 28 Oct 2026 00:26:15 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,38 +47,44 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=594
+      - gfet4t7; dur=730
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"{\\n
-        \ \\\"order_\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        29,\"candidatesTokenCount\": 6,\"totalTokenCount\": 35,\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"eTnhapX8Eq3oz7IPxbqcuA4\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"id\\\": \\\"A-17\\\",\\n
-        \ \\\"items\\\": [\\n    {\\n      \\\"name\\\": \\\"book\"}],\"role\": \"model\"},\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 29,\"candidatesTokenCount\":
-        30,\"totalTokenCount\": 59,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        29}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"eTnhapX8Eq3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\\\",\\n      \\\"price\\\": 12.99,\\n      \\\"quantity\\\":
-        1\\n    },\\n    {\\n      \\\"name\\\": \\\"pen\\\",\\n      \\\"price\\\":
-        1.50,\\n      \\\"\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 29,\"candidatesTokenCount\": 78,\"totalTokenCount\":
-        107,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\":
+        \ \\\"order_id\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 29,\"candidatesTokenCount\": 7,\"totalTokenCount\":
+        36,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"eTnhapX8Eq3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"quantity\\\": 1\\n    }\\n  ]\\n}\"}],\"role\":
-        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 29,\"candidatesTokenCount\":
+        \"JkHhat_RGLu-_uMPrf7NoAY\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\\": \\\"A-17\\\",\\n  \\\"items\\\": [\\n    {\\n
+        \     \\\"name\\\": \\\"book\\\",\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 29,\"candidatesTokenCount\": 31,\"totalTokenCount\":
+        60,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"JkHhat_RGLu-_uMPrf7NoAY\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\n      \\\"price\\\": 12.99,\\n      \\\"quantity\\\":
+        1\\n    },\\n    \"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 29,\"candidatesTokenCount\": 55,\"totalTokenCount\":
+        84,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"JkHhat_RGLu-_uMPrf7NoAY\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"{\\n      \\\"name\\\": \\\"pen\\\",\\n      \\\"price\\\":
+        1.50,\\n      \\\"quantity\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 29,\"candidatesTokenCount\": 79,\"totalTokenCount\":
+        108,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"JkHhat_RGLu-_uMPrf7NoAY\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\\\": 1\\n    }\\n  ]\\n}\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 29,\"candidatesTokenCount\":
         90,\"totalTokenCount\": 119,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         29}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"eTnhapX8Eq3oz7IPxbqcuA4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T0a52PB3oULt8ysJBf0mLtK6TOdpRwf4DWsSi68vhngEXFRTYdjNXjN7x7ocx+b7rbtMBxwix7gZauyxSySuQ1f57VVj+/zJiX6yp6Qdgs6lNzSCqPCzxjPI=\"}],\"role\":
+        \"JkHhat_RGLu-_uMPrf7NoAY\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TrxWj+jebxhOfdwBqsKyNf/5Byf+62xfKmx8BjAMTngB0JWcvoaVnCKbiow7x0qBwSQILeIRkWmeHdJG+L3rwyw56ofId7NKvQHi32qC4nR+Ex5zeNBrqvK0=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         29,\"candidatesTokenCount\": 90,\"totalTokenCount\": 119,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 29}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"eTnhapX8Eq3oz7IPxbqcuA4\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:30 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"JkHhat_RGLu-_uMPrf7NoAY\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:15 GMT
 recorded_with: VCR 6.4.0

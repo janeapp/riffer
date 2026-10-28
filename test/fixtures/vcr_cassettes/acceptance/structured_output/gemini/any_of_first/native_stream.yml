@@ -38,7 +38,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 27 Oct 2026 23:53:44 GMT
+      - Wed, 28 Oct 2026 00:26:16 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -48,7 +48,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=640
+      - gfet4t7; dur=671
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -58,17 +58,17 @@ http_interactions:
         {\"promptTokenCount\": 17,\"candidatesTokenCount\": 7,\"totalTokenCount\":
         24,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 17}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"iDnhavquBNWxqtsP8tzk2Q4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        \"KEHhaqH3D-PT_PUPne2SoQc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \"\\n    \\\"street\\\": \\\"123 Main St\\\",\\n    \\\"city\\\":
         \\\"Toronto\\\"\\n  }\\n}\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
         {\"promptTokenCount\": 17,\"candidatesTokenCount\": 32,\"totalTokenCount\":
         49,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 17}],\"serviceTier\":
         \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"iDnhavquBNWxqtsP8tzk2Q4\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T9BarLcDxb4H1EIfaSYZ0mBkjDN0q/CgJIe4Wrl5bAJzU9kHMMqRrLOYgq0EBI/ZwnngYV+vUrlpmdiOSHr/gh+8HcKpTQirdI7TQ+EzE8U4KgyYPhfs4fl8=\"}],\"role\":
+        \"KEHhaqH3D-PT_PUPne2SoQc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tv/PSCDbcDvrLJdVf8t/9b5KQ8VxMOZStTBR7dVD6h2KcF6rH8ulvZuAAPbEypfqw5Qbr39XvjNfcUcGbmAB+oOeW0lxcwL533aacRrZYf0Wjxlzx6ubsibM=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
         17,\"candidatesTokenCount\": 32,\"totalTokenCount\": 49,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 17}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"iDnhavquBNWxqtsP8tzk2Q4\"}\r\n\r\n"
-  recorded_at: Tue, 27 Oct 2026 23:53:44 GMT
+        \"gemini-3.5-flash-lite\",\"responseId\": \"KEHhaqH3D-PT_PUPne2SoQc\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:16 GMT
 recorded_with: VCR 6.4.0

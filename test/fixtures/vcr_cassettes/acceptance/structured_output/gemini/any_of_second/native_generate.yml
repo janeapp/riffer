@@ -36,7 +36,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 27 Oct 2026 23:53:32 GMT
+      - Wed, 28 Oct 2026 00:25:43 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,7 +46,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=620
+      - gfet4t7; dur=700
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -60,8 +60,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"result\": {\n    \"error_code\": \"no_address\",\n    \"error_message\": \"No address was found in the provided text.\"\n  }\n}",
-                    "thoughtSignature": "EmAKXgFpFH0TOfWzEHLMAy1oay0u1vszEkk9sV0yfrisALTjapsPyVIg4yDRq7ejgJY6HVvW6X9grcE7BAIV+4Sl7rCMLL7qVxIaa7Djex5dC07B3oYupnfva4YtNO4RnYU="
+                    "text": "{\n  \"result\": {\n    \"error_code\": \"no_address\",\n    \"error_message\": \"No street address or city was found in the provided text.\"\n  }\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TOQrZhCHkbF0H7tP/Adm/ExxwjlQtqD0ynPdf3S2AeyZZTk6Nyen32+ewd9ZxqR/k2gILACNUDgOxA4FOMqpt3XuKFna541U667M/XI+fEHAcQMcaAq4LqVs="
                   }
                 ],
                 "role": "model"
@@ -72,8 +72,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 13,
-            "candidatesTokenCount": 41,
-            "totalTokenCount": 54,
+            "candidatesTokenCount": 44,
+            "totalTokenCount": 57,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -83,7 +83,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "eznhatDXMM3RjMcP4PKjyAg"
+          "responseId": "B0HharC-COfL_uMP_KGcoQM"
         }
-  recorded_at: Tue, 27 Oct 2026 23:53:32 GMT
+  recorded_at: Wed, 28 Oct 2026 00:25:43 GMT
 recorded_with: VCR 6.4.0

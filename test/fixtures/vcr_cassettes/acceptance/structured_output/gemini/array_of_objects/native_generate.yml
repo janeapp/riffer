@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Order A-17 has 2 items:
+        a book costing $12.99 and a pen costing $1.50"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
+        identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
+        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":["integer","null"],"description":"Quantity
+        ordered"}},"required":["name","price","quantity"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false}}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Wed, 28 Oct 2026 00:26:13 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=732
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"order_id\": \"A-17\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99,\n      \"quantity\": 1\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50,\n      \"quantity\": 1\n    }\n  ]\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TOQsPFbGX4g9GlpDF5+gPxb7fSjmbzoq2eGekqwVvhkC5pn09WXpryjPwHfml5N02EVXIs50stB0a1tBdmlIQl6dwHm0zZUJQV7cb4C9sXKF5mVp0fDFw7es="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 29,
+            "candidatesTokenCount": 90,
+            "totalTokenCount": 119,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 29
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "JUHhatCDGMKa_uMP_PW6uQM"
+        }
+  recorded_at: Wed, 28 Oct 2026 00:26:14 GMT
+recorded_with: VCR 6.4.0

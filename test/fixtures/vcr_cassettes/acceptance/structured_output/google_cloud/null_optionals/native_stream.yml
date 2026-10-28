@@ -9,8 +9,8 @@ http_interactions:
         works at 42 King St in Vancouver. No other details are known. Return null
         for any unknown fields."}]}],"generationConfig":{"responseFormat":[{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
-        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":"string","description":"Postal
-        or zip code"},"country":{"type":"string","description":"Country"}},"required":["street","city"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}}]}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -38,7 +38,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 00:04:25 GMT
+      - Wed, 28 Oct 2026 00:25:53 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -52,27 +52,24 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
-        [{\"text\": \"{\\n  \\\"name\\\": \\\"\"}]}}],\"usageMetadata\": {\"trafficType\":
+        [{\"text\": \"{\\n  \\\"name\\\":\"}]}}],\"usageMetadata\": {\"trafficType\":
         \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:04:24.623067Z\",\"responseId\": \"CDzhatuDJtefq8YPr57HmAM\"}\r\n\r\ndata:
+        \"2026-10-28T00:25:52.561774Z\",\"responseId\": \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \"Jane\\\",\\n  \\\"address\\\": {\\n    \\\"street\\\": \\\"42 King St\\\",\\n
-        \   \\\"city\\\":\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:04:24.623067Z\",\"responseId\":
-        \"CDzhatuDJtefq8YPr57HmAM\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"role\": \"model\",\"parts\": [{\"text\": \" \\\"Vancouver\\\",\\n    \\\"country\\\":
-        \\\"Canada\\\",\\n    \\\"postal_code\\\": \\\"V5K 0\"}]}}],\"usageMetadata\":
+        \" \\\"Jane\\\",\\n  \\\"address\\\": {\\n    \\\"street\\\": \\\"42 King
+        St\\\",\\n    \\\"city\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:25:52.561774Z\",\"responseId\":
+        \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \"\\\": \\\"Vancouver\\\",\\n
+        \   \\\"postal_code\\\": null,\\n    \\\"country\\\": null\\n  }\\n}\"}]}}],\"usageMetadata\":
         {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:04:24.623067Z\",\"responseId\": \"CDzhatuDJtefq8YPr57HmAM\"}\r\n\r\ndata:
+        \"2026-10-28T00:25:52.561774Z\",\"responseId\": \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \"A1\\\"\\n  }\\n}\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:04:24.623067Z\",\"responseId\":
-        \"CDzhatuDJtefq8YPr57HmAM\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"role\": \"model\",\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"AY89a1+f1UvRDn5ftdp/kWZvxIKhDiYVzGCkRjzQPYrgCc/b1o2rkI5tuPT+9db/KlRGcuRrpWhxu7QKJFFbHLMD26B3jtNXpfGgpWYn7vo1SXZCHfTLp4bj4Gk=\"}]},\"finishReason\":
-        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 238,\"candidatesTokenCount\":
-        63,\"totalTokenCount\": 301,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 238}],\"candidatesTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 63}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:04:24.623067Z\",\"responseId\": \"CDzhatuDJtefq8YPr57HmAM\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 00:04:25 GMT
+        \"\",\"thoughtSignature\": \"AY89a19fQJcKk+e9GXK+6IIbyv1SVlCMB/l/KyNhglESBwbooVsSP5IBLCTkgvGQTV8M+2AbTawjuLp2dH9a3FxWSTQRn5FnBH2R/HHcVUiChXXHlu/YxbrQWyo=\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 252,\"candidatesTokenCount\":
+        54,\"totalTokenCount\": 306,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 252}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 54}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:25:52.561774Z\",\"responseId\": \"EEHhau6kIreV9LsPlufj8Qw\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:25:53 GMT
 recorded_with: VCR 6.4.0

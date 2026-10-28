@@ -34,7 +34,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 00:03:28 GMT
+      - Wed, 28 Oct 2026 00:26:07 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -48,19 +48,18 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
-        [{\"text\": \"{\\n  \\\"tags\\\":\"}]}}],\"usageMetadata\": {\"trafficType\":
+        [{\"text\": \"{\\n  \\\"tags\\\": [\\\"urgent\"}]}}],\"usageMetadata\": {\"trafficType\":
         \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:28.470178Z\",\"responseId\": \"0DvhaqLZHNefq8YPr57HmAM\"}\r\n\r\ndata:
+        \"2026-10-28T00:26:07.242660Z\",\"responseId\": \"H0HhauTnDs31tAKK-fWgDQ\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \" [\\n    \\\"urgent\\\",\\n    \\\"billing\\\"\\n  ]\\n}\"}]}}],\"usageMetadata\":
-        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:28.470178Z\",\"responseId\": \"0DvhaqLZHNefq8YPr57HmAM\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \"\",\"thoughtSignature\": \"AY89a1/G8+baYum8F6HwNWrCDre0JtCbRigUjbXsd1edi4xw58xZ9/C84ZOlT3wXO4iqOddNyUdaBPzUGXyMtz2+kstEFq10d61EL97YVozJRZKFBS48wKb65Mo=\"}]},\"finishReason\":
+        \"\\\", \\\"billing\\\"]\\n}\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T00:26:07.242660Z\",\"responseId\":
+        \"H0HhauTnDs31tAKK-fWgDQ\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"role\":
+        \"model\",\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"AY89a1/vtz1RWkVceNwwleK889tZKEUjjqgbIffEef/lwOdUfR8hgsyNketRjZ9duUSW8HM0Ytebc7INu52nib20tQ/sSeItoRkUVIqnIcrGruSmsUPB1+5ujN0=\"}]},\"finishReason\":
         \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 113,\"candidatesTokenCount\":
-        22,\"totalTokenCount\": 135,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        14,\"totalTokenCount\": 127,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 113}],\"candidatesTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 22}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:28.470178Z\",\"responseId\": \"0DvhaqLZHNefq8YPr57HmAM\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 00:03:29 GMT
+        [{\"modality\": \"TEXT\",\"tokenCount\": 14}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:07.242660Z\",\"responseId\": \"H0HhauTnDs31tAKK-fWgDQ\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:07 GMT
 recorded_with: VCR 6.4.0

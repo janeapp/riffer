@@ -32,7 +32,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:03:24 GMT
+      - Wed, 28 Oct 2026 00:26:10 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -55,8 +55,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "{\n  \"tags\": [\n    \"Ruby\",\n    \"Programming\",\n    \"Software Development\"\n  ],\n  \"scores\": [\n    0.95,\n    0.90,\n    0.75\n  ]\n}",
-                    "thoughtSignature": "AY89a19D9BkNNiyWzj4pNpq0Ynthsl44OYAKK8xKVeGXPF+pEYXRPBR31PFNBCoCi4wSMBeVK9BU9VaDP7iTTsZczD8My1URC0GpFOC/JDwhDYOn5nlK7Jz7NzM="
+                    "text": "{\n  \"tags\": [\n    \"Ruby\",\n    \"programming language\",\n    \"software development\"\n  ],\n  \"scores\": [\n    0.95,\n    0.90,\n    0.75\n  ]\n}",
+                    "thoughtSignature": "AY89a18nyNjjYVH2ETk7ftM+X0I9vaNFekolp4vJfCtpioPBqhaXWq/kR8yiegVSlmyVvrY0UYHJR87krzufzBqP3ax/8hMTLbFlHCyyWHDrYuVlnQltTdU/B+8="
                   }
                 ]
               },
@@ -65,8 +65,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 152,
-            "candidatesTokenCount": 57,
-            "totalTokenCount": 209,
+            "candidatesTokenCount": 58,
+            "totalTokenCount": 210,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
@@ -77,13 +77,13 @@ http_interactions:
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 57
+                "tokenCount": 58
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:03:23.849459Z",
-          "responseId": "yzvharPsM62Oq8YPvvCB-Qk"
+          "createTime": "2026-10-28T00:26:09.813096Z",
+          "responseId": "IUHhaqjQMe-R9LsPovS8gQM"
         }
-  recorded_at: Wed, 28 Oct 2026 00:03:24 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:10 GMT
 recorded_with: VCR 6.4.0

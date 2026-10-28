@@ -36,7 +36,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 00:03:58 GMT
+      - Wed, 28 Oct 2026 00:26:24 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -50,19 +50,19 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
-        [{\"text\": \"{\\n  \\\"sentiment\\\":\"}]}}],\"usageMetadata\": {\"trafficType\":
-        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:57.554142Z\",\"responseId\": \"7Tvhap7pIYOVq8YPnPzPuA8\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \" \\\"positive\\\",\\n  \\\"score\\\": 0.99\\n}\"}]}}],\"usageMetadata\":
+        [{\"text\": \"{\\n  \\\"sentiment\\\": \\\"positive\"}]}}],\"usageMetadata\":
         {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:57.554142Z\",\"responseId\": \"7Tvhap7pIYOVq8YPnPzPuA8\"}\r\n\r\ndata:
+        \"2026-10-28T00:26:24.016064Z\",\"responseId\": \"MEHhasB9yIv0uw_TzvbBAg\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
-        \"\",\"thoughtSignature\": \"AY89a19H2dE0rPEO9mK8R6rcLfBpQNxgpiiJ9wQ89stvDq5RDm7qv2kXGF42UniXrfgLp+e9unpE6brbRRweXs8JTQ1ZF3n8Esp5yEds4r547giNTQn58Ud7//M=\"}]},\"finishReason\":
+        \"\\\",\\n  \\\"score\\\": 1.0\\n}\"}]}}],\"usageMetadata\": {\"trafficType\":
+        \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:24.016064Z\",\"responseId\": \"MEHhasB9yIv0uw_TzvbBAg\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a18uaJIlVykoXUbtHTuaapi3NEaxH4sBGEFNbZCttqJyghkiTV6qXgeczb0zUvNwRZMg7JL82ZDcWv+0IR0dF4C5OiWk27zZyNSFwjOF8D9UYdaYKxAB5D4=\"}]},\"finishReason\":
         \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 125,\"candidatesTokenCount\":
-        21,\"totalTokenCount\": 146,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        20,\"totalTokenCount\": 145,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 125}],\"candidatesTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 21}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T00:03:57.554142Z\",\"responseId\": \"7Tvhap7pIYOVq8YPnPzPuA8\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 00:03:58 GMT
+        [{\"modality\": \"TEXT\",\"tokenCount\": 20}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-10-28T00:26:24.016064Z\",\"responseId\": \"MEHhasB9yIv0uw_TzvbBAg\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 00:26:24 GMT
 recorded_with: VCR 6.4.0

@@ -8,7 +8,8 @@ http_interactions:
       string: '{"contents":[{"role":"user","parts":[{"text":"Classify the session:
         yoga class, underwater format. The session_type enum does not cover this,
         so return null for session_type."}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
-        name"},"session_type":{"type":"string","description":"Type of session","enum":["in_person","online","both"]}},"required":["name"],"additionalProperties":false}}}}}'
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -34,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 27 Oct 2026 23:53:12 GMT
+      - Wed, 28 Oct 2026 00:26:29 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=661
+      - gfet4t7; dur=782
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -58,8 +59,8 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"name\": \"yoga class, underwater format\",\n  \"session_type\": \"both\"\n}",
-                    "thoughtSignature": "EmAKXgFpFH0TPlDp/J6if4+kRqO9gUV3/mz+PBqeK06CLQNbNKlDSGyOt3MCClLN4xlh3uxD8OjAwCv/Nc1Yyp+DD/Fc4+GUbfDt4F2lfPkKYL6GaZyQx8PHk3BftUQWOC8="
+                    "text": "{\n  \"name\": \"Yoga class, underwater format\",\n  \"session_type\": null\n}",
+                    "thoughtSignature": "EmAKXgFpFH0TnMocmZLqZpa/pEOj5TJOqbSuXd3D0cg5OcdIQOdumfCfC53P4HcIFkTj2yt4mZ6kbSDSLf/QjLbqrkiJ13jWwfwTXkiDGwsd9aq1URl5FwsT1PW5mkFaIWw="
                   }
                 ],
                 "role": "model"
@@ -70,8 +71,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 30,
-            "candidatesTokenCount": 25,
-            "totalTokenCount": 55,
+            "candidatesTokenCount": 23,
+            "totalTokenCount": 53,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -81,7 +82,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "ZznhaueaI_-U_uMPyPeH2A4"
+          "responseId": "NEHhasP4IOe8qtsP5qe40Ao"
         }
-  recorded_at: Tue, 27 Oct 2026 23:53:12 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:29 GMT
 recorded_with: VCR 6.4.0

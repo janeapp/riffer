@@ -36,7 +36,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 27 Oct 2026 23:53:43 GMT
+      - Wed, 28 Oct 2026 00:26:16 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,7 +46,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=677
+      - gfet4t7; dur=728
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -61,7 +61,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\n  \"result\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\"\n  }\n}",
-                    "thoughtSignature": "EmAKXgFpFH0TZnXtalBZVdLOqpH+wpDZRfr+N4+Z3Yga/viwG4UxqBETHN880cysofL5TmBhzA4TUH266RHcox5Ch9IJs2rp+HoOsCuNERxj6iyBubXgeOJULHsxHNmWnRg="
+                    "thoughtSignature": "EmAKXgFpFH0TMj3apoiuWmPpGvzKScoD31CfX+qyUH82LHIusVRSXqYHnnY1T/G1083fL/wkeZFDNz4sl4gaZu8tpX5/x3sFxRHHNW9akQ0bI4edwEPDk7R6PyJsygpzn04="
                   }
                 ],
                 "role": "model"
@@ -83,7 +83,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "hznhaqfPC9mtz7IPuPbiyQs"
+          "responseId": "J0Hhau3FF6yez7IPpL-JwQs"
         }
-  recorded_at: Tue, 27 Oct 2026 23:53:43 GMT
+  recorded_at: Wed, 28 Oct 2026 00:26:16 GMT
 recorded_with: VCR 6.4.0
