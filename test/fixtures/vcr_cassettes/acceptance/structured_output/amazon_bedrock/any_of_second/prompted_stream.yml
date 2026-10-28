@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract the address
+        from: John likes long walks by the lake\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"result\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"error_code\":{\"type\":\"string\",\"description\":\"Why
+        no address\",\"enum\":[\"no_address\",\"multiple_addresses\"]},\"error_message\":{\"type\":\"string\",\"description\":\"Explanation
+        of the error\"}},\"required\":[\"error_code\",\"error_message\"],\"additionalProperties\":false}],\"description\":\"The
+        address, or why none was found\"}},\"required\":[\"result\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"result\":{\"street\":\"<string>\",\"city\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - d6166534-7be1-4458-a06d-761e07670403
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175204Z
+      X-Amz-Content-Sha256:
+      - ba695847feed5e258785cefc49cb930ec3b1b3d7997c12ea467fd6a597fbe432
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1231'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:05 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a64308f4-aca7-4252-b5cb-4b7b8d1d26dd
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAqgAAAFLa0GiGCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSUyIsInJvbGUiOiJhc3Npc3RhbnQifXIDPnsAAADkAAAAV015eiELOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0Ijoie1wicmVzdWx0XCI6e1wiZXJyb3JfIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEifat8n1sAAADLAAAAVw7owvQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiY29kZVwiOlwibm9fYWRkcmVzc1wiLFwiZXJyb3IifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dSJ9Wumj1wAAANAAAABXGdhkZws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJfbWVzc2FnZVwiOlwiVGhlIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE0iffwLyesAAADYAAAAVymoL6YLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiIHRleHQgIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQifVbNgNUAAADEAAAAV4y4VSULOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiJ0pvaG4gbGlrZXMgbG9uZyB3YWxrcyBieSJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyIn08jXRHAAAA1QAAAFfROOsXCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IiB0aGUgbGFrZScgZG9lcyBub3QgY29udGFpbiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHIn0eJpRJAAAAtQAAAFdICpxaCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IiBhbiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eSJ9g6qn1QAAALYAAABXD6rmigs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiIgYWRkcmVzcy5cIn19In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wIn1yI4fcAAAAqQAAAFaaHdZPCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKSyJ9YZcgowAAAJIAAABR0ojKews6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn2VHhmLAAABCwAAAE5IylFKCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTE3OX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFkiLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6MzUzLCJvdXRwdXRUb2tlbnMiOjQ2LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6Mzk5fX2eAumx
+  recorded_at: Wed, 28 Oct 2026 17:52:05 GMT
+recorded_with: VCR 6.4.0

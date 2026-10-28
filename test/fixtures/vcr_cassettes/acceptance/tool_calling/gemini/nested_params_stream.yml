@@ -14,8 +14,8 @@ http_interactions:
         the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"services":{"type":"array","description":"Services
         to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
-        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any"]}],"description":"Room
-        number, or any when there is no preference"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room
+        number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -43,7 +43,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 15:34:00 GMT
+      - Wed, 28 Oct 2026 17:49:25 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -53,25 +53,25 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=824
+      - gfet4t7; dur=1176
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
-        {\"name\": \"book_visit\",\"args\": {\"room\": \"any\",\"visit_type\": \"online\",\"patient\":
-        {\"name\": \"Ada Lovelace\",\"email\": \"ada@example.com\"},\"services\":
-        [{\"name\": \"checkup\",\"minutes\": 30},{\"name\": \"vaccination\",\"minutes\":
-        15}],\"visit_on\": \"2026-11-03\"},\"id\": \"call_1684109\"},\"thoughtSignature\":
-        \"EmAKXgFpFH0TdP8L2lvN9N2pFj6jw/6YwbIw8bXf+q+sRJlTPqeTVOxWU3gZetX1U+TnOyWHinZ0tKDf9FbGLY+uxzyJZyPhGf0waKjbGdoZqWf35e7PzOTMo+7UtaR5I2c=\"}],\"role\":
-        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 343,\"candidatesTokenCount\":
-        88,\"totalTokenCount\": 431,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        343}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"5xXiavHSHorx-8YP8LXrqQ8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"name\": \"book_visit\",\"args\": {\"visit_type\": \"online\",\"room\":
+        \"any\",\"services\": [{\"minutes\": 30,\"name\": \"checkup\"},{\"name\":
+        \"vaccination\",\"minutes\": 15}],\"visit_on\": \"2026-11-03\",\"patient\":
+        {\"email\": \"ada@example.com\",\"name\": \"Ada Lovelace\"}},\"id\": \"call_2031049\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TVl6T8vT+37KAKZiFH33TPaTnqAZMAGuO2RU8sdh5lkKSznI2r2nIxv6x7uq0YNUB2Ypk9P0zLA6l22/pzkXePjBjBsPKZoyzVyZN/QjeFYIckN3+DhTtnDA=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 349,\"candidatesTokenCount\":
+        88,\"totalTokenCount\": 437,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        349}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"pDXiavPLL_CM_PUPu5TiyQ8\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 343,\"candidatesTokenCount\":
-        88,\"totalTokenCount\": 431,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        343}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"5xXiavHSHorx-8YP8LXrqQ8\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 15:34:00 GMT
+        0}],\"usageMetadata\": {\"promptTokenCount\": 349,\"candidatesTokenCount\":
+        88,\"totalTokenCount\": 437,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        349}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"pDXiavPLL_CM_PUPu5TiyQ8\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 17:49:25 GMT
 recorded_with: VCR 6.4.0

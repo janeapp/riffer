@@ -1,0 +1,134 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]}],"system":[{"text":"You are a helpful assistant.\n\nWhen
+        a user''s request matches a skill description below, call the `skill_activate`
+        tool with the skill name. After activation, follow the skill''s instructions.
+        If a skill''s instructions already appear in your context (inside <skill_content>
+        tags), follow them instead of activating the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"toolConfig":{"tools":[{"toolSpec":{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 0f121bd8-e25c-4c33-9b56-fdd98b9a60e4
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175215Z
+      X-Amz-Content-Sha256:
+      - 6ebddef8207a51a927bfd119095acf478060f02958efaa7dbb4644930bbb72fa
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1183'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:16 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1217'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 691bbbb8-d99b-46c6-a702-59a87eb2bb1b
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1278},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSkAQKEggTEAEYAjgBQgh0aGlua2luZxIMHaiad1WRK7V4Y8p/GgwGGRdURddKMsVNp2wiMPFSRCWDGnAUy093SKj74J8JPBg8xuk43FIATC7NzqYrM9KWSsyen5a2hoRwhr2Y5SqrAxBRyYB9QBvYoWeYzjonKc/u62ALPY1mxewWJpbtNARGZWMK5TzlJLlE59yss9mE8p05TkJDeMPz3NJH9+QXg8hZHtq4PAAtzeSZU194O5KZE+PFI1YcEs1AY58USWAIMNxaCrnZdomsIz10N+5UtRogJyhDDkUSONXKtsaha7p4eTH8h7AbAy8tD8ImmMgPDBJhT/IJiLPHD/eVq+xTxiyJNA0tryFsYbX+JMO6qooe3Gvcl9NQUCALKgnFh2zUO06kmA+ho+GEuqt0rs//ZykC8KPM2F1DYZjisEk3tk3uxxKnRHRnoWSNQ5EFiUV7HcFAzlKjVkMrSMaLj4J8mW1CWQgtRb7g93QnjPgz3FrRnd0NxeCJlfhc5ytj64Ya4vLL0XTZPTiON9zx49cgYDuOONmauudFQ4l0mEEsbYZOezEJfiow+ZtgFcdhf9L3mDoTYKLs9X6frWXZ3QdqmUs6SDyivnM57R7JSxRXicD/QjM/WGZaIDwuvO9BsdPwBpVLEZj9QWlr/5rDTDazW0egDddSouykgqlCUcr6jQVK8cJnBjuJieeIItAYAQ==","text":""}}},{"toolUse":{"input":{"name":"code-review"},"name":"skill_activate","toolUseId":"tooluse_3nmN3YwmD1fFKTldfWgpNS","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":634,"outputTokens":80,"serverToolUsage":{},"totalTokens":714}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:16 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Review this Ruby code:
+        def add(a, b) a + b end"}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"","signature":"CAQSkAQKEggTEAEYAjgBQgh0aGlua2luZxIMHaiad1WRK7V4Y8p/GgwGGRdURddKMsVNp2wiMPFSRCWDGnAUy093SKj74J8JPBg8xuk43FIATC7NzqYrM9KWSsyen5a2hoRwhr2Y5SqrAxBRyYB9QBvYoWeYzjonKc/u62ALPY1mxewWJpbtNARGZWMK5TzlJLlE59yss9mE8p05TkJDeMPz3NJH9+QXg8hZHtq4PAAtzeSZU194O5KZE+PFI1YcEs1AY58USWAIMNxaCrnZdomsIz10N+5UtRogJyhDDkUSONXKtsaha7p4eTH8h7AbAy8tD8ImmMgPDBJhT/IJiLPHD/eVq+xTxiyJNA0tryFsYbX+JMO6qooe3Gvcl9NQUCALKgnFh2zUO06kmA+ho+GEuqt0rs//ZykC8KPM2F1DYZjisEk3tk3uxxKnRHRnoWSNQ5EFiUV7HcFAzlKjVkMrSMaLj4J8mW1CWQgtRb7g93QnjPgz3FrRnd0NxeCJlfhc5ytj64Ya4vLL0XTZPTiON9zx49cgYDuOONmauudFQ4l0mEEsbYZOezEJfiow+ZtgFcdhf9L3mDoTYKLs9X6frWXZ3QdqmUs6SDyivnM57R7JSxRXicD/QjM/WGZaIDwuvO9BsdPwBpVLEZj9QWlr/5rDTDazW0egDddSouykgqlCUcr6jQVK8cJnBjuJieeIItAYAQ=="}}},{"toolUse":{"toolUseId":"tooluse_3nmN3YwmD1fFKTldfWgpNS","name":"skill_activate","input":{"name":"code-review"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_3nmN3YwmD1fFKTldfWgpNS","content":[{"text":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}]}}]}],"system":[{"text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"toolConfig":{"tools":[{"toolSpec":{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 9b391ca9-2ed5-4221-a276-0201b81b0ad8
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175216Z
+      X-Amz-Content-Sha256:
+      - 81b37205dd06b77c26e0b06e246faee59eb460479f01951056e92898ae844506
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '2400'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:21 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3531'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 12149038-8c97-436a-b0d0-6b3004c181fa
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":4867},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSwgoKEggTEAEYAjgBQgh0aGlua2luZxIMYRvIfYAuoBT34eEzGgyZoHyMpgOnsCR7OigiMKDFekWi7QA2+j7Oz9nAOufowwFgjqW2YDPI6gKzJxScFqIDtJeC1Hwc+wLlmmYw4irdCXmWEP5NYgrP8Mkgl1eiRpxxaFaIC/Lj0VtF76qf8ELO3htR8XgzOkth+TZ5FuVtVs9XCMtHYLE0mfakKcVPEYeiAEVxt15ZWp1jIWBaiOCsSyHx3OqEAQjyGinLUnPn4ozUjPK+CqBPijbb8oa4wwIn2SROUvwf/kh497FUmEPDo2UITbylQwW+LyekdpoF7+SkIxtqSzHgrjYSYYkF5e9UuSah3KkjCYvHT8MYytuSkJaQia4XncCh1nRC+2VeTnQvlNeOjfJGM3gWboVT5Yh8TonSUJm7kXxwCvf5MC6Ki+N7kkVG9p53IUNRLO8qJCxfoYLHxnMIwDbPWE1RMJIQboWQ84YnO9kHGyHQ+tteoxEV3VHwR1yTtyzFjAajLGEmUHql9jq4HmcKCuZKEUnM7jo8HA7z7iJDeCrTD0qcygNZMWr8YxWI45ez8Hb6XxVLA2uy12svvLHZv7IU4yIi1pkpA1VByaEb4Si+gS0W91s8EWYW5/GP0EJcs27jSh3J0YGk2KMbzN0BRcgNmVs/VlIXLJViHrCau2CPPq8fWt6DkMrmk1Gl6wwGc909Yac/XZNssOlterHWk8o+fqVqV1rstTau1KmptlXVoxaX6Gg98RbuFTxeqRTqPvv1g86wiq7RqkMz8d+LvHT9b8dOoH9ckxj9gBobvnGxa7fW6FknO5n6eXSuxabs8dOIPMXQFFIr9OE7pIIwW6K5MOONRNQdKNQzgnrcdPKqGI+ebEmG6orxruTMGywn6WxZXnb/N4L7RKOcQdNiqfRjNnA9ycQo/PDYOkzS1H2qqYjoC7YDH25MHd+y9Cn+J1nARX0eLs0xej6bskNPHazyZ6LQjHmJE65Ersq0/nkw4GGxl2nAOqkIHtfynukDJkSH4tqqCfckGzl63+b9iaITliy7hzEFmutV0GsV9Y3nxTeHvysF08Q7JuRJj9NHcF7ZkGgcjcRmX7PBm+SMzJGT2Pn8xcHlb1z+ZzhJCvjJcZv8iZttBmO792SNKuU8CXD/A8LsFfmHpaWpIIaUSEWHKfjo+6uH0qzgSzB4zlPy5Bx41pQeSGIsrux2Ng8vZfog+YoTePtFTyxfC9wROnEOJRGoeVneEQb6nOOGNZCjRwpklTBGB5qkaETE+ijzhEQLpl71t9Lo9Ggiw5+QZnseo/SYp0S9KN/Gy7oXsqC2LC91E/h048WTHoi49WN41XSbKWzGvyaVHE51DDIg0jWUUjtFTfv8D+O0pJ2YGrCesaNBlLA/Kg27o8JgpB9izlS2ZDaYM5sHNN8bbINKzVKTysP7uo4AgOSubtXz5cJMMo4VfMVNy4GoaaK94yOw+yylja6x3ULUeGm5yTENII2eFg43EFKVDarbOTOgSMtjZ9dryxQjojXLnrTWj3YdlaA6tvvFWV3IJnPIUKJeKHBn17a+Fd3XbXc5T6TIJkrr9W+S18KQvasswrwSXLv8FFsY6oAR5aZqNhRaHJsqGdkhYXNN5O4ka3PH+9xKeta4s5ORXGrW0ufBxfZ3RwSBFMKfu9k7M6ULSE3zE91zpyhrBGHhBq4YtnkTlMAslrKU3/g5HU80aJsIjnJ/QeXeD/YUv6o4QedFsKU/ZcS6mIWS3Ggt9IG8cIK+yoyiXTS7ZxvVq4/2z7GlmY+Ig2FnixgB","text":""}}},{"text":"The
+        code is valid Ruby and works for numbers. Here''s the review:\n\n**Style**\n-
+        Put the body on its own line for readability:\n  ```ruby\n  def add(a, b)\n    a
+        + b\n  end\n  ```\n- Ruby style guides (RuboCop) favor this layout. Single-line
+        `def` bodies are acceptable only for very short methods, and this one is borderline.\n-
+        The name `add` is clear, and the parameter names are short but fine for a
+        method this simple.\n\n**Potential bugs**\n- There is no input validation,
+        so mixed types fail at runtime. `add(1, \"2\")` raises `TypeError: String
+        can''t be coerced into Integer`, and `add(nil, 1)` raises `NoMethodError`.\n-
+        The method is duck-typed, so it also accepts other types that define `+`.
+        For example, `add(\"a\", \"b\")` returns `\"ab\"`, and `add([1], [2])` returns
+        `[1, 2]`. This is idiomatic Ruby, but it may surprise callers. Document the
+        expected types or add a guard such as `raise ArgumentError unless a.is_a?(Numeric)
+        && b.is_a?(Numeric)` if you need strict behavior.\n\n**Performance**\n- Nothing
+        to flag. The method is a single operation.\n\n**Suggestions**\n- Add a short
+        doc comment if the method is part of a public API, for example `# @param a
+        [Numeric] @param b [Numeric] @return [Numeric]`.\n- Add a test for the expected
+        cases, such as `add(2, 3) == 5`, and decide how the method should behave with
+        other types."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":775,"outputTokens":841,"serverToolUsage":{},"totalTokens":1616}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:21 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract info from:
+        Jane works at 42 King St in Vancouver. No other details are known. Return
+        null for any unknown fields.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 07fd36d1-ed3b-4614-9c8b-6f8c60796d19
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175140Z
+      X-Amz-Content-Sha256:
+      - 53a05f61045daa56953f736d1380a4405f179298d2c0d1e7a09d0157be7a39de
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1226'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:41 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - ed8361c9-e29e-4e54-b716-9f6190da185c
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAngAAAFKOcXbACzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGRyIsInJvbGUiOiJhc3Npc3RhbnQifX0BTpsAAACtAAAAVxiaQBkLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0Ijoie1wibmFtZVwiOlwiSmFuZSJ9LCJwIjoiYWJjZCJ9IW9PtgAAAM0AAABXgag3VAs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJcIixcImFkZHJlc3NcIjp7XCJzdHJlZXRcIjpcIiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dncifWQnKaQAAAC5AAAAV436cVsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiNDIgS2luZyBTdFwiLFwiY2l0eVwiOlwiIn0sInAiOiJhYmNkZWZnaCJ9YN2OHAAAAMkAAABXdCiRlAs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJWYW5jb3V2ZXJcIixcInBvc3RhbCJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQiJ9trlzagAAANUAAABX0TjrFws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJfY29kZVwiOm51bGwsXCJjb3VudHJ5XCI6In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISSJ9EFjPkwAAANEAAABXJLhN1ws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJudWxsfX0ifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYIn2EuH9tAAAAvQAAAFYPfecNCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0In1eBfhuAAAAsQAAAFFU6Z+vCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn3E9HFnAAABBgAAAE6wWpX7CzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTQwNX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUIiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjM1MSwib3V0cHV0VG9rZW5zIjo0NSwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjM5Nn19Znv0mg==
+  recorded_at: Wed, 28 Oct 2026 17:51:41 GMT
+recorded_with: VCR 6.4.0

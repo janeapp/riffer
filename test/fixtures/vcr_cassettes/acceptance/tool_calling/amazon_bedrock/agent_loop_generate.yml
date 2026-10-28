@@ -1,0 +1,163 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"First find the city
+        the Eiffel Tower is in, then get the weather there."}]}],"system":[{"text":"Use
+        the tools to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","inputSchema":{"json":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}}}},{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 6b0162bd-9132-49d7-91ee-dad2032cffc4
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175306Z
+      X-Amz-Content-Sha256:
+      - 65e28010e895f87c03138f0a4de61ebe81d56d7655ac5d8dc97db8ccb88b576f
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '761'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:08 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '441'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 93a2e4f3-2378-465d-8cde-5def75c51e4a
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1206},"output":{"message":{"content":[{"toolUse":{"input":{"landmark":"Eiffel
+        Tower"},"name":"locate_landmark","toolUseId":"tooluse_Sug46qFDnxrye8ZLSVRA8J","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":519,"outputTokens":59,"serverToolUsage":{},"totalTokens":578}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:08 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"First find the city
+        the Eiffel Tower is in, then get the weather there."}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_Sug46qFDnxrye8ZLSVRA8J","name":"locate_landmark","input":{"landmark":"Eiffel
+        Tower"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_Sug46qFDnxrye8ZLSVRA8J","content":[{"text":"The
+        Eiffel Tower is in Paris."}]}}]}],"system":[{"text":"Use the tools to answer.
+        Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","inputSchema":{"json":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}}}},{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 7e81591f-6670-4859-96ea-1f79f99143b7
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175308Z
+      X-Amz-Content-Sha256:
+      - 2983312fc53e1d2851f9a01bec038045b93e64e221221e0cb3ed54f9c9a22744
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1057'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:09 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '426'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - ab522268-1e0b-4936-8bd9-335b599fd825
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1076},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Paris"},"name":"get_weather","toolUseId":"tooluse_0lgrL1ydot3T5lrQm1ElnV","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":598,"outputTokens":50,"serverToolUsage":{},"totalTokens":648}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:09 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"First find the city
+        the Eiffel Tower is in, then get the weather there."}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_Sug46qFDnxrye8ZLSVRA8J","name":"locate_landmark","input":{"landmark":"Eiffel
+        Tower"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_Sug46qFDnxrye8ZLSVRA8J","content":[{"text":"The
+        Eiffel Tower is in Paris."}]}}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_0lgrL1ydot3T5lrQm1ElnV","name":"get_weather","input":{"city":"Paris"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_0lgrL1ydot3T5lrQm1ElnV","content":[{"text":"It
+        is 22 degrees Celsius in Paris."}]}}]}],"system":[{"text":"Use the tools to
+        answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","inputSchema":{"json":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}}}},{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 19b93257-e901-4a30-a528-9fc8c81d2ed5
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175309Z
+      X-Amz-Content-Sha256:
+      - 7569d5a22b81b7c2903f5cdc9d0fb666508025d223afeb1a4ac19c3d38a7babe
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1343'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:10 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '372'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 64aa559d-61cc-49f3-951c-6d3ce2e09bf5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6OTI0fSwib3V0cHV0Ijp7Im1lc3NhZ2UiOnsiY29udGVudCI6W3sidGV4dCI6IlRoZSBFaWZmZWwgVG93ZXIgaXMgaW4gUGFyaXMsIHdoZXJlIGl0IGlzIGN1cnJlbnRseSAyMsKwQy4ifV0sInJvbGUiOiJhc3Npc3RhbnQifX0sInN0b3BSZWFzb24iOiJlbmRfdHVybiIsInVzYWdlIjp7ImNhY2hlUmVhZElucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVSZWFkSW5wdXRUb2tlbnMiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VucyI6MCwiaW5wdXRUb2tlbnMiOjY3MCwib3V0cHV0VG9rZW5zIjoyNywic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjY5N319
+  recorded_at: Wed, 28 Oct 2026 17:53:10 GMT
+recorded_with: VCR 6.4.0

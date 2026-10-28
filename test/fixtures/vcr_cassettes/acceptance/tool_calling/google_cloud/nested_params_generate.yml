@@ -14,8 +14,8 @@ http_interactions:
         the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"services":{"type":"array","description":"Services
         to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
-        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any"]}],"description":"Room
-        number, or any when there is no preference"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room
+        number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -39,7 +39,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 15:34:52 GMT
+      - Wed, 28 Oct 2026 17:50:11 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -65,6 +65,11 @@ http_interactions:
                     "functionCall": {
                       "name": "book_visit",
                       "args": {
+                        "visit_type": "online",
+                        "patient": {
+                          "name": "Ada Lovelace",
+                          "email": "ada@example.com"
+                        },
                         "room": "any",
                         "services": [
                           {
@@ -76,16 +81,11 @@ http_interactions:
                             "minutes": 15
                           }
                         ],
-                        "visit_type": "online",
-                        "visit_on": "2026-11-03",
-                        "patient": {
-                          "email": "ada@example.com",
-                          "name": "Ada Lovelace"
-                        }
+                        "visit_on": "2026-11-03"
                       },
-                      "id": "call_651056"
+                      "id": "call_612351"
                     },
-                    "thoughtSignature": "AY89a1/kdnlpC0d1obbNTP16TnfwXcHo2ijJaLibzxTausY5Zijf3CHWVcg+kWujawojEaiERYVAbBSzCtTJSrsPXvlsJ7zKAoLyQlp/cCrRaYdrxfiAlwtsxCA="
+                    "thoughtSignature": "AY89a18iAexAFVmW6Be965dPWE5ZfRZjn6YOhHHUf/Js76dV1suVBx878ISQHJhfFkRguweNPZApx7ssW44HgKuAcaIRglmRCq72jUajRytlcDc2li+7kt+QnJQ="
                   }
                 ]
               },
@@ -111,8 +111,8 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T15:34:51.395834Z",
-          "responseId": "GxbiarqUGO-R9LsPovS8gQM"
+          "createTime": "2026-10-28T17:50:11.044037Z",
+          "responseId": "0zXiaoXYAuCapucPhbCKmAI"
         }
-  recorded_at: Wed, 28 Oct 2026 15:34:52 GMT
+  recorded_at: Wed, 28 Oct 2026 17:50:11 GMT
 recorded_with: VCR 6.4.0

@@ -1,0 +1,208 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]}],"system":[{"text":"Use the tools to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - e91ef13a-3800-49dc-bae8-c99d32c65ecd
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175238Z
+      X-Amz-Content-Sha256:
+      - 40ba6c675be0414a8627781981bbc68790c0395aba1bc5faeb434ea110fa6880
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '462'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:39 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 59239a26-ad57-4491-b021-268d7a295393
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAtwAAAFJCoDu1CzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDUiLCJyb2xlIjoiYXNzaXN0YW50In1xBrKfAAABFgAAAFe00aq5CzpldmVudC10eXBlBwARY29udGVudEJsb2NrU3RhcnQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTSIsInN0YXJ0Ijp7InRvb2xVc2UiOnsibmFtZSI6ImdldF93ZWF0aGVyIiwidG9vbFVzZUlkIjoidG9vbHVzZV80NTlGa1VYQmZDMER4cWNFNTFsWTdIIiwidHlwZSI6InRvb2xfdXNlIn19fTIxJzkAAADCAAAAVwP4oIULOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0b29sVXNlIjp7ImlucHV0IjoiIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQiJ9kGIr1wAAAK4AAABXXzo6yQs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRvb2xVc2UiOnsiaW5wdXQiOiJ7XCJjIn19LCJwIjoiYWJjZCJ9/2qQ8QAAALsAAABX9zoiOws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRvb2xVc2UiOnsiaW5wdXQiOiJpdHlcIjogXCJUb3JvIn19LCJwIjoiYWJjZGVmZ2gifY9HRIUAAADMAAAAV7zIHuQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0b29sVXNlIjp7ImlucHV0IjoibnRvXCJ9In19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUYifSbQ7HQAAACGAAAAVtmMbpoLOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYiJ98ziKIAAAAKEAAABRNAkILQs6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGIiwic3RvcFJlYXNvbiI6InRvb2xfdXNlIn2tnFqyAAABEwAAAE4YWo0JCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTEzM30sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQ1NiIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjo0MDksIm91dHB1dFRva2VucyI6NTEsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo0NjB9fcvaXhE=
+  recorded_at: Wed, 28 Oct 2026 17:52:39 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_459FkUXBfC0DxqcE51lY7H","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_459FkUXBfC0DxqcE51lY7H","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]}],"system":[{"text":"Use the tools
+        to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - ad2cfcb8-c866-41ec-8765-8f8224717e09
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175239Z
+      X-Amz-Content-Sha256:
+      - d14dad5d2591a8ded46939db79822c4662e852e45f8310aa760e100774373970
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '752'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:40 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - be3e3efb-e0a4-4fb9-8884-a98c9ba05c12
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAoAAAAFKQYHAnCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJIiwicm9sZSI6ImFzc2lzdGFudCJ9CdeWBQAAAKcAAABXUipYuAs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJJdCJ9LCJwIjoiYWJjZGVmZ2hpamtsIn2dx6+iAAAArQAAAFcYmkAZCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IidzIGN1cnIifSwicCI6ImFiY2RlZmdoaWprbG0ifbCc1qoAAAC2AAAAVw+q5ooLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiZW50bHkgMTXCsEMgaW4gVG8ifSwicCI6ImFiY2RlZmdoaWprbCJ9m9cFFgAAANQAAABX7FjCpws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJyb250by4ifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowIn0wrB9oAAAAjgAAAFbp/CVbCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpaiJ9ze7ZRAAAAI0AAABRMDjKKAs6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbCIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ9LttU3QAAAN4AAABOwoNyxgs6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjc4OH0sInAiOiJhYmNkZWZnIiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjQ4Mywib3V0cHV0VG9rZW5zIjoxNiwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjQ5OX19IW3/ig==
+  recorded_at: Wed, 28 Oct 2026 17:52:40 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_459FkUXBfC0DxqcE51lY7H","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_459FkUXBfC0DxqcE51lY7H","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]},{"role":"assistant","content":[{"text":"It''s
+        currently 15°C in Toronto."}]},{"role":"user","content":[{"text":"And in Paris?"}]}],"system":[{"text":"Use
+        the tools to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 9ded006d-8bab-4386-a541-5653d1e3b2f7
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175240Z
+      X-Amz-Content-Sha256:
+      - f8d73476f05240142645eba528ed0f99ee6b70ec1ba9c2772e2f79f39f542ad1
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '882'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:41 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - bbbfd5a3-3afa-4b70-bfbe-30e1b56e52ee
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAgwAAAFIWASXzCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZiIsInJvbGUiOiJhc3Npc3RhbnQifQzWKawAAAEXAAAAV4mxgwkLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tTdGFydA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTiIsInN0YXJ0Ijp7InRvb2xVc2UiOnsibmFtZSI6ImdldF93ZWF0aGVyIiwidG9vbFVzZUlkIjoidG9vbHVzZV90ckpjN1p1Z0JxaWdJQkJoT3lWWm0wIiwidHlwZSI6InRvb2xfdXNlIn19fQ5fQw0AAADLAAAAVw7owvQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0b29sVXNlIjp7ImlucHV0IjoiIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKSyJ9xWNzogAAAOAAAABXuPnc4Qs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRvb2xVc2UiOnsiaW5wdXQiOiJ7XCJjaXR5XCIifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXIn3/NLzDAAAA7wAAAFc6qUswCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidG9vbFVzZSI6eyJpbnB1dCI6IjogXCJQYXJpc1wifSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDU2NzgifUK29IYAAACuAAAAVig9Cl8LOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1AifY2eizoAAACiAAAAUXOpcv0LOmV2ZW50LXR5cGUHAAttZXNzYWdlU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7InAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkciLCJzdG9wUmVhc29uIjoidG9vbF91c2UifXvkI8EAAAEFAAAATvf67ysLOmV2ZW50LXR5cGUHAAhtZXRhZGF0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7Im1ldHJpY3MiOnsibGF0ZW5jeU1zIjo5MDh9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVCIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjo1MDksIm91dHB1dFRva2VucyI6NTAsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo1NTl9fUAMKRo=
+  recorded_at: Wed, 28 Oct 2026 17:52:41 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_459FkUXBfC0DxqcE51lY7H","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_459FkUXBfC0DxqcE51lY7H","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]},{"role":"assistant","content":[{"text":"It''s
+        currently 15°C in Toronto."}]},{"role":"user","content":[{"text":"And in Paris?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_trJc7ZugBqigIBBhOyVZm0","name":"get_weather","input":{"city":"Paris"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_trJc7ZugBqigIBBhOyVZm0","content":[{"text":"It
+        is 22 degrees Celsius in Paris."}]}}]}],"system":[{"text":"Use the tools to
+        answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a645e943-568b-4ccb-8bdf-c5a480dcd2c8
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175241Z
+      X-Amz-Content-Sha256:
+      - f90f38e8d4ba6e7857ef539e4e7b9f21904185ca6e2c0423ac2bb087fa3e64e1
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1168'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:42 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 8b1a3c35-ed1a-41a3-b536-d3cfdd9f8ffc
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAhwAAAFLjgYMzCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWoiLCJyb2xlIjoiYXNzaXN0YW50In10WSZKAAAAtAAAAFd1arXqCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6Ikl0J3MgMjLCsEMgaW4ifSwicCI6ImFiY2RlZmdoaWprbG1uIn1xNmB3AAAAtAAAAFd1arXqCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IiBQYXJpcy4ifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0In1i7GeOAAAAhgAAAFbZjG6aCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWIiffM4iiAAAACYAAAAUZg40toLOmV2ZW50LXR5cGUHAAttZXNzYWdlU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7InAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2dyIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ9zTihJQAAAPcAAABODlI/sws6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjEwMjN9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERSIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjo1ODEsIm91dHB1dFRva2VucyI6MTMsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo1OTR9fcqtK48=
+  recorded_at: Wed, 28 Oct 2026 17:52:42 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"List 3 tags and 3 scores
+        (0.0-1.0) for: ''Ruby is a great programming language''"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Descriptive
+        tags\",\"items\":{\"type\":\"string\"}},\"scores\":{\"type\":\"array\",\"description\":\"Relevance
+        scores between 0 and 1\",\"items\":{\"type\":\"number\"}}},\"required\":[\"tags\",\"scores\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a3a4f788-dfe9-4a1b-8106-f1f558fa1f91
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175318Z
+      X-Amz-Content-Sha256:
+      - 653dab36ec0e3595b5efc5f580716f9630f61299770eceee09b886ffec9a8255
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '576'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:20 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '393'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9beb59ca-7a28-4b47-be49-e749f25dd17a
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1125},"output":{"message":{"content":[{"text":"{\"tags\":[\"programming\",\"Ruby\",\"language\"],\"scores\":[0.95,0.98,0.85]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":322,"outputTokens":37,"serverToolUsage":{},"totalTokens":359}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:20 GMT
+recorded_with: VCR 6.4.0

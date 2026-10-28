@@ -1,0 +1,116 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?\n\nWhen you give your final answer, respond with only a JSON object
+        that conforms to the following JSON Schema, with no other text before or after
+        it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[{"text":"Answer weather questions.
+        Always look the weather up with the tool."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 39fb3939-340b-44f8-98eb-c04a7bbfe25c
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175100Z
+      X-Amz-Content-Sha256:
+      - 6b77b67cafd3ff03b8821ddde091d53ac8cd8d4cb567ca1cdd9845dfdb941d9d
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1115'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:03 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '428'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 6d73ed64-f5af-45d3-adfc-245a96a7a6ed
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2765},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_dk1j3hE2El0H19mwsfMv9x","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":604,"outputTokens":51,"serverToolUsage":{},"totalTokens":655}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:03 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?\n\nWhen you give your final answer, respond with only a JSON object
+        that conforms to the following JSON Schema, with no other text before or after
+        it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_dk1j3hE2El0H19mwsfMv9x","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_dk1j3hE2El0H19mwsfMv9x","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]}],"system":[{"text":"Answer weather
+        questions. Always look the weather up with the tool."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - f9515f9a-5f82-4958-b60b-4b0c09815f5c
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175103Z
+      X-Amz-Content-Sha256:
+      - 74a5f7f5f3bb556f0615cb53aaddd6d953f59d3d3693e817688730cfffbfab95
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1405'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:04 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '352'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 8a0b9e06-aab6-4567-abc0-a6a8f568c838
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1148},"output":{"message":{"content":[{"text":"{\"city\":\"Toronto\",\"celsius\":15}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":678,"outputTokens":18,"serverToolUsage":{},"totalTokens":696}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:04 GMT
+recorded_with: VCR 6.4.0

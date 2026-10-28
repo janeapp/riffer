@@ -11,7 +11,7 @@ describe "Acceptance: finish reasons" do
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
       let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "finish_reasons/#{provider_name}" }
-      let(:token_limit) { { acceptance_setting(provider_name, :max_tokens_option) => 20 } }
+      let(:token_limit) { acceptance_setting(provider_name, :token_limit_options) }
 
       let(:note_tool) do
         stub_tool("SaveNote") do

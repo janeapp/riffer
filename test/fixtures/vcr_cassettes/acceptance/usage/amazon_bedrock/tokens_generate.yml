@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Count from 1 to 40,
+        separated by commas."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 35b04b7b-3bdb-4625-878b-9331bb187aa9
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175156Z
+      X-Amz-Content-Sha256:
+      - e9c8cf1fe11a5b67acaa94d56a6a6dc7f58c2d2c3d632981ad9140fbe491299e
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '106'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:57 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '463'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9ad4f4b8-2adb-477f-9474-eac4873eda22
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":996},"output":{"message":{"content":[{"text":"1,
+        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+        23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":24,"outputTokens":120,"serverToolUsage":{},"totalTokens":144}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:57 GMT
+recorded_with: VCR 6.4.0

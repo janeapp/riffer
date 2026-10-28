@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Tag this support ticket:
+        ''I was charged twice this month and need it fixed today.''"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Tags\",\"items\":{\"type\":\"string\",\"enum\":[\"urgent\",\"billing\",\"technical\",\"account\"]}}},\"required\":[\"tags\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - fda473fe-82d3-4323-91e7-551728dbb3c8
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175355Z
+      X-Amz-Content-Sha256:
+      - 40536c670f46e0883dde903464e0cac35cdac61809b3e06714cdd66c083ba707
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '500'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:56 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '352'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - d77686a3-1206-4e11-83e7-cc27e04fda3c
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1097},"output":{"message":{"content":[{"text":"{\"tags\":
+        [\"urgent\", \"billing\"]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":284,"outputTokens":19,"serverToolUsage":{},"totalTokens":303}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:56 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Classify the session:
+        yoga class, in-person format."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"anyOf\":[{\"type\":\"string\",\"enum\":[\"in_person\",\"online\",\"both\"]},{\"type\":\"null\"}],\"description\":\"Type
+        of session\"}},\"required\":[\"name\",\"session_type\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 628c1f4a-9742-43d0-9751-7b390fde689f
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175359Z
+      X-Amz-Content-Sha256:
+      - 12effec0fbfe4fae8199ed8053c4519ecec75e2129e7c43531dd03cdcd6b996d
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '557'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:00 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '374'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - ce07ec40-1880-4e2a-a570-6802a26ec2d8
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1159},"output":{"message":{"content":[{"text":"{\"name\":
+        \"Yoga Class\", \"session_type\": \"in_person\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":316,"outputTokens":25,"serverToolUsage":{},"totalTokens":341}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:00 GMT
+recorded_with: VCR 6.4.0

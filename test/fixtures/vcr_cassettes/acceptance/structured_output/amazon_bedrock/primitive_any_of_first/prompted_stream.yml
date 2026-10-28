@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Read this order: 12
+        boxes, due on 2026-11-03\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"quantity\":{\"anyOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}],\"description\":\"A
+        count, or a word when there is no count\"},\"due\":{\"anyOf\":[{\"type\":\"string\",\"format\":\"date\"},{\"type\":\"string\",\"enum\":[\"none\"]}],\"description\":\"The
+        due date, or none when there isn''t one\"}},\"required\":[\"quantity\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"quantity\":\"<integer> | <string>\",\"due\":\"<string>
+        | none\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 2308bf21-3234-44b0-9de5-8092bb363894
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175113Z
+      X-Amz-Content-Sha256:
+      - 6f4e9dd3c51cdab77be43cfc83fdf71d1f86881d72d6bd18b35cd2e225c264f3
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '895'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:15 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b296ee51-8f9a-4a15-882a-e828aa22c7ba
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAlwAAAFKDYRSxCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6Iiwicm9sZSI6ImFzc2lzdGFudCJ9G/AFrwAAALgAAABXsJpY6ws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJ7XCJxdWFudGl0eVwiOjEyLCJ9LCJwIjoiYWJjZGVmZ2hpamtsbW4ifZSlTMIAAADFAAAAV7HYfJULOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiXCJkdWVcIjpcIjIwMjYtMTEifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QSJ9DEWj4wAAAL4AAABXP9qtSws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiItMDNcIn0ifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREUifRgEgEgAAACoAAAAVqd9//8LOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUoifRw2GJcAAAC4AAAAUVn5/d4LOmV2ZW50LXR5cGUHAAttZXNzYWdlU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7InAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn2mHaB+AAAA3QAAAE6FIwgWCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTc1OH0sInAiOiJhYmNkZSIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjoyODEsIm91dHB1dFRva2VucyI6MjIsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjozMDN9ffTHkbk=
+  recorded_at: Wed, 28 Oct 2026 17:51:15 GMT
+recorded_with: VCR 6.4.0

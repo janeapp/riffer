@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Order A-17 has 2 items:
+        a book costing $12.99 and a pen costing $1.50\n\nWhen you give your final
+        answer, respond with only a JSON object that conforms to the following JSON
+        Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order
+        identifier\"},\"items\":{\"type\":\"array\",\"description\":\"Line items\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Product
+        name\"},\"price\":{\"type\":\"number\",\"description\":\"Price in dollars\"},\"quantity\":{\"type\":\"integer\",\"description\":\"Quantity
+        ordered\"}},\"required\":[\"name\",\"price\"],\"additionalProperties\":false}}},\"required\":[\"order_id\",\"items\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"order_id\":\"<string>\",\"items\":[{\"name\":\"<string>\",\"price\":\"<number>\",\"quantity\":\"<integer>\"}]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - b8807deb-6d5f-4a06-8dd6-6763ebe3e6a0
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175416Z
+      X-Amz-Content-Sha256:
+      - 0aa5a9a0d1b3aa4b44e2547f35d4b17d7a2f8b0db483f5617310d2c6eaed4eeb
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1127'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:18 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '419'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7a6fdb8a-70c8-4d58-8a60-986102f50b97
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1165},"output":{"message":{"content":[{"text":"{\"order_id\":\"A-17\",\"items\":[{\"name\":\"Book\",\"price\":12.99},{\"name\":\"Pen\",\"price\":1.5}]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":341,"outputTokens":47,"serverToolUsage":{},"totalTokens":388}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:18 GMT
+recorded_with: VCR 6.4.0

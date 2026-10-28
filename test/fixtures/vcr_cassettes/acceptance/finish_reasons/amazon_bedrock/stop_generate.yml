@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Reply with the word
+        pong and nothing else."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 005f9bcd-81a1-4d79-acb9-93344e362f17
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175053Z
+      X-Amz-Content-Sha256:
+      - 99a41d7754d2f1910efc578a32f94ba8e089cea0e7f4e969a945fbb269e472af
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '108'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:54 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '316'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 844f75e5-6bf0-44ba-b74a-c28c31efff16
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1046},"output":{"message":{"content":[{"text":"pong"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":22,"outputTokens":4,"serverToolUsage":{},"totalTokens":26}}'
+  recorded_at: Wed, 28 Oct 2026 17:50:54 GMT
+recorded_with: VCR 6.4.0

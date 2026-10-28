@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Classify the session:
+        yoga class, underwater format. The session_type enum does not cover this,
+        so return null for session_type.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - bdfc078d-0555-4796-9142-571f6fd708e1
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175331Z
+      X-Amz-Content-Sha256:
+      - e8f47299616c33f81c307f2854153884cd4de6572c279fd5df6ff350ed5b7e50
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '859'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:33 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '2172'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 35c74fa1-29a4-4800-aa61-0ce9f69d6cf1
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2555},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSiwoKEggTEAEYAjgBQgh0aGlua2luZxIM8F+CyWjP32O4ukOiGgwd4VLcfFTASuFRnvYiMGhd/SzkxBJlk4AmbQLdkSK4oFe1F/soia41TQh8MwgpM3bZLe+n4ib8oO8JNEZr1iqmCZl7mkjwifx1K1AAX4XEa6s7ufpJyQ4MYg8L443ircGodRTCGp2v7NtSWVeKV1EJCG3mjam29Gk8HHHNQ5bC2AboOwt9pxw1YvNZHewBFka1cHFF7C+crX9ToOU12amuU9bUeKfov1luOVxwqh5zeS33dPwi2BXHxs/SdMYCjv89oazvnddQKqc9UM/5FMqsCJMCTbv5Nh+3h2MCoPNx18UhuoDqLi3tQKcMXvl8hGQXTGn2JBUqAGKd3n3ekW0yKOSVhlfCdnRsb2bknwwwKQkmNrES+CFzbyCHuB3Zd25nMqxG7mPNpQOuaMpYMdyZDfIQKrON22IVQ6iXViV6Hkm7udWjZ/ETyejGx7Ez03UorIiuNMe269BP9JjvI6uXvVxTegmsU5eRcqFRIRZ0BUuDe4mZfv7G3CWm0ylvQDdNjlWXG0mNPedU0mV2lawCPyEZ1waoABdDqqtYJqVRDF11wtuKL1JG6v5V+K2TS5C7w6Spuu5kjsP0Q6k25yYfNgRNqObtVwNp3X4i+TRy5mKYDg+7xbjOalomOn1WiA/tV2DiWNe0SVwXo1CbYqbF1WWe2YPxrduWDR4hpZ1ucxM5vsJm1lkDo4PMSbRVK11IOKqWh/ciBlEqJfg/Bcdti4zSZibkrh7Gbc19uOqVDQCMl0MSIxyE62LxCoxbxzo36f1YJZbGlzf7KZ/mvNqqeKNl17kiOxSEARUBh9ftfEKPz4vQlkfE3/WnKuSeA9HVlD8Y2XY1QyXmmrv5MnH5G8GOJ56R7UzXYjSHklSUg0J8bjaRAh4UqYNkZtvN77xOtY7UsnRcqc43fC7erGQC+S2p9UVvwLRlfqzrNMljgUgmD9kwORElcMmJBSrUD6VL/K/vjRSSohrmCcjDaEuvud+Y05GNLIbZrcyeZvBNfusOnIf/arHojzMCNYsMeV0ho99nowLCRY8E/cBUM2RSFvoY8JESJsIevHyse4k8tx+2m1/bjoCebV4DTgK1wou2mZ8uYG3zir8GpbeBjTwNrKUb4Bbb2yTV73O7/ItDhwqUew5xYmpiP3YwS/lwQNS7bcY/RwEQashmob0G8o464717U0b/1+Rz1sxHILmC0hRh6R7xkxnaptMLLS31HqVTyfQ+rpLhxsB4chpj4DFv0s/gAvR3lqHMNAP1i4cIoYLeBKFypJ6wtBCtkGS95E/J/blUxQytRb95MZLlyoyuXc3ne01vayn1Ox7jrUnzSs87kUJLGCyJ3p+nEpgdx03tXp2CjS1Cx7GQZd34d1dZijkvvPxFkMnX5ozNQNsQGTbIeqmxB64N/ESrXFdgHXusrUh4antISpqsA6X2KeZaWUInm2dLJA4hN3fDdOdCaCjMquyyqI8U3e5jsb8zShZd5NL3h3G7ubMDlwNCzYk4ROX6EhICtrJeyNhgs72SchDdmaPuuQyJM3t089cI9m4krxH5kk97uYTN+sCQQ4MkLrEqN1hiUosPphlzuptb6BIvJ1GH8EaB3tzjCaocpf/jff/8YE15hx/ZqVVqYBTWkOGv3ciPRTO93iHzTqljWMBQaMb9m77Q8NJD10Y4qIQlTRFVPrwIGAE=","text":""}}},{"text":"{\"name\":\"Underwater
+        Yoga Class\",\"session_type\":null}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":237,"outputTokens":283,"serverToolUsage":{},"totalTokens":520}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:33 GMT
+recorded_with: VCR 6.4.0

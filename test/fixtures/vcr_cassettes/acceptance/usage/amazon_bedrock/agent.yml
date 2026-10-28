@@ -1,0 +1,101 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - bd0568ff-f5d4-4e78-99a9-f4ef2945e201
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175154Z
+      X-Amz-Content-Sha256:
+      - f43aa62a2c5c529d3f55fd8cab5ad1b59a828c628bcc266eb098f49052b6e771
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '415'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:55 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '428'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 332dd02a-fcd1-41f5-9881-368ec5cb85f9
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1125},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_FXdJt4mhlvuiUMZRC3Gxpw","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":394,"outputTokens":51,"serverToolUsage":{},"totalTokens":445}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:55 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_FXdJt4mhlvuiUMZRC3Gxpw","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_FXdJt4mhlvuiUMZRC3Gxpw","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - d61f3661-c740-4c15-a8a5-569560fde39e
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175155Z
+      X-Amz-Content-Sha256:
+      - 39b5e133271440d5a2651d1a4592a268c77571800ee50178e16f37e1015b6097
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '705'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:56 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '347'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b566f4cc-51c0-412e-9d74-eabf1db5fada
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTA1N30sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InRleHQiOiJJdCdzIGN1cnJlbnRseSAxNcKwQyBpbiBUb3JvbnRvLiJ9XSwicm9sZSI6ImFzc2lzdGFudCJ9fSwic3RvcFJlYXNvbiI6ImVuZF90dXJuIiwidXNhZ2UiOnsiY2FjaGVSZWFkSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVJlYWRJbnB1dFRva2VucyI6MCwiY2FjaGVXcml0ZUlucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVXcml0ZUlucHV0VG9rZW5zIjowLCJpbnB1dFRva2VucyI6NDY4LCJvdXRwdXRUb2tlbnMiOjE2LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6NDg0fX0=
+  recorded_at: Wed, 28 Oct 2026 17:51:56 GMT
+recorded_with: VCR 6.4.0

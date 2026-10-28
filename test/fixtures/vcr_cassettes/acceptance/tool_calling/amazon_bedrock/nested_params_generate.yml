@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Book an online visit
+        on 2026-11-03 for Ada Lovelace (ada@example.com): a 30-minute checkup, then
+        a 15-minute vaccination. Any room is fine."}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"book_visit","description":"Book
+        a clinic visit","inputSchema":{"json":{"type":"object","properties":{"patient":{"type":"object","description":"The
+        patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email
+        address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
+        the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"services":{"type":"array","description":"Services
+        to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room
+        number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 688f935e-42e9-434c-8cbf-98dbb9c9a88a
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175221Z
+      X-Amz-Content-Sha256:
+      - 0feafa483905b83d968b92efe3739b0c0b3347bc6cd12801fbaace0e20464cd0
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1330'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '611'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 68b8c788-0e3d-4a97-ab77-fa6308409354
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1487},"output":{"message":{"content":[{"toolUse":{"input":{"patient":{"name":"Ada
+        Lovelace","email":"ada@example.com"},"visit_type":"online","visit_on":"2026-11-03","services":[{"name":"checkup","minutes":30},{"name":"vaccination","minutes":15}],"room":"any"},"name":"book_visit","toolUseId":"tooluse_faS0wcd76BEC0s4jVE5gbt","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":793,"outputTokens":206,"serverToolUsage":{},"totalTokens":999}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:23 GMT
+recorded_with: VCR 6.4.0

@@ -49,12 +49,6 @@ VCR.configure do |config|
   end
   config.filter_sensitive_data("<GOOGLE_CLOUD_PROJECT>") { ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project") }
   config.filter_sensitive_data("<OPENROUTER_API_KEY>") { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
-  config.filter_sensitive_data("<AWS_TEST_IMAGE_S3_URI>") do
-    ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png")
-  end
-  config.filter_sensitive_data("<AWS_TEST_DOCUMENT_S3_URI>") do
-    ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://riffer-test-bucket/super-secret-document.pdf")
-  end
 end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)

@@ -14,6 +14,7 @@ describe "Acceptance: reasoning" do
       let(:question) { Riffer::Messages::User.new("What is the weather in Toronto?") }
 
       let(:weather_tool) { acceptance_weather_tool }
+      let(:thinking) { acceptance_setting(provider_name, :thinking_options) }
       let(:agent_model) { acceptance_model_id(provider_name) }
 
       def reasoning_agent(level)
@@ -48,7 +49,7 @@ describe "Acceptance: reasoning" do
 
       it "streams reasoning before the finish" do
         events = acceptance_cassette("#{cassette_prefix}/replay_stream") do
-          provider.stream_text(messages: [question], model: model, tools: [weather_tool]).to_a
+          provider.stream_text(messages: [question], model: model, tools: [weather_tool], **thinking).to_a
         end
         done = events.grep(Riffer::StreamEvents::ReasoningDone)
         deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
@@ -71,9 +72,9 @@ describe "Acceptance: reasoning" do
       ACCEPTANCE_MODES.each do |mode|
         it "captures reasoning for a tool call and replays it (#{mode})" do
           first, second = acceptance_cassette("#{cassette_prefix}/replay_#{mode}") do
-            first = call_provider(provider, mode, messages: [question], model: model, tools: [weather_tool])
+            first = call_provider(provider, mode, messages: [question], model: model, tools: [weather_tool], **thinking)
             history = [question, first, weather_result(first.tool_calls.first)]
-            [first, call_provider(provider, mode, messages: history, model: model, tools: [weather_tool])]
+            [first, call_provider(provider, mode, messages: history, model: model, tools: [weather_tool], **thinking)]
           end
 
           expect(first.reasoning).wont_be_empty

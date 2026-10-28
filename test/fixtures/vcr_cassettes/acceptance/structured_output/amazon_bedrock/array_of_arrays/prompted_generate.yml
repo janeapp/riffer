@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Row 1 has seats 1,
+        2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x
+        o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x.\n\nWhen you give
+        your final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":\"array\",\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"rows\":[[\"<integer>\"]],\"boards\":[[[\"x
+        | o\"]]]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - d162497a-e39a-44c1-9824-69b6d96dcc25
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175345Z
+      X-Amz-Content-Sha256:
+      - 3db2d5a25009665ad768681d1b6ff604a55c80385be9630a3e29d3730c220224
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1016'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1773'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5e2a3390-a1bb-4943-b31d-fa6b2bf95f1f
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2044},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSkgcKEggTEAEYAjgBQgh0aGlua2luZxIMTGihT+Pao9FNI0e+GgyPVhiXcxhgrOHE33QiMOqzSIxQiH5f6olJESQ1eV/NR14UcdFGSSiOQig/zx9kjB1EF2lRWjRXmi211riKESqtBpTX/K8C9UraDh5XEHEuH5CDgnY6uZTN51MW1LOyqXvN41r+sTyzEpKFfJMnE6+uyKJ0M4obnkKUuftnUy5hNT4wvgv3zXK0P9oryJAHPXbU83TQJlWwB8Dl3QTBcVAwfyuL3pTWqvCSdm0tFeyAOhqEHZAn9modZH0tej12dIBNuQBNBmEj+gu1zIYzBlANloATvQApcYu5GSvw5d61Wnli5DImGEeK0SkQN8o3bnWue6whpKb2ogCM7roQ9/3KS48ZIDHzvygdFFD4bK5T4AJgfCI19lDzM48xW/lCOFVx2cnLkJsEVyj5aYknNA1YimxutdHJ8UGNue6vxwJVW6lvM5GLIOFaSRSaBTg+ASi1lghk1YW+fGBolldHgjSplTg86p2fhWfi9/zrxwFfsSscctlT4oI/gSXpkxegjeb6ZjsAYOxy7R4t9uWLt0i6ydRv1uIzl8xpGlb4Fuwm4BEByl2MR9iat6FLNL4lwVZwh+Dq+audIm6PYXIuLksPHohpXoEnp6DKUoHmdZn/z15hZdFS4pLoHGcYpwHRRhBxlHXka3eQu5suuS/Bf9N/gzwYoMX5EEjJmDPMbxru+ahmZ22SIYRNKlnYMkCoEQRRqNeYEGyawj71eYhX4IdBSoXr9RY+T0YN90jjISUNZVGXLplPmOt19ndKA6m0SP8Km7X4c7YBZ7c08wv2Rkzfiz0F1fRjQiO3EH/febdnU//oM1JRcmV9rCXk1xb9PWHdAlwUeIetlN8tA6T/DdIhHwM4Z1GvdVUIwW8P/IKOtC6UTSp8yJhWEql2vPREYGeCE7LscxlvsI/mjSEIiw3jFaik/NF78BsXK1dSlqeuvIaOmdkOMWDK61khmUCSEn/w6QKhU9Xg4m+/T7faT99cThVwLnz5FElzqgwctRWN3ddV0ybF+uWL1RHPQXWqAZxUCs8osCbAh0Q9an8H6TDW2kyRRisE1T5iYE/+xOpmXO7BGhPQAenxW5EjyCVdY194wpUsQzbRna8VB44V7pNNMNp9pO1uXSz0SP7IIlpo7FDtEyqxBnGXjodb4jGu4bZHGR+djo5ARWu3gSiajhgB","text":""}}},{"text":"{\"rows\":[[1,2,3],[4,5]],\"boards\":[[[\"x\",\"o\",\"x\"],[\"o\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]],[[\"o\",\"o\",\"x\"],[\"x\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]]]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":354,"outputTokens":302,"serverToolUsage":{},"totalTokens":656}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:47 GMT
+recorded_with: VCR 6.4.0

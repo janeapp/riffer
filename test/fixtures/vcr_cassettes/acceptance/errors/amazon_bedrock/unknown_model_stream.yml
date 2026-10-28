@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/riffer-unknown-model/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Say hello"}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 1e023aad-0a13-42e1-acf6-33782268f23c
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175137Z
+      X-Amz-Content-Sha256:
+      - fd8ae9a88689b5ea61e651f2261843bee81dd7d39e07cd8e3d2a64bd967d0f11
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '75'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:38 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '55'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 665b2611-7d92-4122-b542-612bfe080b59
+      X-Amzn-Errortype:
+      - ValidationException:http://internal.amazon.com/coral/com.amazon.bedrock/
+    body:
+      encoding: UTF-8
+      string: '{"message":"The provided model identifier is invalid."}'
+  recorded_at: Wed, 28 Oct 2026 17:51:38 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Classify the session:
+        yoga class, underwater format. The session_type enum does not cover this,
+        so return null for session_type."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"anyOf\":[{\"type\":\"string\",\"enum\":[\"in_person\",\"online\",\"both\"]},{\"type\":\"null\"}],\"description\":\"Type
+        of session\"}},\"required\":[\"name\",\"session_type\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 9d34a1d5-f676-403e-8535-329213b19ca3
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175326Z
+      X-Amz-Content-Sha256:
+      - db42d9802a39b987fe555fddf6a49831b92ad141fe7aa9d057fea953fb6c795d
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '634'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:27 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 423da61a-a860-4797-bf49-d6f04769226f
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAArwAAAFISMOf2CzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYIiwicm9sZSI6ImFzc2lzdGFudCJ9BOAdPgAAALkAAABXjfpxWws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJ7XCJuYW1lXCI6IFwiIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzIn2nnKtiAAAArwAAAFdiWhN5CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IllvZ2EgY2xhc3MsIn0sInAiOiJhYmNkZWZnaGlqayJ9A3Cl2wAAALAAAABXgOoTKgs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiIgdW5kZXJ3YXRlciBmb3JtYXRcIiwifSwicCI6ImFiIn36LEX0AAAA4wAAAFf/WaYxCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IiBcInNlc3Npb25fdHlwZVwiOiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjMifToGtYoAAACtAAAAVxiaQBkLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiIG51bGx9In0sInAiOiJhYmNkZWZnaGlqa2xtbiJ9CUj5PAAAAIYAAABW2Yxumgs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiIn3zOIogAAAAjAAAAFENWOOYCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamsiLCJzdG9wUmVhc29uIjoiZW5kX3R1cm4ifYYHhAEAAADxAAAAToESyhMLOmV2ZW50LXR5cGUHAAhtZXRhZGF0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7Im1ldHJpY3MiOnsibGF0ZW5jeU1zIjoxMDc2fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHkiLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6MzM2LCJvdXRwdXRUb2tlbnMiOjI1LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MzYxfX221wiW
+  recorded_at: Wed, 28 Oct 2026 17:53:27 GMT
+recorded_with: VCR 6.4.0

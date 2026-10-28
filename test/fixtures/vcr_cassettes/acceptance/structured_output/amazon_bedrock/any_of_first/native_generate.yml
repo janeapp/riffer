@@ -1,0 +1,54 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract the address
+        from: John lives at 123 Main St, Toronto"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"result\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"error_code\":{\"type\":\"string\",\"description\":\"Why
+        no address\",\"enum\":[\"no_address\",\"multiple_addresses\"]},\"error_message\":{\"type\":\"string\",\"description\":\"Explanation
+        of the error\"}},\"required\":[\"error_code\",\"error_message\"],\"additionalProperties\":false}],\"description\":\"The
+        address, or why none was found\"}},\"required\":[\"result\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 5bfda289-ee34-4a0d-b21b-c0203b07cba5
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175323Z
+      X-Amz-Content-Sha256:
+      - 9ab483faa87980551684016819d8d97a449ff341ec6d8eed1381135dd32d45aa
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '966'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:25 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '377'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - f1922610-203b-401a-93ad-1430f81ae752
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1279},"output":{"message":{"content":[{"text":"{\"result\":{\"street\":\"123
+        Main St\",\"city\":\"Toronto\"}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":492,"outputTokens":27,"serverToolUsage":{},"totalTokens":519}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:25 GMT
+recorded_with: VCR 6.4.0

@@ -38,9 +38,9 @@ describe "Acceptance: tool calling" do
               required :name, String, description: "Service name"
               required :minutes, Integer, description: "Length in minutes"
             end
-            required :room, Riffer::Params::AnyOf, description: "Room number, or any when there is no preference" do
+            required :room, Riffer::Params::AnyOf, description: "Room number, or a kind of room" do
               variant Integer
-              variant String, enum: ["any"]
+              variant String, enum: %w[any accessible quiet]
             end
           end
         end

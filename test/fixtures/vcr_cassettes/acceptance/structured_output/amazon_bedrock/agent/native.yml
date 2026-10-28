@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"I love this product,
+        it is amazing!"}]}],"system":[{"text":"Analyze the sentiment of the given
+        text."}],"requestMetadata":{"kind":"agent","agent":""},"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]}},\"required\":[\"sentiment\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - '0190cdd9-327f-41d6-bbe3-ec9020fc8c54'
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175104Z
+      X-Amz-Content-Sha256:
+      - b61d628ab594588b7630a6550c204c0c30917808f9e0fd81335ac42bf048e674
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '527'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '344'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9c72bf48-74f5-46f4-8a3b-4b23d8963d1c
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1204},"output":{"message":{"content":[{"text":"{\"sentiment\":
+        \"positive\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":266,"outputTokens":14,"serverToolUsage":{},"totalTokens":280}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:05 GMT
+recorded_with: VCR 6.4.0

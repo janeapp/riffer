@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Read this order: 12
+        boxes, due on 2026-11-03"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"quantity\":{\"anyOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}],\"description\":\"A
+        count, or a word when there is no count\"},\"due\":{\"anyOf\":[{\"type\":\"string\",\"format\":\"date\"},{\"type\":\"string\",\"enum\":[\"none\"]},{\"type\":\"null\"}],\"description\":\"The
+        due date, or none when there isn''t one\"}},\"required\":[\"quantity\",\"due\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 11a03f7e-de49-43eb-8760-494da6edfa0e
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175115Z
+      X-Amz-Content-Sha256:
+      - 23f5a8933f2f13850359a48e9c7dd8f110c36247541c1785a7b79a674b00ae12
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '650'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:17 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '358'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 408c4c3d-57fc-4fef-a4d6-d38e35c2b97c
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1833},"output":{"message":{"content":[{"text":"{\"quantity\":
+        12, \"due\": \"2026-11-03\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":381,"outputTokens":23,"serverToolUsage":{},"totalTokens":404}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:17 GMT
+recorded_with: VCR 6.4.0

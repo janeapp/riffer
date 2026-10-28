@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Tag this support ticket:
+        ''I was charged twice this month and need it fixed today.''\n\nWhen you give
+        your final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Tags\",\"items\":{\"type\":\"string\",\"enum\":[\"urgent\",\"billing\",\"technical\",\"account\"]}}},\"required\":[\"tags\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"tags\":[\"urgent | billing | technical
+        | account\"]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 9e848bf7-d31f-4087-b4d0-66eddac32098
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175354Z
+      X-Amz-Content-Sha256:
+      - 60642a55779470ff320bf7390c9525c5d06f011c5a6f35d87e3e77609a207cba
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '761'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:55 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - f1d30696-8ec5-4232-810d-8a18626b4926
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAhAAAAFKkIfnjCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmciLCJyb2xlIjoiYXNzaXN0YW50In3i0eE2AAAAuAAAAFewmljrCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IntcInRhZ3NcIjpbXCJ1cmcifSwicCI6ImFiY2RlZmdoaWprbG1ubyJ9pz0i2AAAANgAAABXKagvpgs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJlbnRcIixcImJpbGxpbmdcIl19In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUiJ9OvEN5gAAALsAAABWgD0SrQs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIifXbOeXUAAAC9AAAAUZEZcq4LOmV2ZW50LXR5cGUHAAttZXNzYWdlU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7InAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQ1NjciLCJzdG9wUmVhc29uIjoiZW5kX3R1cm4ifaVrCDQAAADuAAAATmOiykALOmV2ZW50LXR5cGUHAAhtZXRhZGF0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7Im1ldHJpY3MiOnsibGF0ZW5jeU1zIjoxMDA2fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXYiLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6MjIxLCJvdXRwdXRUb2tlbnMiOjE3LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MjM4fX0pOdNe
+  recorded_at: Wed, 28 Oct 2026 17:53:55 GMT
+recorded_with: VCR 6.4.0

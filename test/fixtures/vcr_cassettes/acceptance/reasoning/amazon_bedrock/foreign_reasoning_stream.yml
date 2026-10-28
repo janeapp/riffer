@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"My name is Ada."}]},{"role":"assistant","content":[{"text":"Nice
+        to meet you, Ada!"}]},{"role":"user","content":[{"text":"What is my name?
+        Reply with just the name."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 3799b36c-ab61-4b38-828a-2c188ab0647f
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175407Z
+      X-Amz-Content-Sha256:
+      - 35a1d950b64db44b5b2c1294cb24d1ea5de7938db06424b04e4087a2962b0c4b
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '230'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:08 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 140f32ef-fd60-4a77-8539-8206a39db7a1
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAjQAAAFKpMZuSCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3AiLCJyb2xlIjoiYXNzaXN0YW50In20BGRuAAAAzgAAAFfGCE2ECzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IkFkYSJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1gifWwuANwAAACdAAAAVs68yAkLOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5In2cxYxdAAAAkQAAAFGVKLCrCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcCIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ9X1/KLgAAAOQAAABOKRLS4Qs6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjEwNTJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vIiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjQ0LCJvdXRwdXRUb2tlbnMiOjUsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo0OX19taP39Q==
+  recorded_at: Wed, 28 Oct 2026 17:54:08 GMT
+recorded_with: VCR 6.4.0

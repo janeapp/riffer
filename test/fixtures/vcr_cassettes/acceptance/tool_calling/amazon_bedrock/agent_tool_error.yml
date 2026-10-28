@@ -1,0 +1,105 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is tomorrow''s
+        forecast for Toronto? If the tool fails, say so."}]}],"system":[{"text":"Use
+        the tools to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - cea86453-ad71-494e-aee7-26c9d67e6790
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175249Z
+      X-Amz-Content-Sha256:
+      - e2d83e70bf81b12ed8ba28cf76b852e4178edb1b3a74fc3fb66477a5ee24a993
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '499'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:50 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '429'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a56a0dce-8c51-4139-9281-4c570b58e5fe
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1071},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Toronto"},"name":"get_forecast","toolUseId":"tooluse_l78ATKAM8W52IXl5rav2v1","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":431,"outputTokens":52,"serverToolUsage":{},"totalTokens":483}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:50 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is tomorrow''s
+        forecast for Toronto? If the tool fails, say so."}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_l78ATKAM8W52IXl5rav2v1","name":"get_forecast","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_l78ATKAM8W52IXl5rav2v1","content":[{"text":"The
+        forecast service for Toronto is down"}]}}]}],"system":[{"text":"Use the tools
+        to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 073ace82-9fc1-47f4-b201-e07ee10cbebd
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175250Z
+      X-Amz-Content-Sha256:
+      - 8f151de12633674eafa4ab05bbd793b929ff7909535047d6d58ddef151774eb1
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '794'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:52 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '482'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b1132470-e5fe-435b-9d98-f07d2ca3b9b6
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1240},"output":{"message":{"content":[{"text":"The
+        forecast tool failed: the service for Toronto is down, so I can''t give you
+        tomorrow''s forecast right now. Please try again later or check a weather
+        website or app."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":500,"outputTokens":53,"serverToolUsage":{},"totalTokens":553}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:52 GMT
+recorded_with: VCR 6.4.0

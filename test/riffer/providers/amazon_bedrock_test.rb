@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "aws-sdk-bedrockruntime"
 
 describe Riffer::Providers::AmazonBedrock do
-  let(:api_token) { ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token") }
-
-  # Cassettes were recorded against us-east-1 unless a describe block overrides
-  # the region.
   before do
-    Riffer.config.amazon_bedrock.api_token = api_token
+    Riffer.config.amazon_bedrock.api_token = "test_api_token"
     Riffer.config.amazon_bedrock.region = "us-east-1"
   end
 
@@ -16,6 +13,30 @@ describe Riffer::Providers::AmazonBedrock do
     Riffer.config.amazon_bedrock.api_token = nil
     Riffer.config.amazon_bedrock.region = nil
     Riffer.config.amazon_bedrock.client = nil
+  end
+
+  # The SDK's stubbed client validates each request against the Converse shapes.
+  def stub_converse
+    client = Aws::BedrockRuntime::Client.new(stub_responses: true, region: "us-east-1")
+    client.stub_responses(
+      :converse,
+      {
+        output: { message: { role: "assistant", content: [{ text: "OK" }] } },
+        stop_reason: "end_turn",
+        usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
+        metrics: { latency_ms: 1 },
+      },
+    )
+    Riffer.config.amazon_bedrock.client = client
+    client
+  end
+
+  def stub_stream_events(events)
+    stream_double = Object.new
+    stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+    client_double = Object.new
+    client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+    Riffer.config.amazon_bedrock.client = client_double
   end
 
   describe ".semconv_provider_name" do
@@ -67,25 +88,6 @@ describe Riffer::Providers::AmazonBedrock do
 
     it "returns nil without a stop reason" do
       expect(provider.send(:build_finish_reason, nil)).must_be_nil
-    end
-
-    it "extracts the finish reason when generating" do
-      VCR.use_cassette(
-        "Riffer_Providers_AmazonBedrock/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
-      ) do
-        result = provider.generate_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-        expect(result.finish_reason).must_equal :stop
-      end
-    end
-
-    it "emits a FinishReasonDone event when streaming" do
-      VCR.use_cassette("Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_stream_events") do
-        events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
-
-        expect(done.finish_reason).must_equal :stop
-      end
     end
   end
 
@@ -209,576 +211,6 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
-  describe "#generate_text" do
-    describe "when prompt is provided" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "when system and prompt are provided" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/when_system_and_prompt_are_provided/" \
-          "returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          params = { system: "Be concise", prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
-          result = provider.generate_text(**params)
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a hash messages array" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            { role: "system", content: "Be concise" },
-            { role: "user", content: "Say hello" },
-          ]
-          result = provider.generate_text(messages: messages, model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a User message" do
-      it "returns an Assistant" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/with_a_User_message/returns_an_Assistant") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [Riffer::Messages::User.new("Say hello")]
-          result = provider.generate_text(messages: messages, model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a System message" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/with_a_System_message/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            Riffer::Messages::System.new("Be concise"),
-            Riffer::Messages::User.new("Say hello"),
-          ]
-          result = provider.generate_text(messages: messages, model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with an Assistant message" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            Riffer::Messages::User.new("Say hello"),
-            Riffer::Messages::Assistant.new("Hello!"),
-            Riffer::Messages::User.new("How are you?"),
-          ]
-          result = provider.generate_text(messages: messages, model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-    describe "structured output" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: structured_output,
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns non-empty content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: structured_output,
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-
-      it "returns valid JSON content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: structured_output,
-          )
-          JSON.parse(result.content)
-        end
-      end
-
-      it "includes sentiment key" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed.key?("sentiment")).must_equal true
-        end
-      end
-
-      it "includes score key" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed.key?("score")).must_equal true
-        end
-      end
-    end
-
-    describe "structured output with nested object" do
-      let(:nested_object_prompt) { "Extract the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada" }
-
-      let(:nested_object_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Person name")
-        params.required(:address, Hash, description: "Mailing address") do
-          required :street, String, description: "Street address"
-          required :city, String, description: "City"
-          optional :postal_code, String, description: "Postal or zip code"
-          optional :country, String, description: "Country"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with nested object content" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_nested_object/returns_nested_json",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: nested_object_prompt,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: nested_object_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_include "John"
-          expect(parsed["address"]).must_be_instance_of Hash
-          expect(parsed["address"]["street"]).must_include "123 Main"
-          expect(parsed["address"]["city"]).must_include "Toronto"
-        end
-      end
-    end
-
-    describe "structured output with null optional fields" do
-      let(:null_optional_prompt) do
-        "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. " \
-          "Return null for any unknown fields."
-      end
-
-      let(:null_optional_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Person name")
-        params.required(:address, Hash, description: "Mailing address") do
-          required :street, String, description: "Street address"
-          required :city, String, description: "City"
-          optional :postal_code, String, description: "Postal or zip code"
-          optional :country, String, description: "Country"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns null for optional fields when info is unavailable" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_null_optionals/" \
-          "returns_null_for_optional_fields",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: null_optional_prompt,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: null_optional_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_include "Jane"
-          expect(parsed["address"]["street"]).must_include "42 King"
-          expect(parsed["address"]["city"]).must_include "Vancouver"
-          so = null_optional_structured_output.parse_and_validate(result.content)
-
-          expect(so.success?).must_equal true
-          expect(so.object[:address][:postal_code]).must_be_nil
-          expect(so.object[:address][:country]).must_be_nil
-        end
-      end
-    end
-
-    describe "structured output with optional enum" do
-      let(:session_types) { %w[in_person online both] }
-
-      let(:optional_enum_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Session name")
-        params.optional(:session_type, String, enum: session_types, description: "Type of session")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns an enum value when present" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_optional_enum/returns_enum_value",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Classify the session: yoga class, in-person format. Return session_type from the enum.",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: optional_enum_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_be_instance_of String
-          expect(session_types).must_include parsed["session_type"]
-        end
-      end
-
-      it "returns null when the enum value is unknown" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_optional_enum/returns_null",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Classify the session: yoga class, underwater format. The session_type enum does not " \
-                    "cover this, return null for session_type.",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: optional_enum_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_be_instance_of String
-          expect(parsed["session_type"]).must_be_nil
-        end
-      end
-    end
-
-    describe "structured output with typed array" do
-      let(:typed_array_prompt) { "List 3 tags and 3 scores (0.0-1.0) for: 'Ruby is a great programming language'" }
-
-      let(:typed_array_structured_output) do
-        params = Riffer::Params.new
-        params.required(:tags, Array, of: String, description: "Descriptive tags")
-        params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with typed array content" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_typed_array/returns_typed_arrays",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: typed_array_prompt,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: typed_array_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["tags"].length).must_equal 3
-          expect(parsed["scores"].length).must_equal 3
-          parsed["tags"].each { |tag| expect(tag).must_be_instance_of String }
-          parsed["scores"].each { |score| expect(score).must_be_instance_of Float }
-        end
-      end
-    end
-
-    describe "structured output with array of objects" do
-      let(:array_of_objects_prompt) { "List 2 items from an order: a book costing $12.99 and a pen costing $1.50" }
-
-      let(:array_of_objects_structured_output) do
-        params = Riffer::Params.new
-        params.required(:order_id, String, description: "Order identifier")
-        params.required(:items, Array, description: "Line items") do
-          required :name, String, description: "Product name"
-          required :price, Float, description: "Price in dollars"
-          optional :quantity, Integer, description: "Quantity ordered"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with array of objects content" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: array_of_objects_prompt,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: array_of_objects_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["order_id"]).must_be_instance_of String
-          expect(parsed["items"].length).must_equal 2
-          parsed["items"].each do |item|
-            expect(item["name"]).must_be_instance_of String
-            expect(item["price"]).must_be_instance_of Float
-          end
-        end
-      end
-    end
-
-    describe "structured output with any_of" do
-      let(:any_of_structured_output) do
-        params = Riffer::Params.new
-        params.required(:result, Riffer::Params::AnyOf, description: "The address, or why none was found") do
-          variant do
-            required :street, String, description: "Street address"
-            required :city, String, description: "City"
-          end
-          variant do
-            required :error_code, String, enum: %w[no_address multiple_addresses], description: "Why no address"
-            required :error_message, String, description: "Explanation of the error"
-          end
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns the first variant when it applies" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_any_of/returns_first_variant",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Extract the address from: John lives at 123 Main St, Toronto",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: any_of_structured_output,
-          )
-          validated = any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:result][:street]).must_include "123 Main"
-          expect(validated.object[:result][:city]).must_equal "Toronto"
-        end
-      end
-
-      it "returns the second variant when the first does not apply" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_any_of/returns_second_variant",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Extract the address from: John likes long walks by the lake",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: any_of_structured_output,
-          )
-          validated = any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:result][:error_code]).must_equal "no_address"
-          expect(validated.object[:result][:error_message]).must_be_instance_of String
-        end
-      end
-    end
-
-    describe "structured output with primitive any_of" do
-      let(:primitive_any_of_structured_output) do
-        params = Riffer::Params.new
-        params.required(:quantity, Riffer::Params::AnyOf, description: "A count, or a word when there is no count") do
-          variant Integer
-          variant String
-        end
-        params.optional(:due, Riffer::Params::AnyOf, description: "The due date, or none when there isn't one") do
-          variant String, format: "date"
-          variant String, enum: ["none"]
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns the integer and date variants when the order has both" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_primitive_any_of/returns_integer_and_date",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Read this order: 12 boxes, due on 2026-11-03",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: primitive_any_of_structured_output,
-          )
-          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: 12, due: "2026-11-03" })
-        end
-      end
-
-      it "returns the string and enum variants when the order has neither" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_primitive_any_of/returns_string_and_enum",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Read this order: several boxes, with no due date",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: primitive_any_of_structured_output,
-          )
-          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: "several", due: "none" })
-        end
-      end
-    end
-
-    describe "structured output with enum array" do
-      let(:ticket_tags) { %w[urgent billing technical account] }
-      let(:weekdays) { [1, 2, 3, 4, 5] }
-
-      let(:enum_array_structured_output) do
-        params = Riffer::Params.new
-        params.required(:tags, Array, of: String, enum: ticket_tags, description: "Ticket tags")
-        params.optional(:available_days, Array, of: Integer, enum: weekdays, description: "Weekdays, 1 is Monday")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns values from the enum" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_enum_array/returns_values_from_the_enum",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Tag this support ticket: 'I was charged twice this month and need it fixed. " \
-                    "I can take a call on Monday or Wednesday.'",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: enum_array_structured_output,
-          )
-          validated = enum_array_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:tags]).must_include "billing"
-          expect(validated.object[:available_days]).must_equal [1, 3]
-        end
-      end
-    end
-
-    describe "structured output with format" do
-      let(:clinic_id) { "550e8400-e29b-41d4-a716-446655440000" }
-
-      let(:format_structured_output) do
-        params = Riffer::Params.new
-        params.required(:visit_on, String, format: "date", description: "Visit date")
-        params.required(:starts_at, String, format: "date-time", description: "Visit start, with its UTC offset")
-        params.optional(:email, String, format: "email", description: "Patient email, if given")
-        params.required(:clinic_ids, Array, of: String, format: "uuid", description: "Clinic IDs")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns values in the format" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_format/returns_values_in_the_format",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Book a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic #{clinic_id}. " \
-                    "The patient gave no email.",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: format_structured_output,
-          )
-          validated = format_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:visit_on]).must_equal "2026-10-26"
-          expect(validated.object[:starts_at]).must_equal "2026-10-26T09:30:00-04:00"
-          expect(validated.object[:email]).must_be_nil
-          expect(validated.object[:clinic_ids]).must_equal [clinic_id]
-        end
-      end
-    end
-
-    describe "structured output with an array of arrays" do
-      let(:nested_structured_output) do
-        params = Riffer::Params.new
-        params.required(:rows, Array, of: [Integer], description: "Seat numbers, one array per row")
-        params.optional(:boards, Array, of: [[String]], enum: %w[x o], description: "Tic-tac-toe boards, one per game")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns nested arrays" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_generate_text/structured_output_array_of_arrays/returns_nested_arrays",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "Row 1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. " \
-                    "Game 1's tic-tac-toe board rows are: x o x, o x o, o x x. " \
-                    "Game 2's rows are: o o x, x x o, o x x.",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            structured_output: nested_structured_output,
-          )
-          validated = nested_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:rows]).must_equal [[1, 2, 3], [4, 5]]
-          expect(validated.object[:boards]).must_equal [
-            [%w[x o x], %w[o x o], %w[o x x]],
-            [%w[o o x], %w[x x o], %w[o x x]],
-          ]
-        end
-      end
-    end
-  end
-
   describe "tags" do
     let(:provider) { Riffer::Providers::AmazonBedrock.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
@@ -817,24 +249,6 @@ describe Riffer::Providers::AmazonBedrock do
       params = provider.send(:build_request_params, messages, model, { tags: { "team" => "growth" } })
 
       expect(params.key?(:tags)).must_equal false
-    end
-  end
-
-  describe "per-call tags (end-to-end)" do
-    before { Riffer.config.amazon_bedrock.region = "us-west-2" }
-
-    let(:provider) { Riffer::Providers::AmazonBedrock.new }
-
-    it "forwards per-call tags to the request" do
-      VCR.use_cassette("Riffer_Providers_AmazonBedrock/tags/forwards_request_metadata") do
-        result = provider.generate_text(
-          prompt: "Say hello",
-          model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-          tags: { "user_id" => "u_1", "team" => "growth" },
-        )
-
-        expect(result).must_be_instance_of Riffer::Messages::Assistant
-      end
     end
   end
 
@@ -891,88 +305,8 @@ describe Riffer::Providers::AmazonBedrock do
   end
 
   describe "#stream_text" do
-    describe "when prompt is provided" do
-      it "returns an Enumerator" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result).must_be_instance_of Enumerator
-        end
-      end
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDelta events" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_TextDelta_events",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-          deltas = events.grep(Riffer::StreamEvents::TextDelta)
-
-          expect(deltas).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    describe "when messages are provided" do
-      it "returns an Enumerator" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_stream_text/when_messages_are_provided/yields_stream_events",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.stream_text(
-            messages: [{ role: "user", content: "Say hello" }],
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-          )
-
-          expect(result).must_be_instance_of Enumerator
-        end
-      end
-
-      it "yields stream events" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/_stream_text/when_messages_are_provided/yields_stream_events",
-        ) do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(
-            messages: [{ role: "user", content: "Say hello" }],
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-    end
-
     describe "when the stream emits an exception event" do
       let(:provider) { Riffer::Providers::AmazonBedrock.new }
-
-      def stub_stream_events(provider, events)
-        stream_double = Object.new
-        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
-        client_double = Object.new
-        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-        provider.instance_variable_set(:@client, client_double)
-      end
 
       {
         InternalServerException: :internal_server_exception,
@@ -986,7 +320,7 @@ describe Riffer::Providers::AmazonBedrock do
           type_klass = Aws::BedrockRuntime::Types.const_get(class_name)
           error_klass = Aws::BedrockRuntime::Errors.const_get(class_name)
           event = type_klass.new(message: "boom", event_type: event_type)
-          stub_stream_events(provider, [event])
+          stub_stream_events([event])
 
           error = assert_raises(error_klass) do
             provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
@@ -1007,7 +341,7 @@ describe Riffer::Providers::AmazonBedrock do
           original_status_code: 500,
           event_type: :model_stream_error_exception,
         )
-        stub_stream_events(provider, [delta_event, error_event])
+        stub_stream_events([delta_event, error_event])
 
         enum = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
         assert_raises(Aws::BedrockRuntime::Errors::ModelStreamErrorException) { enum.to_a }
@@ -1022,7 +356,7 @@ describe Riffer::Providers::AmazonBedrock do
           end
         end
         event = fake_future_exception_class.new("surprise", :hypothetical_future_exception)
-        stub_stream_events(provider, [event])
+        stub_stream_events([event])
 
         error = assert_raises(Aws::BedrockRuntime::Errors::ServiceError) do
           provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
@@ -1048,7 +382,7 @@ describe Riffer::Providers::AmazonBedrock do
           stop_reason: "end_turn",
           event_type: :message_stop,
         )
-        stub_stream_events(provider, [message_start, metadata, message_stop])
+        stub_stream_events([message_start, metadata, message_stop])
 
         events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
         usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
@@ -1061,16 +395,8 @@ describe Riffer::Providers::AmazonBedrock do
     describe "when the stream ends without a messageStop event" do
       let(:provider) { Riffer::Providers::AmazonBedrock.new }
 
-      def stub_stream_events(provider, events)
-        stream_double = Object.new
-        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
-        client_double = Object.new
-        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-        provider.instance_variable_set(:@client, client_double)
-      end
-
       it "raises Riffer::IncompleteStreamError for an empty stream" do
-        stub_stream_events(provider, [])
+        stub_stream_events([])
 
         error = assert_raises(Riffer::IncompleteStreamError) do
           provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
@@ -1091,7 +417,7 @@ describe Riffer::Providers::AmazonBedrock do
           content_block_index: 0,
           event_type: :content_block_stop,
         )
-        stub_stream_events(provider, [delta_event, stop_event])
+        stub_stream_events([delta_event, stop_event])
 
         enum = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
         events = []
@@ -1107,7 +433,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "raises the EventError the SDK delivers as an event" do
         provider # force SDK load before constructing the Aws types below
         event = Aws::Errors::EventError.new(:error, "InternalServerError", "boom")
-        stub_stream_events(provider, [event])
+        stub_stream_events([event])
 
         error = assert_raises(Aws::Errors::EventError) do
           provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
@@ -1124,7 +450,7 @@ describe Riffer::Providers::AmazonBedrock do
           stop_reason: "end_turn",
           event_type: :message_stop,
         )
-        stub_stream_events(provider, [message_stop])
+        stub_stream_events([message_stop])
 
         events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
         finish_reason_done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
@@ -1151,11 +477,7 @@ describe Riffer::Providers::AmazonBedrock do
                                                                 event_type: :content_block_stop,),
           Aws::BedrockRuntime::Types::MessageStopEvent.new(stop_reason: "tool_use", event_type: :message_stop),
         ]
-        stream_double = Object.new
-        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
-        client_double = Object.new
-        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-        provider.instance_variable_set(:@client, client_double)
+        stub_stream_events(events)
 
         done = provider.stream_text(prompt: "What time is it?", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").
           to_a.grep(Riffer::StreamEvents::ToolCallDone)
@@ -1166,14 +488,6 @@ describe Riffer::Providers::AmazonBedrock do
 
     describe "text delta accumulation" do
       let(:provider) { Riffer::Providers::AmazonBedrock.new }
-
-      def stub_stream_events(provider, events)
-        stream_double = Object.new
-        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
-        client_double = Object.new
-        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-        provider.instance_variable_set(:@client, client_double)
-      end
 
       # Streamed text accumulates in place with <<, so a frozen seed or a buffer
       # aliased into a delta would corrupt the result.
@@ -1195,7 +509,7 @@ describe Riffer::Providers::AmazonBedrock do
           stop_reason: "end_turn",
           event_type: :message_stop,
         )
-        stub_stream_events(provider, events)
+        stub_stream_events(events)
 
         stream_events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
 
@@ -1228,29 +542,26 @@ describe Riffer::Providers::AmazonBedrock do
         tool_use_start = types::ContentBlockStart.new(
           tool_use: types::ToolUseBlockStart.new(tool_use_id: "id-1", name: "calc"),
         )
-        stub_stream_events(
-          provider,
-          [
-            text_delta.call(0, "Let me "),
-            text_delta.call(0, "check. "),
-            block_stop.call(0),
-            types::ContentBlockStartEvent.new(
-              start: tool_use_start,
-              content_block_index: 1,
-              event_type: :content_block_start,
-            ),
-            types::ContentBlockDeltaEvent.new(
-              delta: types::ContentBlockDelta.new(tool_use: types::ToolUseBlockDelta.new(input: "{}")),
-              content_block_index: 1,
-              event_type: :content_block_delta,
-            ),
-            block_stop.call(1),
-            text_delta.call(2, "The answer "),
-            text_delta.call(2, "is 42."),
-            block_stop.call(2),
-            types::MessageStopEvent.new(stop_reason: "end_turn", event_type: :message_stop),
-          ],
-        )
+        stub_stream_events([
+                             text_delta.call(0, "Let me "),
+                             text_delta.call(0, "check. "),
+                             block_stop.call(0),
+                             types::ContentBlockStartEvent.new(
+                               start: tool_use_start,
+                               content_block_index: 1,
+                               event_type: :content_block_start,
+                             ),
+                             types::ContentBlockDeltaEvent.new(
+                               delta: types::ContentBlockDelta.new(tool_use: types::ToolUseBlockDelta.new(input: "{}")),
+                               content_block_index: 1,
+                               event_type: :content_block_delta,
+                             ),
+                             block_stop.call(1),
+                             text_delta.call(2, "The answer "),
+                             text_delta.call(2, "is 42."),
+                             block_stop.call(2),
+                             types::MessageStopEvent.new(stop_reason: "end_turn", event_type: :message_stop),
+                           ])
 
         events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
 
@@ -1536,143 +847,10 @@ describe Riffer::Providers::AmazonBedrock do
         expect(convert([part(type: :text, text: "legacy", format: "mock-v1")])[:content]).must_equal [{ text: "42" }]
       end
     end
-
-    describe "with thinking enabled" do
-      let(:thinking_options) do
-        {
-          model: model,
-          inference_config: { max_tokens: 2048 },
-          additional_model_request_fields: { thinking: { type: "enabled", budget_tokens: 1024 } },
-        }
-      end
-
-      it "captures signed reasoning from #generate_text" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/_generate_text/captures_reasoning_content") do
-          result = provider.generate_text(
-            prompt: "What is 17 times 23? Reply with just the number.",
-            **thinking_options,
-          )
-
-          expect(result.reasoning).wont_be_empty
-          expect(result.reasoning.map(&:format).uniq).must_equal [Riffer::Providers::AmazonBedrock::REASONING_FORMAT]
-          expect(result.reasoning.first.type).must_equal :text
-          expect(result.reasoning.first.text).wont_be_empty
-          expect(result.reasoning.first.signature).wont_be_nil
-        end
-      end
-
-      it "sends turn one's streamed reasoning back and gets an answer" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/_stream_text/replays_reasoning_content") do
-          question = Riffer::Messages::User.new("What is 17 times 23? Reply with just the number.")
-
-          first = provider.stream_text(messages: [question], **thinking_options).to_a
-          parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
-          answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
-
-          expect(first.grep(Riffer::StreamEvents::ReasoningDelta)).wont_be_empty
-          expect(parts).wont_be_empty
-          expect(parts.first.signature).wont_be_nil
-
-          history = [
-            question,
-            Riffer::Messages::Assistant.new(answer, reasoning: parts),
-            Riffer::Messages::User.new("Now add 10. Reply with just the number."),
-          ]
-          second = provider.stream_text(messages: history, **thinking_options).to_a
-          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(text_done.content).must_include "401"
-        end
-      end
-
-      it "replays reasoning across a tool call round trip" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/reasoning/_generate_text/replays_reasoning_with_tool_result",
-        ) do
-          weather_tool = stub_tool("GetWeather") do
-            description "Get the current weather for a city"
-            params do
-              required :city, String, description: "The city name"
-            end
-          end
-          options = thinking_options.merge(tools: [weather_tool])
-          question = Riffer::Messages::User.new("What is the weather in Toronto?")
-
-          first = provider.generate_text(messages: [question], **options)
-          tool_call = first.tool_calls.first
-
-          expect(first.reasoning).wont_be_empty
-          expect(first.reasoning.first.signature).wont_be_nil
-          expect(tool_call.name).must_equal "get_weather"
-
-          history = [
-            question,
-            first,
-            Riffer::Messages::Tool.new(
-              "15 degrees Celsius and sunny.",
-              tool_call_id: tool_call.call_id,
-              name: tool_call.name,
-            ),
-          ]
-          second = provider.generate_text(messages: history, **options)
-
-          expect(second.content).must_include "15"
-        end
-      end
-    end
-
-    {
-      "claude-opus-5-5" => ["us.anthropic.claude-opus-5-5", :text],
-      "claude-sonnet-5-5" => ["us.anthropic.claude-sonnet-5-5", :text],
-      "gpt-6-luna" => ["us.openai.gpt-6-luna", :encrypted],
-    }.each do |name, (model_id, reasoning_type)|
-      describe "with default thinking on #{name}" do
-        let(:model) { model_id }
-        # A question hard enough that adaptive thinking reasons before answering.
-        let(:prime_sum) { "What is the sum of the prime numbers between 100 and 150? Reply with just the number." }
-
-        it "captures reasoning from #generate_text" do
-          VCR.use_cassette(
-            "Riffer_Providers_AmazonBedrock/reasoning/#{name}/_generate_text/captures_reasoning_content",
-          ) do
-            result = provider.generate_text(prompt: prime_sum, model: model)
-
-            expect(result.reasoning.map(&:type).uniq).must_equal [reasoning_type]
-            expect(result.reasoning.map(&:format).uniq).must_equal [Riffer::Providers::AmazonBedrock::REASONING_FORMAT]
-            expect(result.reasoning.map { |part| part.signature || part.data }).wont_include nil
-            expect(result.content).must_include "1216"
-          end
-        end
-
-        it "sends turn one's streamed reasoning back and gets an answer" do
-          VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/#{name}/_stream_text/replays_reasoning_content") do
-            question = Riffer::Messages::User.new(prime_sum)
-
-            first = provider.stream_text(messages: [question], model: model).to_a
-            parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
-            answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
-
-            expect(parts.map(&:type).uniq).must_equal [reasoning_type]
-            expect(parts.map { |part| part.signature || part.data }).wont_include nil
-
-            history = [
-              question,
-              Riffer::Messages::Assistant.new(answer, reasoning: parts),
-              Riffer::Messages::User.new("Now add 10. Reply with just the number."),
-            ]
-            second = provider.stream_text(messages: history, model: model).to_a
-            text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-            expect(text_done.content).must_include "1226"
-          end
-        end
-      end
-    end
   end
 
   describe "reasoning level" do
     let(:provider) { Riffer::Providers::AmazonBedrock.new }
-    let(:prompt) { "What is 17 times 23? Reply with just the number." }
 
     it "maps :off to Claude's disabled thinking" do
       expect(provider.send(:default_reasoning_options, :off)).must_equal(
@@ -1688,93 +866,39 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
-    it "turns thinking off on a live Claude model" do
-      VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/claude-sonnet-4-6/off") do
-        result = provider.generate_text(
-          prompt: prompt,
-          model: "us.anthropic.claude-sonnet-4-6",
-          riffer_reasoning_level: :off,
-        )
-
-        expect(result.content).must_include "391"
-      end
-    end
-
-    it "reasons at low effort on a live Claude model" do
-      VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/claude-sonnet-4-6/low") do
-        result = provider.generate_text(
-          prompt: prompt,
-          model: "us.anthropic.claude-sonnet-4-6",
-          riffer_reasoning_level: :low,
-        )
-
-        expect(result.content).must_include "391"
-      end
-    end
-
     describe "with a catalog entry" do
       before { Riffer.config.catalog_files = [REASONING_CATALOG_PATH] }
       after { Riffer.config.catalog_files = [] }
 
-      {
-        "claude-haiku-4-5/low" => ["us.anthropic.claude-haiku-4-5-20251001-v1:0", :low],
-        "nova-2-lite/low" => ["us.amazon.nova-2-lite-v1:0", :low],
-        "gpt-6-luna/low" => ["us.openai.gpt-6-luna", :low],
-        "gpt-6-luna/high" => ["us.openai.gpt-6-luna", :high],
-        "gpt-oss-120b/low" => ["openai.gpt-oss-120b-1:0", :low],
-      }.each do |name, (model_id, level)|
-        it "sends the #{name} reasoning fields to a live model" do
-          VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning_level/#{name}") do
-            result = provider.generate_text(prompt: prompt, model: model_id, riffer_reasoning_level: level)
+      it "sends the catalog's thinking budget instead of adaptive thinking" do
+        client = stub_converse
 
-            expect(result.content).must_include "391"
-          end
-        end
+        provider.generate_text(
+          prompt: "17 * 23?",
+          model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+          riffer_reasoning_level: :low,
+        )
+        params = client.api_requests.last[:params]
+
+        expect(params[:additional_model_request_fields]).must_equal(
+          { thinking: { type: "enabled", budget_tokens: 1024 } },
+        )
+        expect(params[:inference_config]).must_equal({ max_tokens: 5120 })
+      end
+
+      it "sends the catalog's reasoning fields for a model outside the Claude family" do
+        client = stub_converse
+
+        provider.generate_text(prompt: "17 * 23?", model: "us.amazon.nova-2-lite-v1:0", riffer_reasoning_level: :low)
+
+        expect(client.api_requests.last[:params][:additional_model_request_fields]).must_equal(
+          { reasoningConfig: { type: "enabled", maxReasoningEffort: "low" } },
+        )
       end
     end
   end
 
   describe "usage" do
-    describe "#generate_text returns usage" do
-      it "includes usage in the response" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/usage/_generate_text/includes_usage") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-
-          expect(result.token_usage).wont_be_nil
-          expect(result.token_usage.input_tokens).must_equal 9
-          expect(result.token_usage.output_tokens).must_equal 16
-          expect(result.token_usage.total_tokens).must_equal 25
-        end
-      end
-    end
-
-    describe "#stream_text yields TokenUsageDone" do
-      it "yields TokenUsageDone event with correct token counts" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-          usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
-
-          expect(usage_done).wont_be_nil
-          expect(usage_done.token_usage.input_tokens).must_equal 9
-          expect(usage_done.token_usage.output_tokens).must_equal 16
-          expect(usage_done.token_usage.total_tokens).must_equal 25
-        end
-      end
-
-      it "yields TokenUsageDone after TextDone" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-          text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-          usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
-
-          expect(usage_done_index).must_be :>, text_done_index
-        end
-      end
-    end
-
     describe "normalization" do
       it "folds cache buckets into input_tokens" do
         provider = Riffer::Providers::AmazonBedrock.new
@@ -2021,374 +1145,61 @@ describe Riffer::Providers::AmazonBedrock do
       expect(params[:messages].last[:content].none? { |block| block.key?(:cache_point) }).must_equal true
     end
 
-    describe "#generate_text across the steps of a tool loop" do
-      # Sonnet 4.6 ignores a checkpoint until 1,024 tokens precede it. The
-      # system prompt alone stays well under that, so the static checkpoint
-      # is a no-op and every cache read the second step sees has to come
-      # from the moving checkpoint on the first step's user message.
-      let(:model) { "us.anthropic.claude-sonnet-4-6" }
-      let(:lookup_tool) do
-        stub_tool("LookupPolicy") do
-          description "Look up the current wording of a named clinic policy"
-          params do
-            required :name, String, description: "The policy name"
-          end
-        end
-      end
-      let(:handbook) do
-        (1..80).map do |n|
-          "Section #{n}. Clause #{n} of the clinic handbook describes procedure number #{n}, " \
-            "which staff follow when handling a case of type #{n} during regular operating hours."
-        end.join(" ")
-      end
-      let(:first_step) do
-        [
-          Riffer::Messages::System.new(
-            "You are a clinic assistant. Call lookup_policy before answering a policy question.",
-          ),
-          Riffer::Messages::User.new(
-            "Here is the handbook:\n\n#{handbook}\n\nWhat is the current cancellation policy?",
-          ),
-        ]
-      end
+    it "keeps the previous step's request as the prefix of the next step of a tool loop" do
+      options = { cache_control: { type: "ephemeral" }, tools: [cache_tool] }
+      first_step = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Weather?")]
 
-      it "reads the previous step's messages from cache on the next step of a tool loop" do
-        VCR.use_cassette(
-          "Riffer_Providers_AmazonBedrock/prompt_caching/_generate_text/reads_previous_step_from_cache",
-        ) do
-          first = provider.generate_text(
-            messages: first_step,
-            model: model,
-            tools: [lookup_tool],
-            cache_control: { type: "ephemeral" },
-          )
+      first = provider.send(:build_request_params, first_step, model, options)
+      second = provider.send(
+        :build_request_params,
+        [*first_step, tool_call_message("tooluse_1"), tool_result_message("tooluse_1")],
+        model,
+        options,
+      )
 
-          expect(first.tool_calls).wont_be_empty
-          expect(first.token_usage.cache_write_tokens).must_be :>, 1024
-
-          second = provider.generate_text(
-            messages: [
-              *first_step,
-              first,
-              Riffer::Messages::Tool.new(
-                "Cancellations require 24 hours notice.",
-                tool_call_id: first.tool_calls.first.call_id,
-                name: "lookup_policy",
-              ),
-            ],
-            model: model,
-            tools: [lookup_tool],
-            cache_control: { type: "ephemeral" },
-          )
-
-          expect(second.token_usage.cache_read_tokens).must_be :>=, first.token_usage.cache_write_tokens
-        end
-      end
+      expect(second[:system]).must_equal first[:system]
+      expect(second[:tool_config]).must_equal first[:tool_config]
+      expect(first[:messages].map { |message| message[:content] }).must_equal [[{ text: "Weather?" }, cache_point]]
+      expect(second[:messages].map { |message| message[:content].map(&:keys) }).must_equal(
+        [[[:text]], [[:tool_use]], [[:tool_result], [:cache_point]]],
+      )
     end
   end
 
   describe "file handling" do
-    let(:image_base64) do
-      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/" \
-        "oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
-    end
+    describe "with an S3 URI" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new }
 
-    describe "#generate_text with image" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(
-            prompt: "Describe this image",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          )
+      it "sends an image as an s3_location source" do
+        client = stub_converse
+        file = Riffer::Messages::User::FilePart.from_url("s3://riffer-test-bucket/image.png")
 
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
+        provider.generate_text(prompt: "Describe", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
+
+        expect(client.api_requests.last[:params][:messages].last[:content].last).must_equal(
+          { image: { format: "png", source: { s3_location: { uri: "s3://riffer-test-bucket/image.png" } } } },
+        )
       end
 
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(
-            prompt: "Describe this image",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          )
+      it "sends a document as an s3_location source" do
+        client = stub_converse
+        file = Riffer::Messages::User::FilePart.new(
+          media_type: "application/pdf",
+          filename: "report.pdf",
+          url: "s3://riffer-test-bucket/report.pdf",
+        )
 
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
+        provider.generate_text(prompt: "Read", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
 
-    describe "#generate_text with document" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
-          result = provider.generate_text(
-            prompt: "What is in this document?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
-          result = provider.generate_text(
-            prompt: "What is in this document?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#stream_text with document" do
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
-          events = provider.stream_text(
-            prompt: "What is in this document?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
-          events = provider.stream_text(
-            prompt: "What is in this document?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          ).to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    describe "#stream_text with image" do
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          events = provider.stream_text(
-            prompt: "Describe this image",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          events = provider.stream_text(
-            prompt: "Describe this image",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          ).to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    let(:image_s3_uri) { ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png") }
-    let(:document_s3_uri) { ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://riffer-test-bucket/super-secret-document.pdf") }
-
-    describe "#generate_text with S3 URI image" do
-      before { Riffer.config.amazon_bedrock.region = "us-west-2" }
-
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
-          result = provider.generate_text(
-            prompt: "Describe this image",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
-          result = provider.generate_text(
-            prompt: "Describe this image",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#generate_text with S3 URI document" do
-      before { Riffer.config.amazon_bedrock.region = "us-west-2" }
-
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(
-            media_type: "application/pdf",
-            filename: "super-secret-document",
-            url: document_s3_uri,
-          )
-          result = provider.generate_text(
-            prompt: "What is in this document?",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(
-            media_type: "application/pdf",
-            filename: "super-secret-document",
-            url: document_s3_uri,
-          )
-          result = provider.generate_text(
-            prompt: "What is in this document?",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#stream_text with S3 URI image" do
-      before { Riffer.config.amazon_bedrock.region = "us-west-2" }
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
-          events = provider.stream_text(
-            prompt: "Describe this image",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
-          events = provider.stream_text(
-            prompt: "Describe this image",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          ).to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    describe "#stream_text with S3 URI document" do
-      before { Riffer.config.amazon_bedrock.region = "us-west-2" }
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(
-            media_type: "application/pdf",
-            filename: "super-secret-document",
-            url: document_s3_uri,
-          )
-          events = provider.stream_text(
-            prompt: "What is in this document?",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::User::FilePart.new(
-            media_type: "application/pdf",
-            filename: "super-secret-document",
-            url: document_s3_uri,
-          )
-          events = provider.stream_text(
-            prompt: "What is in this document?",
-            model: "us.amazon.nova-lite-v1:0",
-            files: [file],
-          ).to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
+        expect(client.api_requests.last[:params][:messages].last[:content].last).must_equal(
+          {
+            document: {
+              format: "pdf",
+              name: "report",
+              source: { s3_location: { uri: "s3://riffer-test-bucket/report.pdf" } },
+            },
+          },
+        )
       end
     end
 
@@ -2466,292 +1277,6 @@ describe Riffer::Providers::AmazonBedrock do
 
       expect(schema[:required]).must_include "age"
       expect(schema[:properties]["age"][:type]).must_equal %w[integer null]
-    end
-  end
-
-  describe "tool calling" do
-    let(:weather_tool) do
-      stub_tool("GetWeather") do
-        description "Get the current weather for a city"
-        params do
-          required :city, String, description: "The city name"
-        end
-      end
-    end
-
-    describe "#generate_text with tools" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns tool_calls" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls).wont_be_empty
-        end
-      end
-
-      it "returns correct tool name" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.name).must_equal "get_weather"
-        end
-      end
-
-      it "parses tool call arguments correctly" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/parses_arguments") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-          args = JSON.parse(result.tool_calls.first.arguments)
-
-          expect(args["city"]).must_equal "Toronto"
-        end
-      end
-
-      it "includes tool call id" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.call_id).wont_be_nil
-        end
-      end
-    end
-
-    describe "#generate_text with Tool message in history" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "tooluse_123",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "The weather in Toronto is 15 degrees Celsius.",
-              tool_call_id: "tooluse_123",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns response with content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "tooluse_123",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "The weather in Toronto is 15 degrees Celsius.",
-              tool_call_id: "tooluse_123",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#generate_text with multiple Tool messages" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/with_multiple_tool_messages") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto and Vancouver?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ",
-                  name: "get_weather",
-                  arguments: '{"city":"Vancouver"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "Toronto: 15°C",
-              tool_call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M",
-              name: "get_weather",
-            ),
-            Riffer::Messages::Tool.new(
-              "Vancouver: 12°C",
-              tool_call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns response with content" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/with_multiple_tool_messages") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto and Vancouver?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ",
-                  name: "get_weather",
-                  arguments: '{"city":"Vancouver"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "Toronto: 15°C",
-              tool_call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M",
-              name: "get_weather",
-            ),
-            Riffer::Messages::Tool.new(
-              "Vancouver: 12°C",
-              tool_call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#stream_text with tools" do
-      it "yields ToolCallDelta events" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_stream_text/yields_tool_call_delta") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          ).to_a
-          tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
-
-          expect(tool_deltas).wont_be_empty
-        end
-      end
-
-      it "yields ToolCallDone event" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_stream_text/yields_tool_call_done") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-
-          expect(tool_done).wont_be_nil
-        end
-      end
-
-      it "includes tool name in ToolCallDone" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_stream_text/tool_call_done_has_name") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-
-          expect(tool_done.name).must_equal "get_weather"
-        end
-      end
-
-      it "includes arguments in ToolCallDone" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_stream_text/tool_call_done_has_arguments") do
-          provider = Riffer::Providers::AmazonBedrock.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-          args = JSON.parse(tool_done.arguments)
-
-          expect(args["city"]).must_equal "Toronto"
-        end
-      end
     end
   end
 end

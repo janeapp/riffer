@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Row 1 has seats 1,
+        2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x
+        o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":[\"array\",\"null\"],\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\",\"boards\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 4ae75b8a-ee56-42f3-baab-cd9dc1365dad
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175342Z
+      X-Amz-Content-Sha256:
+      - 35521749a50cbc30c808ef83b4fb6e202f2132a89d4352ffc4d929d4734ec305
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '777'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:45 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1569'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5a77fad5-b37b-41f1-8269-4c1c8e8fae90
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2207},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQS+QUKEggTEAEYAjgBQgh0aGlua2luZxIMK5f40BCF4h2rRfUbGgxSMXlJyb7k+GbUfK8iMHAeGeZiNxeLiVpzv4KOX7lByGPcovqSz5rvWzqeBPq19FM6NW0N0MY+HHiEROI2MSqUBahsP4+ijpMRl3CSntRwaVHtarEwnGPEL++/4+5vYU3IPmNbQM5M+9CNMHZihdXqG9jFmPeB/Bytt6XtE8pOqJkzzwDv/NZPPteCd2pMkq6K/BBV3Ke77azSUIBLShxQqeX/1JtpWlecj5Boh7bLlgJ/GHhYn6VvZwic9XqqoCJx9cW15zr6deUHtGR1x1Y00/IB1X3nkC/LG29Yz645U41CqaZQ6FsErQSvLveI2RCwanxbW95dysC07gp0sO85hY2aST93414fiYCOoklXsbAJJSgwW+XoM7Zm5iXXX0GZFiQLLBUt3VFzCGVIEJ6fO++xsbkkaHVQoHqoN7aT/oPM5CCtbfutNKCl3EXKmbxwi/mcg5sq2bZ8vR3RhAIemucOsJMOSa7HMme+zU2Qx4eMH5Ajk+J2EDsdlH6DRRXzlHKlQ3fTIIO3kOnzjXy5RlzYJ0DCzupDcmqm0yM1GKqnwObjZr92Jdr3z/UPCsLw4FB1IJEmECKjrKBB6+05rzR5SqqvRdbv+1ZVhP1W9BAA//2quUuK0v0xcGB/jrEqjKvmu2xTgGshpinpSt20pzd5H1G+6d3wXfgb5tQaD56p4W59PPWGwwxW/J8o4RKZqDozgDDhyQsaTCJuEFaPMT4wq0Bpj91bLoO/QnNOOxevYoJP+3zX0Kd2YffEsX5M1KfmJ7sEPEbWGfvjjrsovMFF42AXYOwBr20lveHBuCvRdiwwcl1t8LGm8bAHbKveyB4gTlIrjXZ94UD+BAInzWj8Jvup6kwpv5hVfG1dXQvNhcOI51SCSt+FrTOp/Bcilnh8j7FN68rRWBvgRXhVMj/gYoebCiJgPCQm20VQUfexfOTRhJetO6SULlewEYbzmIg1ExgB","text":""}}},{"text":"{\"rows\":[[1,2,3],[4,5]],\"boards\":[[[\"x\",\"o\",\"x\"],[\"o\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]],[[\"o\",\"o\",\"x\"],[\"x\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]]]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":457,"outputTokens":217,"serverToolUsage":{},"totalTokens":674}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:45 GMT
+recorded_with: VCR 6.4.0

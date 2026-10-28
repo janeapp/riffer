@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"I love this product,
+        it is amazing!\n\nWhen you give your final answer, respond with only a JSON
+        object that conforms to the following JSON Schema, with no other text before
+        or after it:\n\n{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]}},\"required\":[\"sentiment\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"sentiment\":\"positive | neutral |
+        negative\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"system":[{"text":"Analyze
+        the sentiment of the given text."}],"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 287c30df-479a-4101-b9aa-5f907c672ee6
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175105Z
+      X-Amz-Content-Sha256:
+      - 963823c06fb24529b125cdc37acfe26a54cd68990aa9faa96553bc2a175191d0
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '782'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '343'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 6d9ff38c-4b4b-4362-8274-b8f0b3ecc5d3
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1175},"output":{"message":{"content":[{"text":"{\"sentiment\":\"positive\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":212,"outputTokens":14,"serverToolUsage":{},"totalTokens":226}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:07 GMT
+recorded_with: VCR 6.4.0

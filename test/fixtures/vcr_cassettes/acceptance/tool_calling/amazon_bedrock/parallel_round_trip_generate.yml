@@ -1,0 +1,102 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto and in Paris?"}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 2124d405-5ecb-444d-9798-ec5552bcaefb
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175235Z
+      X-Amz-Content-Sha256:
+      - 166474e8e6f0f106f3a5e1d23ba746154693034a40d45174e76d0a8266ed0218
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '382'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:37 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '551'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - afb226ad-76b4-4e87-b1df-71ce3be91fd3
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1208},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_DXSwVQxqhrMbK71T8iB9Uz","type":"tool_use"}},{"toolUse":{"input":{"city":"Paris"},"name":"get_weather","toolUseId":"tooluse_UHm5bFA1A9nGjCs3zcjIbP","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":399,"outputTokens":98,"serverToolUsage":{},"totalTokens":497}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:37 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto and in Paris?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_DXSwVQxqhrMbK71T8iB9Uz","name":"get_weather","input":{"city":"Toronto"}}},{"toolUse":{"toolUseId":"tooluse_UHm5bFA1A9nGjCs3zcjIbP","name":"get_weather","input":{"city":"Paris"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_DXSwVQxqhrMbK71T8iB9Uz","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}},{"toolResult":{"toolUseId":"tooluse_UHm5bFA1A9nGjCs3zcjIbP","content":[{"text":"It
+        is 22 degrees Celsius in Paris."}]}}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 1c7979d1-5c4d-433b-af91-70cb655e4a29
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175237Z
+      X-Amz-Content-Sha256:
+      - 1d7005047a99d44dd60b50dd7e41d3f0c5a816a9e95c492de2338102b520e70f
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '897'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:38 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '351'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 0d8e5943-9cf1-4e25-9d28-1f48375cdcfa
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTA0NX0sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InRleHQiOiJUb3JvbnRvIGlzIDE1wrBDIGFuZCBQYXJpcyBpcyAyMsKwQy4ifV0sInJvbGUiOiJhc3Npc3RhbnQifX0sInN0b3BSZWFzb24iOiJlbmRfdHVybiIsInVzYWdlIjp7ImNhY2hlUmVhZElucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVSZWFkSW5wdXRUb2tlbnMiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VucyI6MCwiaW5wdXRUb2tlbnMiOjU5MCwib3V0cHV0VG9rZW5zIjoyMSwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjYxMX19
+  recorded_at: Wed, 28 Oct 2026 17:52:38 GMT
+recorded_with: VCR 6.4.0

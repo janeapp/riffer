@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Write a 500-word essay
+        about the sea."}]}],"system":[],"inferenceConfig":{"maxTokens":20}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - d00b9b28-c39f-47c2-a5ad-6656e694f11c
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175050Z
+      X-Amz-Content-Sha256:
+      - 3a0a97ea84f082a261e34f36200e3c1571487e2857e3ad5b017f4ededf27cf01
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '138'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:51 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 843202b1-72d2-4605-8fb1-8363dade7d3b
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAuAAAAFLA8KxkCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDU2Iiwicm9sZSI6ImFzc2lzdGFudCJ9yKXkMgAAAMUAAABXsdh8lQs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsidGV4dCI6IiJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3In36D17uAAADagAAAFfFOwZ8CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJzaWduYXR1cmUiOiJDQVFTOVFNS0VnZ1RFQUVZQWpnQlFnaDBhR2x1YTJsdVp4SU1KWm9zMFhJZzBsd1pCU1UrR2d3MzZ0K3pHSVMrelp4SFZhSWlNT0JlZ3RLa2RtTklhSW83NERnNlcyZHVqWmpBM1Y1TDl5TFR4YzdHaUNFS1lqNVZadlFWaWdoMGF3ZUxDWlFSTkNxUUE1Vjc5OXV1RzFhSXN6MjNYaTZKTHNwdlNlNWJrdStsWGN3TGZUaEwxdDdxL3hOV25yYVhZa2xUQm5NcjRtYjF6WDVOZTV0S2JsYXFkNWFlc0x6aTRDZXhwSmxBcXl0WkhCck9jc0xiTWFOQ3Z6UlZnb250bDBwU2VDTGhsWVlJM3hoZ0NFTGo0b3hDWHdPb3JSMUpZS05rclF3VnJ1eUlvdFlSNjc0VmY1SG4rdFZaZlFHU1gzdHhVMlJFTU5qUGs2c0I2TENqMUV1Ym0zTTJqM0JxNWpRSDk4V3g4cWNaZTlvbXlUQXRRTnNqNUJCQ3oycWhwWGlpdFFhVHRZbEJqSGdBSXdCKzZqdTM4NDdzTEU1Qk1kWGdTREZaM0JIQmRodnFsdW9zU3FCbmM0WGFBN2VSV2ltMzBFdlZKOU52RGFFMm5iU3lwMEE0TW5uYlh4a05yM1p1VythLzV3QzV6V2JjcnE5WUNXZUYveG5JL3FvQm5wMEpqMVBQUUVLdm1sSWpvQlVabWt3bjMyejR3RWlpMkMyNXptN1RaMWpldlF0dzhIbmk5L2VhNDRkbVd5WnpRbW5KaEtRTWdyQlo3Mkx2ajNaVmNXVHR3bjVUUnFDYWQ0NTd6TG1FSHRsOWNncUszVkJvYk9iak5jbm0xVjYwa0MvNmtsRU42VXp1TkZUYjVFN0tIdWRyV2k0aTE4alZkdTRZQVE9PSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ubyJ98346wQAAALkAAABW+v1BzQs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowIn2IAETUAAAAmwAAAFHfmKgKCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4Iiwic3RvcFJlYXNvbiI6Im1heF90b2tlbnMifYO8DxYAAADZAAAATnCjrtYLOmV2ZW50LXR5cGUHAAhtZXRhZGF0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7Im1ldHJpY3MiOnsibGF0ZW5jeU1zIjoxMTE2fSwicCI6ImFiYyIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjoyMiwib3V0cHV0VG9rZW5zIjoyMCwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjQyfX3IAawy
+  recorded_at: Wed, 28 Oct 2026 17:50:51 GMT
+recorded_with: VCR 6.4.0

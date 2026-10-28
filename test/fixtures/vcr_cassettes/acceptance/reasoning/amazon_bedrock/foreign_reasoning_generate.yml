@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"My name is Ada."}]},{"role":"assistant","content":[{"text":"Nice
+        to meet you, Ada!"}]},{"role":"user","content":[{"text":"What is my name?
+        Reply with just the name."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 3d4629f2-d06f-4160-98af-a2ae48a2825a
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175404Z
+      X-Amz-Content-Sha256:
+      - 35a1d950b64db44b5b2c1294cb24d1ea5de7938db06424b04e4087a2962b0c4b
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '230'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '314'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 1db46eeb-725b-4522-9df2-9052eba318b9
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":889},"output":{"message":{"content":[{"text":"Ada"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":44,"outputTokens":5,"serverToolUsage":{},"totalTokens":49}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:05 GMT
+recorded_with: VCR 6.4.0

@@ -137,7 +137,11 @@ Google Cloud tests take a short-lived access token rather than a key, so pass it
 RIFFER_RECORD=once bin/test test/acceptance/tool_calling_test.rb -n "/::gemini/"
 GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
   RIFFER_RECORD=once bin/test test/acceptance/tool_calling_test.rb -n "/::google_cloud/"
+eval "$(aws configure export-credentials --profile your-profile --format env)" && \
+  RIFFER_RECORD=once bin/test test/acceptance/tool_calling_test.rb -n "/::amazon_bedrock/"
 ```
+
+Bedrock records with the AWS credentials in the environment when `AWS_ACCESS_KEY_ID` is set, and with `AWS_BEDROCK_API_TOKEN` otherwise. Export a profile's credentials as above instead of setting `AWS_PROFILE`, so the SDK doesn't fetch them over HTTP during a test.
 
 A test that fails while recording leaves a partial cassette behind; delete it before recording again.
 

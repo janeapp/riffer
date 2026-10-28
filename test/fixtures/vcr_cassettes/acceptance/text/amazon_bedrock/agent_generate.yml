@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Reply with the word
+        pong and nothing else."}]}],"system":[{"text":"Be concise."}],"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 366b295a-df84-4070-bf64-74f6a76421ab
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175423Z
+      X-Amz-Content-Sha256:
+      - 78b5f5419a1a6631947c67195e0bd372a77a9ca5b8368ae699a22095930447fe
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '176'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:24 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '316'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - c13f2e4a-61bb-4039-96f9-6e078e7611b8
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1273},"output":{"message":{"content":[{"text":"pong"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":28,"outputTokens":4,"serverToolUsage":{},"totalTokens":32}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:25 GMT
+recorded_with: VCR 6.4.0

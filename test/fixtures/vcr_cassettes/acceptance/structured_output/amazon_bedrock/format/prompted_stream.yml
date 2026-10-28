@@ -1,0 +1,60 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Book a visit on 2026-10-26
+        at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 07afc69a-fab0-41d3-b436-efde6ef9ebe7
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175120Z
+      X-Amz-Content-Sha256:
+      - 528f7eb1066220bac89694baf3cafa634a2b71356095002b19e99035d6d1804e
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1169'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:21 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5bdde814-c3b5-4b26-9c16-005bc1a3488a
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAtgAAAFJ/wBIFCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNCIsInJvbGUiOiJhc3Npc3RhbnQifURlAvAAAAC8AAAAV0Ua/isLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIifX0sInAiOiJhYmNkZWZnaGlqa2xtbiJ91/hMMgAABF8AAABXsf8BMgs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsic2lnbmF0dXJlIjoiQ0FRU2l3VUtFZ2dURUFFWUFqZ0JRZ2gwYUdsdWEybHVaeElNYjUxU1J1MlJvQ0JRQkloQ0dneFVueFZUaTF5OFFXRC9obUFpTU5uNVZCTlRSelQ4c2doWkU0K0RZZTBiUHYxUFJsYXQ3QkhHeVJvaGt6YTZHbXlWblZuY0RBcU5EYitZaU9lc2lpcW1CSHE2enNUY254azZVQ0N3RmhUNldCVG1veEhBTHd4ZDlxbnhpL3lRcThtN085QzFRK0FITHU2RVVPUVBiVzFRSUJJWlVaOTFqNitJVVFSd2E0VkhSOW9oeHcwUUo5ZWk1L1Z3L21ZTEh1TFF2QkZLb1BvY0pCNURJMDJ1NkdiRFRaNjQ0UWt0ekJVQ2M3cDFEWDFMTTlwQm43NFRSLzRDU0IyQXFsdGZNL1BIeVFXUDROdnRva2dkL3FpcjJlSm5FMVo4bFVFTDJLNEVoUUgyWmVVdkRoakhwK3ZNMnNQRngrNUgyeUZSUnQ4VFFOakhkYkhwTTVkTE5iSCtqZHRSeTlacU9RNUFTSXJNU1NhdU5pNExGMTJaZnFHZUY2NkNWRnRoSlFrZDdCNGx4QTdEa1dmN2xlSFN6U2RHRmJ4NHZ2OVdCdFZDOVVLVGx3Y2pqREpNSnpPbjNmSTlZUmFubWx3RWE3cGs4NGhraEtlQ0ZxQkkvcnd4YldaNjgrcHJvNUp2d2h2Q1I2MHBzR0VpVW0zbWZwdGxYV0xMZVlaU0duTnFSbkZEQU9lSUxwbGZBMm1FWUY0N0VMcDhaTk5pUW1XSkpkTG42UCtZa1gwWWdFZnR1OUt2TENnNE12azFsNDFTd0dHSXZBSUNhMlBVV2hndk1iUE45WDI4ZmhBVzF4WVVuS0xEOFkzcllXMXBiWjBoOHBCckFmMWN4eFp1Z1Q2a1JjblY3cVZUeUM0ckoxTDhEeTd4N0ZldG5UQmxHNjFIVTJyS09Wd3B2SWpKUDBSc29HMGRJQkJUUDUraE5tMDJGUDJ1SVBOcVJzUXduN3RMeEQ3RGFJaTg2NFIvU1h1bitpajZTOHBZYWRCL2JCTjZUbTFBeElHS1orQThIbHVVMTBBcTdIb1Q0K1Q3S3ZXZ3hvd3BncTJyZkNPa1hEbWdzeEFBbGxLZ3FxcTk1NlZVcnBkNnk2TS94Q0VZQVE9PSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDU2NyJ9bu18ngAAAKEAAABWqm2djgs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDIn0AfJ4vAAAAsQAAAFe9ijqaCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IntcInZpc2l0In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wIn3VFqkkAAAAxwAAAFfLGC/1CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6Il9vblwiOlwiMjAyNi0xMCJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERSJ9ckhRRAAAAMoAAABXM4jrRAs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRleHQiOiItMjZcIixcInN0YXJ0c19hdFwiOiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkMifUtttoMAAAC7AAAAV/c6IjsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiXCIyMDI2LTEwLTI2VCJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1In1tZP0lAAAA0gAAAFdjGDcHCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IjA5OjMwOjAwLTA0OiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTIn0zaVT4AAAArQAAAFcYmkAZCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IjAwXCIsXCJjbGluaWNfaWRzIn0sInAiOiJhYmMifSorG2YAAADKAAAAVzOI60QLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiXCI6W1wiNTUwZTg0MDAtZSJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHIn3X3llQAAAA1wAAAFer+Lh3CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IjI5Yi00MWQ0LWEifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVoifTOZZlwAAADOAAAAV8YITYQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiNzE2LTQ0NjY1NTQ0MDAwMFwiXSJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSCJ9nNgmIgAAANcAAABXq/i4dws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRleHQiOiJ9In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQ1Njc4In1+ZOyNAAAAtAAAAFYCbYV8CzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWIn2yFBMOAAAAnwAAAFEqGA7KCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNEIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn2rNcIbAAABAgAAAE5F2jM7CzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTk0NH0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OTyIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjozODcsIm91dHB1dFRva2VucyI6MTUwLCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6NTM3fX0hG/QT
+  recorded_at: Wed, 28 Oct 2026 17:51:22 GMT
+recorded_with: VCR 6.4.0

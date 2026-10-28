@@ -1,0 +1,206 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]}],"system":[{"text":"Use the tools to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 9f97e3a7-72f2-40d0-ba5f-4e9edda5b73c
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175245Z
+      X-Amz-Content-Sha256:
+      - 40ba6c675be0414a8627781981bbc68790c0395aba1bc5faeb434ea110fa6880
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '462'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:46 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '428'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 1c4997a0-4d7b-4818-8ac1-726aa7200b84
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1274},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":409,"outputTokens":51,"serverToolUsage":{},"totalTokens":460}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:46 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]}],"system":[{"text":"Use the tools
+        to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 96c51ebd-48a0-47a0-9747-3e71c5ba52ed
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175246Z
+      X-Amz-Content-Sha256:
+      - c341aefef7c1be891f4757aa5bbcb1ae66b16f0b89910ce958b343143d572cad
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '752'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '346'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 59bb4515-89b2-410a-bb58-a173c73e33b6
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6ODQyfSwib3V0cHV0Ijp7Im1lc3NhZ2UiOnsiY29udGVudCI6W3sidGV4dCI6Ikl0J3MgY3VycmVudGx5IDE1wrBDIGluIFRvcm9udG8uIn1dLCJyb2xlIjoiYXNzaXN0YW50In19LCJzdG9wUmVhc29uIjoiZW5kX3R1cm4iLCJ1c2FnZSI6eyJjYWNoZVJlYWRJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlUmVhZElucHV0VG9rZW5zIjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbnMiOjAsImlucHV0VG9rZW5zIjo0ODMsIm91dHB1dFRva2VucyI6MTYsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo0OTl9fQ==
+  recorded_at: Wed, 28 Oct 2026 17:52:47 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]},{"role":"assistant","content":[{"text":"It''s
+        currently 15°C in Toronto."}]},{"role":"user","content":[{"text":"And in Paris?"}]}],"system":[{"text":"Use
+        the tools to answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - b429c0e3-929a-42f6-b144-5609f4a981e4
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175247Z
+      X-Amz-Content-Sha256:
+      - c7c875f92dcdbfc079bed8e35c886195cec93d1f75ad4e934a1382d52a09ed05
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '882'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:48 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '426'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 653f6004-9321-437f-b065-39fe8e44e38d
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1013},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Paris"},"name":"get_weather","toolUseId":"tooluse_T2Cj83fnqfSzoZtZswPu1k","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":509,"outputTokens":50,"serverToolUsage":{},"totalTokens":559}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:48 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_xHR8q1vORwyFNx6MGUVVat","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]},{"role":"assistant","content":[{"text":"It''s
+        currently 15°C in Toronto."}]},{"role":"user","content":[{"text":"And in Paris?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_T2Cj83fnqfSzoZtZswPu1k","name":"get_weather","input":{"city":"Paris"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_T2Cj83fnqfSzoZtZswPu1k","content":[{"text":"It
+        is 22 degrees Celsius in Paris."}]}}]}],"system":[{"text":"Use the tools to
+        answer. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - db9722f5-1cc1-465e-9c56-f2488fb95511
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175248Z
+      X-Amz-Content-Sha256:
+      - 6caa3508c0780239016a4b96756564ca290356a5d005674eeebf78cc95e74500
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1168'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:49 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '334'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7bd68aee-e5ef-41e2-8f55-2dcd9f7587e3
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6OTc2fSwib3V0cHV0Ijp7Im1lc3NhZ2UiOnsiY29udGVudCI6W3sidGV4dCI6Ikl0J3MgMjLCsEMgaW4gUGFyaXMuIn1dLCJyb2xlIjoiYXNzaXN0YW50In19LCJzdG9wUmVhc29uIjoiZW5kX3R1cm4iLCJ1c2FnZSI6eyJjYWNoZVJlYWRJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlUmVhZElucHV0VG9rZW5zIjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbnMiOjAsImlucHV0VG9rZW5zIjo1ODEsIm91dHB1dFRva2VucyI6MTMsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo1OTR9fQ==
+  recorded_at: Wed, 28 Oct 2026 17:52:49 GMT
+recorded_with: VCR 6.4.0

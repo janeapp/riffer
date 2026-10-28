@@ -14,8 +14,8 @@ http_interactions:
         the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
         date","format":"date"},"services":{"type":"array","description":"Services
         to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
-        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any"]}],"description":"Room
-        number, or any when there is no preference"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room
+        number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false}}]}]}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -43,7 +43,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 15:34:44 GMT
+      - Wed, 28 Oct 2026 17:50:12 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -57,19 +57,19 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
-        [{\"functionCall\": {\"name\": \"book_visit\",\"args\": {\"patient\": {\"email\":
-        \"ada@example.com\",\"name\": \"Ada Lovelace\"},\"services\": [{\"minutes\":
-        30,\"name\": \"checkup\"},{\"minutes\": 15,\"name\": \"vaccination\"}],\"visit_on\":
-        \"2026-11-03\",\"room\": \"any\",\"visit_type\": \"online\"},\"id\": \"call_850116\"},\"thoughtSignature\":
-        \"AY89a1/Vw8A/8T1wmFvBLB3BvMkSGGBgxuv+EbxyzN1d0oR4iWRrN8xI83p2TkUqAdHvZ6+ZcYKVthnRuTJvsLs2wVETdR6dHKIpTSzXw9tej+Jc7vHqQkH4ZRU=\"}]}}],\"usageMetadata\":
+        [{\"functionCall\": {\"name\": \"book_visit\",\"args\": {\"room\": \"any\",\"visit_on\":
+        \"2026-11-03\",\"visit_type\": \"online\",\"services\": [{\"minutes\": 30,\"name\":
+        \"checkup\"},{\"minutes\": 15,\"name\": \"vaccination\"}],\"patient\": {\"name\":
+        \"Ada Lovelace\",\"email\": \"ada@example.com\"}},\"id\": \"call_2028062\"},\"thoughtSignature\":
+        \"AY89a1+zaXGXfT1pmX1+WlVG7vm5HqYg7lwRNyoJVMGjkFCbDd1FSJgH78QHi37jkyJAlr3joycPSYeonT4FxDEsQXNP56/uBbhayH/khA+yFuf5Cs7JxMMR5g8=\"}]}}],\"usageMetadata\":
         {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
-        \"2026-10-28T15:34:43.730059Z\",\"responseId\": \"ExbiasvHLK6N9LsP24-4oA8\"}\r\n\r\ndata:
+        \"2026-10-28T17:50:11.940918Z\",\"responseId\": \"0zXiava2OcuEpucPnqiR8Ag\"}\r\n\r\ndata:
         {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
         \"\"}]},\"finishReason\": \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\":
         183,\"candidatesTokenCount\": 88,\"totalTokenCount\": 271,\"trafficType\":
         \"ON_DEMAND\",\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
         183}],\"candidatesTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        88}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T15:34:43.730059Z\",\"responseId\":
-        \"ExbiasvHLK6N9LsP24-4oA8\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 15:34:44 GMT
+        88}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\": \"2026-10-28T17:50:11.940918Z\",\"responseId\":
+        \"0zXiava2OcuEpucPnqiR8Ag\"}\r\n\r\n"
+  recorded_at: Wed, 28 Oct 2026 17:50:12 GMT
 recorded_with: VCR 6.4.0

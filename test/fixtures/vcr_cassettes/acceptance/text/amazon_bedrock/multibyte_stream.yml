@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: "{\"messages\":[{\"role\":\"user\",\"content\":[{\"text\":\"Repeat this
+        exactly, with nothing else: ¿Qué tal? 日本語のテキスト \U0001F680\U0001F389 Ünïcödé\"}]}],\"system\":[]}"
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 5ffd4ea9-f462-4daa-8067-65ec84ab89bc
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175425Z
+      X-Amz-Content-Sha256:
+      - 6f9402a57b6097ffc9444f3915ed46a3ea380b66f2e56bce98f99c55f220c7bd
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '163'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:26 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9c799db6-d309-4151-95a6-e692e1bb1718
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAApgAAAFIfIIWHCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PIiwicm9sZSI6ImFzc2lzdGFudCJ9AcVkFwAAALsAAABX9zoiOws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiLCv1F1w6kgdGFsPyJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dncifdoUQB4AAAC/AAAAVwK6hPsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiIOaXpeacrOiqnuOBruODhuOCreOCuSJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcCJ9V+i5FgAAALoAAABXyloLiws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiLjg4gg8J+agPCfjokifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dSJ9Dlf7JQAAAMIAAABXA/ighQs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiIgw5xuw69jw7Zkw6kifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDIn2Y4K0PAAAAuwAAAFaAPRKtCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMiJ9ds55dQAAAKEAAABRNAkILQs6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGIiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn1v6HrPAAAA6AAAAE7s4j/gCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTMzM30sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXIiLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6NTYsIm91dHB1dFRva2VucyI6MzQsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo5MH19Ij9ofQ==
+  recorded_at: Wed, 28 Oct 2026 17:54:26 GMT
+recorded_with: VCR 6.4.0
