@@ -236,6 +236,8 @@ response = provider.generate_text(
 puts response.structured_output
 ```
 
+The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return `null` for a value it doesn't know instead of making one up. A `Hash` param needs a block and an `Array` param a block or `of:` (see [Structured Output Limitations](../AGENTS.md#limitations)).
+
 ### Tool Calling
 
 ```ruby
@@ -264,7 +266,7 @@ Gemini 3 models attach an opaque `thoughtSignature` to the first function call o
 
 Riffer keeps each signature on the assistant message as the `data` of an `:encrypted` [reasoning part](../MESSAGES.md#reasoning) tagged `format: "google-cloud-generate-content-v1"` (`Riffer::Providers::GoogleCloud::REASONING_FORMAT`). A signature from a function call carries that tool call's `call_id` as its `id`; the text signature has no `id`. Streams emit them as `ReasoningDone` events. On later turns riffer puts each signature back on the part it came from. You don't have to do anything as long as the assistant messages stay in the history.
 
-If you persist sessions, keep the `reasoning` key when you store messages. If you drop it and pick a session back up between a tool call and its result, the next request is rejected. Only the signatures of the current turn are checked, so older turns without them still work.
+A function call without an Agent Platform signature goes out with Google's placeholder signature (`skip_thought_signature_validator`), which Agent Platform accepts in place of a real one. That happens when the call came from another provider, or from the Gemini Developer API, whose signatures Agent Platform rejects. It covers the first call of each step whose reasoning carries no signature for this provider. Google warns that a call without its real signature may degrade the model's answer, so if you persist sessions, keep the `reasoning` key when you store messages.
 
 ### Web Search
 

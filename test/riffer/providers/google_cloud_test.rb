@@ -175,7 +175,9 @@ describe Riffer::Providers::GoogleCloud do
       )
 
       expect(result[:generationConfig]).must_equal(
-        responseFormat: [{ text: { mimeType: "APPLICATION_JSON", schema: structured_output.json_schema } }],
+        responseFormat: [{
+          text: { mimeType: "APPLICATION_JSON", schema: structured_output.json_schema(strict: true) },
+        }],
       )
     end
   end
@@ -192,7 +194,7 @@ describe Riffer::Providers::GoogleCloud do
       expect(parts.map(&:format)).must_equal ["google-cloud-generate-content-v1"]
     end
 
-    it "leaves Gemini Developer API signatures out, since Agent Platform rejects them" do
+    it "swaps Gemini Developer API signatures for the placeholder, since Agent Platform rejects them" do
       tool_call = provider.send(:extract_tool_calls, response).first
       developer_api = Riffer::Messages::Assistant::ReasoningPart.new(
         type: :encrypted,
@@ -204,7 +206,10 @@ describe Riffer::Providers::GoogleCloud do
 
       result = provider.send(:convert_assistant_to_gemini_format, message)
 
-      expect(result[:parts]).must_equal [{ functionCall: { name: "get_weather", args: { "city" => "Toronto" } } }]
+      expect(result[:parts]).must_equal [{
+        functionCall: { name: "get_weather", args: { "city" => "Toronto" } },
+        thoughtSignature: Riffer::Providers::Gemini::PLACEHOLDER_SIGNATURE,
+      }]
     end
   end
 

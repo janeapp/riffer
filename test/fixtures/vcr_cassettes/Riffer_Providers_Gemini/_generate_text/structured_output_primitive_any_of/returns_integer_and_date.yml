@@ -7,8 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Read this order: 12 boxes,
         due on 2026-11-03"}]}],"generationConfig":{"responseFormat":{"text":{"mimeType":"APPLICATION_JSON","schema":{"type":"object","properties":{"quantity":{"anyOf":[{"type":"integer"},{"type":"string"}],"description":"A
-        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]}],"description":"The
-        due date, or none when there isn''t one"}},"required":["quantity"],"additionalProperties":false}}}}}'
+        count, or a word when there is no count"},"due":{"anyOf":[{"type":"string","format":"date"},{"type":"string","enum":["none"]},{"type":"null"}],"description":"The
+        due date, or none when there isn''t one"}},"required":["quantity","due"],"additionalProperties":false}}}}}'
     headers:
       User-Agent:
       - Faraday v2.14.4
@@ -34,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Fri, 23 Oct 2026 21:09:34 GMT
+      - Wed, 28 Oct 2026 00:21:59 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=817
+      - gfet4t7; dur=692
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -59,7 +59,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\n  \"quantity\": 12,\n  \"due\": \"2026-11-03\"\n}",
-                    "thoughtSignature": "EmAKXgFpFH0Tducfj/lJxwko1oCoYU1lx3GSzGY2x5DzHVaQ2HeL57EJmRFjYEbjXLqbNbMTwPrjIEys6uhI315yLQdtgwW6YD+emkpjetYwQcCv+nhsehlW6n4eFK+qQNg="
+                    "thoughtSignature": "EmAKXgFpFH0T8sc3TkwxAl2uCr8mQA7jQD4mKJdVfJX67Q262nqIlu7lmsIpLOgJP3zJTtqCrBSvYpxoVZYNfB3LDWJXak4WsDKix9Jh28QXb6svqgDZmZbb08RalAyDNr0="
                   }
                 ],
                 "role": "model"
@@ -81,7 +81,7 @@ http_interactions:
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "Dc3bav2GHLuV_uMPlartgQE"
+          "responseId": "JkDhas24LdrdjMcPxZzWyQg"
         }
-  recorded_at: Fri, 23 Oct 2026 21:09:34 GMT
+  recorded_at: Wed, 28 Oct 2026 00:21:59 GMT
 recorded_with: VCR 6.4.0

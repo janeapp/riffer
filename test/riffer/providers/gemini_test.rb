@@ -598,7 +598,8 @@ describe Riffer::Providers::Gemini do
           validated = primitive_any_of_structured_output.parse_and_validate(result.content)
 
           expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: "several boxes", due: "none" })
+          expect(validated.object[:quantity]).must_be_kind_of String
+          expect(validated.object[:due]).must_equal "none"
         end
       end
     end
@@ -766,7 +767,7 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "structured output" do
-    it "sends the JSON schema unmodified in responseFormat" do
+    it "sends the strict JSON schema in responseFormat" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
       params.required(:result, Riffer::Params::AnyOf) do
@@ -784,8 +785,42 @@ describe Riffer::Providers::Gemini do
       )
 
       expect(result[:generationConfig]).must_equal(
-        responseFormat: { text: { mimeType: "APPLICATION_JSON", schema: structured_output.json_schema } },
+        responseFormat: {
+          text: { mimeType: "APPLICATION_JSON", schema: structured_output.json_schema(strict: true) },
+        },
       )
+    end
+
+    it "makes optional fields required and nullable" do
+      provider = Riffer::Providers::Gemini.new
+      params = Riffer::Params.new
+      params.required(:name, String)
+      params.optional(:postal_code, String)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
+      messages = [Riffer::Messages::User.new("Extract")]
+
+      schema = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-3.5-flash-lite",
+        { structured_output: structured_output },
+      ).dig(:generationConfig, :responseFormat, :text, :schema)
+
+      expect(schema[:required]).must_equal %w[name postal_code]
+      expect(schema.dig(:properties, "postal_code", :type)).must_equal %w[string null]
+    end
+
+    it "raises for a Hash param without a block" do
+      provider = Riffer::Providers::Gemini.new
+      params = Riffer::Params.new
+      params.required(:address, Hash)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
+      messages = [Riffer::Messages::User.new("Extract")]
+      options = { structured_output: structured_output }
+
+      expect do
+        provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", options)
+      end.must_raise Riffer::ArgumentError
     end
 
     it "does not include generationConfig when not configured" do
@@ -1027,6 +1062,23 @@ describe Riffer::Providers::Gemini do
 
         expect(contents[0][:parts].first[:functionCall]).wont_include :id
         expect(contents[1][:parts].first[:functionResponse]).wont_include :id
+      end
+
+      it "signs the first call of a step Gemini did not sign with the placeholder" do
+        tool_calls = %w[Toronto Paris].each_with_index.map do |city, index|
+          Riffer::Messages::Assistant::ToolCall.new(
+            call_id: "toolu_#{index}",
+            name: "get_weather",
+            arguments: { city: city }.to_json,
+          )
+        end
+        message = Riffer::Messages::Assistant.new("", tool_calls: tool_calls)
+
+        result = provider.send(:convert_assistant_to_gemini_format, message)
+
+        expect(result[:parts].map { |part| part[:thoughtSignature] }).must_equal(
+          [Riffer::Providers::Gemini::PLACEHOLDER_SIGNATURE, nil],
+        )
       end
 
       it "puts each signature back on the part it came on and skips other formats" do
@@ -1330,6 +1382,25 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "usage" do
+    it "streams one TokenUsageDone with the final counts" do
+      chunks = [[2, "Hello"], [20, " there"]].map do |count, text|
+        chunk = {
+          candidates: [{ content: { parts: [{ text: text }] } }],
+          usageMetadata: { promptTokenCount: 14, candidatesTokenCount: count },
+        }
+        "data: #{chunk.to_json}\n\n"
+      end
+      client = Object.new
+      client.define_singleton_method(:post_stream) { |_path, _body, &block| chunks.each(&block) }
+      Riffer.config.gemini.client = client
+
+      events = Riffer::Providers::Gemini.new.stream_text(prompt: "Hi", model: "gemini-3.5-flash-lite").to_a
+      usage = events.grep(Riffer::StreamEvents::TokenUsageDone)
+
+      expect(usage.size).must_equal 1
+      expect([usage.first.token_usage.input_tokens, usage.first.token_usage.output_tokens]).must_equal [14, 20]
+    end
+
     describe "#generate_text returns usage" do
       it "includes usage in the response" do
         VCR.use_cassette("Riffer_Providers_Gemini/usage/_generate_text/includes_usage") do

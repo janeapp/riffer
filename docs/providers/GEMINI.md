@@ -146,6 +146,8 @@ puts response.structured_output
 
 Structured output is sent as `responseFormat`, which needs a gemini-3 model or later. gemini-2.x models ignore it and return prose.
 
+The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return `null` for a value it doesn't know instead of making one up. A `Hash` param needs a block and an `Array` param a block or `of:` (see [Structured Output Limitations](../AGENTS.md#limitations)).
+
 ### Tool Calling
 
 ```ruby
@@ -174,7 +176,7 @@ Gemini 3 models attach an opaque `thoughtSignature` to the first function call o
 
 Riffer keeps each signature on the assistant message as the `data` of an `:encrypted` [reasoning part](../MESSAGES.md#reasoning) tagged `format: "gemini-generate-content-v1"` (`Riffer::Providers::Gemini::REASONING_FORMAT`). A signature from a function call carries that tool call's `call_id` as its `id`; the text signature has no `id`. Streams emit them as `ReasoningDone` events. On later turns riffer puts each signature back on the part it came from. You don't have to do anything as long as the assistant messages stay in the history.
 
-If you persist sessions, keep the `reasoning` key when you store messages. If you drop it and pick a session back up between a tool call and its result, the next request is rejected. Gemini only checks the signatures of the current turn, so older turns without them still work.
+A function call that Gemini didn't sign, such as one another provider made before the conversation switched to Gemini, goes out with Gemini's placeholder signature (`skip_thought_signature_validator`), which Gemini accepts in place of a real one. That covers the first call of each step whose reasoning carries no signature for this provider. Google warns that a call without its real signature may degrade the model's answer, so if you persist sessions, keep the `reasoning` key when you store messages.
 
 ### Web Search
 
