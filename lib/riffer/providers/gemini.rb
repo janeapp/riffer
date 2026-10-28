@@ -319,8 +319,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
 
       # Every chunk repeats the running totals; the last one holds the final count.
-      chunk_usage = parsed[:usageMetadata]
-      usage = chunk_usage if chunk_usage && chunk_usage[:candidatesTokenCount]
+      usage = parsed[:usageMetadata] || usage
     end
 
     path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
@@ -420,11 +419,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       parts << { text: message.content, thoughtSignature: text_signature }.compact
     end
 
-    # Gemini signs only the first call of a step, so a step none of whose
-    # calls is signed came from elsewhere.
-    unsigned_step = message.tool_calls.none? { |tc| call_signatures.key?(tc.call_id) }
     message.tool_calls.each_with_index do |tc, index|
-      signature = unsigned_step && index.zero? ? PLACEHOLDER_SIGNATURE : call_signatures[tc.call_id]
+      signature = call_signatures[tc.call_id]
+      # Gemini requires a signature on the first call of a step.
+      signature ||= PLACEHOLDER_SIGNATURE if index.zero?
       parts << {
         functionCall: {
           id: gemini_call_id(tc.call_id),

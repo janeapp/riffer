@@ -598,8 +598,7 @@ describe Riffer::Providers::Gemini do
           validated = primitive_any_of_structured_output.parse_and_validate(result.content)
 
           expect(validated.error).must_be_nil
-          expect(validated.object[:quantity]).must_be_kind_of String
-          expect(validated.object[:due]).must_equal "none"
+          expect(validated.object).must_equal({ quantity: "several", due: "none" })
         end
       end
     end
