@@ -13,22 +13,8 @@ describe "Acceptance: reasoning" do
       let(:cassette_prefix) { "reasoning/#{provider_name}" }
       let(:question) { Riffer::Messages::User.new("What is the weather in Toronto?") }
 
-      let(:weather_tool) do
-        stub_tool("GetWeather") do
-          description "Get the current weather for a city"
-          params { required :city, String, description: "The city name" }
-        end
-      end
-
-      def weather_result(tool_call)
-        Riffer::Messages::Tool.new(
-          "It is 15 degrees Celsius in Toronto.",
-          tool_call_id: tool_call.call_id,
-          name: tool_call.name,
-        )
-      end
-
-      let(:agent_model) { "#{provider_name}/#{model}" }
+      let(:weather_tool) { acceptance_weather_tool }
+      let(:agent_model) { acceptance_model_id(provider_name) }
 
       def reasoning_agent(level)
         model_id = agent_model
@@ -39,21 +25,14 @@ describe "Acceptance: reasoning" do
         end.new
       end
 
-      describe "with the test catalog" do
-        before { Riffer.config.catalog_files = [ACCEPTANCE_CATALOG_PATH] }
-        after { Riffer.config.catalog_files = [] }
-
-        # The catalog maps only the levels a model's provider default can't
-        # serve, so the other levels exercise the default.
-        Riffer::Agent::Config::REASONING_LEVELS.each do |level|
-          it "answers at reasoning level #{level}" do
-            response = acceptance_cassette("#{cassette_prefix}/level_#{level}") do
-              reasoning_agent(level).generate("What is 17 times 23? Reply with just the number.")
-            end
-
-            expect(response.outcome.reason).must_equal :completed
-            expect(response.content).must_include "391"
+      acceptance_setting(provider_name, :reasoning_levels).each do |level|
+        it "answers at reasoning level #{level}" do
+          response = acceptance_cassette("#{cassette_prefix}/level_#{level}") do
+            reasoning_agent(level).generate("What is 17 times 23? Reply with just the number.")
           end
+
+          expect(response.outcome.reason).must_equal :completed
+          expect(response.content).must_include "391"
         end
       end
 
@@ -74,7 +53,7 @@ describe "Acceptance: reasoning" do
           end
 
           expect(first.reasoning).wont_be_empty
-          expect(first.reasoning).must_be(:all?) { |part| part.format && (part.data || part.text) }
+          expect(first.reasoning.all? { |part| part.format && (part.data || part.text) }).must_equal true
           expect(second.content).must_include "15"
         end
 

@@ -13,12 +13,7 @@ describe "Acceptance: web search" do
       let(:cassette_prefix) { "web_search/#{provider_name}" }
       let(:prompt) { "What is the latest stable Ruby version? Answer in one sentence." }
 
-      let(:weather_tool) do
-        stub_tool("GetWeather") do
-          description "Get the current weather for a city"
-          params { required :city, String, description: "The city name" }
-        end
-      end
+      let(:weather_tool) { acceptance_weather_tool }
 
       ACCEPTANCE_MODES.each do |mode|
         it "answers from the search (#{mode})" do
@@ -50,16 +45,10 @@ describe "Acceptance: web search" do
               tools: [weather_tool],
               web_search: true,
             )
-            tool_call = first.tool_calls.first
-            result = Riffer::Messages::Tool.new(
-              "It is 15 degrees Celsius in Toronto.",
-              tool_call_id: tool_call.call_id,
-              name: tool_call.name,
-            )
             call_provider(
               provider,
               mode,
-              messages: [question, first, result],
+              messages: [question, first, weather_result(first.tool_calls.first)],
               model: model,
               tools: [weather_tool],
               web_search: true,
@@ -77,18 +66,19 @@ describe "Acceptance: web search" do
         end
         done = events.grep(Riffer::StreamEvents::WebSearchDone)
         statuses = events.grep(Riffer::StreamEvents::WebSearchStatus)
+        sources = done.flat_map(&:sources)
 
         expect(done).wont_be_empty
-        expect(done).must_be(:all?) { |event| !event.query.empty? }
-        expect(done.flat_map(&:sources)).wont_be_empty
-        expect(done.flat_map(&:sources)).must_be(:all?) { |source| source.keys == %i[title url] && source[:url] }
-        expect(statuses).must_be(:all?) { |status| events.index(status) < events.index(done.last) }
+        expect(done.map(&:query)).wont_include ""
+        expect(sources).wont_be_empty
+        expect(sources.map(&:keys).uniq).must_equal [%i[title url]]
+        expect(sources.map { |source| source[:url] }).wont_include nil
+        expect(statuses.all? { |status| events.index(status) < events.index(done.last) }).must_equal true
       end
 
       it "keeps the streamed answer in the Agent session" do
-        model_id = "#{provider_name}/#{model}"
         agent = Class.new(Riffer::Agent) do
-          model model_id
+          model acceptance_model_id(provider_name)
           model_options web_search: true
         end.new
 

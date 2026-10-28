@@ -14,6 +14,8 @@ ACCEPTANCE_CATALOG_PATH = File.join(ACCEPTANCE_FIXTURES_PATH, "catalog.json")
 
 ACCEPTANCE_MODES = %i[generate stream].freeze
 
+ACCEPTANCE_TEMPERATURES = { "Toronto" => 15, "Paris" => 22 }.freeze
+
 # Every acceptance file runs against each provider here unless it excludes it,
 # so a new provider joins every feature by default. An entry holds what the
 # tests can't derive: riffer passes model options and web_search options
@@ -21,6 +23,7 @@ ACCEPTANCE_MODES = %i[generate stream].freeze
 ACCEPTANCE_PROVIDERS = {
   gemini: {
     model: "gemini-3.5-flash-lite",
+    reasoning_levels: %i[low medium high],
     max_tokens_option: :maxOutputTokens,
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     configure: -> { Riffer.config.gemini.api_key = ENV.fetch("GEMINI_API_KEY", "test_api_key") },
@@ -29,6 +32,7 @@ ACCEPTANCE_PROVIDERS = {
   },
   google_cloud: {
     model: "gemini-3.5-flash-lite",
+    reasoning_levels: %i[low medium high],
     max_tokens_option: :maxOutputTokens,
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     configure: lambda do
@@ -67,12 +71,38 @@ def configure_acceptance_provider(provider_name)
   acceptance_setting(provider_name, :configure).call
 end
 
-def configure_invalid_acceptance_credentials(provider_name)
+def break_acceptance_credentials(provider_name)
   acceptance_setting(provider_name, :break_credentials).call
 end
 
 def reset_acceptance_provider(provider_name)
   acceptance_setting(provider_name, :reset).call
+end
+
+def acceptance_model_id(provider_name)
+  "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
+end
+
+def acceptance_weather_tool
+  stub_tool("GetWeather") do
+    description "Get the current weather for a city"
+    params { required :city, String, description: "The city name" }
+
+    define_method(:call) do |context:, city:|
+      celsius = ACCEPTANCE_TEMPERATURES.fetch(city, 10)
+      text("It is #{celsius} degrees Celsius in #{city}.")
+    end
+  end
+end
+
+def weather_result(tool_call)
+  city = JSON.parse(tool_call.arguments).fetch("city")
+  celsius = ACCEPTANCE_TEMPERATURES.fetch(city)
+  Riffer::Messages::Tool.new(
+    "It is #{celsius} degrees Celsius in #{city}.",
+    tool_call_id: tool_call.call_id,
+    name: tool_call.name,
+  )
 end
 
 def acceptance_file(name)

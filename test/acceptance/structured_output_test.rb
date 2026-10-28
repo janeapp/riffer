@@ -56,7 +56,7 @@ describe "Acceptance: structured output" do
         end
       end
 
-      describe "a nested object" do
+      describe "an address" do
         let(:params) do
           Riffer::Params.new.tap do |params|
             params.required(:name, String, description: "Person name")
@@ -68,43 +68,35 @@ describe "Acceptance: structured output" do
             end
           end
         end
-        let(:prompt) { "Extract the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada" }
 
-        strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
-          it "returns the nested object (#{strategy}, #{mode})" do
-            object = structured_result("nested_object", strategy, mode)
+        describe "with every field" do
+          let(:prompt) { "Extract the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada" }
 
-            expect(object[:name]).must_include "John"
-            expect(object[:address][:street]).must_include "123 Main"
-            expect(object[:address][:city]).must_equal "Toronto"
-          end
-        end
-      end
+          strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
+            it "returns the nested object (#{strategy}, #{mode})" do
+              object = structured_result("nested_object", strategy, mode)
 
-      describe "optional fields with no value" do
-        let(:params) do
-          Riffer::Params.new.tap do |params|
-            params.required(:name, String, description: "Person name")
-            params.required(:address, Hash, description: "Mailing address") do
-              required :street, String, description: "Street address"
-              required :city, String, description: "City"
-              optional :postal_code, String, description: "Postal or zip code"
-              optional :country, String, description: "Country"
+              expect(object[:name]).must_include "John"
+              expect(object[:address][:street]).must_include "123 Main"
+              expect(object[:address][:city]).must_equal "Toronto"
             end
           end
         end
-        let(:prompt) do
-          "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. " \
-            "Return null for any unknown fields."
-        end
 
-        strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
-          it "leaves them nil (#{strategy}, #{mode})" do
-            object = structured_result("null_optionals", strategy, mode)
+        describe "with optional fields that have no value" do
+          let(:prompt) do
+            "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. " \
+              "Return null for any unknown fields."
+          end
 
-            expect(object[:address][:city]).must_equal "Vancouver"
-            expect(object[:address][:postal_code]).must_be_nil
-            expect(object[:address][:country]).must_be_nil
+          strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
+            it "leaves them nil (#{strategy}, #{mode})" do
+              object = structured_result("null_optionals", strategy, mode)
+
+              expect(object[:address][:city]).must_equal "Vancouver"
+              expect(object[:address][:postal_code]).must_be_nil
+              expect(object[:address][:country]).must_be_nil
+            end
           end
         end
       end
@@ -344,7 +336,7 @@ describe "Acceptance: structured output" do
         strategies.each do |strategy|
           it "returns the validated object (#{strategy})" do
             agent = Class.new(Riffer::Agent) do
-              model "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
+              model acceptance_model_id(provider_name)
               instructions "Analyze the sentiment of the given text."
               structured_output strategy: strategy do
                 required :sentiment, String, enum: %w[positive neutral negative], description: "The sentiment"
@@ -360,16 +352,9 @@ describe "Acceptance: structured output" do
           end
 
           it "calls a tool before the structured answer (#{strategy})" do
-            weather_tool = stub_tool("GetWeather") do
-              description "Get the current weather for a city"
-              params { required :city, String, description: "The city name" }
-
-              def call(context:, city:)
-                text("It is 15 degrees Celsius in #{city}.")
-              end
-            end
+            weather_tool = acceptance_weather_tool
             agent = Class.new(Riffer::Agent) do
-              model "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
+              model acceptance_model_id(provider_name)
               instructions "Answer weather questions. Always look the weather up with the tool."
               uses_tools [weather_tool]
               structured_output strategy: strategy do

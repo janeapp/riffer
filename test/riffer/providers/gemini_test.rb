@@ -346,9 +346,7 @@ describe Riffer::Providers::Gemini do
 
     describe "thought signatures" do
       let(:provider) { Riffer::Providers::Gemini.new }
-      let(:model) { "gemini-3.5-flash-lite" }
       let(:format) { Riffer::Providers::Gemini::REASONING_FORMAT }
-      let(:question) { Riffer::Messages::User.new("What is the weather in Toronto?") }
       let(:signed_response) do
         toronto = { id: "call_1", name: "get_weather", args: { city: "Toronto" } }
         paris = { id: "call_2", name: "get_weather", args: { city: "Paris" } }
@@ -462,7 +460,6 @@ describe Riffer::Providers::Gemini do
   describe "web search" do
     let(:provider) { Riffer::Providers::Gemini.new }
     let(:model) { "gemini-3.5-flash-lite" }
-    let(:prompt) { "What is the latest Ruby version? Answer in one sentence." }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
     let(:weather_tool) do
       stub_tool("GetWeather") do

@@ -65,30 +65,28 @@ describe "Acceptance: files" do
         end
 
         describe "from a URL" do
-          before { Riffer.config.files.allow_downloads = true }
-          after { Riffer.config.files.allow_downloads = false }
+          before do
+            Riffer.config.files.allow_downloads = true
+            Riffer.config.files.downloader = ->(_url, **) { acceptance_file("red_square.png") }
+          end
+
+          after do
+            Riffer.config.files.allow_downloads = false
+            Riffer.config.files.downloader = Riffer::Files::Downloader.new
+          end
 
           it "reads an image (#{mode})" do
-            file = Riffer::Messages::User::FilePart.from_url(
-              "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
-            )
+            file = Riffer::Messages::User::FilePart.from_url("https://files.example.com/red_square.png")
             message = acceptance_cassette("#{cassette_prefix}/image_url_#{mode}") do
-              call_provider(
-                provider,
-                mode,
-                prompt: "Which company's logo is this? One word.",
-                model: model,
-                files: [file],
-              )
+              call_provider(provider, mode, prompt: "What color is this square? One word.", model: model, files: [file])
             end
 
-            expect(message.content).must_match(/google/i)
+            expect(message.content).must_match(/red/i)
           end
         end
 
         it "reads a file passed to an Agent (#{mode})" do
-          model_id = "#{provider_name}/#{model}"
-          agent = Class.new(Riffer::Agent) { model model_id }.new
+          agent = Class.new(Riffer::Agent) { model acceptance_model_id(provider_name) }.new
 
           response = acceptance_cassette("#{cassette_prefix}/agent_#{mode}") do
             run_agent(agent, mode, "What is the invoice number in this document?", files: [document])

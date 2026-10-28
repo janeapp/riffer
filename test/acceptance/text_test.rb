@@ -94,7 +94,7 @@ describe "Acceptance: text" do
 
       it "answers through an Agent" do
         agent = Class.new(Riffer::Agent) do
-          model "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
+          model acceptance_model_id(provider_name)
           instructions "Be concise."
         end.new
 

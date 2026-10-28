@@ -20,7 +20,7 @@ describe "Acceptance: errors" do
 
       ACCEPTANCE_MODES.each do |mode|
         it "raises an APIError for invalid credentials (#{mode})" do
-          configure_invalid_acceptance_credentials(provider_name)
+          break_acceptance_credentials(provider_name)
 
           error = api_error("invalid_credentials", mode, model: model)
 

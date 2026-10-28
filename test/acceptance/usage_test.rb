@@ -28,7 +28,7 @@ describe "Acceptance: usage" do
         (uncached + (cached * rates.cache_read) + (usage.output_tokens * rates.output)) / 1_000_000
       end
 
-      let(:catalog_key) { "#{provider_name}/#{model}" }
+      let(:catalog_key) { acceptance_model_id(provider_name) }
 
       ACCEPTANCE_MODES.each do |mode|
         it "reports input and output tokens (#{mode})" do
@@ -67,17 +67,9 @@ describe "Acceptance: usage" do
       end
 
       it "adds up usage across an Agent run" do
-        weather_tool = stub_tool("GetWeather") do
-          description "Get the current weather for a city"
-          params { required :city, String, description: "The city name" }
-
-          def call(context:, city:)
-            text("It is 15 degrees Celsius in #{city}.")
-          end
-        end
-        model_id = "#{provider_name}/#{model}"
+        weather_tool = acceptance_weather_tool
         agent = Class.new(Riffer::Agent) do
-          model model_id
+          model acceptance_model_id(provider_name)
           uses_tools [weather_tool]
         end.new
 

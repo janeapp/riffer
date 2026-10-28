@@ -2,8 +2,6 @@
 
 require "acceptance/acceptance_helper"
 
-ACCEPTANCE_TEMPERATURES = { "Toronto" => 15, "Paris" => 22 }.freeze
-
 describe "Acceptance: tool calling" do
   acceptance_providers.each do |provider_name|
     describe provider_name do
@@ -14,17 +12,7 @@ describe "Acceptance: tool calling" do
       let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "tool_calling/#{provider_name}" }
 
-      let(:weather_tool) do
-        stub_tool("GetWeather") do
-          description "Get the current weather for a city"
-          params { required :city, String, description: "The city name" }
-
-          def call(context:, city:)
-            celsius = ACCEPTANCE_TEMPERATURES.fetch(city, 10)
-            text("It is #{celsius} degrees Celsius in #{city}.")
-          end
-        end
-      end
+      let(:weather_tool) { acceptance_weather_tool }
 
       let(:time_tool) do
         stub_tool("GetTime") do
@@ -36,17 +24,7 @@ describe "Acceptance: tool calling" do
         end
       end
 
-      def weather_result(tool_call)
-        city = JSON.parse(tool_call.arguments).fetch("city")
-        celsius = ACCEPTANCE_TEMPERATURES.fetch(city)
-        Riffer::Messages::Tool.new(
-          "It is #{celsius} degrees Celsius in #{city}.",
-          tool_call_id: tool_call.call_id,
-          name: tool_call.name,
-        )
-      end
-
-      let(:agent_model) { "#{provider_name}/#{model}" }
+      let(:agent_model) { acceptance_model_id(provider_name) }
 
       def agent_with(tools, steps: nil)
         model_id = agent_model
@@ -159,7 +137,7 @@ describe "Acceptance: tool calling" do
         deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
 
         expect(done.name).must_equal "get_weather"
-        expect(deltas).must_be(:all?) { |delta| events.index(delta) < events.index(done) }
+        expect(deltas.all? { |delta| events.index(delta) < events.index(done) }).must_equal true
       end
 
       it "streams the Agent's tool calls and final text" do

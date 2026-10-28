@@ -11,9 +11,8 @@ describe "Acceptance: skills" do
       let(:cassette_prefix) { "skills/#{provider_name}" }
       let(:prompt) { "Review this Ruby code: def add(a, b) a + b end" }
       let(:agent) do
-        model_id = "#{provider_name}/#{acceptance_setting(provider_name, :model)}"
         Class.new(Riffer::Agent) do
-          model model_id
+          model acceptance_model_id(provider_name)
           instructions "You are a helpful assistant."
           skills { backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH) }
         end.new

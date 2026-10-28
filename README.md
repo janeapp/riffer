@@ -141,7 +141,7 @@ GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) 
 
 A test that fails while recording leaves a partial cassette behind; delete it before recording again.
 
-To add a provider, add its entry to `ACCEPTANCE_PROVIDERS` in `test/acceptance/acceptance_helper.rb` and its model to `test/acceptance/fixtures/catalog.json` (pricing, plus a reasoning mapping for each level its provider default can't serve). Every feature file then runs against it. A feature the provider can't support excludes it with a reason: `acceptance_providers(except: { amazon_bedrock: "Converse has no web search tool" })`.
+To add a provider, add its entry to `ACCEPTANCE_PROVIDERS` in `test/acceptance/acceptance_helper.rb`, including the reasoning levels its model accepts, and its model's pricing to `test/acceptance/fixtures/catalog.json`. Every feature file then runs against it. A feature the provider can't support excludes it with a reason: `acceptance_providers(except: { amazon_bedrock: "Converse has no web search tool" })`.
 
 VCR records the HTTP interactions to `test/fixtures/vcr_cassettes/` on the first run. Subsequent runs replay from the cassettes without hitting the API. API keys are automatically filtered from recorded cassettes.
 

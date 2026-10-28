@@ -60,10 +60,9 @@ describe "Acceptance: finish reasons" do
       end
 
       it "reports :length as the Agent outcome" do
-        model_id = "#{provider_name}/#{model}"
         limit = token_limit
         agent = Class.new(Riffer::Agent) do
-          model model_id
+          model acceptance_model_id(provider_name)
           model_options limit
         end.new
 
