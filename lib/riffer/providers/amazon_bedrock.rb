@@ -533,21 +533,31 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  DOCUMENT_NAME_LIMIT = 200 #: Integer
+  private_constant :DOCUMENT_NAME_LIMIT
+
   # Converse allows only alphanumerics, single whitespace, hyphens, parentheses
-  # and square brackets in a document name, so +invoice.pdf+ is sent as
-  # +invoice+ and a repeated name gets a counter: +invoice (2)+.
+  # and square brackets in a document name, up to 200 characters, so
+  # +invoice.pdf+ is sent as +invoice+ and a repeated name gets a counter:
+  # +invoice (2)+.
   #--
   #: (String?, Array[String]) -> String
   def document_name(filename, document_names)
-    base = File.basename(filename.to_s, File.extname(filename.to_s)).
+    filename = filename.to_s
+    base = File.basename(filename, File.extname(filename)).
       gsub(/[^A-Za-z0-9\s\-()\[\]]+/, "-").
       gsub(/\s+/, " ").
       gsub(/\A[\s-]+|[\s-]+\z/, "")
     base = "document" if base.empty?
 
-    name = base
+    head = base[0, DOCUMENT_NAME_LIMIT] #: String
+    name = head.rstrip
     count = 1
-    name = "#{base} (#{count += 1})" while document_names.include?(name)
+    while document_names.include?(name)
+      suffix = " (#{count += 1})"
+      head = base[0, DOCUMENT_NAME_LIMIT - suffix.length] #: String
+      name = "#{head.rstrip}#{suffix}"
+    end
     document_names << name
     name
   end

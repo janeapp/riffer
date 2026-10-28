@@ -156,9 +156,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Riffer::Messages::User::FilePart, Array[String]) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format: (Riffer::Messages::User::FilePart, Array[String]) -> Hash[Symbol, untyped]
 
+  DOCUMENT_NAME_LIMIT: Integer
+
   # Converse allows only alphanumerics, single whitespace, hyphens, parentheses
-  # and square brackets in a document name, so +invoice.pdf+ is sent as
-  # +invoice+ and a repeated name gets a counter: +invoice (2)+.
+  # and square brackets in a document name, up to 200 characters, so
+  # +invoice.pdf+ is sent as +invoice+ and a repeated name gets a counter:
+  # +invoice (2)+.
   # --
   # : (String?, Array[String]) -> String
   def document_name: (String?, Array[String]) -> String

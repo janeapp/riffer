@@ -2427,6 +2427,13 @@ describe Riffer::Providers::AmazonBedrock do
 
         expect(document_names(messages)).must_equal ["invoice", "invoice (2)", "invoice (3)"]
       end
+
+      it "keeps names within 200 characters, counter included" do
+        long = "#{'a' * 250}.pdf"
+        messages = [Riffer::Messages::User.new("Read these", files: [document(long), document(long)])]
+
+        expect(document_names(messages)).must_equal ["a" * 200, "#{'a' * 196} (2)"]
+      end
     end
 
     describe "with unsupported URL source" do

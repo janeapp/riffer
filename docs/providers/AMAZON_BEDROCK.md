@@ -212,7 +212,7 @@ response = provider.generate_text(
 )
 ```
 
-Converse requires every document to have a name, unique across the request, made only of letters, digits, single spaces, hyphens, parentheses and square brackets. Riffer builds it from the file's `filename`: the extension is dropped, other characters become hyphens, a document without a filename is named `document`, and a repeated name gets a counter (`invoice`, `invoice (2)`). The model can see the name.
+Converse requires every document to have a name, unique across the request, made only of letters, digits, single spaces, hyphens, parentheses and square brackets, and at most 200 characters long. Riffer builds it from the file's `filename`: the extension is dropped, other characters become hyphens, the name is cut to 200 characters, a document without a filename is named `document`, and a repeated name gets a counter (`invoice`, `invoice (2)`). The model can see the name.
 
 Any other URL scheme (e.g. `https://`) isn't something Bedrock accepts as a reference, so riffer downloads the file itself and sends the raw bytes — see [File Downloads](../CONFIGURATION.md#file-downloads) for the `allow_downloads` policy this requires.
 
