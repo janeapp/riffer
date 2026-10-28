@@ -214,20 +214,3 @@ def stream_agent(agent, prompt, **)
   response = loop { events << enumerator.next }
   [events, response]
 end
-
-# Matches every AWS endpoint, including dual-stack and China partition hosts.
-ACCEPTANCE_AWS_HOST = /\.(amazonaws\.com(\.cn)?|api\.aws)\z/
-
-# A SigV4 recording carries the access key id and session token in its
-# headers, and a credential fetch would record the credentials themselves.
-VCR.configure do |config|
-  config.before_record do |interaction|
-    # Replay matches on method, URI and body only, so no recording needs these.
-    interaction.request.headers.delete("Authorization")
-    interaction.request.headers.delete("X-Amz-Security-Token")
-
-    # Sensitive-data placeholders make the URI unparseable, so match the host as text.
-    host = interaction.request.uri[%r{\Ahttps?://([^/:]+)}, 1].to_s
-    interaction.ignore! if host.match?(ACCEPTANCE_AWS_HOST) && !host.start_with?("bedrock-runtime.")
-  end
-end

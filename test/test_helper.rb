@@ -49,6 +49,20 @@ VCR.configure do |config|
   end
   config.filter_sensitive_data("<GOOGLE_CLOUD_PROJECT>") { ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project") }
   config.filter_sensitive_data("<OPENROUTER_API_KEY>") { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
+
+  # A SigV4 recording carries the access key id and session token in its
+  # headers, and a credential fetch would record the credentials themselves.
+  config.before_record do |interaction|
+    # Replay matches on method, URI and body only, so no recording needs these.
+    interaction.request.headers.delete("Authorization")
+    interaction.request.headers.delete("X-Amz-Security-Token")
+
+    # Sensitive-data placeholders make the URI unparseable, so match the host as text.
+    # The pattern covers every AWS endpoint, including dual-stack and China partition hosts.
+    host = interaction.request.uri[%r{\Ahttps?://([^/:]+)}, 1].to_s
+    aws_host = host.match?(/\.(amazonaws\.com(\.cn)?|api\.aws)\z/)
+    interaction.ignore! if aws_host && !host.start_with?("bedrock-runtime.")
+  end
 end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
