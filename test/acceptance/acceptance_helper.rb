@@ -19,16 +19,12 @@ ACCEPTANCE_TEMPERATURES = { "Toronto" => 15, "Paris" => 22 }.freeze
 
 ACCEPTANCE_TAGS = { "team" => "growth", "agent" => "support/triage_agent", "user_id" => "u_1" }.freeze
 
-# Providers on Riffer::HTTP::Client raise Riffer::APIError.
 HTTP_ERROR_CONTRACT = { class: Riffer::APIError, status: :status.to_proc, detail: :body.to_proc }.freeze
 
 # Every acceptance file runs against each provider here unless it excludes it,
 # so a new provider joins every feature by default. An entry holds what the
 # tests can't derive: riffer passes model options and web_search options
-# through as-is, so their names are the provider's own. token_limit_options
-# caps output at 20 tokens, invalid_options is rejected with a 400,
-# thinking_options makes the model reason on a simple tool call, and
-# cache_options lets a repeated prompt hit the cache. wire_tags is what
+# through as-is, so their names are the provider's own. wire_tags is what
 # ACCEPTANCE_TAGS adds to the request body, and error_contract the error class
 # a failed request raises and how to read its HTTP status and text.
 ACCEPTANCE_PROVIDERS = {
@@ -91,8 +87,8 @@ ACCEPTANCE_PROVIDERS = {
       status: ->(error) { error.context.http_response.status_code },
       detail: :message.to_proc,
     },
-    # Replay authenticates with a placeholder bearer token. Recording signs
-    # with the AWS credentials in the environment when AWS_ACCESS_KEY_ID is set.
+    # An api_token takes precedence over SigV4, so recording with AWS
+    # credentials leaves it unset.
     configure: lambda do
       Riffer.config.amazon_bedrock.region = "us-east-1"
       unless ENV["AWS_ACCESS_KEY_ID"]

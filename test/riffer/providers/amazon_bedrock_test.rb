@@ -16,12 +16,12 @@ describe Riffer::Providers::AmazonBedrock do
   end
 
   # The SDK's stubbed client validates each request against the Converse shapes.
-  def stub_converse
+  def stub_converse(content: [{ text: "OK" }])
     client = Aws::BedrockRuntime::Client.new(stub_responses: true, region: "us-east-1")
     client.stub_responses(
       :converse,
       {
-        output: { message: { role: "assistant", content: [{ text: "OK" }] } },
+        output: { message: { role: "assistant", content: content } },
         stop_reason: "end_turn",
         usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
         metrics: { latency_ms: 1 },
@@ -253,11 +253,7 @@ describe Riffer::Providers::AmazonBedrock do
   end
 
   describe "#extract_content" do
-    let(:provider) do
-      # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes
-      # the Aws::BedrockRuntime::Types constants below available.
-      Riffer::Providers::AmazonBedrock.new
-    end
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
 
     def build_response(content_blocks)
       Aws::BedrockRuntime::Types::ConverseResponse.new(
@@ -316,7 +312,6 @@ describe Riffer::Providers::AmazonBedrock do
         ServiceUnavailableException: :service_unavailable_exception,
       }.each do |class_name, event_type|
         it "raises Aws::BedrockRuntime::Errors::#{class_name} for a #{event_type} event" do
-          provider # force SDK load so the Aws constants resolve below
           type_klass = Aws::BedrockRuntime::Types.const_get(class_name)
           error_klass = Aws::BedrockRuntime::Errors.const_get(class_name)
           event = type_klass.new(message: "boom", event_type: event_type)
@@ -575,13 +570,7 @@ describe Riffer::Providers::AmazonBedrock do
 
   describe "reasoning" do
     let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
-    let(:provider) do
-      # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes
-      # the Aws::BedrockRuntime::Types constants below available.
-      Riffer::Providers::AmazonBedrock.new
-    end
-    # Force construction now so the constants resolve regardless of test order.
-    before { provider }
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
     let(:redacted_bytes) { "\xFF\x00opaque\xFE".b }
 
     def text_reasoning_block(text, signature)
@@ -640,12 +629,8 @@ describe Riffer::Providers::AmazonBedrock do
     end
 
     def stream_events(events)
-      events += [Aws::BedrockRuntime::Types::MessageStopEvent.new(stop_reason: "end_turn", event_type: :message_stop)]
-      stream_double = Object.new
-      stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
-      client_double = Object.new
-      client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-      provider.instance_variable_set(:@client, client_double)
+      stop = Aws::BedrockRuntime::Types::MessageStopEvent.new(stop_reason: "end_turn", event_type: :message_stop)
+      stub_stream_events(events + [stop])
       provider.stream_text(prompt: "Hi", model: model).to_a
     end
 
@@ -797,26 +782,13 @@ describe Riffer::Providers::AmazonBedrock do
       # The SDK's stubbed client runs its own param validation and JSON
       # serialization, so this pins the wire shape Converse receives.
       it "round-trips captured reasoning through the SDK onto the next request body" do
-        client = Aws::BedrockRuntime::Client.new(stub_responses: true, region: "us-east-1")
-        client.stub_responses(
-          :converse,
-          {
-            output: {
-              message: {
-                role: "assistant",
-                content: [
-                  { reasoning_content: { reasoning_text: { text: "Think", signature: "sig" } } },
-                  { reasoning_content: { redacted_content: redacted_bytes } },
-                  { text: "42" },
-                ],
-              },
-            },
-            stop_reason: "end_turn",
-            usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
-            metrics: { latency_ms: 1 },
-          },
+        client = stub_converse(
+          content: [
+            { reasoning_content: { reasoning_text: { text: "Think", signature: "sig" } } },
+            { reasoning_content: { redacted_content: redacted_bytes } },
+            { text: "42" },
+          ],
         )
-        Riffer.config.amazon_bedrock.client = client
         question = Riffer::Messages::User.new("Hi")
 
         first = provider.generate_text(messages: [question], model: model)

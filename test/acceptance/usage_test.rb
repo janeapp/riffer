@@ -25,8 +25,10 @@ describe "Acceptance: usage" do
       def expected_cost(usage)
         rates = Riffer.config.catalog.rates_for(catalog_key)
         cached = usage.cache_read_tokens.to_i
-        uncached = (usage.input_tokens - cached) * rates.input
-        (uncached + (cached * rates.cache_read) + (usage.output_tokens * rates.output)) / 1_000_000
+        written = usage.cache_write_tokens.to_i
+        uncached = (usage.input_tokens - cached - written) * rates.input
+        cache_cost = (cached * rates.cache_read) + (written * (rates.cache_write || rates.input))
+        (uncached + cache_cost + (usage.output_tokens * rates.output)) / 1_000_000
       end
 
       let(:catalog_key) { acceptance_model_id(provider_name) }
