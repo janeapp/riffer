@@ -1,0 +1,107 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]}],"system":[{"text":"Answer weather questions. Always look
+        the weather up with the tool."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""},"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 06b5cd23-5dab-4057-8d0c-4e099c30b187
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175056Z
+      X-Amz-Content-Sha256:
+      - c78b5499e9159b0e67b4aa6f7acb82a63e0c9a6c5951803397195fc0698af6c7
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '860'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:59 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1651'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 425fa4e6-64b8-4c25-b1f1-728a61c3f532
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2247},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQS2wYKEggTEAEYAjgBQgh0aGlua2luZxIMJSS6gymuvN5Xl+BsGgylemNWIV6b7YATYU0iMI+hx1aSQDcC6U3Kr0Pv72eV1DOfaJ1dmzzo3Rz1BrgeULpgg3zrmdFEC2drxET4qyr2BXMbbwKDDBRoOPwTbndUt9fWhQO1gGoopiEEQP0vgUkQq0ff0K63Yg+dBwADcC9+lKth4QK9CR/qkI9HAnqT/A+GlNu9kbmpR6ZGXffISf9NA+TFmsh33XXPWS5UFXV2b+LUgd684PKtKIcxygERdc7Fyc8Dfpe3DBEcCcAqIqNhqL6YzHsfarP247JLxRj85CeK8Enf8BZYXtfQKSkQVWAMhccVJkxtmrFCgcVerYv5vNswL+NtXElbyvy3LO62c1AsOW79KpamMOXheOSNoNOGqR5XonKE2M1rjqgGRHPiiTUMWtCNERVx/GYqAXJkbfR2pZuZddvP8tDEI9X675W4QMvJ26+oGKjBUu1rBjfUSd5qLgLkVdOsciX0ezFx/0TpYJSQVAveH7aAI+xS+iXinVJSmMkqrUAhJ91uQMTpbV4v0INzP6+RYAi1iBlmzk2CqL4uUcA7LqwROm8PKqmsk56k5LvIAzTpTY/cu1RAzq2BKuWiPfVcl2HFItxTqppUFy4ZiBxFvMwmEDc/aXZCpvSnsxdsb67bhNVC1MfTiLMaa+NKTLqFDCpyVNPbrKNpyjpKDgTd3s6q4kaokuTcLCvr2lwSH8O2wyKnIlc4UXLlDpJ1OHElVBlTWau8E6d9BSkFUF1zoAkehqCfY/aUgUpKwbMeZzvXllUTqJeyBxHE82n/cJP6YU8TJLLOwIpcMv1D22Gz7GNkF+zIWrCw8ARQWgX6fLaearM2yAV97ptyZjLgBgON1N63O8lU7MlBSzZadfPP7Z/dTVOIgQlCy/f42xYIbIXtoEdhP6sOiznQzgOO3uJUwBQDTg50miVyYJBp+C0ajhWpJ1ypuE7XPJPPM6+oEnP6zdSmKROitm2zb+NHUpY/GAU/WdQ/9zKiQvgFKQTTmqoW2hR4LxKs0yixtasm/WU3tA6HN64JotPbfAE8MBX+k9cTdRfcoct9WAptujqdeyxPhvxCXL5UG/g/7dVMui4JodX4fs6wvzeLez61GAE=","text":""}}},{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_3RZ5v8oOkEZz4A0OLbhsPm","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":654,"outputTokens":167,"serverToolUsage":{},"totalTokens":821}}'
+  recorded_at: Wed, 28 Oct 2026 17:50:59 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"","signature":"CAQS2wYKEggTEAEYAjgBQgh0aGlua2luZxIMJSS6gymuvN5Xl+BsGgylemNWIV6b7YATYU0iMI+hx1aSQDcC6U3Kr0Pv72eV1DOfaJ1dmzzo3Rz1BrgeULpgg3zrmdFEC2drxET4qyr2BXMbbwKDDBRoOPwTbndUt9fWhQO1gGoopiEEQP0vgUkQq0ff0K63Yg+dBwADcC9+lKth4QK9CR/qkI9HAnqT/A+GlNu9kbmpR6ZGXffISf9NA+TFmsh33XXPWS5UFXV2b+LUgd684PKtKIcxygERdc7Fyc8Dfpe3DBEcCcAqIqNhqL6YzHsfarP247JLxRj85CeK8Enf8BZYXtfQKSkQVWAMhccVJkxtmrFCgcVerYv5vNswL+NtXElbyvy3LO62c1AsOW79KpamMOXheOSNoNOGqR5XonKE2M1rjqgGRHPiiTUMWtCNERVx/GYqAXJkbfR2pZuZddvP8tDEI9X675W4QMvJ26+oGKjBUu1rBjfUSd5qLgLkVdOsciX0ezFx/0TpYJSQVAveH7aAI+xS+iXinVJSmMkqrUAhJ91uQMTpbV4v0INzP6+RYAi1iBlmzk2CqL4uUcA7LqwROm8PKqmsk56k5LvIAzTpTY/cu1RAzq2BKuWiPfVcl2HFItxTqppUFy4ZiBxFvMwmEDc/aXZCpvSnsxdsb67bhNVC1MfTiLMaa+NKTLqFDCpyVNPbrKNpyjpKDgTd3s6q4kaokuTcLCvr2lwSH8O2wyKnIlc4UXLlDpJ1OHElVBlTWau8E6d9BSkFUF1zoAkehqCfY/aUgUpKwbMeZzvXllUTqJeyBxHE82n/cJP6YU8TJLLOwIpcMv1D22Gz7GNkF+zIWrCw8ARQWgX6fLaearM2yAV97ptyZjLgBgON1N63O8lU7MlBSzZadfPP7Z/dTVOIgQlCy/f42xYIbIXtoEdhP6sOiznQzgOO3uJUwBQDTg50miVyYJBp+C0ajhWpJ1ypuE7XPJPPM6+oEnP6zdSmKROitm2zb+NHUpY/GAU/WdQ/9zKiQvgFKQTTmqoW2hR4LxKs0yixtasm/WU3tA6HN64JotPbfAE8MBX+k9cTdRfcoct9WAptujqdeyxPhvxCXL5UG/g/7dVMui4JodX4fs6wvzeLez61GAE="}}},{"toolUse":{"toolUseId":"tooluse_3RZ5v8oOkEZz4A0OLbhsPm","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_3RZ5v8oOkEZz4A0OLbhsPm","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]}],"system":[{"text":"Answer weather
+        questions. Always look the weather up with the tool."}],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""},"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - bb82e443-b213-4a05-935d-f3f2f0a02be9
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175059Z
+      X-Amz-Content-Sha256:
+      - 6baf9f0a19f5e0e5d6bfe6294f3a50c3f0423760a6e39e4df913f826096fd543
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '2372'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:00 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '355'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - e127e9f4-163e-4064-9ce6-810c4e0bffd7
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1316},"output":{"message":{"content":[{"text":"{\"city\":
+        \"Toronto\", \"celsius\": 15}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":844,"outputTokens":20,"serverToolUsage":{},"totalTokens":864}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:00 GMT
+recorded_with: VCR 6.4.0

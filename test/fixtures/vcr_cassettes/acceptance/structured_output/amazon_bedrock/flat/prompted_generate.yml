@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Analyze the sentiment
+        of: ''I love this product, it is amazing!''\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]},\"score\":{\"type\":\"number\",\"description\":\"Confidence
+        between 0 and 1\"}},\"required\":[\"sentiment\",\"score\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"sentiment\":\"positive | neutral |
+        negative\",\"score\":\"<number>\"}\n\nOnly call tools when the request needs
+        them. If you can answer directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 852b6e82-b286-446c-8c5c-ba1706b4eea6
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175201Z
+      X-Amz-Content-Sha256:
+      - 2a4b7092f848fe6fed183ac5d1938eca704386348a01186c2e9aaa9444d39b30
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '825'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:02 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '358'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5bf9cf16-33c9-4682-8528-8ddaaeff239d
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1075},"output":{"message":{"content":[{"text":"{\"sentiment\":\"positive\",\"score\":0.98}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":246,"outputTokens":19,"serverToolUsage":{},"totalTokens":265}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:02 GMT
+recorded_with: VCR 6.4.0

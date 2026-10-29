@@ -1,0 +1,54 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Order A-17 has 2 items:
+        a book costing $12.99 and a pen costing $1.50"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order
+        identifier\"},\"items\":{\"type\":\"array\",\"description\":\"Line items\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Product
+        name\"},\"price\":{\"type\":\"number\",\"description\":\"Price in dollars\"},\"quantity\":{\"type\":[\"integer\",\"null\"],\"description\":\"Quantity
+        ordered\"}},\"required\":[\"name\",\"price\",\"quantity\"],\"additionalProperties\":false}}},\"required\":[\"order_id\",\"items\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - b5d070e6-4172-4112-be84-68b31ad91dfc
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175415Z
+      X-Amz-Content-Sha256:
+      - dea9d578eb4c2f847848cec496a612bcf46ec033f1dc47366643340b890b7dd6
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '832'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:16 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '470'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - e3c62425-b6ff-4d1d-ae4f-644fb1d08ad1
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1160},"output":{"message":{"content":[{"text":"{\"order_id\":
+        \"A-17\", \"items\": [{\"name\": \"book\", \"price\": 12.99, \"quantity\":
+        null}, {\"name\": \"pen\", \"price\": 1.50, \"quantity\": null}]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":439,"outputTokens":65,"serverToolUsage":{},"totalTokens":504}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:16 GMT
+recorded_with: VCR 6.4.0

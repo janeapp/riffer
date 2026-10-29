@@ -1,0 +1,54 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Book a visit on 2026-10-26
+        at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":[\"string\",\"null\"],\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"email\",\"clinic_ids\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a88a9121-6a3d-4373-acc4-ff42a37bddc5
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175122Z
+      X-Amz-Content-Sha256:
+      - 27f1ff987a0432b5dbde05c927490d627a5e080a5cd55930a9727cddf7569531
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '877'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '461'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 85cf69d6-311c-43b4-b338-fc3f5c3c2177
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1444},"output":{"message":{"content":[{"text":"{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"email\":null,\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":471,"outputTokens":76,"serverToolUsage":{},"totalTokens":547}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:24 GMT
+recorded_with: VCR 6.4.0

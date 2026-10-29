@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[{"text":"Be concise."}],"additionalModelRequestFields":{"thinking":{"type":"adaptive"},"output_config":{"effort":"max"}},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 6289ab88-d725-4c11-87e1-438443a0e4f5
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175403Z
+      X-Amz-Content-Sha256:
+      - 41b1c9cc4b282c88439c355f376631c6ae0db3e7c4c4766c0567bd4f6d4b002e
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '279'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:04 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1078'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 16466c0b-ed56-4a80-ac3e-ab3b304b4d20
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1150},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSggQKEggTEAEYAjgBQgh0aGlua2luZxIMww6bV8l612o+2hfaGgyo2TewdOb5cy9bQPEiMM6jWB3bN6t8nxxJEIMqlgESHgVwjPT3++Rv3/5qzQ9JMNnnyyzSTQVkllkObyLLriqdA0i7hqVkS27pE2nO6z7cwQdlbc3MEx2xfKbuzMliSPwf/b6BO0O+WWiy4al7FDqGmnsMJDo7LG2V6guDDU/zK5fSdNelyHqe1l/oSDlYjG8rBkaFJM3z5MZvIbeEeYQuNYb2ETr95qOJ2whGULIoB9XaCsnyApBi5stEQfJqEX1YoQSqeYx/93rE/XNPgynGkn2k4A/MGWUczQKipmXPDJTW66Iexe6RQcGTqQ0dvGaQ19Hdx4E6JxlF4F8Myd72cIJypQkUzQl040/ZD8g31mNgQPFBQ3NW2IsT4HhLcsPaImJXU3MJZpT4l8crjOA7uo85x+kFoXMdlBLOCgJJL4+gW1eRqtlYu2K6bhq/k3P9KQt1aycYLQPw1enLcvO/5s174NHc9wKy1A1A+q/wQbGswzfj5OK7lpXr5BBU0FUinETQJdpbKP6ItOh1O513rKMcCpTYrn3XhpURzZQjET6i9i8YGjcytfiSmwC1gWsiQWzU+Zkt0nxAtbql7xIhCeVAK726QOhNlimu6C5AVmxgrdDBszIRbYLHhbqvGAE=","text":""}}},{"text":"391"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":31,"outputTokens":40,"serverToolUsage":{},"totalTokens":71}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:04 GMT
+recorded_with: VCR 6.4.0

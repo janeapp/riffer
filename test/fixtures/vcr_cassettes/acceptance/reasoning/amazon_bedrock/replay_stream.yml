@@ -1,0 +1,102 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"additionalModelRequestFields":{"thinking":{"type":"adaptive"},"output_config":{"effort":"max"}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 1f45843c-f593-49b3-9ce8-c1fc95187023
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175040Z
+      X-Amz-Content-Sha256:
+      - bada47bcb836f5d08c0df8e56959ebbe7d94d8c1570cd2d7cb3dae368ade7083
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '466'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:41 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 03c40778-9e90-4b1e-ab51-7678bea137da
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAhAAAAFKkIfnjCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmciLCJyb2xlIjoiYXNzaXN0YW50In3i0eE2AAAAtgAAAFcPquaKCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiIn19LCJwIjoiYWJjZGVmZ2giffRvBBMAAAOlAAAAV65+eXYLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InNpZ25hdHVyZSI6IkNBUVNsd1FLRWdnVEVBRVlBamdCUWdoMGFHbHVhMmx1WnhJTUdOV3BuN1E2dHhMTkxsbTRHZ3d5OWlvWGZzMTFFckQ1TzRVaU1EY2RFYUwyb3lYRE9MdGU2QmQ4M3QyTFprYUFiZHJpa0RPeE1mL3dIaHRpWitGbndDQnZkaHhmME15UVRPMUROeXF5QTJQZnlBM0ZsVFFQMnlJRFM1R0E2QW9yMWw4eXBOZERXK1g0M1kzQ2plRUh2UHhyK2VWcU5jem9ZR09CUnd0b0t1MXVJbG42ZzZuczYyZmVjUzhnSkxGUGhUdjF1V2xwaXh0L1I1VW1CblBxVWtXaDZnTmhQNDA3a3BBT3lGcHBGbmxoSTZoaGRMVFdlZlpta2Jldm5hTy9lWVRMOHFnbnMyaUZPcE84bVUxWklYYUJ0VUJiSHBSYlczcHpEdS9OemZDZkIxTGdGNXpzRnBGd0xMcnRFOWZFdU81dHRwVSt4cTN0anAxbW1MNlFsWUh1T3NxMGdRTlJBNTRCUS95SklOTDlac3Y4dmU4ZzRpeE9BOUtoTjl0UXZHZEFLc2dCNCtWWmJLeUwydHVlZmpGRlpqemxqUllZL21tekVzanFpWldwVjl5bitOY2tud3M0TTluajhsV2xka2Y5NlFhV1ZwNW5kdmxZZXVPNHFkSnpheW1YbWZiVmJTK0lJdU5naXN2ZWdQdHlNZFptSXJmcm9RQVJHQmxndk9vOUhCTkNhMEloK1A4V1dMbmt3Y2o3TFdNZGM3K0JrZWRKWElGcXFBKzFmRmNwM0d3QlhiazRvQVJDa0wvM0xNam5rNzFla3RzOE44MVRQZEdvZ29qQzdkQ3JJQWprdStsc0FkZ041RkltOVBQekdGRjRjQk9UOVdHYVJ1SzJoY0pHblhZRnd1M3JDb2VzdXc5aGZNbENZQUxBcHh1bDlHZm1OOVJsbUszM0dBRT0ifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0Qifb3UT0YAAACqAAAAVt29rJ8LOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTCJ9BKO9CQAAASwAAABXX0AKngs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja1N0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQ1Njc4Iiwic3RhcnQiOnsidG9vbFVzZSI6eyJuYW1lIjoiZ2V0X3dlYXRoZXIiLCJ0b29sVXNlSWQiOiJ0b29sdXNlX21vQkdLT1cwRG5IOU90SlAzQWFFUHciLCJ0eXBlIjoidG9vbF91c2UifX19f/Da+AAAANIAAABXYxg3Bws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRvb2xVc2UiOnsiaW5wdXQiOiIifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUiJ9g4S/kwAAAOAAAABXuPnc4Qs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRvb2xVc2UiOnsiaW5wdXQiOiJ7XCJjaSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowIn2fxww/AAAA1gAAAFeWmJHHCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidG9vbFVzZSI6eyJpbnB1dCI6InR5XCI6ICJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUCJ9EdXPoAAAAN8AAABXm4jztgs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRvb2xVc2UiOnsiaW5wdXQiOiJcIlRvcm9udCJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVlcifVxh4hcAAACxAAAAV72KOpoLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0b29sVXNlIjp7ImlucHV0Ijoib1wifSJ9fSwicCI6ImFiY2RlZmcifcnriNMAAACHAAAAVuTsRyoLOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsInAiOiJhYmMifVAMp9gAAAC6AAAAUSM5rr4LOmV2ZW50LXR5cGUHAAttZXNzYWdlU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7InAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQiLCJzdG9wUmVhc29uIjoidG9vbF91c2UifUQlONoAAAEDAAAATni6GosLOmV2ZW50LXR5cGUHAAhtZXRhZGF0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7Im1ldHJpY3MiOnsibGF0ZW5jeU1zIjoxMzU5fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFEiLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6Mzk0LCJvdXRwdXRUb2tlbnMiOjgyLCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6NDc2fX0076Ay
+  recorded_at: Wed, 28 Oct 2026 17:50:42 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"","signature":"CAQSlwQKEggTEAEYAjgBQgh0aGlua2luZxIMGNWpn7Q6txLNLlm4Ggwy9ioXfs11ErD5O4UiMDcdEaL2oyXDOLte6Bd83t2LZkaAbdrikDOxMf/wHhtiZ+FnwCBvdhxf0MyQTO1DNyqyA2PfyA3FlTQP2yIDS5GA6Aor1l8ypNdDW+X43Y3CjeEHvPxr+eVqNczoYGOBRwtoKu1uIln6g6ns62fecS8gJLFPhTv1uWlpixt/R5UmBnPqUkWh6gNhP407kpAOyFppFnlhI6hhdLTWefZmkbevnaO/eYTL8qgns2iFOpO8mU1ZIXaBtUBbHpRbW3pzDu/NzfCfB1LgF5zsFpFwLLrtE9fEuO5ttpU+xq3tjp1mmL6QlYHuOsq0gQNRA54BQ/yJINL9Zsv8ve8g4ixOA9KhN9tQvGdAKsgB4+VZbKyL2tuefjFFZjzljRYY/mmzEsjqiZWpV9yn+Ncknws4M9nj8lWldkf96QaWVp5ndvlYeuO4qdJzaymXmfbVbS+IIuNgisvegPtyMdZmIrfroQARGBlgvOo9HBNCa0Ih+P8WWLnkwcj7LWMdc7+BkedJXIFqqA+1fFcp3GwBXbk4oARCkL/3LMjnk71ekts8N81TPdGogojC7dCrIAjku+lsAdgN5FIm9PPzGFF4cBOT9WGaRuK2hcJGnXYFwu3rCoesuw9hfMlCYALApxul9GfmN9RlmK33GAE="}}},{"toolUse":{"toolUseId":"tooluse_moBGKOW0DnH9OtJP3AaEPw","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_moBGKOW0DnH9OtJP3AaEPw","content":[{"text":"It
+        is 15 degrees Celsius in Toronto."}]}}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"additionalModelRequestFields":{"thinking":{"type":"adaptive"},"output_config":{"effort":"max"}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a032b325-cc09-4532-91ff-e5aa0d8650cf
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175042Z
+      X-Amz-Content-Sha256:
+      - 63cfeaa11c65733fcb3589fd3cd903834dba78dc7283633c7201677cd1d4d8f5
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1546'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:43 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - d737bf85-19d9-4eca-92dd-4171764402ea
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAlQAAAFL5oUfRCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eCIsInJvbGUiOiJhc3Npc3RhbnQiffvVpbAAAADSAAAAV2MYNwcLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiSXQifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIifahibXEAAACtAAAAVxiaQBkLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiJ3MgY3VyciJ9LCJwIjoiYWJjZGVmZ2hpamtsbSJ9sJzWqgAAAMQAAABXjLhVJQs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InRleHQiOiJlbnRseSAxNcKwQyBpbiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkMifZrtipYAAACsAAAAVyX6aakLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiIFRvcm9udG8uIn0sInAiOiJhYmNkZWZnaGlqIn3ECLE4AAAAkAAAAFY2LAy4CzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsIn3C2aZeAAAAlAAAAFFdyD/bCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFycyIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ9odWPzAAAAQ4AAABOgCreOgs6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjEyNjd9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxIiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjQ5OSwib3V0cHV0VG9rZW5zIjoxNiwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjUxNX19QW9y4w==
+  recorded_at: Wed, 28 Oct 2026 17:50:43 GMT
+recorded_with: VCR 6.4.0

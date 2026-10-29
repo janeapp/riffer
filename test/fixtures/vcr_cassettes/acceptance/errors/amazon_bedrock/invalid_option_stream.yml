@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Say hello"}]}],"system":[],"inferenceConfig":{"temperature":5.0}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - e379be82-71ab-475a-a137-28627ec23cb4
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175138Z
+      X-Amz-Content-Sha256:
+      - 9d19749be98cb51987dccbcb8d570eb2cb4a907eff3f0ee3824b5d0541cfeceb
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '113'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:38 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '164'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 24864101-a792-4f47-8937-206353aecb63
+      X-Amzn-Errortype:
+      - ValidationException:http://internal.amazon.com/coral/com.amazon.bedrock/
+    body:
+      encoding: UTF-8
+      string: '{"message":"1 validation error detected: Value ''5.0'' at ''inferenceConfig.temperature''
+        failed to satisfy constraint: Member must have value less than or equal to
+        1"}'
+  recorded_at: Wed, 28 Oct 2026 17:51:38 GMT
+recorded_with: VCR 6.4.0

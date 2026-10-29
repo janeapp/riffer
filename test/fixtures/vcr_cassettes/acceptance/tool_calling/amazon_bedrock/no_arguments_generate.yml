@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What time is it?"}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_time","description":"Get
+        the current time in UTC","inputSchema":{"json":{"type":"object","properties":{},"required":[],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - c85fde13-a408-48ca-acf6-a303d4226729
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175232Z
+      X-Amz-Content-Sha256:
+      - 73c1bd1b5de46f13c00918263900f379092018b3333e576966eb0012e1f40c04
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '284'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:52:34 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '409'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 2fbf6132-e2a1-4409-84d4-0db9cbfdec19
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1080},"output":{"message":{"content":[{"toolUse":{"input":{},"name":"get_time","toolUseId":"tooluse_BLcAiEplmkeb9lrUwrIxbB","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":365,"outputTokens":26,"serverToolUsage":{},"totalTokens":391}}'
+  recorded_at: Wed, 28 Oct 2026 17:52:34 GMT
+recorded_with: VCR 6.4.0

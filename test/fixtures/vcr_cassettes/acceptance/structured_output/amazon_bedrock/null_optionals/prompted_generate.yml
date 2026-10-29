@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract info from:
+        Jane works at 42 King St in Vancouver. No other details are known. Return
+        null for any unknown fields.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 0d0f6c2f-02d7-41c3-a5d8-f152bc768fc9
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175142Z
+      X-Amz-Content-Sha256:
+      - 53a05f61045daa56953f736d1380a4405f179298d2c0d1e7a09d0157be7a39de
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1226'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:45 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1862'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - '09ac0e76-7e95-46e1-81f1-f1e05e47a807'
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2085},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQS8wcKEggTEAEYAjgBQgh0aGlua2luZxIMrM8b2yZfAmPzgDp5Ggwb1X7qoSLA5siebvQiMMcLXKJR/pFpHynTA3jISmqMEYlqbtgaQ1usGOFLf4vQH8tn6a+O8E9thZP6lu7oPyqOB3nVn+m0kEVSvf1tePbb76Y96fnCoYgqaboZBAddlSvFbjvzjFrT/wOjexIMRh9ysNx8ei44jSWwNh4k+BFk6fWYCERErqDNUvSlHeQbCnbn1JYP9mxHasXM7Uvna4cN2F3X7TyRKI2zY0eHXidoX4wtYv3BAOMm6pF2UQtFbAHMFzIxUlrLdEZBMi7Bq0SabvOVkGjcyRg9EgS2i3ffa7Ff/v1P0oxY3Fa5mi/xDkzFULAEqaB2WudPIREVGuV/mVa9NOqbCbBEADTe5W1XS4/Ja/v4j2wCmuXPutMV6wfrSgThRGIe96eGEJuM/Mo6jLz6SaZUimaWKyzWxsROvBGH59YVKsltyKhu0Z8wBw/YQXGu/rceEH7z4UCVSCYnTlz7LDtU8W+VoCT3zV6EQDxqhtdL2FShW61EufQixObhElQ+ehHLMP1dmoBGcsYBJOe79fVC0IsnKer6TPddLiBENfb5f5OwZK+iVH6aowukqWExobqfKeYCJvspkM6KMkAMm0YSrZvKpjt6laoOKzcbewt0H/EfHSUoADSljbaQtNnCl343pdPWUBJFfQQJRn21V6Bhj+6uaUvpGltmi4r74drWf00U2YXTGIAWTm2q1I3n+TtWnfGdDeSmPa8FAIdGf8H+GWqJz/TTaTov4YMECYtTX8qgkReJtYUAvWTL16ffzNWt0MbVKFWFsAOPsZUlcNMOYBuLhsyzTg+WXAOJ168JT59PAaDR3zGIJwbXRBM9uOnbco+h6qc2qO3iyKLhRd/q9/jJjDr9EzR9xTRpGq1vAyxiyTed3qN+1DNMpA+S004YYEd9WS5kLisBT6Q/Ve5zB3CZAM6+O/LMtee25bzD4DC9G14L5s5R2C3k7dP5XTxRX1pdJJC5WFhPnYVnQleMhSiy79of8YKTkvdgacyRge2XRcL2FWhR+nW+EJCHZofz1b68nuvpkeoxS4zu/ZM8zAMYG0Ifbnh51N99u0BRPrGayQWlhfjhgF1u8R72N7lNodp3cbkcdoxaMrl+mfv0oSqiUj0QVJtf4lClPrhaA2xo8fKeeBwQ0dc+fY9cSyHm+vFQ4uB+j7J3fvyk3gK7lxnw2UFsY/afzH9vdPiB2T+fM1p583ADoO0A//baJqNUF9oiIQ/oSDwOq6szCCaqISBZOZJv5tCKMUjA7kVp1Q63wDhz/vLBI1LST65K7MUxKFR8WM/RLlYYAQ==","text":""}}},{"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42
+        King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":351,"outputTokens":224,"serverToolUsage":{},"totalTokens":575}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:45 GMT
+recorded_with: VCR 6.4.0

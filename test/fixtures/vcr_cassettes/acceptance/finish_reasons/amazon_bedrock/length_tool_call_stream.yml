@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Save a note with the
+        full text of a 300-word story about a lighthouse keeper."}]}],"system":[],"inferenceConfig":{"maxTokens":20},"toolConfig":{"tools":[{"toolSpec":{"name":"save_note","description":"Save
+        a note","inputSchema":{"json":{"type":"object","properties":{"body":{"type":"string","description":"The
+        full note text"}},"required":["body"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 8448ef03-6b83-4c16-a9f9-7fabf215073d
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175045Z
+      X-Amz-Content-Sha256:
+      - b6cccd020405533572d2716d91ce7b25dab5dbf1b3a486834a5a107cce4c0589
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '430'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:46 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - f4a3f7e7-e206-4df6-83b4-5ef26d1d069c
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAArAAAAFJVkJ0mCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVIiwicm9sZSI6ImFzc2lzdGFudCJ9mBqgYwAAAMEAAABXRFjaVQs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsidGV4dCI6IiJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnMifYkzo7QAAAOBAAAAV5o/8LILOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InNpZ25hdHVyZSI6IkNBUVMrQU1LRWdnVEVBRVlBamdCUWdoMGFHbHVhMmx1WnhJTWpOQy91WmJBYWxPam1ialJHZ3pWR1RCSytmVFMvOHI2YzI0aU1KMmhyTFc0Yms0aDRGUUF3MU1YYXQyRDZmV291c2NSYWNwSGxWMlU3ZWgwY1lJU3Y2Wk1henZtTEVmSnhib3FpeXFUQTRGMllYLzdmRVR3Mi9CajJqRjl2bWdjYXAyeEM2cS9wallBYVZHSmJaK0ZZSElNT2lTem41T2xZTlNnRVkwQ3BEQ2lxUjMydUh3dTVsZHBCZHZsN0J1T1hFZDNnbENhVDFoQ2JadU1HWnVneEN3ZCtmQjVodnliVFc4N01YbGRxNk40ZExlTW1qZnhTV3QyeTlnNm9DQ3ZKQXgyY00wclBlTWZ5ekhPdkZQTlJ4U1pYQkFLTEJJTERPM1NWMGhyYlN0ZEhhSFVidnQ4T29pK3NnWFdUckdheDZ5QnYvRjR4RnNKUHlPVlBxVWJLbWlhR0dlbDl0RkRWR21vR0dlL2YydlpIOTRvOWV6bUREUmJoYVZ0SjZVNlNvMlN3VC9XbktXaThrOUFueklZOTlhUFlTZkkzbnhacG13d2lCbm1DTFRXaW1MT05XRTNMS3BEUU5maktibTV2NGhrNkpuRkRDZFczbTlldjF2cFYxNmxmMDYwVTVJZGtxWEhyQ1pBRzQrNmVwMTNlaUUwZ2FYaGczOTMyS0ozWFczZUNyL0dyUlZRT3dPN1hkSFJJbTZUcGpXM1NlcHAyY083RTNyS3p0SlpWTk9RcHJiWXlVWHlJLzlRNHk5SHNIMUtDcDYwYUt1NldteEdIUGh2QW1LRGQxbjE1WDRtd01FNDFKYVRKRmZwU2dCOUJNbVFIV3Z1blZ5SXBlaTZ0aU1ZQVE9PSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0gifRIytJEAAACGAAAAVtmMbpoLOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYiJ98ziKIAAAAKoAAABRQ9k5PAs6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTSIsInN0b3BSZWFzb24iOiJtYXhfdG9rZW5zIn3CtsasAAAA+QAAAE6xYoHSCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTE3OH0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkciLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6NDA0LCJvdXRwdXRUb2tlbnMiOjIwLCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6NDI0fX1n1wPC
+  recorded_at: Wed, 28 Oct 2026 17:50:47 GMT
+recorded_with: VCR 6.4.0

@@ -18,14 +18,17 @@ describe "Acceptance: usage" do
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
       let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "usage/#{provider_name}" }
+      let(:caching) { acceptance_setting(provider_name, :cache_options) }
 
       # The catalog's prices per million tokens, applied by hand so the check
       # doesn't reuse riffer's own formula.
       def expected_cost(usage)
         rates = Riffer.config.catalog.rates_for(catalog_key)
         cached = usage.cache_read_tokens.to_i
-        uncached = (usage.input_tokens - cached) * rates.input
-        (uncached + (cached * rates.cache_read) + (usage.output_tokens * rates.output)) / 1_000_000
+        written = usage.cache_write_tokens.to_i
+        uncached = (usage.input_tokens - cached - written) * rates.input
+        cache_cost = (cached * rates.cache_read) + (written * (rates.cache_write || rates.input))
+        (uncached + cache_cost + (usage.output_tokens * rates.output)) / 1_000_000
       end
 
       let(:catalog_key) { acceptance_model_id(provider_name) }
@@ -44,13 +47,12 @@ describe "Acceptance: usage" do
         it "reports cached input tokens on a repeated prompt (#{mode})" do
           rules = (1..400).map { |n| "Rule #{n}: staff member #{n} opens the clinic on day #{n % 7}." }.join("\n")
           system = "You answer questions about this handbook.\n\n#{rules}"
+          prompt = "Who opens on day 3? Name one."
           messages = acceptance_cassette("#{cassette_prefix}/cache_#{mode}") do
-            Array.new(2) do
-              call_provider(provider, mode, system: system, prompt: "Who opens on day 3? Name one.", model: model)
-            end
+            Array.new(2) { call_provider(provider, mode, system: system, prompt: prompt, model: model, **caching) }
           end
 
-          # Implicit caching is best-effort: a warm cache can hit on the first call.
+          # Caching is best-effort: a warm cache can hit on the first call.
           cached = messages.max_by { |message| message.token_usage.cache_read_tokens.to_i }.token_usage
 
           expect(cached.cache_read_tokens.to_i).must_be :>, 0

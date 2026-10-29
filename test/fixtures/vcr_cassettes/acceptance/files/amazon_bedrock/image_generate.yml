@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What color is this
+        square? One word."},{"image":{"format":"png","source":{"bytes":"iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAb0lEQVR4nO3PAQkAAAyEwO9feoshgnABdLep8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3IPanc8OLDQitxAAAAAElFTkSuQmCC"}}}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 17446e00-6d17-474c-9c88-26a07d983073
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175134Z
+      X-Amz-Content-Sha256:
+      - 90aa8c14bd98753907797cdbe8ce81ca64dd076cc01d440c1ea46c3e79ac8c24
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '375'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:36 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '315'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 841effc7-e1e3-44f9-b5be-5ee0c1319307
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1637},"output":{"message":{"content":[{"text":"Red"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":29,"outputTokens":4,"serverToolUsage":{},"totalTokens":33}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:36 GMT
+recorded_with: VCR 6.4.0

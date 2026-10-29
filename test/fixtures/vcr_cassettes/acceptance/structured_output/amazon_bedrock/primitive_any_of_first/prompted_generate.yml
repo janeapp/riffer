@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Read this order: 12
+        boxes, due on 2026-11-03\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"quantity\":{\"anyOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}],\"description\":\"A
+        count, or a word when there is no count\"},\"due\":{\"anyOf\":[{\"type\":\"string\",\"format\":\"date\"},{\"type\":\"string\",\"enum\":[\"none\"]}],\"description\":\"The
+        due date, or none when there isn''t one\"}},\"required\":[\"quantity\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"quantity\":\"<integer> | <string>\",\"due\":\"<string>
+        | none\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 6332f811-6749-43cf-9496-d3c7249a530a
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175117Z
+      X-Amz-Content-Sha256:
+      - 6f4e9dd3c51cdab77be43cfc83fdf71d1f86881d72d6bd18b35cd2e225c264f3
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '895'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:18 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '355'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7c6058a1-d3b0-4414-b5cb-98734b21038e
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1323},"output":{"message":{"content":[{"text":"{\"quantity\":12,\"due\":\"2026-11-03\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":281,"outputTokens":22,"serverToolUsage":{},"totalTokens":303}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:19 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,95 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Reply with the word
+        pong and nothing else."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - ac54eb4e-405a-400f-a468-ab41a04dd9e4
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175109Z
+      X-Amz-Content-Sha256:
+      - 99a41d7754d2f1910efc578a32f94ba8e089cea0e7f4e969a945fbb269e472af
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '108'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:11 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '316'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 447e3a8b-0e25-4895-8d42-3b98d4242a0f
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1372},"output":{"message":{"content":[{"text":"pong"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":22,"outputTokens":4,"serverToolUsage":{},"totalTokens":26}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:11 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Reply with the word
+        pong and nothing else."}]}],"system":[],"requestMetadata":{"team":"growth","agent":"support/triage_agent","user_id":"u_1"}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 50d763e2-8f31-4a0c-9917-03668e76e991
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175111Z
+      X-Amz-Content-Sha256:
+      - b24dac6864f3e87e7b14b12587b09e599007cce6330127c401dc134ac9fdfb5a
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '191'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:12 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '316'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 1922f97c-ca6b-42d3-aa57-b4f98f7f8961
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1119},"output":{"message":{"content":[{"text":"pong"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":22,"outputTokens":4,"serverToolUsage":{},"totalTokens":26}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:12 GMT
+recorded_with: VCR 6.4.0

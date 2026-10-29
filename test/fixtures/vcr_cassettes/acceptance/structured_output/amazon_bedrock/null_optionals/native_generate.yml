@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract info from:
+        Jane works at 42 King St in Vancouver. No other details are known. Return
+        null for any unknown fields."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":[\"string\",\"null\"],\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":[\"string\",\"null\"],\"description\":\"Country\"}},\"required\":[\"street\",\"city\",\"postal_code\",\"country\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 30364088-0352-4dd3-ac6d-829c18451a58
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175141Z
+      X-Amz-Content-Sha256:
+      - f286070dd7110301ba2cbf5f912af22df698ceaa5339b9cb113952f0a2a63540
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '933'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:42 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '445'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 37d8456a-596c-4297-971b-ea328203ce36
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1259},"output":{"message":{"content":[{"text":"{\"name\":
+        \"Jane\", \"address\": {\"street\": \"42 King St\", \"city\": \"Vancouver\",
+        \"postal_code\": null, \"country\": null}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":466,"outputTokens":48,"serverToolUsage":{},"totalTokens":514}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:42 GMT
+recorded_with: VCR 6.4.0

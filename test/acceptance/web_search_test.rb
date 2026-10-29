@@ -3,7 +3,7 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: web search" do
-  acceptance_providers.each do |provider_name|
+  acceptance_providers(except: { amazon_bedrock: "Converse has no web search tool" }).each do |provider_name|
     describe provider_name do
       before { configure_acceptance_provider(provider_name) }
       after { reset_acceptance_provider(provider_name) }

@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Row 1 has seats 1,
+        2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x
+        o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x.\n\nWhen you give
+        your final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":\"array\",\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"rows\":[[\"<integer>\"]],\"boards\":[[[\"x
+        | o\"]]]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - b415ad6f-0cd9-4a48-ae0c-11a7eb5b34bd
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175531Z
+      X-Amz-Content-Sha256:
+      - 3db2d5a25009665ad768681d1b6ff604a55c80385be9630a3e29d3730c220224
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1016'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:55:32 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 30ef740f-36e8-4e00-829e-ff554ae0f7a0
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAlAAAAFLEwW5hCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3Iiwicm9sZSI6ImFzc2lzdGFudCJ9P+wfRAAAAOcAAABXCtkA8Qs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsidGV4dCI6IiJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNCJ9yAif7QAABeAAAABX6DRNUgs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsic2lnbmF0dXJlIjoiQ0FRU3dnY0tFZ2dURUFFWUFqZ0JRZ2gwYUdsdWEybHVaeElNRUxFWkpmcEgvSmI1bXhUU0dneUFYdnUvaUJ1bXFQVUZRSk1pTUZibGJNMmw0VmZZUE9JQWZRZTlabGRzWUhkV241MGhxOWFxOEVuYkc1TlhyUVU4YjFTN3h2Q0ZyN2N1NzVOdUF5cmRCbDBYaE5MbXN1TTR2b1VVd0owRVZwU3ZaanRUaXlTcW1kOFozQS9yc3JIWVIrcCtlaVFhWUhPNUtDNXZoNjBkbWo1ZWFGdndkZThWcWE4ZFpzVCs5T1hpakhoMGwvRm9hL0ZpYlpjT2RCOExZY1loNXVJeHRRUTJYZUt0RFJkV3RHcTlWTFI3eU1KalBSbUtIeFV4RlY0Z1QyQk1NVE1kT0dUaWlJQjREY0JKQTFQTGd4dDF5V1ZJWFc2RFByQjEwakpUb0NoMkhNdHEvRU9iNWtCYVh2SnZnRWFCd3VjODhjYmhIbzczODNRME8wbXlCbEZBTWFhWlZFa1lsdG9zdWpTY1lNTWNIRVYycG4yN01mM3I2WVNUVktFSURvL2RTZGJ1RVdxZmFEM1lZd1I3aVJYYVZiWS9UUVp1MndmcFFsODJ4U0NUT2w0c0dtM1VTN0IxcFRjSEZVRkJSTmQ4V0p6S1l5Y2dZdGpsV3ZhclU4VGV5b21CZzl2NUt4dDR3b0RNV3JHMm9YaVNDZGJ4V09ZczhodXJTc3hTcUt4S2ZGUjI5N1pvbW9ua3RoTkVlendGL25Sa1B3TGVCbS9HVTdEZmd1cHJMbHJmRnplK3VGTllrWEV1UmhadHNlM0crTlVhYnJnSnN1WFZFdTFLVEtMN0VZbjE0RUp3T1VvY1BpSEZoWWlqUmJVK1lWRkI3bVZObW52ZnhLUVRwVWgrSkhBTFZyenhTTC9zY3V6eUoyZzZyNzI3LzYrR1kxOU5VNngvSWFHR3VBOE9TcHNGTzUvZThzbjFxZk8xVFFWSGtRRXZXeEEvVU8rU2QwMVFXVUpQTjYyOW8vSWJhUHVIZnpUaXlXZ1F2U1ZhOForaGJ6cERiNkJ5dWRlNWZaU25WWVRLOWM5b1ZnR1pTdGdFSmRQNnAxR2YyeEthS3QrZmpCTEJEZ3hSalpVb2hrTnlsVVkrcHFzb1RBeTA0S2NrbHN5VkVud0pSVW9TbmJRd0QzM3lGYkY2Yk5PbmYrSkFrSGdpVm1ud3VlYzJySVNaYWhxaFQxNGROeGJTUXBadzhYbXo2WlBaTGE0ZWhDQ2t1NUdOVDJvQ2JJTnB6S2drenF3OTJvL2NjSHMxY3I1WjNzZlZkU1lkYkU2aDFFYXUzUWRORXNlV2I3VWVFYkJxWlN5RmJsWlRrRFVIYTEwZm40UkZNUDQzdmJoU0IvQmcwOEJPeGZTaVE5b1JhRkRrZzZkMnhURTNjMEhLWFV2cHhPalg4QzI4Wm45TFEyejRlMjFHU09ybmdpOHZMQU43OStWWGZ1ZFJzMmg5R3dzc0ZQTDVnYXBCekV1dXAzTzA0N1kvS0FuMXErV0dSNWJCbEF6OGcxdFJSdEdFNm84L1Y1YlpsRHJzOHN3aU5WWGFqTjBaZlA4emdMUm1mbHArQ0pia0RkckFzYWUwM3gralEyYzJyR0U5cDN3cS9mU1lzemFxLzhkUTVGTFVtWDcvNXZTcGxtcUdIZUJ0Y003WXN6TjBnTEpIMXU2dStCZ0IifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkcifbpsBpQAAAClAAAAVl/tO04LOmV2ZW50LXR5cGUHABBjb250ZW50QmxvY2tTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkcifSfP6sQAAACsAAAAVyX6aakLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0Ijoie1wiciJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vIn19/4opAAAAyAAAAFdJSLgkCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6Im93c1wiOltbIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE0ifadOprsAAADaAAAAV1NofMYLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiMSwyLDNdLFs0In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMyJ9v6GvYwAAALwAAABXRRr+Kws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRleHQiOiIsNV1dLFwiYm9hcmRzXCI6In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzIn2mDcLfAAAA4QAAAFeFmfVRCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IltbW1wieFwiLFwib1wiLFwieCJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxIn1vCEdxAAAA1AAAAFfsWMKnCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IlwiXSxbXCJvXCIsXCJ4XCIsXCJvIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE0ifVLBwpUAAAC6AAAAV8paC4sLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiXCJdLFtcIm9cIixcInhcIixcIngifSwicCI6ImFiY2RlZmdoaWprbG0ifZhAwI0AAADTAAAAV154HrcLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiXCJdXSxbW1wib1wiLFwibyJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QIn2dAjM6AAAAxwAAAFfLGC/1CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IlwiLFwieFwiXSxbXCJ4XCIsXCJ4In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5eiJ90/ptoQAAAM8AAABX+2hkNAs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRleHQiOiJcIixcIm9cIl0sW1wib1wiLFwieCJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSCJ9RGjYFAAAALwAAABXRRr+Kws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRleHQiOiJcIixcInhcIl1dXX0ifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3In3zsR/hAAAApgAAAFYYTUGeCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSCJ9Gcr1zgAAALcAAABR26lqDws6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMSIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ94GGBnQAAAQIAAABORdozOws6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjIxNDZ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk8iLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6MzU0LCJvdXRwdXRUb2tlbnMiOjMwOSwic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjY2M319PEy4BQ==
+  recorded_at: Wed, 28 Oct 2026 17:55:33 GMT
+recorded_with: VCR 6.4.0

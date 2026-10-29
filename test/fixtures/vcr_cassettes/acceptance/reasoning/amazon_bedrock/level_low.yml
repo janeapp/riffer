@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[{"text":"Be concise."}],"additionalModelRequestFields":{"thinking":{"type":"adaptive"},"output_config":{"effort":"low"}},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 8a7b4a34-a3f7-445a-874a-64ee91b2d13a
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175410Z
+      X-Amz-Content-Sha256:
+      - b66459b81fe338e97b85565d3d82ac3fc7b6bce74f9c9d56d352a008d849269a
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '279'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:11 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '315'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a4896c08-a2c3-4769-89c4-b6d8c7bf6205
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1053},"output":{"message":{"content":[{"text":"391"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":31,"outputTokens":3,"serverToolUsage":{},"totalTokens":34}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:11 GMT
+recorded_with: VCR 6.4.0

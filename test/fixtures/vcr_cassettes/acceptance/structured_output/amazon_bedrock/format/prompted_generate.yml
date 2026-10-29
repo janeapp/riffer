@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Book a visit on 2026-10-26
+        at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 87971eb4-675e-42ab-9311-85f9113e7a4c
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175124Z
+      X-Amz-Content-Sha256:
+      - 528f7eb1066220bac89694baf3cafa634a2b71356095002b19e99035d6d1804e
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1169'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:51:25 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1425'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 11305c24-bfc2-4446-8539-754009990dbb
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1780},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSpAUKEggTEAEYAjgBQgh0aGlua2luZxIMW9/Ap5bTgcJ/FKMKGgy+3aZVYEV3qbMGdxMiMOSFJ4tVK35ZgZYu1MRcsoOrygyAQZeh3PEX49sREtQpRXlzbE0auB5PBwq/TpjPNyq/BCC3qf9EimpZmDMncQa6TVFB6txiNRuE/09Rj6+MpovXTtM2nZkIdUInBlPpKD5str8gyA8ynRX4G2uKXpE7xl+/1n36/Sn8m3nHH68evdHFyE3NJzTNeo1t+0wYbgusWUolivrVhy7xsZ49OPz90tIuKbeB9AtONQGvDk6R/9mvdWQr3MyXzlmTaH5UbQ5z267J9uGtKxi8MQAH27ddoXQSFMUfb/3j+/5AGYRl1gyl/cK2TCfYqMPjB+fgV+KRtGG+Fx7T27rx3kIC9bDA2b5b5ad6O8rJg/n4oXEB9ebEy/vGW3lcL52B5WsyxUrqgRQ9YQI5N7Z6WqDzLkMd2amJGyoukdZ8VNzeMB//46tGypkJAJmuH2MDisDH1gHE2k+RJaoboC4BWioE/2jzVqURNaPDj8CrzaNpbOYXN8xwJ5Vor8yZZ74v/nMGvX6Xfhqk2CZyyeGZiLTVpe4jQZv1JSCtbVvOAdbp+471Md3EgWvbxKPOmP+2U4oUb8qowikY+lE9mAzy/yq8knFG5mgfy8/vRtlpUA7Xkh6kFUKSqOVvayFIw07wqnVO2r4LCXt1UZlGzce0ayoUObeLdqogAw9BKU+IpszLidMIIOdIJMhqffRGeh1RTPOfkqAGTOUjm52RCaXVFxPfQAxWbUGX+hxdTJee7ODPrHOqQweUsHk40YnN59rHaOrno+1978z4Jf7CAxG8ABDF7cE4QMaSiTRlN5+5kPvFJXUePamluZPoAvjAR+1XJAQPdoxFGAE=","text":""}}},{"text":"{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":387,"outputTokens":169,"serverToolUsage":{},"totalTokens":556}}'
+  recorded_at: Wed, 28 Oct 2026 17:51:25 GMT
+recorded_with: VCR 6.4.0

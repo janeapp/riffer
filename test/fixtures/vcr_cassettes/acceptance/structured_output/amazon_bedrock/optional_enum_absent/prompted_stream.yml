@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Classify the session:
+        yoga class, underwater format. The session_type enum does not cover this,
+        so return null for session_type.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a0ec1f86-899f-4398-9244-4d483d45179f
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175327Z
+      X-Amz-Content-Sha256:
+      - e8f47299616c33f81c307f2854153884cd4de6572c279fd5df6ff350ed5b7e50
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '859'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:28 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9866334f-3fc9-46a7-8442-cab70bd0f285
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAswAAAFK3IJ11CzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMSIsInJvbGUiOiJhc3Npc3RhbnQifRl7p7oAAADOAAAAV8YITYQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRiJ9wLRHoAAABzIAAABXVsnAYAs6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsic2lnbmF0dXJlIjoiQ0FRU3VRa0tFZ2dURUFFWUFqZ0JRZ2gwYUdsdWEybHVaeElNSHpCeUJRWjBqZDBFdXBSN0dneG1mN3pad09SN0MrRnNZc2dpTVB4QkRpMmlwOElEZnp3ek05SnNNdWxpVDczV0ZJSmFCdUdQa3V0b3o0SitURGh0amxvZWsxeXZ3aHlJQlhkOTlDclVDTklqMXBLeGRDeC9SS2NMUEczbFViRFVKVHJMUWdHSFcwbXZtanl6TngxY01hTVN5MFduNDdtUkZ1WFBWbUk4UkNRcHVXTXZHbGtqVnFoMVp3ZGtqQ0I2Vm9ia2RrdjhmMWo3UjAyOE5PdjZoUkorRG4yc3pmcExZREVZTm1oblp0VXhVNWNPdXJjWUtuRlJESXgycWJONUdzeFlpTVJnY1V6ekxXMlpYSnVLTjNQVmJHeGxZdTN5ZWVYS1E5bmZlbnZRMVhJaUFiY2VvZGFoLzhxTzVjdGJDNWowYytROW9mN1g4Qm0wSGc0MXpUS0M0YzFBeDBDU0ROaG1zLzkwNVFvbHZ6Q0hZNUZyZkx5MW1tanVvTldsRTgzRGRRZzdmZDhlRmZiUkJJOXdBVWRQejloQ3VHa0trRGJobkJ2R1JOOE0rU3IyWTQySEFGRkNHdHkweVN2cXcvK1pMRXkrc1NKWE12U3pQdmZjSmhYOVJGelVOcEFvekdwYWpFYkphbFU5UEgrbVBHQVBYdXdmQmwzczhOWFltVFlHV2xPbEN4TVlXY2k5REk4b1ZNdjFuSzUrTGFOUTlzOFlzMGZTZXZ5US9xalJJTndIMXpoeEdhZDZMVEg4MHp5TUV6LzdweW11VmRnQm4rZzk5bFFGT2h2VWd5dEZUL29rb2hEUGJmY29PQmZGcDJkeVhaSDdMaFJtejVPNlNrV3dZeUtqalZKZnd5RmxFdkRUaVdWNWUrVitISGJKOC9acTVPaUxTTXZmYXQ4RFhKUVdRc1Iva2x2NGttZ0ZLNFJSLzlQbSt2YzF0Ui9uSk13Y3lRZlkzbEYvVGl6WUVJVlE0YmVGNHZyRHNXWkJIZ1ZHT29tQkIvb1RDdW9pL0JWZW5tT3ZZd0RTN090eHltZVoxUDk2aUZrUGlaWFQ0czlwbGF0TUZZaXZLTmhWai8wWDFDOVMwMmxwUFE5UkEzWDhyVStOY0NiVGI5MExmdy9mZ2ZLRzNIcVlyUlZicS9BRFhlcXJ2QzJ0dGxLcnhhWHRqTG93V1pCK2xYYjkrLzhlc3ZXWk44c3RxemMvanZ4SkNCUWpNNWtoRWNJOVFHN2dQZytBNStuNGpBMDFDd2R1dEwxckVhTjMxUmNlU0FwQkdGY2RrVHY3ZVY2Y0NoMGVqSVRrYnVMZWFWQkpmMnFDeFlYZVhrTTU2WFdKRWhmQmZ4MHpLSzBGdzJqV3J4Yng0QUVlUlVUTC9UNHN0bEdkcmY5U1k1QkFuOHpFaGtGcHR0T3VWZTlMUE1UYkYwNE9WS2ZIOUN6Vng0RS9pbWlLN2pzbWVUWmFFbnFJMHl4L2RYMjVDZ2FVZ05BM01WSGlJSE42dDNRWDl5UkdMZmNacWVSYXlsSXpIYWpkOTFvSFBOc0dPNEdIS0pwZythbVVXM1o2c01sNEQ0YjhVeGNBZGJDcU1KbTdDZDduRmd1ZDFYUEliL0x6VEprd3B3UUhxaDh5SkVleXFmd2Z0eUd2Smt2c0hjK3gyQnFSQXRuTkxiQm4za0xXMnUvTnhTbEFQK2JVdnF4T2dMOTJDcmtBUHA0UHkyL3pYRitvM0RUYzljekxsQUVxVndndjdNK3pzWDBZdFRNbWVjeEZhOFk3ZTY1dHFlSjE1QW5VZFQyOXp5UVBOOU5CUFZNcVBGZXAwbldyQzRBWFk0WnBpcUppa2QyT1U4b0luZVlFQ0dWL2pUT0RkblBvZ09FbFVucWNUaitIbEM4aFJzQll2dXpvQ21UKzl6Y0pQSUR5SXoxTkVOY243cWhva2duMWl2ZWhMSTR4aTNuL01pc2U2RjYvTnRKN1hzcXVpSVljc2lIR2VBTmJiOGc4cm5nYTJwQWs5N2tkS21NQzZEWEFDTXo3TllPNnlOQUplZU1XSFNxT3l0aWtQeVp0NFUxcXdkMzZSS1d6NHlaaHFiNmRzcEc5QjZ1UFNod1hnUTBZQVE9PSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTSJ9ddOCXwAAAJEAAABWC0wlCAs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiY2RlZmdoaWprbG0ifZnqWN4AAADDAAAAVz6YiTULOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoieyJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk8ifRekeTEAAAC4AAAAV7CaWOsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiXCJuYW1lXCI6XCJVbmRlcndhdGVyIn0sInAiOiJhYmNkZWZnaGlqIn3+R9bhAAAAvQAAAFd4etebCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MSwiZGVsdGEiOnsidGV4dCI6IiBZb2dhIENsYXNzXCJ9In0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2In20hd10AAAAugAAAFa9XTsdCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxIn3BqDNNAAAAlwAAAFEaaEULCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1diIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ99N3cYQAAAQsAAABOSMpRSgs6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjIwMjJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1giLCJ1c2FnZSI6eyJpbnB1dFRva2VucyI6MjM3LCJvdXRwdXRUb2tlbnMiOjI2Mywic2VydmVyVG9vbFVzYWdlIjp7fSwidG90YWxUb2tlbnMiOjUwMH19sChhtA==
+  recorded_at: Wed, 28 Oct 2026 17:53:29 GMT
+recorded_with: VCR 6.4.0

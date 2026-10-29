@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Classify the session:
+        yoga class, in-person format.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 62ab4147-1d1b-45cc-8bac-916bdbc40de5
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175400Z
+      X-Amz-Content-Sha256:
+      - d8b9e068ad439ced3cbd81b5815b886065dc9d0c1a8c488e0cfe2e7ed17e9654
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '782'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:54:01 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '370'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b50f75b1-86c3-4694-b3ae-e831a7435b8e
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":654},"output":{"message":{"content":[{"text":"{\"name\":\"Yoga
+        class\",\"session_type\":\"in_person\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":217,"outputTokens":23,"serverToolUsage":{},"totalTokens":240}}'
+  recorded_at: Wed, 28 Oct 2026 17:54:01 GMT
+recorded_with: VCR 6.4.0

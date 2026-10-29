@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto and in Paris?"}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 5e3b5a5e-a9f8-465a-9763-d59b2c5a47ca
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175305Z
+      X-Amz-Content-Sha256:
+      - 166474e8e6f0f106f3a5e1d23ba746154693034a40d45174e76d0a8266ed0218
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '382'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:06 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '551'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 2cef6939-af6e-4741-8f31-9a65dc9e76e8
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1292},"output":{"message":{"content":[{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_pX0ZZgfYbpZYxAfm3id4xl","type":"tool_use"}},{"toolUse":{"input":{"city":"Paris"},"name":"get_weather","toolUseId":"tooluse_BuRWsMkIr9G22bsrIjV04v","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":399,"outputTokens":98,"serverToolUsage":{},"totalTokens":497}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:06 GMT
+recorded_with: VCR 6.4.0

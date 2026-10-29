@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Write a 500-word essay
+        about the sea."}]}],"system":[],"inferenceConfig":{"maxTokens":20},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 25ac0155-9371-4182-a961-31af65171689
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175051Z
+      X-Amz-Content-Sha256:
+      - 886a0a96d096680ec8a195c54d862feec8a8afc1429d640984133c057c1c4771
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '184'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:50:52 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1049'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 3c958e78-d406-47d6-8594-74d3f3dc667e
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1338},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQS9QMKEggTEAEYAjgBQgh0aGlua2luZxIMvlapnGcSOUi/gDYhGgy86/re1FbnUoMEp0AiMF43lzG06B9CVINQk7SqdLSkGA4OVUJ8xqJ7Xpf0sSIi27Xop3dZ3WErV/FABq2FnCqQA3ZzyBK20mN7ixKeNXTzkrMd9kP4wsy8OdI9U7NKgszfbg2YBPkrENaEF4QrIJLjQA7xenCGRODGRqinaosYb25WCauRYZebf+qr5oHMShUWrth5D0W9cmUssaX3tgz1F491OjUfWVy8zgE8cxQwIb3CJdP000LnKJkbOHdFy9Yq1ostc8XxKGLEMKUd+V7LdrLPWwH7ilIVQdR4cmMFa0WKVFzRLCIxy9rKTgkiDG/HMuXR0+fMAKQhZCKUtHyrBjMNOG/7+keUCvWwDwcGSP8xKLffY7eAkxqMa2cUVFrlUqpRGMn8XYMlF+t5llXXWXKkKFlyQ4GSkRpWcOVtReOxpCxqePzc1ero1f9Y9gOetYr7bmfEtyW8oWSsLRrmsnuOfnnEZ9MFuKZxnjgBpnlg8L8pS0tfQ43LbpQBMqCAo2+Yt0f8UO1FjqZk5STZ2QPpgKJDrnaX/gFXIdpBcyLvcxYEkUdRnHb1wixHCalERH84rpkTd1bHZA6pqH1lqLHgcJH/zbraln30/EkxhYgYAQ==","text":""}}}],"role":"assistant"}},"stopReason":"max_tokens","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":22,"outputTokens":20,"serverToolUsage":{},"totalTokens":42}}'
+  recorded_at: Wed, 28 Oct 2026 17:50:53 GMT
+recorded_with: VCR 6.4.0

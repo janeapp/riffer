@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"List 3 tags and 3 scores
+        (0.0-1.0) for: ''Ruby is a great programming language''\n\nWhen you give your
+        final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Descriptive
+        tags\",\"items\":{\"type\":\"string\"}},\"scores\":{\"type\":\"array\",\"description\":\"Relevance
+        scores between 0 and 1\",\"items\":{\"type\":\"number\"}}},\"required\":[\"tags\",\"scores\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"tags\":[\"<string>\"],\"scores\":[\"<number>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 6fc06ac4-2e52-4eb8-8b76-66caadb27496
+      Content-Type:
+      - application/json
+      Host:
+      - bedrock-runtime.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20261028T175320Z
+      X-Amz-Content-Sha256:
+      - 03f0ece30569915af9d3c757f2408696efda7f1b996be25c8b0335ff8ce1f751
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '833'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 28 Oct 2026 17:53:21 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '403'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a3d29e14-03f3-4334-becd-f9423ae9fc7b
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1134},"output":{"message":{"content":[{"text":"{\"tags\":[\"programming\",\"Ruby\",\"software
+        development\"],\"scores\":[0.9,0.95,0.7]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":260,"outputTokens":38,"serverToolUsage":{},"totalTokens":298}}'
+  recorded_at: Wed, 28 Oct 2026 17:53:21 GMT
+recorded_with: VCR 6.4.0

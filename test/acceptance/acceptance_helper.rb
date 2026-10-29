@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "aws-sdk-bedrockruntime"
 require "googleauth"
 
 # Acceptance cassettes only replay. To record against the live APIs, set
@@ -18,19 +19,28 @@ ACCEPTANCE_TEMPERATURES = { "Toronto" => 15, "Paris" => 22 }.freeze
 
 ACCEPTANCE_TAGS = { "team" => "growth", "agent" => "support/triage_agent", "user_id" => "u_1" }.freeze
 
+HTTP_ERROR_CONTRACT = { class: Riffer::APIError, status: :status.to_proc, detail: :body.to_proc }.freeze
+
 # Every acceptance file runs against each provider here unless it excludes it,
 # so a new provider joins every feature by default. An entry holds what the
 # tests can't derive: riffer passes model options and web_search options
-# through as-is, so their names are the provider's own, and wire_tags is what
-# ACCEPTANCE_TAGS adds to the request body.
+# through as-is, so their names are the provider's own. wire_tags is what
+# ACCEPTANCE_TAGS adds to the request body, and error_contract the error class
+# a failed request raises and how to read its HTTP status and text.
 ACCEPTANCE_PROVIDERS = {
   gemini: {
     model: "gemini-3.5-flash-lite",
     reasoning_levels: %i[low medium high],
-    max_tokens_option: :maxOutputTokens,
+    token_limit_options: { maxOutputTokens: 20 },
+    invalid_options: { temperature: 5 },
+    # Gemini thinks by default.
+    thinking_options: {},
+    # Implicit caching needs no request field.
+    cache_options: {},
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     # The Developer API has no request field for tags, so none are sent.
     wire_tags: {},
+    error_contract: HTTP_ERROR_CONTRACT,
     configure: -> { Riffer.config.gemini.api_key = ENV.fetch("GEMINI_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.gemini.api_key = "invalid-api-key" },
     reset: -> { Riffer.config.gemini.api_key = nil },
@@ -38,9 +48,15 @@ ACCEPTANCE_PROVIDERS = {
   google_cloud: {
     model: "gemini-3.5-flash-lite",
     reasoning_levels: %i[low medium high],
-    max_tokens_option: :maxOutputTokens,
+    token_limit_options: { maxOutputTokens: 20 },
+    invalid_options: { temperature: 5 },
+    # Gemini thinks by default.
+    thinking_options: {},
+    # Implicit caching needs no request field.
+    cache_options: {},
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     wire_tags: { "labels" => { "team" => "growth", "agent" => "support_triage_agent", "user_id" => "u_1" } },
+    error_contract: HTTP_ERROR_CONTRACT,
     configure: lambda do
       Riffer.config.google_cloud.project_id = ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project")
       Riffer.config.google_cloud.credentials = Google::Auth::BearerTokenCredentials.new(
@@ -53,6 +69,36 @@ ACCEPTANCE_PROVIDERS = {
     reset: lambda do
       Riffer.config.google_cloud.project_id = nil
       Riffer.config.google_cloud.credentials = nil
+    end,
+  },
+  amazon_bedrock: {
+    model: "us.anthropic.claude-haiku-5-5",
+    reasoning_levels: %i[low medium high max],
+    token_limit_options: { inference_config: { max_tokens: 20 } },
+    invalid_options: { inference_config: { temperature: 5 } },
+    # Below max effort, Haiku 5.5 rarely thinks before a simple tool call.
+    thinking_options: {
+      additional_model_request_fields: { thinking: { type: "adaptive" }, output_config: { effort: "max" } },
+    },
+    cache_options: { cache_control: true },
+    wire_tags: { "requestMetadata" => ACCEPTANCE_TAGS },
+    error_contract: {
+      class: Aws::BedrockRuntime::Errors::ServiceError,
+      status: ->(error) { error.context.http_response.status_code },
+      detail: :message.to_proc,
+    },
+    # An api_token takes precedence over SigV4, so recording with AWS
+    # credentials leaves it unset.
+    configure: lambda do
+      Riffer.config.amazon_bedrock.region = "us-east-1"
+      unless ENV["AWS_ACCESS_KEY_ID"]
+        Riffer.config.amazon_bedrock.api_token = ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token")
+      end
+    end,
+    break_credentials: -> { Riffer.config.amazon_bedrock.api_token = "invalid-api-token" },
+    reset: lambda do
+      Riffer.config.amazon_bedrock.region = nil
+      Riffer.config.amazon_bedrock.api_token = nil
     end,
   },
 }.freeze

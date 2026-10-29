@@ -49,11 +49,19 @@ VCR.configure do |config|
   end
   config.filter_sensitive_data("<GOOGLE_CLOUD_PROJECT>") { ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project") }
   config.filter_sensitive_data("<OPENROUTER_API_KEY>") { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
-  config.filter_sensitive_data("<AWS_TEST_IMAGE_S3_URI>") do
-    ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png")
-  end
-  config.filter_sensitive_data("<AWS_TEST_DOCUMENT_S3_URI>") do
-    ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://riffer-test-bucket/super-secret-document.pdf")
+
+  config.before_record do |interaction|
+    # A SigV4 recording carries the access key id and session token here.
+    # Replay matches on method, URI and body only, so no recording needs them.
+    interaction.request.headers.delete("Authorization")
+    interaction.request.headers.delete("X-Amz-Security-Token")
+
+    # Sensitive-data placeholders make the URI unparseable, so match the host as text.
+    host = interaction.request.uri[%r{\Ahttps?://([^/:]+)}, 1].to_s
+    aws_host = host.match?(/\.(amazonaws\.com(\.cn)?|api\.aws)\z/)
+    # A credential fetch (STS, SSO, or the link-local container and instance
+    # metadata endpoints) would record the credentials themselves.
+    interaction.ignore! if (aws_host && !host.start_with?("bedrock-runtime.")) || host.start_with?("169.254.")
   end
 end
 
