@@ -13,7 +13,16 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def self.reasoning_part(block)
-    format = Riffer::Providers::AnthropicCompatible::MessagesAPI::REASONING_FORMAT
+    messages_api = Riffer::Providers::AnthropicCompatible::MessagesAPI
+    format = messages_api::REASONING_FORMAT
+
+    if messages_api::SERVER_TOOL_BLOCK_TYPES.include?(block[:type])
+      return Riffer::Messages::Assistant::ReasoningPart.new(
+        type: :encrypted,
+        data: JSON.generate(block),
+        format: messages_api::SERVER_TOOL_FORMAT,
+      )
+    end
 
     case block[:type]
     when "thinking"
@@ -137,14 +146,23 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
       yielder << Riffer::StreamEvents::ReasoningDone.new(part)
     when "server_tool_use"
       block[:input] = parse_input(@partial_json.delete(index).to_s) || {}
+      yield_server_tool_part(block, yielder)
       return unless block[:name] == "web_search"
 
       @web_search_query = block[:input]["query"]
       yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: @web_search_query)
     when "web_search_tool_result"
+      yield_server_tool_part(block, yielder)
       yielder << Riffer::StreamEvents::WebSearchDone.new(@web_search_query || "", sources: web_search_sources(block))
       @web_search_query = nil
     end
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def yield_server_tool_part(block, yielder)
+    part = self.class.reasoning_part(block) #: Riffer::Messages::Assistant::ReasoningPart
+    yielder << Riffer::StreamEvents::ReasoningDone.new(part)
   end
 
   #--

@@ -48,6 +48,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   def stop_block: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # --
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def yield_server_tool_part: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+
+  # --
   # : (Hash[Symbol, untyped]) -> void
   def apply_message_delta: (Hash[Symbol, untyped]) -> void
 

@@ -21,6 +21,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # request.
   REASONING_FORMAT = "anthropic-messages-v1" #: String
 
+  # Tags the web search blocks kept among the reasoning parts. Claude signs a
+  # thinking block that follows a search over that search, so the blocks go
+  # back in their place or the API rejects the turn as modified.
+  SERVER_TOOL_FORMAT = "anthropic-messages-server-tool-v1" #: String
+
+  SERVER_TOOL_BLOCK_TYPES = %w[server_tool_use web_search_tool_result].freeze #: Array[String]
+
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(_model = nil)
@@ -243,7 +250,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant(message)
     content = message.reasoning.filter_map do |part|
-      convert_reasoning_part(part) if part.format == REASONING_FORMAT
+      convert_reasoning_part(part) if [REASONING_FORMAT, SERVER_TOOL_FORMAT].include?(part.format)
     end
     content << { type: "text", text: message.content } if message.content && !message.content.empty?
 
@@ -262,6 +269,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
   def convert_reasoning_part(part)
+    return JSON.parse(part.data.to_s, symbolize_names: true) if part.format == SERVER_TOOL_FORMAT
     return { type: "redacted_thinking", data: part.data } if part.type == :encrypted
 
     { type: "thinking", thinking: part.text.to_s, signature: part.signature }
