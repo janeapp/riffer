@@ -1,0 +1,160 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Row
+        1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board
+        rows are: x o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x.\n\nWhen
+        you give your final answer, respond with only a JSON object that conforms
+        to the following JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":\"array\",\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"rows\":[[\"<integer>\"]],\"boards\":[[[\"x
+        | o\"]]]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}],"max_tokens":4096,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:35:52 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:35:52Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:35:52Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:52Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:35:52Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQVwSdwwnCu788XHPvT
+      Traceresponse:
+      - 00-94c87eaecb677ce13215d7d77e456b45-38a4f7368087a91c-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=141
+      X-Robots-Tag:
+      - none
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Ray:
+      - a525ffc57bb8ebb3-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQVwphCCEZ3LbMX4fPB","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":354,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":2,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}   }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}            }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQStAcKEAgTGAI4AUIIdGhpbmtpbmcSDEzCIRDKYPXpDDKKBxoMfFErm/2eczFbs88+IjAdTof/UbI0d4lLjY1hppKFUOjU8d3XVIqq67hs/4xhpJMMfMb2ogIZMlzmoUME6mAq0QYNvoY9YbeuNdQRsqmqN5K6Sb3DkWcXCgL83Uhc10VUCc6mx+I55j3Y14LInzQyMc1uskTpoYGHHyx9HHiGXAYftmSy/1/v9aea8oqDhPLlj9W98QoDu1wSQ5eYqMeTPlj2lGHLFcOKxmKdh5sCnK/I2IpSMFS06MAcqwTOHx8a720KohJl5LTk3AD4Iw48DcqKGDfdMa1M7ZSsldgL+Yk6iMlXoprUOazASmc3pVlBpg/9pIirUUyf3siHxbvNNku9pFvR5lLZp0sxcVf8MT7b2+doSZUOdKx6yJc9mz4YcIYuyJWnclpGK5s8+tKYs/iKXzhRDnv3Yfy2dpAFG5SuQxXEBlg334egI8pX4GQx6s/nZU0AAYPXJMslo+cbugqiGwCgDqe1lXmFpalpTh+PYzUMyrB2EW6FR0Ir/8W0OCHvzmNzgQI/Oj7BW3bahIWHVE2cFFsIM7RYNsn3aMv85gwE/PPEZF9ej4ekJRIXnobFaN4ATd7OXN8m9IygroxFlJUfFQ8r/21WUGW+rxh4j//uQshcWc1rj1IUt3hjE9uh92hTgsn9CctK/Xv9xxub7LY7JilS/+FKLAXlhB4r6jByBCmUoE5tzt2yq90cHKeT0E0pQSFqy+UACLVnoCL8ypysda5pfyngIqEjBXr7Wxrdtr7j4oo6w1DvJziIq74fQQsZCfwD4Z7+UkR7Wg0NRkqOwHaXWd/XgM/5Z6f+m8Hewqx2akPU/r0PPUoV4hFc2RxhjBH/A25du0x+kssYf+tlOikp6HP7rCmehrvKQFCDlCsgJYk6IPL34wsgAe6kLG4Ty9C0/yc71gRO+8iZXmGbW/zRhx0o/HChjSFp/deYtjpcPt0cy7R2RQaza3Z1ojAMorebJH26ev01KqnFLov4qRrvCtUvlYzFmqV/nejaoUDJpDmwI787Mq4AadoAToi3Fb+7dM7oOtEOO+WAbv0qpCfYXUyyhmmFrXk4WiMDk+8Ajfjk1NJj1ONpu+njCBt5YVntz8CROdBoQB6BiAaO93s8w7OG9Or+JF76YXCZDd70SPyN1TjjxZiByhfBi3mVEpEq8xpct8EJSK0ovcynvDugwjp9L4SWlcv9xJYBXbHPAfstDWvgCf3CFzQYAQ=="}              }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0           }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\"r"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ows\":[[1,2,"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"3],[4,5]],"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"boards\":[[[\"x"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"o\",\"x\"],[\"o"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"x\",\"o\"],[\"o"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"x\",\"x\"]],["}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[\"o\",\"o\",\"x\"],"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[\"x\",\"x\",\"o\"],"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[\"o\",\"x\",\"x\"]"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"]]}"}              }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1              }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":354,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":238,"output_tokens_details":{"thinking_tokens":158}}               }
+
+        event: message_stop
+        data: {"type":"message_stop" }
+
+  recorded_at: Thu, 29 Oct 2026 23:35:53 GMT
+recorded_with: VCR 6.4.0
+...

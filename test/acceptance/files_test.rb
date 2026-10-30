@@ -64,6 +64,8 @@ describe "Acceptance: files" do
           expect(message.content).must_include "INV-4821"
         end
 
+        # Providers that download the file get the fixture from the stubbed
+        # downloader; Anthropic fetches the URL itself, so it must be real.
         describe "from a URL" do
           before do
             Riffer.config.files.allow_downloads = true
@@ -76,7 +78,9 @@ describe "Acceptance: files" do
           end
 
           it "reads an image (#{mode})" do
-            file = Riffer::Messages::User::FilePart.from_url("https://files.example.com/red_square.png")
+            file = Riffer::Messages::User::FilePart.from_url(
+              "https://raw.githubusercontent.com/janeapp/riffer/main/test/acceptance/fixtures/red_square.png",
+            )
             message = acceptance_cassette("#{cassette_prefix}/image_url_#{mode}") do
               call_provider(provider, mode, prompt: "What color is this square? One word.", model: model, files: [file])
             end

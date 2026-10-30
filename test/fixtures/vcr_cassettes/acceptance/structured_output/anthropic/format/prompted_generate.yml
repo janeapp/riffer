@@ -1,0 +1,96 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Book
+        a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:35:37 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:35:36Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:35:37Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:35Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:35:36Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQUjs5gwsJZHF6bbVUS
+      Traceresponse:
+      - 00-1c61b12998ee895e443b93d7f6028f27-ea03a65866a90c3e-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=1403
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525ff5fb8a979fd-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQUkDAyU4PNEVbqdRsM","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSggkKEAgTGAI4AUIIdGhpbmtpbmcSDAsqwHwlyRNnB8LhuRoMYTt+PS5lKfylWr7IIjCArfyX6hRneP5LtrH/50PUOQCHJrqQYj40jKiVJI7oRetKYjdifr4gSjduHBV34rQqnwgUFOqsZ7CVU5s8JHTlraKfXQvKw1UE7lj3bUIuV7qxi/326GKJ+sgEVJQahuQjVEvbcldWVR5X4oWD+fFj6h9Qmkb/ccyiAcZdryYtuI9hvm0NA5OGYoQiOzi78wIgqt1jZEPla4pnO5C3t/3MKViaonEQh8BU4zHm0JyRzPQBGP4DDPOIpFzQhAo4vvaQE9JcZie9z73I8bBt9yTmlOOlZdFJKoNd9BrxsycI5fH6X84csBn49boeVeU/a4XOTPRDc7EIfiquzpkQ7QZfe1aVWgN/Fv4f2FuKT/vBzRDjyVRGBXlbFnZu46DQa1FKZhJ+XWg+9o4r9J9/ypTBFOMKNfaAiFi1XfYbP72FHeGLugfVdiZdUzJoR15/ievxuFmz1YDDJ6GR4ac8TE02cFdOZN2ZxDjoikxYLkJoZgez8jLzIoseUmCtVdkoeACYDsynHHOBp3BzxE7KBMfMyHpE5gML4W1GBgsC0odF+onBMwSNg4gHDeJvqUX3nAoGCDgpoiqyU+v5OjCLyJOK7r2NyWLzw2BOnrbHRqavdhINfMZXDEKIpCUKHxzrVfchmrrZTQrCUvtbzk83956jpdbc7gid6joEIvqKFGZzrRS00ebqi8zZt06vVSSToCkEYavUkxaG5l6+44rG1K3bT45e7lRM5GC8hbZisHu5vItnrPGA3k8mw59hNxZPvCTSehywfRxZkiX27I+GJgI9WFxrC+TCMe8epdiAZ9Fd9SPIG1DnovZzQDUsdR2+j8YBzmbA3CQcBqHposcjAKluk0+FMC72UMzEld8Tls5RFcnm7UuIMKczx1Dnpm+lxqhWgzJlJJ6GDy0nm24QCe+nOBgEu5VPnEUOz2yg7sLcjYtMzZXYl5cixKmaVYw6lJkqDdLhdrQDfN69XBQ/2epgWNRqbZUPfSsY7+xFTwymrmeYG/CfmeuCuiX8WOqGT847VXSJXw1u/1/g+RaMudjUPa0FmYjs5OwgAF2liU/ib3tRSt3MllF/MAyp8zVKO6PYTKCkJaRd/TP8HgTkSk9k53mM14KQQVURx/trwftCFVkkZ0wJ+i1s0wcSK5Vn5HP8RFWwW1+Bx8kOm5DE320I1pv1G4ua3BJYXt/dU7EevPaos4H6EQxBaRnHT61WU5nVvSN5CtyqTM7oWDXwDE8XoUCu5MeqMxNMlYPFNmIUD3z5vNLuUTMAmlMns3xChHh8865PuoDtYzZGPvtEKPhiNybbBkvkQOvb9i3M2JsUC0jAkba23aPBUl+j+mkIbKvvlug4s/t2REL3K9NkhI0wE2F/NM/Hn/lEY3sYGJh0XXB7nCjQ9tpWZKVTJPsG7ICEbhw3HFp1DbbsL/y/rNMsLq2OKSVUMJwzPI/DxoefKVhe3jd61hR2bosCDcwzC3aatRgB"},{"type":"text","text":"{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":387,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":295,"output_tokens_details":{"thinking_tokens":224},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Thu, 29 Oct 2026 23:35:37 GMT
+recorded_with: VCR 6.4.0

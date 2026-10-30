@@ -101,6 +101,22 @@ ACCEPTANCE_PROVIDERS = {
       Riffer.config.amazon_bedrock.api_token = nil
     end,
   },
+  anthropic: {
+    model: "claude-haiku-5-5",
+    reasoning_levels: %i[low medium high max],
+    token_limit_options: { max_tokens: 20 },
+    invalid_options: { temperature: 5 },
+    # Below max effort, Haiku 5.5 rarely thinks before a simple tool call.
+    thinking_options: { thinking: { type: "adaptive" }, output_config: { effort: "max" } },
+    cache_options: { cache_control: { type: "ephemeral" } },
+    web_search_options: { max_uses: 2, allowed_domains: ["ruby-lang.org"] },
+    # The Messages API keeps only user_id, as metadata.user_id.
+    wire_tags: { "metadata" => { "user_id" => "u_1" } },
+    error_contract: HTTP_ERROR_CONTRACT,
+    configure: -> { Riffer.config.anthropic.api_key = ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") },
+    break_credentials: -> { Riffer.config.anthropic.api_key = "invalid-api-key" },
+    reset: -> { Riffer.config.anthropic.api_key = nil },
+  },
 }.freeze
 
 def acceptance_cassette(name, &)
