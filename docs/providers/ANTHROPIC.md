@@ -187,9 +187,11 @@ end
 
 The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.md#reasoning), whether you call `generate` or `stream`. Read it with `response.reasoning`, or as plain text with `reasoning_text` on the message. Each `thinking` block becomes a `:text` part carrying its `signature`, and each `redacted_thinking` block becomes an `:encrypted` part whose `data` is the block's opaque payload. `reasoning_text` leaves the redacted parts out, since they have no readable text. Every part is tagged `format: "anthropic-messages-v1"` (`Riffer::Providers::Anthropic::REASONING_FORMAT`).
 
+A turn that used [web search](#web-search) also keeps its `server_tool_use` and `web_search_tool_result` blocks among the reasoning parts, in their place between the thinking blocks. Each becomes an `:encrypted` part whose `data` is the block's JSON, tagged `format: "anthropic-messages-server-tool-v1"` (`Riffer::Providers::Anthropic::SERVER_TOOL_FORMAT`). Claude signs a thinking block that follows a search over that search, so a later turn needs the blocks back where they were.
+
 ### Reasoning Replay
 
-Riffer sends the reasoning back to Anthropic on every later turn, as `thinking` and `redacted_thinking` blocks ahead of the message's text and `tool_use` blocks, in their original order and unchanged. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
+Riffer sends the reasoning back to Anthropic on every later turn, as `thinking`, `redacted_thinking` and web search blocks ahead of the message's text and `tool_use` blocks, in their original order and unchanged. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
 
 If you persist sessions, keep the `reasoning` key when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop it, later turns lose the model's earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.
 
@@ -221,6 +223,8 @@ end
 ```
 
 Anthropic emits sources with `title` and `url` on the `WebSearchDone` event.
+
+The search blocks stay on the assistant message as reasoning parts and go back to Anthropic on later turns (see [Extended Thinking](#extended-thinking)), so Claude reuses the results instead of searching again.
 
 ## Message Format
 

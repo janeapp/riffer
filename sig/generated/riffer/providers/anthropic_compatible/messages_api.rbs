@@ -10,6 +10,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # request.
   REASONING_FORMAT: String
 
+  # Tags the web search blocks kept among the reasoning parts. Claude signs a
+  # thinking block that follows a search over that search, so the blocks go
+  # back in their place or the API rejects the turn as modified.
+  SERVER_TOOL_FORMAT: String
+
+  SERVER_TOOL_BLOCK_TYPES: Array[String]
+
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)

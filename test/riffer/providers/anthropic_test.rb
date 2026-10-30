@@ -1811,6 +1811,22 @@ describe Riffer::Providers::Anthropic do
       [block_start(index, redacted_thinking_block(data)), block_stop(index)]
     end
 
+    def search_use_block(input = { query: "ruby" })
+      { type: "server_tool_use", id: "srvtoolu_1", name: "web_search", input: input }
+    end
+
+    def search_result_block
+      {
+        type: "web_search_tool_result",
+        tool_use_id: "srvtoolu_1",
+        content: [{ type: "web_search_result", title: "Ruby", url: "https://ruby-lang.org", encrypted_content: "enc" }],
+      }
+    end
+
+    def server_tool_part(block)
+      { type: :encrypted, data: JSON.generate(block), format: "anthropic-messages-server-tool-v1" }
+    end
+
     def stream_events(events)
       events = [
         { type: "message_start", message: { id: "msg_1", role: "assistant", content: [], usage: { input_tokens: 1 } } },
@@ -1855,6 +1871,19 @@ describe Riffer::Providers::Anthropic do
         response = build_response([thinking_block("One", "sig-1"), redacted_thinking_block("opaque")])
 
         expect(provider.send(:extract_reasoning, response).map(&:type)).must_equal %i[text encrypted]
+      end
+
+      it "keeps web search blocks as server-tool parts between the thinking parts" do
+        response = build_response(
+          [thinking_block("One", "sig-1"), search_use_block, search_result_block, thinking_block("Two", "sig-2")],
+        )
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :text, text: "One", signature: "sig-1", format: "anthropic-messages-v1" },
+          server_tool_part(search_use_block),
+          server_tool_part(search_result_block),
+          { type: :text, text: "Two", signature: "sig-2", format: "anthropic-messages-v1" },
+        ]
       end
 
       it "returns no parts when the response carries no thinking" do
@@ -1910,6 +1939,28 @@ describe Riffer::Providers::Anthropic do
         ]
       end
 
+      it "emits streamed web search blocks as server-tool parts in block order" do
+        events = stream_events(
+          [
+            *thinking_events(0, signature: "sig-1"),
+            block_start(1, search_use_block({})),
+            delta(1, { type: "input_json_delta", partial_json: '{"query":' }),
+            delta(1, { type: "input_json_delta", partial_json: '"ruby"}' }),
+            block_stop(1),
+            block_start(2, search_result_block),
+            block_stop(2),
+            *thinking_events(3, signature: "sig-2"),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :text, text: "", signature: "sig-1", format: "anthropic-messages-v1" },
+          server_tool_part(search_use_block),
+          server_tool_part(search_result_block),
+          { type: :text, text: "", signature: "sig-2", format: "anthropic-messages-v1" },
+        ]
+      end
+
       it "emits parts in block order and leaves the following text block intact" do
         events = stream_events(
           [*thinking_events(0, "First", signature: "sig-1"), *redacted_events(1, "opaque"), *text_events(2, "4", "2")],
@@ -1934,6 +1985,23 @@ describe Riffer::Providers::Anthropic do
         expect(content[1]).must_equal({ type: "redacted_thinking", data: "opaque" })
         expect(content[2]).must_equal({ type: "text", text: "42" })
         expect(content[3][:type]).must_equal "tool_use"
+      end
+
+      it "sends server-tool parts back as the original blocks, between the thinking blocks" do
+        reasoning = [
+          part(type: :text, text: "", signature: "sig-1", format: "anthropic-messages-v1"),
+          part(**server_tool_part(search_use_block)),
+          part(**server_tool_part(search_result_block)),
+          part(type: :text, text: "", signature: "sig-2", format: "anthropic-messages-v1"),
+        ]
+
+        expect(convert(reasoning)[:content]).must_equal [
+          { type: "thinking", thinking: "", signature: "sig-1" },
+          search_use_block,
+          search_result_block,
+          { type: "thinking", thinking: "", signature: "sig-2" },
+          { type: "text", text: "42" },
+        ]
       end
 
       it "replays parts restored from a persisted hash" do
