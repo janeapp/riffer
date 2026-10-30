@@ -1,0 +1,138 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Classify
+        the session: yoga class, underwater format. The session_type enum does not
+        cover this, so return null for session_type.\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}],"max_tokens":4096,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:35:24 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:35:24Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:35:24Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:24Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:35:24Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQTttYJUEUcZzJcSmyd
+      Traceresponse:
+      - 00-8e8d51bb3c81d3d84b107e9821c9e5a6-1e460ef5ba59d8c8-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=138
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525ff182d8cff38-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQTuEco9GLpxhX8EYap","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":237,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}              }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}      }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSlgcKEAgTGAI4AUIIdGhpbmtpbmcSDCQwxKKsD1bu0WcjyhoMZORcj1A/mz3ag5OhIjD7iSmhcHzLi8jyIpoeD+z7NI6suCrtMg1IHr0qx/hv5Vhxboqc9syhNCYuwelTf1kqswZMHpqfYObk5qJFCM92ZiGIEd7IhDF3kRFQR3vNW7YaBJpIFDAsMO6EyaWt/bO8m0QACCLB2/th4fKt2hXymr1Mlk/vNMMZNFaf/NLx1N+iiovQaONKFI9kbZa5nZhtC74KLMwZAvfgTV3uVNUYreCRSicJFd/hP8YIKwCToy+i5ff/grOSuqh7BP8vHVH5vpSKcW+fetmjD8WPQl2f5LjUPbemtuFqXPUR12QrLahkSzlnhsZLViRyP/gbFwvrsgPTR0cfRkQ9/YQi3EuqGsBYH/poCKmOtWRhM1aScTVXf9MVarIGJhef/tgf8k9B5MUszavC3kx/NmLyfbjusvCv1ViPgjPWNGArch+D92oKYgRkXJDWg0cu4ZLtEIQgA5ExvlP+971KuN1iNGZ9fFMxpnS7I939k4r7tArjTImAbbqIc/NMgjOWMZsFljgUjZpCchUl8v4gI/StNB/jKw1kQTycA0O/8Hyr7F2Yr94DRS5t0VgXfWCSdzBQeamfDsYC0qghW8/J185LOImiymC72jOcA9SPWSwitbd81UchaPLUSzahhLmnb5KrtHdAvKaEa/a38bxhdYRBonXVqazxnjQvEvkp/3CRuXVfOfi5hQgk4qeCsZzg1ML8F91fpiFneASFlyomVQAqJmqwkMaGvgPc3fQGXdr9p4DuXz0oYjukt+eyWDLn1JKYFaloXVjXTQ3uWP9k28ahiIDCJZ42j6xnoVRRPHtK9jR7U+rPBLiZmS270zdRkCREhv3rk89S9ybzBTZI9oOGsQ6fplcpaWnm47JItDUIK4ExP4VMU0cOd4xDTw3UX0MR3M9NhPdSjnKQPuBHBEujyoxrvyXlUMXjs2NMaMCrtso0Lmth1ZBPuAUFVO2858qA1WURYTbgycuiqZuO4VFxoLOJdiJK1vkP5FP1KIkBxm9WiZpzQ2YXjJTGhlwEDSJAcNp0ucNO2J3+Ckoafp74n2tJzBt+87t/aFnspTGzCNYXZy9roGPanfGL8gpl75drayI5rmJk+NDsAOdpGjj05EOqoz+UXlpZtbGiCqYiNGtazaLDNmdgvbEZGZOjoir8piLJcIrEl4wYAQ=="}      }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0  }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\"name"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\":\"Underwater Y"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"oga Class\",\"session_type"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\":null}"}   }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1}
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":237,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":120,"output_tokens_details":{"thinking_tokens":96}} }
+
+        event: message_stop
+        data: {"type":"message_stop"          }
+
+  recorded_at: Thu, 29 Oct 2026 23:35:25 GMT
+recorded_with: VCR 6.4.0
+...

@@ -1,0 +1,682 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"}],"max_tokens":4096,"system":[{"type":"text","text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"tools":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:33:59 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:33:59Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:33:59Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:33:59Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:33:59Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQMdh4oeUVQ3LNWzi3E
+      Traceresponse:
+      - 00-2e35239b5a8d19c6b0070bd305c93eba-13a3905664eb1bf3-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=151
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525fd053e69757d-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQMe5dNtph8kgk9nb77","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":634,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}       }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSvgUKEAgTGAI4AUIIdGhpbmtpbmcSDA4wM8TmX+xm+KJ/+xoM3Dvd7z1rNS+VhI9aIjD+TgxCWel9nuQwAsyzMMJMepz9HyuR5GptgAWWJpudHlWw64ppapL84Cbt0Q3LreAq2wT2jGrDfXt55UL7OFMF+7tRkGJNZJAeLyJv1/HBBgQFkjvoqVom7mgi7APHMAo4fppZqpGRuOq7S08GfhlJmgF1G/gzxaiiXopdnqimXtTGFwGqIL/cSdtHJSEBVwuMkiwX0tdB9E1lnryFuMKkkfFOVeXPbkx+OZatn0hfUqaN3aFmNcDn/fUgml8aph+B1niFdX1KV+rVmspKo061PxdSvlKtthtkcdaOsltd9Cu0sAOaDbW4kqDnCSMAXQwll3nBFJS8/l8AktkglqGoc5v6Q9Sm0KNAME9zj5oIzXmgfut1977tWAK08wB3HnkgvwstZhgNNEjAlEMMlO+bipN2K7UAgTvHako+orL8Hh40Ww67qG3n+blAq6kAriHOLaRft1S2yt4m93Ap09K6ZxfkiAZnRhkKEWowPaViUePNKyBBFoJJCwd0c3q2Xhc73SW3vKB47mh2JdKq8HVdTDyXU/1vljhbQcjqUigkYdbUO1UjdnCm7JROyhIQKak5GmM3lvWkZWPaOyP3UH8Klb1ae8V/BA6xARKLmijrEaxnOPVDyndN4cIw8qLJURYupt+ZCwcQtqn7iZlKj0Fj9OpGCsm3bpRSpmhMOPSSXpX1U5DzQ2VUd9ls/qfAt8Fk9rr2LgDWKko7F1pcsfrJM7WL89fBJ3RO5K6JjIV64dPdYtoxfoaW8BQHJEZ4+L7OVtOyk13bvKAZG361TZyuMsjon3i9xOgwJ+E+20FAIVr4UHHPMP62SKVRdAHqu15RzSgCCd671n218WC2EqBh4MXcH3bYTyhrOOQo9Z8YAQ=="}          }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0     }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_018DFmRiM5FDv92Ypp1Pn8v1","name":"skill_activate","input":{},"caller":{"type":"direct"}}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"name\""}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":": \"code"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"-review"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"}"}           }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1       }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":634,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":79,"output_tokens_details":{"thinking_tokens":27}}              }
+
+        event: message_stop
+        data: {"type":"message_stop" }
+
+  recorded_at: Thu, 29 Oct 2026 23:34:00 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSvgUKEAgTGAI4AUIIdGhpbmtpbmcSDA4wM8TmX+xm+KJ/+xoM3Dvd7z1rNS+VhI9aIjD+TgxCWel9nuQwAsyzMMJMepz9HyuR5GptgAWWJpudHlWw64ppapL84Cbt0Q3LreAq2wT2jGrDfXt55UL7OFMF+7tRkGJNZJAeLyJv1/HBBgQFkjvoqVom7mgi7APHMAo4fppZqpGRuOq7S08GfhlJmgF1G/gzxaiiXopdnqimXtTGFwGqIL/cSdtHJSEBVwuMkiwX0tdB9E1lnryFuMKkkfFOVeXPbkx+OZatn0hfUqaN3aFmNcDn/fUgml8aph+B1niFdX1KV+rVmspKo061PxdSvlKtthtkcdaOsltd9Cu0sAOaDbW4kqDnCSMAXQwll3nBFJS8/l8AktkglqGoc5v6Q9Sm0KNAME9zj5oIzXmgfut1977tWAK08wB3HnkgvwstZhgNNEjAlEMMlO+bipN2K7UAgTvHako+orL8Hh40Ww67qG3n+blAq6kAriHOLaRft1S2yt4m93Ap09K6ZxfkiAZnRhkKEWowPaViUePNKyBBFoJJCwd0c3q2Xhc73SW3vKB47mh2JdKq8HVdTDyXU/1vljhbQcjqUigkYdbUO1UjdnCm7JROyhIQKak5GmM3lvWkZWPaOyP3UH8Klb1ae8V/BA6xARKLmijrEaxnOPVDyndN4cIw8qLJURYupt+ZCwcQtqn7iZlKj0Fj9OpGCsm3bpRSpmhMOPSSXpX1U5DzQ2VUd9ls/qfAt8Fk9rr2LgDWKko7F1pcsfrJM7WL89fBJ3RO5K6JjIV64dPdYtoxfoaW8BQHJEZ4+L7OVtOyk13bvKAZG361TZyuMsjon3i9xOgwJ+E+20FAIVr4UHHPMP62SKVRdAHqu15RzSgCCd671n218WC2EqBh4MXcH3bYTyhrOOQo9Z8YAQ=="},{"type":"tool_use","id":"toolu_018DFmRiM5FDv92Ypp1Pn8v1","name":"skill_activate","input":{"name":"code-review"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_018DFmRiM5FDv92Ypp1Pn8v1","content":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}]}],"max_tokens":4096,"system":[{"type":"text","text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"tools":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:34:00 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:34:00Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:34:00Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:34:00Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:34:00Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQMhznDYagYVdJV8stH
+      Traceresponse:
+      - 00-a453146c37aedb93adb8a286e88ab2f0-71fa5cc819b817f5-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=132
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525fd0b7cb2763c-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQMiL7yiArbSUsA5S23","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":774,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}    }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQStgsKEAgTGAI4AUIIdGhpbmtpbmcSDMRPxbUpdi7d6jFwthoMbrh0W4BRCkdKunEsIjDNlrSMUosDcBuytaPpbS5Z6Kxa4sJjrITQwSans6fl89PwDeEbv8bfeDRwMRlejykq0wrIRSArOe5yr31PiH0LEdz8ILwQBoJ6I+N1cVO2AXEqYCXviXWPfwtUbI8xCOUBds5Y/bdp/5JOlhvaDbXDXqU7Z1MOKowBxbLuxu3KS6FX90Eep6Jr5+kHAta2Cao1eimH6eQtUYdg7yEI4mnb04KHxyCbm339llRJ4PEC6Le83zt/zQWbwnpxt7JBBFqIVNGHVPNblAOU7hi3L1egzu3w41Xg8nljQPV2r2C1GbDQG4DasjsvsLiMhZmUC3u+5upZnVoy/fZNIo05g8wkwWz+chKPy+Wh/B6KaZ7rhGn03OWkVKmkYuAkAMyq+6TznZMPA6xsK8jWvI6GqcxLOkC/uk96rmWEvAz6GRnKrJEnfTRa+8Fuv7sjfuFPJ4rAan5H3hpRIgHNPh7BpXlgzvl7yvciMVTLBEN3ZO352RdAuFBJwHfAWTLypqunUwteEcAa1L6lquYHXpEEaefp9+Jn1EtE+1PjKLrWPb3mK0fhJwb577ekNylo0ya1Ot85Ppwz3IO3sqU2mkxtVxCuYhDygm5dIfTp2WVrxmIgDMqkn7Qn1BvG6efwisXu9lOwDt7UzdjpdPiXqwpTghVz6TaMiCKAExKmgPrwgwVOepfKQkDQoo+AWKRaLfwBauRs3furRWhdCGqM4oBRyg5kNCN6kIvOzvV+/D8UPHHvjtOdUDVJssnDxeKkbyFLhlf2JiNOSAPfRzPtvOMTSaqnOBql+Ssk/haJ4Yj5wZfH9fjx0FWatRmDAaa8edgxumY2pS7HaUar8r3XPl5sU0Zn0HYyg7QeG+urtpVwCQnU51fHsQlGkmex4IjvZDbD9EQtKc6WGdeFxlXv6aPmPnZfOV7S2qawcOLviNfIWIstTFE7aPSKqyh2P2I1lU57AAERc7YBo+oMmJqLRBM1ayrlBU9MzkIx0u3Id3lDr0hQxdeBFThgccCktZEIqR5RXCcOSc48DZGZQBN2EOhih1YcXyNHq0uUTnkJ+qING4dhKb3xnve3DtxScH/6smNqYG5K9iaopn8sMhM5rm9eS4hYJdhCCI305zc0SdNhDa0xQuAcm0HHOJy5PGYoc4k4VOjZBoC1ehioPLUFjYaVgOMjz1Tkgeaj60/gwtki5YuvbM2fBJ596F2hWcyH8QUGfNKVMY0Kiqz3JKe5ghqMF/8+I5NhXhh78ponG+SFhvA2/XWC2IssCNFerBAfq/tzexdLkcDlSTPlt267/xuWdIC7lMa+4v+0c231IC13OZPgBKTjQiVT59EKvjdq4fOBmCsqG90Y4L6wHhBh2JYQhtyzbE9EdvJfpxbJO8yqmt5YvvL7wII/s9rX9khekfDfqUmMHDatb2+ngQHjIHJ84o4vApyMcxs7U3sW/kj2aOUcB23KAiZcz4Sev6OW9FGT0h8y/Mx+2+Oe0pQetwlhi4+CJdOgCPkaJNrdTT7r/FL79gzMc7MW6Q/w7FN5AA7/tphx/9A+q+LVAW2jtg76ofXSjqEQIvIj9k9C9MBEnqj/FkVEsc83u3Az01ntjns5XdRXAdEbXSlvrSwjowxpl4ZSISk1kJu8sUyhzlNi6dyiIPHsxzltFvQDO5wRR/s7KC3XAJ2wl8yW9/6RfObwJ0Q8qwXjJ8yo5/5Ymegeb2TlFZJ+zMBUeuFfQsXuzULF5lEaPy82av3lqRTL5WVj7lQBdS9EJqHZAGNZhwCr04H6AaqzJNAV0XyJheRmiDjUAiM50UtHAuKTJZ2hHxwd/3Spv+RYyQJ/J7NU2WxYdXugTJBjpRqGc5DTKQiwnaLvb/WYfX5NXpFQuMgjG7dfL/ZNFdBYMBreGAE="}               }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0         }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"**"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Code re"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"viewed:"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"**"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `def add(a, b)"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" a + b end`\n\n**"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Style**\n- The method is val"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"id"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Ruby,"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" but the"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" one-line form is un"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"us"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ual. The"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" conventional lay"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"out is:"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n  ```ruby\n  "}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"def add(a, b)"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    a + b\n  end"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n  ```\n- The"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" name and par"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ameters"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" follow Ruby con"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ventions."}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n- Running R"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"uboCop would"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" lik"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ely flag the one"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"-line body"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", though"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" it's a"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" minor point"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".\n\n**Potential bug"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"s**\n- There"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" is no input"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" validation,"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" so beh"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"avior depends ent"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"irely on what"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `+` does for"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" the ar"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"guments:\n  - `add"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(1, 2)` retur"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ns `3`."}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n  - `add(\"a\","}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \"b\")` returns `\""}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ab\"`, which may"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" be sur"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"prising if"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" you"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" exp"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ected nume"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ric addition.\n  - `"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"add("}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1, \"2"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\")` raises `Type"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Error`.\n  - `add"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(n"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"il, 1)` raises"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `NoMethodError`"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".\n  - `add(["}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1], [2])` returns"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `[1, 2]`"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".\n- If the"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" method is meant only"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" for numb"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ers, cons"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ider guarding the"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" in"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"puts,"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" for"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" example with"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `ra"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ise ArgumentError un"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"less a.is_a?("}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Numeric) && b."}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"is_a?(Nume"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ric)`."}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" If"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" du"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ck typing is intentional,"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" document"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" that"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"."}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n- "}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Ruby's d"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ynamic typing mak"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"es this fl"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"exib"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ility a"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" design"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" choice r"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ather than a def"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ect,"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" so"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" it may"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" be"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" fine as"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" is"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".\n\n**Performance**"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n- No"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" conc"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"erns. The method is a"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" single add"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ition and is about"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" as c"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"heap as"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Ruby meth"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ods get"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".\n\n**Suggestions"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"**\n- Add a brief"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" doc comment st"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ating the"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" expected arg"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ument types, such as a"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" YARD `"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"@param` tag.\n-"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Add a test or"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" two"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" covering the int"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ended types and the fail"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ure c"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ases.\n\n**Ver"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"dict:** Corre"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ct for"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" num"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"eric inputs and"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" f"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ine as a"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" sim"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ple helper. The"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" main impro"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"vement is docum"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"enting or"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" en"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"forcing the exp"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ected arg"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ument types."}            }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1        }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":774,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":853,"output_tokens_details":{"thinking_tokens":292}}           }
+
+        event: message_stop
+        data: {"type":"message_stop"            }
+
+  recorded_at: Thu, 29 Oct 2026 23:34:05 GMT
+recorded_with: VCR 6.4.0
+...
