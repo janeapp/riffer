@@ -10,6 +10,11 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # @rbs @web_search_query: String?
   # @rbs @completed: bool
 
+  # Each server tool has its own result type (web search run from code execution returns
+  # +code_execution_tool_result+ blocks too), and the API rejects a server_tool_use sent back
+  # without its result.
+  SERVER_TOOL_RESULT_TYPE = /\A\w+_tool_result\z/ #: Regexp
+
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def self.reasoning_part(block)
@@ -156,8 +161,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
 
       @web_search_query = block[:input]["query"]
       yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: @web_search_query)
-    when "web_search_tool_result"
+    when SERVER_TOOL_RESULT_TYPE
       yielder << Riffer::StreamEvents::ServerToolDone.new(self.class.server_tool_part(block))
+      return unless block[:type] == "web_search_tool_result"
+
       yielder << Riffer::StreamEvents::WebSearchDone.new(@web_search_query || "", sources: web_search_sources(block))
       @web_search_query = nil
     end

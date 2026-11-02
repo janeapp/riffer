@@ -129,8 +129,7 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, Enumerator::Yielder, ?Hash[String, String]) -> Riffer::Messages::Assistant
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
-    # Text deltas between two non-text events form one text part; the String entries are those
-    # buffers.
+    # Text deltas between two non-text events form one text part.
     parts = [] #: Array[String | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
     text_buffer = nil #: String?
     final_text = nil #: String?

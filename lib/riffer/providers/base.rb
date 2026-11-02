@@ -258,11 +258,11 @@ class Riffer::Providers::Base
   #--
   #: (untyped) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
   def extract_parts(response)
-    parts = [] #: Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
-    parts.concat(extract_reasoning(response))
-    content = extract_content(response)
-    parts << Riffer::Messages::Assistant::TextPart.new(content) unless content.empty?
-    parts.concat(extract_tool_calls(response))
+    Riffer::Messages::Assistant.new(
+      extract_content(response),
+      tool_calls: extract_tool_calls(response),
+      reasoning: extract_reasoning(response),
+    ).parts
   end
 
   #--

@@ -1836,6 +1836,15 @@ describe Riffer::Providers::Anthropic do
     def search_call_block = { type: "server_tool_use", id: "srvtoolu_1", name: "web_search", input: { query: "ruby" } }
     def search_result_block = { type: "web_search_tool_result", tool_use_id: "srvtoolu_1", content: [] }
 
+    def code_call_block
+      { type: "server_tool_use", id: "srvtoolu_ce", name: "code_execution", input: { code: "print(1)" } }
+    end
+
+    def code_result_block
+      { type: "code_execution_tool_result", tool_use_id: "srvtoolu_ce",
+        content: { type: "code_execution_result", stdout: "1" }, }
+    end
+
     def cited_text_block(text)
       { type: "text", text: text, citations: [{ type: "web_search_result_location", url: "https://ruby-lang.org", encrypted_index: "Eo8B" }] }
     end
@@ -1903,6 +1912,16 @@ describe Riffer::Providers::Anthropic do
         expect(JSON.parse(result.data, symbolize_names: true)).must_equal search_result_block
       end
 
+      it "sends a code execution call back with its result, around the web search it ran" do
+        blocks = [code_call_block, search_call_block, search_result_block, code_result_block, text_block("4.0.9")]
+        message = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, build_response(blocks)))
+
+        expect(message.parts.grep(Riffer::Messages::Assistant::ServerToolPart).map { |p| [p.name, p.kind] }).
+          must_equal [["code_execution", :call], ["web_search", :call], ["web_search", :result],
+                      ["code_execution", :result],]
+        expect(provider.send(:convert_assistant, message)[:content]).must_equal blocks
+      end
+
       it "keeps a text block's citations, and only the text when it has none" do
         cited, plain = provider.send(:extract_parts, build_response([cited_text_block("4.0.9"), text_block(".")]))
 
@@ -1967,6 +1986,22 @@ describe Riffer::Providers::Anthropic do
 
         expect(JSON.parse(call.data,
                           symbolize_names: true,)).must_equal search_call_block.merge(input: { query: "ruby" })
+      end
+
+      it "emits a ServerToolDone for a code execution result, without a web search event" do
+        events = stream_events(
+          [
+            block_start(0, code_call_block.merge(input: {})),
+            delta(0, { type: "input_json_delta", partial_json: '{"code":"print(1)"}' }),
+            block_stop(0),
+            block_start(1, code_result_block),
+            block_stop(1),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ServerToolDone).map { |e| [e.part.name, e.part.kind] }).
+          must_equal [["code_execution", :call], ["code_execution", :result]]
+        expect(events.grep(Riffer::StreamEvents::WebSearchDone)).must_be_empty
       end
 
       it "emits parts in block order and leaves the following text block intact" do
