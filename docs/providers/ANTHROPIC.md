@@ -29,12 +29,12 @@ Riffer.configure do |config|
 end
 ```
 
-| Option       | Default                                | Description                                                         |
-| ------------ | -------------------------------------- | ------------------------------------------------------------------- |
-| `api_key`    | required                               | Sent as `Authorization: Bearer <api_key>`                           |
-| `base_url`   | `https://api.anthropic.com`            | API origin; requests go to `<base_url>/v1/messages`                 |
-| `headers`    | `{}`                                   | Sent on every request; replaces riffer's headers of the same name   |
-| `connection` | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections]      |
+| Option       | Default                                | Description                                                       |
+| ------------ | -------------------------------------- | ----------------------------------------------------------------- |
+| `api_key`    | required                               | Sent as `Authorization: Bearer <api_key>`                         |
+| `base_url`   | `https://api.anthropic.com`            | API origin; requests go to `<base_url>/v1/messages`               |
+| `headers`    | `{}`                                   | Sent on every request; replaces riffer's headers of the same name |
+| `connection` | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections]    |
 
 Timeouts, retries, proxies, beta headers and errors are covered in [Configuration → Connections][connections]. An API error becomes a `Riffer::APIError` whose message carries the Anthropic error type, e.g. `Anthropic API error (401): authentication_error: Invalid bearer token`. No requests are retried unless your connection adds retries.
 
@@ -224,7 +224,7 @@ end
 
 Anthropic emits sources with `title` and `url` on the `WebSearchDone` event.
 
-Each `server_tool_use` and `web_search_tool_result` block is kept on the assistant message as a `ServerToolPart` (see [Messages — Parts](../MESSAGES.md#parts)), and a streamed one also arrives as a `ServerToolDone` event. Text blocks with citations keep their block too. Later turns send them back in place, so Claude reuses the results instead of searching again.
+Each `server_tool_use` block and its result block (`web_search_tool_result`, or `code_execution_tool_result` when a newer web search version runs the search from code execution) is kept on the assistant message as a `ServerToolPart` (see [Messages — Parts](../MESSAGES.md#parts)), and a streamed one also arrives as a `ServerToolDone` event. With `generate`, text blocks with citations keep their block too; a streamed turn keeps the text without its citations. Later turns send them back in place, so Claude reuses the results instead of searching again.
 
 ## Message Format
 

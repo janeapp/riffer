@@ -86,7 +86,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
           name: decode_tool_name(block[:name], tools: @current_tools),
           arguments: (block[:input] || {}).to_json,
         )
-      when "server_tool_use", "web_search_tool_result" then Stream.server_tool_part(block)
+      when "server_tool_use", Stream::SERVER_TOOL_RESULT_TYPE then Stream.server_tool_part(block)
       else Stream.reasoning_part(block)
       end
     end
