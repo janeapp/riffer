@@ -199,12 +199,12 @@ To drop parts from the in-memory session mid-run instead, `Session#update(id:, r
 
 A part is one of:
 
-| Class            | Holds                                                                                                                                 |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Class            | Holds                                                                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `TextPart`       | One stretch of answer text (`text`). `data` keeps the provider's block when it carries more than the text, such as Anthropic citations |
-| `ReasoningPart`  | A thinking block (see [Reasoning](#reasoning))                                                                                        |
-| `ToolCall`       | A function call riffer runs (see [Tool Calls](#tool-calls))                                                                           |
-| `ServerToolPart` | A call (`kind: :call`) or result (`kind: :result`) of a tool the provider ran itself, such as web search                              |
+| `ReasoningPart`  | A thinking block (see [Reasoning](#reasoning))                                                                                         |
+| `ToolCall`       | A function call riffer runs (see [Tool Calls](#tool-calls))                                                                            |
+| `ServerToolPart` | A call (`kind: :call`) or result (`kind: :result`) of a tool the provider ran itself, such as web search                               |
 
 ```ruby
 msg = Riffer::Messages::Assistant.new(parts: [
@@ -430,12 +430,14 @@ Without this step, the same model can receive different input depending on the p
 
 ### Merge rules
 
-| Message type | Content              | Auxiliary data                   | Merged?                                  |
-| ------------ | -------------------- | -------------------------------- | ---------------------------------------- |
-| `System`     | Joined with `"\n\n"` | —                                | Yes                                      |
-| `User`       | Joined with `"\n\n"` | `files` arrays concatenated      | Yes                                      |
-| `Assistant`  | Joined with `"\n\n"` | `tool_calls` and `reasoning` arrays concatenated; [`parts`](#parts) concatenated instead when either message has parts its fields can't rebuild | Yes                                      |
-| `Tool`       | —                    | —                                | Never (each has a unique `tool_call_id`) |
+| Message type | Content              | Auxiliary data                                   | Merged?                                  |
+| ------------ | -------------------- | ------------------------------------------------ | ---------------------------------------- |
+| `System`     | Joined with `"\n\n"` | —                                                | Yes                                      |
+| `User`       | Joined with `"\n\n"` | `files` arrays concatenated                      | Yes                                      |
+| `Assistant`  | Joined with `"\n\n"` | `tool_calls` and `reasoning` arrays concatenated | Yes                                      |
+| `Tool`       | —                    | —                                                | Never (each has a unique `tool_call_id`) |
+
+When either assistant message has [parts](#parts) its fields can't rebuild, the merged message concatenates the two `parts` lists instead, with a `"\n\n"` text part between the texts.
 
 ### Example
 
