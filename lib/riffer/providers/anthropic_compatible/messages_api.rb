@@ -18,7 +18,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
 
   # Only parts carrying this tag are replayed, so reasoning captured by another
   # adapter, whose signatures the Messages API may not accept, never reaches the
-  # request.
+  # request. Server tool parts and text parts that keep their block carry it too.
   REASONING_FORMAT = "anthropic-messages-v1" #: String
 
   #--
@@ -72,30 +72,35 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage) if usage
   end
 
+  # Claude signs each thinking block over every block before it in the turn, so
+  # the blocks go back in the order they came.
   #--
-  #: (Hash[Symbol, untyped]) -> String
-  def extract_content(response)
-    content_blocks(response).filter_map { |block| block[:text] if block[:type] == "text" }.join
-  end
-
-  #--
-  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls(response)
+  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+  def extract_parts(response)
     content_blocks(response).filter_map do |block|
-      next unless block[:type] == "tool_use"
-
-      Riffer::Messages::Assistant::ToolCall.new(
-        call_id: block[:id],
-        name: decode_tool_name(block[:name], tools: @current_tools),
-        arguments: (block[:input] || {}).to_json,
-      )
+      case block[:type]
+      when "text" then text_part(block)
+      when "tool_use"
+        Riffer::Messages::Assistant::ToolCall.new(
+          call_id: block[:id],
+          name: decode_tool_name(block[:name], tools: @current_tools),
+          arguments: (block[:input] || {}).to_json,
+        )
+      when "server_tool_use", "web_search_tool_result" then Stream.server_tool_part(block)
+      else Stream.reasoning_part(block)
+      end
     end
   end
 
+  # The block is kept only when it carries citations, which point into the
+  # search results and go back with the text.
   #--
-  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
-  def extract_reasoning(response)
-    content_blocks(response).filter_map { |block| Stream.reasoning_part(block) }
+  #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::TextPart
+  def text_part(block)
+    citations = block[:citations]
+    return Riffer::Messages::Assistant::TextPart.new(block[:text].to_s) if citations.nil? || citations.empty?
+
+    Riffer::Messages::Assistant::TextPart.new(block[:text].to_s, data: JSON.generate(block), format: REASONING_FORMAT)
   end
 
   #--
@@ -242,21 +247,38 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant(message)
-    content = message.reasoning.filter_map do |part|
+    { role: "assistant", content: message.parts.filter_map { |part| convert_part(part) } }
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?
+  def convert_part(part)
+    case part
+    when Riffer::Messages::Assistant::TextPart then convert_text_part(part)
+    when Riffer::Messages::Assistant::ToolCall
+      {
+        type: "tool_use",
+        id: part.call_id,
+        name: encode_tool_name(part.name),
+        input: parse_tool_arguments(part.arguments),
+      }
+    when Riffer::Messages::Assistant::ServerToolPart
+      JSON.parse(part.data, symbolize_names: true) if part.format == REASONING_FORMAT
+    when Riffer::Messages::Assistant::ReasoningPart
       convert_reasoning_part(part) if part.format == REASONING_FORMAT
     end
-    content << { type: "text", text: message.content } if message.content && !message.content.empty?
+  end
 
-    message.tool_calls.each do |tc|
-      content << {
-        type: "tool_use",
-        id: tc.call_id,
-        name: encode_tool_name(tc.name),
-        input: parse_tool_arguments(tc.arguments),
-      }
-    end
+  # The API rejects empty text blocks.
+  #--
+  #: (Riffer::Messages::Assistant::TextPart) -> Hash[Symbol, untyped]?
+  def convert_text_part(part)
+    return nil if part.text.empty?
 
-    { role: "assistant", content: content }
+    data = part.data
+    return JSON.parse(data, symbolize_names: true) if data && part.format == REASONING_FORMAT
+
+    { type: "text", text: part.text }
   end
 
   #--

@@ -1,0 +1,44 @@
+# Generated from lib/riffer/messages/assistant/server_tool_part.rb with RBS::Inline
+
+# A call or result of a tool the provider ran itself (e.g. web search). Stored and replayed
+# verbatim under the same rule as reasoning parts: only the adapter whose +format+ it is sends
+# it back.
+class Riffer::Messages::Assistant::ServerToolPart
+  KINDS: Array[Symbol]
+
+  attr_reader name: String
+
+  attr_reader kind: Symbol
+
+  # The provider's block, JSON-encoded and unchanged.
+  attr_reader data: String
+
+  # Shared by a call and its result.
+  attr_reader id: String?
+
+  attr_reader format: String?
+
+  # --
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ServerToolPart)) -> Riffer::Messages::Assistant::ServerToolPart
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Assistant::ServerToolPart) -> Riffer::Messages::Assistant::ServerToolPart
+
+  # --
+  # : (name: String, kind: Symbol, data: String, ?id: String?, ?format: String?) -> void
+  def initialize: (name: String, kind: Symbol, data: String, ?id: String?, ?format: String?) -> void
+
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+
+  # --
+  # : (untyped) -> bool
+  def ==: (untyped) -> bool
+
+  # --
+  # : (untyped) -> bool
+  def eql?: (untyped) -> bool
+
+  # --
+  # : () -> Integer
+  def hash: () -> Integer
+end

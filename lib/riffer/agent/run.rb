@@ -129,9 +129,11 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, Enumerator::Yielder, ?Hash[String, String]) -> Riffer::Messages::Assistant
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
-    accumulated_content = +""
-    accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
-    accumulated_reasoning = [] #: Array[Riffer::Messages::Assistant::ReasoningPart]
+    # Text deltas between two non-text events form one text part; the String entries are those
+    # buffers.
+    parts = [] #: Array[String | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+    text_buffer = nil #: String?
+    final_text = nil #: String?
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
     accumulated_finish_reason_raw = nil #: String?
@@ -141,21 +143,23 @@ module Riffer::Agent::Run
 
       case event
       when Riffer::StreamEvents::TextDelta
+        buffer = text_buffer || (+"").tap { |new_buffer| parts << new_buffer }
+        text_buffer = buffer
         # << rather than +=, which copies the whole buffer per delta (O(n^2)
         # over a stream).
-        accumulated_content << event.content
+        buffer << event.content
       when Riffer::StreamEvents::TextDone
-        # replace, not =, so a later delta's << can never mutate the string
-        # this event holds.
-        accumulated_content.replace(event.content)
+        final_text = event.content
       when Riffer::StreamEvents::ToolCallDone
-        accumulated_tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+        text_buffer = nil
+        parts << Riffer::Messages::Assistant::ToolCall.new(
           call_id: event.call_id,
           name: event.name,
           arguments: event.arguments,
         )
-      when Riffer::StreamEvents::ReasoningDone
-        accumulated_reasoning << event.part
+      when Riffer::StreamEvents::ReasoningDone, Riffer::StreamEvents::ServerToolDone
+        text_buffer = nil
+        parts << event.part
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage
       when Riffer::StreamEvents::FinishReasonDone
@@ -165,13 +169,30 @@ module Riffer::Agent::Run
     end
 
     Riffer::Messages::Assistant.new(
-      accumulated_content,
-      tool_calls: accumulated_tool_calls,
-      reasoning: accumulated_reasoning,
+      parts: streamed_parts(parts, final_text),
       token_usage: accumulated_token_usage,
       finish_reason: accumulated_finish_reason,
       finish_reason_raw: accumulated_finish_reason_raw,
     )
+  end
+
+  # TextDone is the adapter's full text. When it differs from the deltas, it replaces them as one
+  # part where the text began, or at the end when no delta arrived.
+  #--
+  #: (Array[String | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart], String?) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+  def streamed_parts(parts, final_text)
+    streamed_text = parts.grep(String).join
+    if final_text && final_text != streamed_text
+      index = parts.index { |part| part.is_a?(String) } || parts.length
+      parts = parts.grep_v(String)
+      parts.insert(index, final_text)
+    end
+
+    parts.filter_map do |part|
+      next part unless part.is_a?(String)
+
+      Riffer::Messages::Assistant::TextPart.new(part) unless part.empty?
+    end
   end
 
   #--

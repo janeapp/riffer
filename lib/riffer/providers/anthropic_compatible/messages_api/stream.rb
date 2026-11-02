@@ -29,6 +29,20 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   end
 
   #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ServerToolPart
+  def self.server_tool_part(block)
+    call = block[:type] == "server_tool_use"
+
+    Riffer::Messages::Assistant::ServerToolPart.new(
+      name: call ? block[:name] : block[:type].delete_suffix("_tool_result"),
+      kind: call ? :call : :result,
+      data: JSON.generate(block),
+      id: call ? block[:id] : block[:tool_use_id],
+      format: Riffer::Providers::AnthropicCompatible::MessagesAPI::REASONING_FORMAT,
+    )
+  end
+
+  #--
   #: (tools: Array[singleton(Riffer::Tool)]) -> void
   def initialize(tools:)
     @tools = tools
@@ -137,11 +151,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
       yielder << Riffer::StreamEvents::ReasoningDone.new(part)
     when "server_tool_use"
       block[:input] = parse_input(@partial_json.delete(index).to_s) || {}
+      yielder << Riffer::StreamEvents::ServerToolDone.new(self.class.server_tool_part(block))
       return unless block[:name] == "web_search"
 
       @web_search_query = block[:input]["query"]
       yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: @web_search_query)
     when "web_search_tool_result"
+      yielder << Riffer::StreamEvents::ServerToolDone.new(self.class.server_tool_part(block))
       yielder << Riffer::StreamEvents::WebSearchDone.new(@web_search_query || "", sources: web_search_sources(block))
       @web_search_query = nil
     end

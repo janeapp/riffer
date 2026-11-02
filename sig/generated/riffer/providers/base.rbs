@@ -103,6 +103,11 @@ class Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
+  # Override when the provider interleaves blocks in one turn and needs them back in that order.
+  # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+  def extract_parts: (untyped) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+
   # --
   # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
   def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]

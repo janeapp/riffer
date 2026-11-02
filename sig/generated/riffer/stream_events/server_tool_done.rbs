@@ -1,0 +1,15 @@
+# Generated from lib/riffer/stream_events/server_tool_done.rb with RBS::Inline
+
+# Carries a server tool block for replay. WebSearchStatus and WebSearchDone are the events to
+# display.
+class Riffer::StreamEvents::ServerToolDone < Riffer::StreamEvents::Base
+  attr_reader part: Riffer::Messages::Assistant::ServerToolPart
+
+  # --
+  # : (Riffer::Messages::Assistant::ServerToolPart, ?role: Symbol) -> void
+  def initialize: (Riffer::Messages::Assistant::ServerToolPart, ?role: Symbol) -> void
+
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end
