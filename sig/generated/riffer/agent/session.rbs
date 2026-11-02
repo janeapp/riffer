@@ -77,6 +77,12 @@ class Riffer::Agent::Session
   # : (Riffer::Messages::Base, Riffer::Messages::Base) -> void
   def cascade_dropped_tool_calls: (Riffer::Messages::Base, Riffer::Messages::Base) -> void
 
+  # A +content+, +tool_calls+ or +reasoning+ edit rebuilds the parts in the default order, which
+  # drops server tool parts; +parts:+ replaces them as given.
+  # --
+  # : (Riffer::Messages::Assistant, Hash[Symbol, untyped]) -> Riffer::Messages::Assistant
+  def rebuild_assistant: (Riffer::Messages::Assistant, Hash[Symbol, untyped]) -> Riffer::Messages::Assistant
+
   # --
   # : (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
   def rebuild_message: (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base

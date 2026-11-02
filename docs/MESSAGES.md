@@ -184,13 +184,83 @@ Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, Reaso
 
 **The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no `format` is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
 
-An application that would rather not store parts can leave the key out when it serializes:
+An application that would rather not store reasoning can leave it out when it serializes. When the hash also carries [`parts`](#parts), drop the reasoning entries there too, or `from_hash` reads them back:
 
 ```ruby
-msg.to_h.except(:reasoning)
+hash = msg.to_h.except(:reasoning)
+hash[:parts] = hash[:parts].reject { |part| part[:part] == :reasoning } if hash[:parts]
 ```
 
 To drop parts from the in-memory session mid-run instead, `Session#update(id:, reasoning: [])` rewrites the message in place; it needs [message ids](#ids) enabled to address it.
+
+#### Parts
+
+`parts` is the assistant turn in the order the provider produced it. `content`, `tool_calls` and `reasoning` are views over it. Some providers interleave reasoning, server-side tools and text in one turn, and Anthropic needs the turn back in that order: Claude signs each thinking block over every block before it. Sending earlier turns back unchanged also keeps the model's own reasoning and search results, and keeps the prompt cache warm, since the history doesn't change between requests.
+
+A part is one of:
+
+| Class            | Holds                                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `TextPart`       | One stretch of answer text (`text`). `data` keeps the provider's block when it carries more than the text, such as Anthropic citations |
+| `ReasoningPart`  | A thinking block (see [Reasoning](#reasoning))                                                                                        |
+| `ToolCall`       | A function call riffer runs (see [Tool Calls](#tool-calls))                                                                           |
+| `ServerToolPart` | A call (`kind: :call`) or result (`kind: :result`) of a tool the provider ran itself, such as web search                              |
+
+```ruby
+msg = Riffer::Messages::Assistant.new(parts: [
+  Riffer::Messages::Assistant::TextPart.new("Let me check. "),
+  Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, id: "srvtoolu_1", data: "{...}", format: "anthropic-messages-v1"),
+  Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :result, id: "srvtoolu_1", data: "{...}", format: "anthropic-messages-v1"),
+  Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "", signature: "CAQS...", format: "anthropic-messages-v1"),
+  Riffer::Messages::Assistant::TextPart.new("The latest stable Ruby version is 4.0.9.")
+])
+
+msg.content     # => "Let me check. The latest stable Ruby version is 4.0.9."
+msg.reasoning   # => [ReasoningPart]
+msg.reasoning?  # => true; server tool parts don't count as reasoning
+```
+
+- `content` joins the text parts with no separator.
+- `Assistant.new(content, tool_calls:, reasoning:)` builds the parts in a fixed order: reasoning, then `content` as one text part (none when empty), then tool calls.
+- Passing `parts:` together with `content`, `tool_calls:` or `reasoning:` raises `Riffer::ArgumentError`.
+- `ServerToolPart#data` holds the provider's block as JSON, unchanged. It follows the same replay contract as reasoning: only the adapter that recognizes its `format` sends it back, and other adapters skip it. The same goes for a `TextPart` that carries `data`; other adapters send its `text`.
+
+`to_h` keeps the `content`, `tool_calls` and `reasoning` keys. It adds a `parts` key only when those three can't rebuild the parts: a server tool part, a text part with `data`, or parts out of the fixed order. Each entry is the part's own hash plus a `part` tag (`:text`, `:reasoning`, `:tool_call` or `:server_tool`). `from_hash` reads `parts` when present and the old keys otherwise, so earlier persisted messages load unchanged.
+
+```ruby
+msg.to_h[:parts]
+# => [{part: :text, text: "Let me check. "},
+#     {part: :server_tool, name: "web_search", kind: :call, data: "{...}", id: "srvtoolu_1", format: "anthropic-messages-v1"},
+#     ...]
+```
+
+If you persist sessions, keep the `parts` key. Without it the turn falls back to the fixed order and loses its server tool parts, so Anthropic may reject a later turn or search again.
+
+**Editing a turn.** Riffer sends the parts back as they are. When you change a turn's text (in an output guardrail, or with `Session#update`), keeping the rest of the turn consistent is up to you:
+
+- Drop that turn's reasoning parts. They were signed over the old text, so Anthropic would reject them or drop them silently, and they may still hold the text you removed.
+- Keep server tool parts and tool calls, so the model doesn't search again and tool results keep their call.
+- Put the new text after the last server tool part and before the first tool call.
+
+```ruby
+def redact(message, text)
+  kept = message.parts.reject do |part|
+    part.is_a?(Riffer::Messages::Assistant::ReasoningPart) || part.is_a?(Riffer::Messages::Assistant::TextPart)
+  end
+  index = kept.index { |part| part.is_a?(Riffer::Messages::Assistant::ToolCall) } || kept.length
+  parts = kept.insert(index, Riffer::Messages::Assistant::TextPart.new(text))
+
+  Riffer::Messages::Assistant.new(
+    parts: parts,
+    id: message.id,
+    token_usage: message.token_usage,
+    finish_reason: message.finish_reason,
+    finish_reason_raw: message.finish_reason_raw
+  )
+end
+```
+
+`Assistant.new(text)` and `Session#update(id:, content:)` don't follow these rules. They rebuild the turn in the fixed order, which keeps the reasoning and drops server tool parts. Use `Session#update(id:, parts:)` to replace the parts as given.
 
 ### Tool
 
@@ -364,7 +434,7 @@ Without this step, the same model can receive different input depending on the p
 | ------------ | -------------------- | -------------------------------- | ---------------------------------------- |
 | `System`     | Joined with `"\n\n"` | —                                | Yes                                      |
 | `User`       | Joined with `"\n\n"` | `files` arrays concatenated      | Yes                                      |
-| `Assistant`  | Joined with `"\n\n"` | `tool_calls` arrays concatenated | Yes                                      |
+| `Assistant`  | Joined with `"\n\n"` | `tool_calls` and `reasoning` arrays concatenated; [`parts`](#parts) concatenated instead when either message has parts its fields can't rebuild | Yes                                      |
 | `Tool`       | —                    | —                                | Never (each has a unique `tool_call_id`) |
 
 ### Example

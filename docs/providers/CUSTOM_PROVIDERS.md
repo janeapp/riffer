@@ -259,6 +259,9 @@ Riffer::StreamEvents::ToolCallDone.new(
 Riffer::StreamEvents::ReasoningDelta.new("thinking...")
 Riffer::StreamEvents::ReasoningDone.new(part)
 
+# Server tool blocks (if supported); see the Ordered Parts section
+Riffer::StreamEvents::ServerToolDone.new(server_tool_part)
+
 # Web search (if supported)
 Riffer::StreamEvents::WebSearchStatus.new("searching", query: "search query")
 Riffer::StreamEvents::WebSearchDone.new(
@@ -342,6 +345,27 @@ yielder << Riffer::StreamEvents::ReasoningDone.new(part)
 ```
 
 If your adapter surfaces reasoning text but cannot yet replay it, call `yield_reasoning_done(yielder, text)` instead. It wraps the text in a `:text` part with no `format`, which persists for display and is skipped on replay.
+
+## Ordered Parts
+
+By default the base class builds the assistant message's [parts](../MESSAGES.md#parts) from `extract_reasoning`, `extract_content` and `extract_tool_calls`, in that order. If your provider interleaves blocks in one turn and needs them back in that order, override `extract_parts` instead and return every block as a part, in response order:
+
+```ruby
+def extract_parts(response)
+  response.blocks.filter_map do |block|
+    case block.type
+    when "text" then Riffer::Messages::Assistant::TextPart.new(block.text)
+    when "thinking" then Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: block.text, signature: block.signature, format: "my-provider-v1")
+    when "tool_call" then Riffer::Messages::Assistant::ToolCall.new(call_id: block.id, name: block.name, arguments: block.arguments)
+    when "search" then Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, id: block.id, data: block.to_json, format: "my-provider-v1")
+    end
+  end
+end
+```
+
+Then replay by walking `message.parts` rather than reading `content`, `tool_calls` and `reasoning` separately, and skip parts whose `format` you don't recognize.
+
+For streaming, emit `ServerToolDone` for each server tool block, and keep text deltas, `ReasoningDone` and `ToolCallDone` in the order the blocks arrive. The agent loop builds the parts in that order.
 
 ## Reasoning Level
 

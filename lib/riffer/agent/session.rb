@@ -186,21 +186,44 @@ class Riffer::Agent::Session
     @messages.reject! { |m| m.is_a?(Riffer::Messages::Tool) && removed_ids.include?(m.tool_call_id) }
   end
 
+  # A +content+, +tool_calls+ or +reasoning+ edit rebuilds the parts in the default order, which
+  # drops server tool parts; +parts:+ replaces them as given.
+  #--
+  #: (Riffer::Messages::Assistant, Hash[Symbol, untyped]) -> Riffer::Messages::Assistant
+  def rebuild_assistant(old, attrs)
+    options = {
+      id: attrs.fetch(:id, old.id),
+      token_usage: attrs.fetch(:token_usage, old.token_usage),
+      structured_output: attrs.fetch(:structured_output, old.structured_output),
+      finish_reason: attrs.fetch(:finish_reason, old.finish_reason),
+      finish_reason_raw: attrs.fetch(:finish_reason_raw, old.finish_reason_raw),
+    } #: Hash[Symbol, untyped]
+    field_edit = attrs.key?(:content) || attrs.key?(:tool_calls) || attrs.key?(:reasoning)
+
+    if attrs.key?(:parts) || !field_edit
+      return Riffer::Messages::Assistant.new(
+        attrs[:content],
+        parts: attrs.fetch(:parts, old.parts),
+        tool_calls: attrs.fetch(:tool_calls, []),
+        reasoning: attrs.fetch(:reasoning, []),
+        **options,
+      )
+    end
+
+    Riffer::Messages::Assistant.new(
+      attrs.fetch(:content, old.content),
+      tool_calls: attrs.fetch(:tool_calls, old.tool_calls),
+      reasoning: attrs.fetch(:reasoning, old.reasoning),
+      **options,
+    )
+  end
+
   #--
   #: (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
   def rebuild_message(old, attrs)
     case old
     when Riffer::Messages::Assistant
-      Riffer::Messages::Assistant.new(
-        attrs.fetch(:content, old.content),
-        id: attrs.fetch(:id, old.id),
-        tool_calls: attrs.fetch(:tool_calls, old.tool_calls),
-        reasoning: attrs.fetch(:reasoning, old.reasoning),
-        token_usage: attrs.fetch(:token_usage, old.token_usage),
-        structured_output: attrs.fetch(:structured_output, old.structured_output),
-        finish_reason: attrs.fetch(:finish_reason, old.finish_reason),
-        finish_reason_raw: attrs.fetch(:finish_reason_raw, old.finish_reason_raw),
-      )
+      rebuild_assistant(old, attrs)
     when Riffer::Messages::Tool
       Riffer::Messages::Tool.new(
         attrs.fetch(:content, old.content),

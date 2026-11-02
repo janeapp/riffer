@@ -1,0 +1,35 @@
+# Generated from lib/riffer/messages/assistant/text_part.rb with RBS::Inline
+
+class Riffer::Messages::Assistant::TextPart
+  attr_reader text: String
+
+  # The provider's whole block as JSON, kept when it carries more than the text (e.g. Anthropic
+  # +citations+), so the adapter that produced it can send it back unchanged.
+  attr_reader data: String?
+
+  attr_reader format: String?
+
+  # --
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::TextPart)) -> Riffer::Messages::Assistant::TextPart
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Assistant::TextPart) -> Riffer::Messages::Assistant::TextPart
+
+  # --
+  # : (String, ?data: String?, ?format: String?) -> void
+  def initialize: (String, ?data: String?, ?format: String?) -> void
+
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+
+  # --
+  # : (untyped) -> bool
+  def ==: (untyped) -> bool
+
+  # --
+  # : (untyped) -> bool
+  def eql?: (untyped) -> bool
+
+  # --
+  # : () -> Integer
+  def hash: () -> Integer
+end

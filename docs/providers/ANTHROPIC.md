@@ -189,9 +189,11 @@ The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.
 
 ### Reasoning Replay
 
-Riffer sends the reasoning back to Anthropic on every later turn, as `thinking` and `redacted_thinking` blocks ahead of the message's text and `tool_use` blocks, in their original order and unchanged. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
+Riffer sends every earlier turn back to Anthropic as the API returned it: the `thinking`, `redacted_thinking`, text, web search and `tool_use` blocks, in their original order and unchanged (see [Messages — Parts](../MESSAGES.md#parts)). Order matters because Claude signs each thinking block over everything before it, including earlier blocks of the same turn. A turn sent back in a different order loses that reasoning, or is rejected with a 400 on accounts that enforce the binding. For tool calls, sending the reasoning back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
 
-If you persist sessions, keep the `reasoning` key when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop it, later turns lose the model's earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.
+If you persist sessions, keep the `reasoning` and `parts` keys when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop them, later turns lose the model's earlier reasoning and search results, and a tool-calling turn with thinking enabled may be rejected.
+
+If you change a turn's text, drop that turn's reasoning yourself; see [Editing a turn](../MESSAGES.md#parts).
 
 Only reasoning that this provider produced is sent back to Anthropic. A conversation that switches providers midway still works: reasoning from other providers (including OpenRouter's `anthropic-claude-v1` parts) is kept on the messages but left out of Anthropic requests.
 
@@ -222,16 +224,18 @@ end
 
 Anthropic emits sources with `title` and `url` on the `WebSearchDone` event.
 
+Each `server_tool_use` and `web_search_tool_result` block is kept on the assistant message as a `ServerToolPart` (see [Messages — Parts](../MESSAGES.md#parts)), and a streamed one also arrives as a `ServerToolDone` event. Text blocks with citations keep their block too. Later turns send them back in place, so Claude reuses the results instead of searching again.
+
 ## Message Format
 
 The provider converts Riffer messages to Anthropic format:
 
-| Riffer Message | Anthropic Format                                                |
-| -------------- | --------------------------------------------------------------- |
-| `System`       | Added to `system` array as `{type: "text", text: ...}`          |
-| `User`         | `{role: "user", content: "..."}`                                |
-| `Assistant`    | `{role: "assistant", content: [...]}` with text/tool_use blocks |
-| `Tool`         | `{role: "user", content: [{type: "tool_result", ...}]}`         |
+| Riffer Message | Anthropic Format                                                         |
+| -------------- | ------------------------------------------------------------------------ |
+| `System`       | Added to `system` array as `{type: "text", text: ...}`                   |
+| `User`         | `{role: "user", content: "..."}`                                         |
+| `Assistant`    | `{role: "assistant", content: [...]}`, one block per part, in part order |
+| `Tool`         | `{role: "user", content: [{type: "tool_result", ...}]}`                  |
 
 ## Direct Provider Usage
 

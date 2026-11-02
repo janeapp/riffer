@@ -16,6 +16,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   def self.reasoning_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
 
   # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ServerToolPart
+  def self.server_tool_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ServerToolPart
+
+  # --
   # : (tools: Array[singleton(Riffer::Tool)]) -> void
   def initialize: (tools: Array[singleton(Riffer::Tool)]) -> void
 
