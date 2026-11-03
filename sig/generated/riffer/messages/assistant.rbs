@@ -4,7 +4,6 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # The other reasoning part types carry no prose.
   REASONING_TEXT_TYPES: Array[Symbol]
 
-  # The +part+ key that tags each entry of a serialized +parts+ list.
   PART_TAGS: Hash[singleton(Riffer::Messages::Assistant::TextPart) | singleton(Riffer::Messages::Assistant::ReasoningPart) | singleton(Riffer::Messages::Assistant::ToolCall) | singleton(Riffer::Messages::Assistant::ServerToolPart), Symbol]
 
   # --

@@ -175,8 +175,7 @@ module Riffer::Agent::Run
     )
   end
 
-  # TextDone is the adapter's full text. When it differs from the deltas, it replaces them as one
-  # part where the text began, or at the end when no delta arrived.
+  # TextDone is the adapter's authoritative full text, so it wins over the deltas.
   #--
   #: (Array[String | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart], String?) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
   def streamed_parts(parts, final_text)

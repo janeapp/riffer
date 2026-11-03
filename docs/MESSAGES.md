@@ -208,6 +208,26 @@ A part is one of:
 | `ToolCall`       | A function call riffer runs (see [Tool Calls](#tool-calls))                                                                            |
 | `ServerToolPart` | A call (`kind: :call`) or result (`kind: :result`) of a tool the provider ran itself, such as web search                               |
 
+`TextPart` carries:
+
+| Field    | Type      | Description                                                                                            |
+| -------- | --------- | ------------------------------------------------------------------------------------------------------ |
+| `text`   | `String`  | The answer text                                                                                        |
+| `data`   | `String?` | The provider's whole block as JSON, kept when it carries more than the text (e.g. Anthropic citations) |
+| `format` | `String?` | The wire format of `data`, owned by the adapter that produced it                                       |
+
+`ServerToolPart` carries:
+
+| Field    | Type      | Description                                                                                   |
+| -------- | --------- | --------------------------------------------------------------------------------------------- |
+| `name`   | `String`  | The tool's name (e.g. `"web_search"`)                                                         |
+| `kind`   | `Symbol`  | `:call` or `:result`                                                                          |
+| `data`   | `String`  | The provider's block as JSON, unchanged                                                       |
+| `id`     | `String?` | The provider's identifier, shared by a call and its result                                    |
+| `format` | `String?` | The wire format, owned by the adapter that produced the part (e.g. `"anthropic-messages-v1"`) |
+
+A `kind` outside `:call` and `:result` raises `Riffer::ArgumentError`.
+
 ```ruby
 msg = Riffer::Messages::Assistant.new(parts: [
   Riffer::Messages::Assistant::TextPart.new("Let me check. "),
