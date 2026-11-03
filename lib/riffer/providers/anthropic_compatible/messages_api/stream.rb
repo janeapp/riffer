@@ -12,8 +12,9 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
 
   # Each server tool has its own result type (web search run from code execution returns
   # +code_execution_tool_result+ blocks too), and the API rejects a server_tool_use sent back
-  # without its result.
-  SERVER_TOOL_RESULT_TYPE = /\A\w+_tool_result\z/ #: Regexp
+  # without its result. +mcp_tool_result+ pairs with +mcp_tool_use+, which riffer drops, so
+  # its result is dropped too.
+  SERVER_TOOL_RESULT_TYPE = /\A(?!mcp_)\w+_tool_result\z/ #: Regexp
 
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?

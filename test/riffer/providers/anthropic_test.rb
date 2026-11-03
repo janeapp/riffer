@@ -1922,6 +1922,17 @@ describe Riffer::Providers::Anthropic do
         expect(provider.send(:convert_assistant, message)[:content]).must_equal blocks
       end
 
+      it "drops an MCP tool result along with its call" do
+        blocks = [
+          { type: "mcp_tool_use", id: "mcptoolu_1", name: "echo", server_name: "demo", input: {} },
+          { type: "mcp_tool_result", tool_use_id: "mcptoolu_1", is_error: false, content: [] },
+          text_block("done"),
+        ]
+
+        expect(provider.send(:extract_parts, build_response(blocks))).
+          must_equal [Riffer::Messages::Assistant::TextPart.new("done")]
+      end
+
       it "keeps a text block's citations, and only the text when it has none" do
         cited, plain = provider.send(:extract_parts, build_response([cited_text_block("4.0.9"), text_block(".")]))
 

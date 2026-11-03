@@ -11,7 +11,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     Riffer::Messages::Assistant::ReasoningPart => :reasoning,
     Riffer::Messages::Assistant::ToolCall => :tool_call,
     Riffer::Messages::Assistant::ServerToolPart => :server_tool,
-  }.freeze #: Hash[Class, Symbol]
+  }.freeze #: Hash[singleton(Riffer::Messages::Assistant::TextPart) | singleton(Riffer::Messages::Assistant::ReasoningPart) | singleton(Riffer::Messages::Assistant::ToolCall) | singleton(Riffer::Messages::Assistant::ServerToolPart), Symbol]
 
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant)) -> Riffer::Messages::Assistant
@@ -40,15 +40,12 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   def self.part_from_hash(part)
     return part unless part.is_a?(Hash)
 
-    attributes = part.except(:part)
-    case part[:part]&.to_sym
-    when :text then Riffer::Messages::Assistant::TextPart.from_hash(attributes)
-    when :reasoning then Riffer::Messages::Assistant::ReasoningPart.from_hash(attributes)
-    when :tool_call then Riffer::Messages::Assistant::ToolCall.from_hash(attributes)
-    when :server_tool then Riffer::Messages::Assistant::ServerToolPart.from_hash(attributes)
-    else
+    klass = PART_TAGS.key(part[:part]&.to_sym)
+    unless klass
       raise Riffer::ArgumentError, "part must be one of #{PART_TAGS.values.inspect}, got #{part[:part].inspect}"
     end
+
+    klass.from_hash(part.except(:part))
   end
   private_class_method :part_from_hash
 
