@@ -191,7 +191,7 @@ The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.
 
 Riffer sends every earlier turn back to Anthropic as the API returned it: the `thinking`, `redacted_thinking`, text, web search and `tool_use` blocks, in their original order and unchanged (see [Messages — Parts](../MESSAGES.md#parts)). Order matters because Claude signs each thinking block over everything before it, including earlier blocks of the same turn. A turn sent back in a different order loses that reasoning, or is rejected with a 400 on accounts that enforce the binding. For tool calls, sending the reasoning back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
 
-If you persist sessions, keep the `reasoning` and `parts` keys when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop them, later turns lose the model's earlier reasoning and search results, and a tool-calling turn with thinking enabled may be rejected.
+If you persist sessions, store messages with `to_h(parts: true)` (see [Messages — Parts](../MESSAGES.md#parts)). The default `to_h` shape drops web search results and the turn's block order, so a later turn may search again or be rejected. Dropping the reasoning loses the model's earlier thinking, and a tool-calling turn with thinking enabled may be rejected.
 
 If you change a turn's text, drop that turn's reasoning yourself; see [Editing a turn](../MESSAGES.md#parts).
 

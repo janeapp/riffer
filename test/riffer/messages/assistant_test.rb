@@ -64,7 +64,7 @@ describe Riffer::Messages::Assistant do
       expect { Riffer::Messages::Assistant.from_hash({ content: "Hi", finish_reason: "bogus" }) }.must_raise(Riffer::ArgumentError)
     end
 
-    it "round-trips every attribute" do
+    it "round-trips every attribute through to_h(parts: true)" do
       message = Riffer::Messages::Assistant.new(
         id: "a-1",
         parts: [
@@ -80,7 +80,22 @@ describe Riffer::Messages::Assistant do
         finish_reason_raw: "tool_use",
       )
 
-      assert_round_trips message
+      assert_round_trips message, parts: true, omitted: %i[tool_calls reasoning]
+    end
+
+    it "round-trips every attribute through the default to_h" do
+      message = Riffer::Messages::Assistant.new(
+        "Let me search",
+        id: "a-1",
+        tool_calls: [Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "search", arguments: "{}")],
+        reasoning: [Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking")],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.42),
+        structured_output: { answer: 42 },
+        finish_reason: :tool_calls,
+        finish_reason_raw: "tool_use",
+      )
+
+      assert_round_trips message, omitted: %i[parts]
     end
 
     it "builds the parts from the old keys when the hash has no parts" do
@@ -100,12 +115,10 @@ describe Riffer::Messages::Assistant do
       ]
     end
 
-    it "reads parts in their stored order and ignores the old keys" do
+    it "reads parts in their stored order" do
       message = Riffer::Messages::Assistant.from_hash(
         {
           role: "assistant",
-          content: "stale",
-          reasoning: [{ type: "text", text: "stale" }],
           parts: [
             { part: "text", text: "Let me check." },
             { part: "server_tool", name: "web_search", kind: "call", data: "{}" },
@@ -125,9 +138,31 @@ describe Riffer::Messages::Assistant do
       expect(message.reasoning_text).must_equal "Thinking"
     end
 
+    it "raises Riffer::ArgumentError on a hash that has parts and content, tool_calls or reasoning" do
+      parts = [{ part: "text", text: "Hi" }]
+
+      [
+        { content: "Hi" },
+        { tool_calls: [{ call_id: "c1", name: "search", arguments: "{}" }] },
+        { reasoning: [{ type: "text", text: "Thinking" }] },
+      ].each do |old_keys|
+        expect do
+          Riffer::Messages::Assistant.from_hash({ role: "assistant", parts: parts, **old_keys })
+        end.must_raise Riffer::ArgumentError
+      end
+    end
+
+    it "accepts parts next to nil content and empty tool_calls and reasoning" do
+      message = Riffer::Messages::Assistant.from_hash(
+        { role: "assistant", content: nil, tool_calls: [], reasoning: [], parts: [{ part: "text", text: "Hi" }] },
+      )
+
+      expect(message.content).must_equal "Hi"
+    end
+
     it "raises Riffer::ArgumentError on an unknown part tag" do
       expect do
-        Riffer::Messages::Assistant.from_hash({ role: "assistant", content: "", parts: [{ part: "image" }] })
+        Riffer::Messages::Assistant.from_hash({ role: "assistant", parts: [{ part: "image" }] })
       end.must_raise Riffer::ArgumentError
     end
   end
@@ -303,37 +338,40 @@ describe Riffer::Messages::Assistant do
   end
 
   describe "#to_h" do
-    it "omits parts when content, tool_calls and reasoning rebuild them" do
-      reasoning = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking")
+    it "writes content, tool_calls and reasoning by default, without the parts they can't hold" do
       message = Riffer::Messages::Assistant.new(
-        parts: [reasoning, Riffer::Messages::Assistant::TextPart.new("Hi")],
-      )
-
-      expect(message.to_h.key?(:parts)).must_equal false
-    end
-
-    it "writes tagged parts, next to the old keys, when the order says more than the fields" do
-      reasoning = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking")
-      message = Riffer::Messages::Assistant.new(
-        parts: [Riffer::Messages::Assistant::TextPart.new("Hi"), reasoning],
+        parts: [
+          Riffer::Messages::Assistant::TextPart.new("Hi", data: "{}", format: "mock-v1"),
+          Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}"),
+          Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking"),
+        ],
       )
 
       expect(message.to_h).must_equal(
+        { role: :assistant, content: "Hi", reasoning: [{ type: :text, text: "Thinking" }] },
+      )
+    end
+
+    it "writes only tagged parts with parts: true" do
+      reasoning = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking")
+      message = Riffer::Messages::Assistant.new(
+        id: "a-1",
+        parts: [Riffer::Messages::Assistant::TextPart.new("Hi"), reasoning],
+      )
+
+      expect(message.to_h(parts: true)).must_equal(
         {
           role: :assistant,
-          content: "Hi",
-          reasoning: [{ type: :text, text: "Thinking" }],
+          id: "a-1",
           parts: [{ part: :text, text: "Hi" }, { part: :reasoning, type: :text, text: "Thinking" }],
         },
       )
     end
 
-    it "writes parts when a text part keeps its provider block" do
-      message = Riffer::Messages::Assistant.new(
-        parts: [Riffer::Messages::Assistant::TextPart.new("Hi", data: "{}", format: "mock-v1")],
-      )
+    it "writes parts with parts: true even when content, tool_calls and reasoning could rebuild them" do
+      message = Riffer::Messages::Assistant.new("Hi")
 
-      expect(message.to_h[:parts]).must_equal [{ part: :text, text: "Hi", data: "{}", format: "mock-v1" }]
+      expect(message.to_h(parts: true)).must_equal({ role: :assistant, parts: [{ part: :text, text: "Hi" }] })
     end
 
     it "returns hash with role and content" do

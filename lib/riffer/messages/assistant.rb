@@ -26,10 +26,9 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
       finish_reason_raw: msg[:finish_reason_raw],
     } #: Hash[Symbol, untyped]
 
-    return new(parts: msg[:parts].map { |part| part_from_hash(part) }, **options) if msg[:parts]
-
     new(
       msg[:content],
+      parts: msg[:parts]&.map { |part| part_from_hash(part) },
       tool_calls: (msg[:tool_calls] || []).map { |tc| Riffer::Messages::Assistant::ToolCall.from_hash(tc) },
       reasoning: (msg[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
       **options,
@@ -150,19 +149,21 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     )
   end
 
-  # +parts+ is written only when +content+, +tool_calls+ and +reasoning+ can't rebuild it, so a
-  # plain message serializes without it.
+  # The default shape writes +content+, +tool_calls+ and +reasoning+ in the fixed order, which
+  # drops server tool parts and the +data+ of text parts. <tt>parts: true</tt> writes +parts+
+  # instead of those three.
   #--
-  #: () -> Hash[Symbol, untyped]
-  def to_h
-    hash = { role: role, content: content } #: Hash[Symbol, untyped]
-    hash[:id] = id if id
-    hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
-    hash[:reasoning] = reasoning.map(&:to_h) if reasoning?
-    unless described_by_fields?(self)
-      hash[:parts] = parts.map do |part|
-        { part: PART_TAGS.fetch(part.class), **part.to_h }
-      end
+  #: (?parts: bool) -> Hash[Symbol, untyped]
+  def to_h(parts: false)
+    hash = { role: role } #: Hash[Symbol, untyped]
+    if parts
+      hash[:id] = id if id
+      hash[:parts] = @parts.map { |part| { part: PART_TAGS.fetch(part.class), **part.to_h } }
+    else
+      hash[:content] = content
+      hash[:id] = id if id
+      hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
+      hash[:reasoning] = reasoning.map(&:to_h) if reasoning?
     end
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
