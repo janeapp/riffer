@@ -5,7 +5,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   REASONING_TEXT_TYPES: Array[Symbol]
 
   # The +part+ key that tags each entry of a serialized +parts+ list.
-  PART_TAGS: Hash[Class, Symbol]
+  PART_TAGS: Hash[singleton(Riffer::Messages::Assistant::TextPart) | singleton(Riffer::Messages::Assistant::ReasoningPart) | singleton(Riffer::Messages::Assistant::ToolCall) | singleton(Riffer::Messages::Assistant::ServerToolPart), Symbol]
 
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant)) -> Riffer::Messages::Assistant
