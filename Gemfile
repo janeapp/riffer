@@ -21,7 +21,7 @@ gem "rubocop-minitest", require: false
 gem "rubocop-performance", require: false
 gem "rubocop-rake", require: false
 gem "steep", "~> 2.1"
-gem "vcr", "~> 6.0"
+gem "vcr", "~> 6.4"
 gem "webmock", "~> 3.34"
 
 gem "kramdown"
