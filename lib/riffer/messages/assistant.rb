@@ -5,7 +5,6 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # The other reasoning part types carry no prose.
   REASONING_TEXT_TYPES = %i[text summary].freeze #: Array[Symbol]
 
-  # The +part+ key that tags each entry of a serialized +parts+ list.
   PART_TAGS = {
     Riffer::Messages::Assistant::TextPart => :text,
     Riffer::Messages::Assistant::ReasoningPart => :reasoning,
