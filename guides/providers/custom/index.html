@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/" class="active" aria-current="page"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -187,7 +192,7 @@
 
       <main>
         <article>
-          <p class="kicker"><span class="chapter">Providers · 09</span></p>
+          <p class="kicker"><span class="chapter">Providers · 10</span></p>
           <h1>Creating Custom Providers</h1>
           <nav class="toc" aria-label="On this page">
             <span class="toc-label">On this page</span>
@@ -197,6 +202,7 @@
               <li><a href="#using-depends_on">Using depends_on</a></li>
               <li><a href="#registering-your-provider">Registering Your Provider</a></li>
               <li><a href="#using-your-provider">Using Your Provider</a></li>
+              <li><a href="#anthropic-compatible-endpoints">Anthropic-Compatible Endpoints</a></li>
               <li><a href="#tool-support">Tool Support</a></li>
               <li><a href="#stream-events">Stream Events</a></li>
               <li><a href="#token-usage-semantics">Token Usage Semantics</a></li>
@@ -376,6 +382,40 @@
   <span class="n">model</span> <span class="s1">'my_provider/model-name'</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h2 id="anthropic-compatible-endpoints">Anthropic-Compatible Endpoints</h2>
+
+<p>For a service that speaks the Anthropic Messages API, subclass <code>Riffer::Providers::AnthropicCompatible::MessagesAPI</code> instead of <code>Base</code>. It brings the request building, response parsing and streaming of the Anthropic provider; you supply the client. An endpoint that takes a bearer key can use <code>Riffer::Providers::Anthropic::Client</code> with its own <code>base_url</code>. For other auth, subclass <code>Riffer::HTTP::Client</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AcmeClaude</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AnthropicCompatible</span><span class="o">::</span><span class="no">MessagesAPI</span>
+  <span class="k">class</span> <span class="nc">Client</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Client</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">api_key</span><span class="p">:,</span> <span class="ss">connection: </span><span class="kp">nil</span><span class="p">)</span>
+      <span class="k">super</span><span class="p">(</span><span class="ss">connection: </span><span class="n">connection</span><span class="p">)</span>
+      <span class="vi">@api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">url_for</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">=</span> <span class="s2">"https://llm.acme.example/</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">def</span> <span class="nf">headers</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"api-key"</span> <span class="o">=&gt;</span> <span class="vi">@api_key</span> <span class="p">}</span>
+    <span class="k">def</span> <span class="nf">error_label</span> <span class="o">=</span> <span class="s2">"Acme"</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">build_client</span>
+    <span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s2">"ACME_API_KEY"</span><span class="p">))</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Only when the endpoint differs from POST v1/messages with the standard body:</span>
+  <span class="k">def</span> <span class="nf">messages_path</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">stream</span><span class="p">:)</span> <span class="o">=</span> <span class="s2">"models/</span><span class="si">#{</span><span class="n">model</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">stream</span> <span class="p">?</span> <span class="s1">'streamRawPredict'</span> <span class="p">:</span> <span class="s1">'rawPredict'</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">def</span> <span class="nf">request_body</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">stream</span><span class="p">:)</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">anthropic_version: </span><span class="s2">"acme-2025-01-01"</span><span class="p">,</span> <span class="o">**</span><span class="k">super</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:model</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">:acme</span><span class="p">)</span> <span class="p">{</span> <span class="no">AcmeClaude</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p><code>messages_path</code> returns the path relative to the client’s base URL; <code>request_body</code> returns the JSON body actually sent, and by default adds <code>stream: true</code> when streaming. Read credentials from your own configuration or environment in <code>build_client</code>, never from <code>ANTHROPIC_API_KEY</code>, so an Anthropic key is never sent to another vendor.</p>
 
 <h2 id="tool-support">Tool Support</h2>
 

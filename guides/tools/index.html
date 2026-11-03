@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -343,7 +348,7 @@
     </tr>
     <tr>
       <td><code>Riffer::Params::AnyOf</code></td>
-      <td><code>anyOf</code> of objects</td>
+      <td><code>anyOf</code> of objects or primitives</td>
     </tr>
   </tbody>
 </table>
@@ -354,7 +359,7 @@
 
 <h3 id="nested-parameters">Nested Parameters</h3>
 
-<p>Tool params support the same nested DSL as structured output — nested objects (<code>Hash</code> with block), typed arrays (<code>Array, of:</code>), arrays of arrays (<code>Array, of: [Integer]</code>), arrays of objects (<code>Array</code> with block), and either/or shapes (<code>Riffer::Params::AnyOf</code> with <code>variant</code> blocks). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
+<p>Tool params support the same nested DSL as structured output — nested objects (<code>Hash</code> with block), typed arrays (<code>Array, of:</code>), arrays of arrays (<code>Array, of: [Integer]</code>), arrays of objects (<code>Array</code> with block), and either/or shapes (<code>Riffer::Params::AnyOf</code> with <code>variant</code>s). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateOrderTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
   <span class="n">description</span> <span class="s2">"Creates an order"</span>

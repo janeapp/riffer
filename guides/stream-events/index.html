@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -497,7 +502,7 @@
 </ol>
 
 <blockquote>
-  <p><strong>Note:</strong> When <code>web_search</code> is enabled, <code>WebSearchStatus</code> and <code>WebSearchDone</code> events may appear before text events as the provider performs a server-side search.</p>
+  <p><strong>Note:</strong> When <code>web_search</code> is enabled, <code>WebSearchStatus</code> and <code>WebSearchDone</code> events may appear before text events as the provider performs a server-side search. Gemini sends its <code>WebSearchDone</code> after the text.</p>
 </blockquote>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"What's the weather in Tokyo?"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>

@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -212,14 +217,16 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
+<p>When <code>config.gemini.api_key</code> is unset, the provider reads <code>GEMINI_API_KEY</code>; with neither set it raises <code>Riffer::ArgumentError</code>. Set <code>config.gemini.base_url</code> to send requests somewhere other than <code>https://generativelanguage.googleapis.com</code> (proxies, regional mirrors).</p>
+
 <h2 id="http-client">HTTP Client</h2>
 
-<p>Gemini has no vendor SDK, so riffer ships its own transport: <code>Riffer::Providers::Gemini::Client</code>. The provider builds one from the configured <code>api_key</code> by default; construct your own to tune the HTTP knobs and assign it to <code>config.gemini.client</code>:</p>
+<p>Gemini has no vendor SDK, so riffer ships its own transport: <code>Riffer::Providers::Gemini::Client</code>, built on <code>Riffer::HTTP::Client</code>. The provider builds one from the configured credentials by default; construct your own to change timeouts, add retries or route through a proxy, and assign it to <code>config.gemini.client</code>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">gemini</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Gemini</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
     <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GEMINI_API_KEY'</span><span class="p">],</span>
-    <span class="ss">read_timeout: </span><span class="mi">120</span>
+    <span class="ss">connection: </span><span class="no">Faraday</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">request: </span><span class="p">{</span> <span class="ss">open_timeout: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">read_timeout: </span><span class="mi">120</span> <span class="p">})</span>
   <span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -235,45 +242,27 @@
   <tbody>
     <tr>
       <td><code>api_key</code></td>
-      <td><code>nil</code></td>
+      <td>required</td>
       <td>Sent as the <code>x-goog-api-key</code> header</td>
     </tr>
     <tr>
       <td><code>base_url</code></td>
       <td><code>https://generativelanguage.googleapis.com</code></td>
-      <td>API origin (proxies, regional mirrors)</td>
+      <td>API origin</td>
     </tr>
     <tr>
-      <td><code>open_timeout</code></td>
-      <td><code>10</code></td>
-      <td>Connection-open timeout in seconds</td>
-    </tr>
-    <tr>
-      <td><code>read_timeout</code></td>
-      <td><code>60</code></td>
-      <td>Read timeout in seconds</td>
-    </tr>
-    <tr>
-      <td><code>write_timeout</code></td>
-      <td><code>nil</code></td>
-      <td>Write timeout in seconds</td>
-    </tr>
-    <tr>
-      <td><code>proxy_address</code></td>
-      <td><code>nil</code></td>
-      <td>HTTP proxy host</td>
-    </tr>
-    <tr>
-      <td><code>proxy_port</code></td>
-      <td><code>nil</code></td>
-      <td>HTTP proxy port</td>
+      <td><code>connection</code></td>
+      <td>riffer default: 10s open / 600s read</td>
+      <td>Your own <code>Faraday::Connection</code>; see <a href="/guides/configuration/#connections">Connections</a></td>
     </tr>
   </tbody>
 </table>
 
+<p>Timeouts, retries, proxies and errors are covered in <a href="/guides/configuration/#connections">Configuration → Connections</a>.</p>
+
 <p>The setting accepts a client instance or a no-argument <code>Proc</code>, resolved on every LLM call — see <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
 
-<p>The class is a default implementation, not a required base: any object implementing the two-method contract works, e.g. a Faraday-based or instrumented transport.</p>
+<p>The class is a default implementation, not a required base: any object implementing the two-method contract works, e.g. an instrumented transport.</p>
 
 <table>
   <thead>
@@ -285,11 +274,11 @@
   <tbody>
     <tr>
       <td><code>post(path, body)</code></td>
-      <td>POST <code>body</code> as JSON to <code>path</code>; return the parsed response <code>Hash</code> (symbol keys); raise <code>Riffer::Error</code> on a non-success status</td>
+      <td>POST <code>body</code> as JSON to <code>path</code>; return the parsed response <code>Hash</code> (symbol keys); raise <code>Riffer::APIError</code> on a non-success status</td>
     </tr>
     <tr>
       <td><code>post_stream(path, body) { \|chunk\| }</code></td>
-      <td>POST <code>body</code> as JSON to <code>path</code>; yield raw response body chunks; raise <code>Riffer::Error</code> on a non-success status</td>
+      <td>POST <code>body</code> as JSON to <code>path</code>; yield raw response body chunks; raise <code>Riffer::APIError</code> on a non-success status</td>
     </tr>
   </tbody>
 </table>
@@ -298,9 +287,9 @@
 
 <p>Use Gemini model IDs in the <code>gemini/model</code> format:</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="s1">'gemini/gemini-2.5-flash-lite'</span>
-<span class="n">model</span> <span class="s1">'gemini/gemini-2.5-pro'</span>
-<span class="n">model</span> <span class="s1">'gemini/gemini-2.5-flash'</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="s1">'gemini/gemini-3.5-flash-lite'</span>
+<span class="n">model</span> <span class="s1">'gemini/gemini-3.8-flash'</span>
+<span class="n">model</span> <span class="s1">'gemini/gemini-3.1-pro-preview'</span>
 </code></pre></div></div>
 
 <h2 id="model-options">Model Options</h2>
@@ -335,6 +324,14 @@
 
 <p>The agent-level <a href="/guides/agents/#reasoning"><code>reasoning</code></a> setting writes <code>thinkingConfig: {thinkingLevel: "&lt;level&gt;"}</code> by default, including <code>"off"</code> for <code>:off</code>, which Gemini rejects. Gemini 2.5 models take <code>thinkingBudget</code> instead; map them in a <a href="/guides/catalog/#reasoning">catalog</a> entry.</p>
 
+<h3 id="web_search">web_search</h3>
+
+<p>Enable grounding with Google Search. Pass <code>true</code> to use defaults or a hash to merge into the <code>googleSearch</code> tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">web_search: </span><span class="kp">true</span>
+<span class="n">model_options</span> <span class="ss">web_search: </span><span class="p">{</span><span class="ss">timeRangeFilter: </span><span class="p">{</span><span class="ss">startTime: </span><span class="s2">"2026-01-01T00:00:00Z"</span><span class="p">,</span> <span class="ss">endTime: </span><span class="s2">"2026-06-30T00:00:00Z"</span><span class="p">}}</span>
+</code></pre></div></div>
+
 <h2 id="usage">Usage</h2>
 
 <h3 id="basic-generation">Basic Generation</h3>
@@ -343,14 +340,14 @@
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
-  <span class="ss">model: </span><span class="s2">"gemini-2.5-flash-lite"</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span>
 <span class="p">)</span>
 <span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
 </code></pre></div></div>
 
 <h3 id="streaming">Streaming</h3>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stream_text</span><span class="p">(</span><span class="ss">prompt: </span><span class="s2">"Tell me a story"</span><span class="p">,</span> <span class="ss">model: </span><span class="s2">"gemini-2.5-flash-lite"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stream_text</span><span class="p">(</span><span class="ss">prompt: </span><span class="s2">"Tell me a story"</span><span class="p">,</span> <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
   <span class="k">case</span> <span class="n">event</span>
   <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
     <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
@@ -369,11 +366,15 @@
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Analyze: 'This is great!'"</span><span class="p">,</span>
-  <span class="ss">model: </span><span class="s2">"gemini-2.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
   <span class="ss">structured_output: </span><span class="n">structured_output</span>
 <span class="p">)</span>
 <span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">structured_output</span>
 </code></pre></div></div>
+
+<p>Structured output is sent as <code>responseFormat</code>, which needs a gemini-3 model or later. gemini-2.x models ignore it and return prose.</p>
+
+<p>The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return <code>null</code> for a value it doesn’t know instead of making one up. A <code>Hash</code> param needs a block and an <code>Array</code> param a block or <code>of:</code> (see <a href="/guides/agents/#limitations">Structured Output Limitations</a>).</p>
 
 <h3 id="tool-calling">Tool Calling</h3>
 
@@ -389,10 +390,48 @@
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"What's the weather in Tokyo?"</span><span class="p">,</span>
-  <span class="ss">model: </span><span class="s2">"gemini-2.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
   <span class="ss">tools: </span><span class="p">[</span><span class="no">WeatherTool</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div></div>
+
+<p>Gemini’s own call ids are short, so riffer gives each tool call its own <code>call_id</code> (<code>gemini_call_&lt;hex&gt;</code>) and appends Gemini’s id when there is one. On later turns riffer sends that id back on the function call and its result, so Gemini can match results to parallel calls of the same tool.</p>
+
+<h3 id="thought-signatures">Thought Signatures</h3>
+
+<p>Gemini 3 models attach an opaque <code>thoughtSignature</code> to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.</p>
+
+<p>Riffer keeps each signature on the assistant message as the <code>data</code> of an <code>:encrypted</code> <a href="/guides/messages/#reasoning">reasoning part</a> tagged <code>format: "gemini-generate-content-v1"</code> (<code>Riffer::Providers::Gemini::REASONING_FORMAT</code>). A signature from a function call carries that tool call’s <code>call_id</code> as its <code>id</code>; the text signature has no <code>id</code>. Streams emit them as <code>ReasoningDone</code> events. On later turns riffer puts each signature back on the part it came from. You don’t have to do anything as long as the assistant messages stay in the history.</p>
+
+<p>A function call that Gemini didn’t sign, such as one another provider made before the conversation switched to Gemini, goes out with Gemini’s placeholder signature (<code>skip_thought_signature_validator</code>), which Gemini accepts in place of a real one. That covers the first call of each step when that call has no signature for this provider. Google warns that a call without its real signature may degrade the model’s answer, so if you persist sessions, keep the <code>reasoning</code> key when you store messages.</p>
+
+<h3 id="web-search">Web Search</h3>
+
+<p>With <code>web_search</code> set, riffer adds the <code>googleSearch</code> tool and turns on <code>toolConfig.includeServerSideToolInvocations</code>, which Gemini requires when Google Search and function tools are used together.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stream_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"What is the latest Ruby version?"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">web_search: </span><span class="kp">true</span>
+<span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span>
+    <span class="nb">puts</span> <span class="s2">"[search: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">status</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span>
+    <span class="nb">puts</span> <span class="s2">"[search complete: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">]"</span>
+    <span class="n">event</span><span class="p">.</span><span class="nf">sources</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"  - </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:title</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:url</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Each search query streams as a <code>"searching"</code> <code>WebSearchStatus</code>; a <code>"completed"</code> status follows once the results are in.</li>
+  <li>Gemini reports the queries and sources of a response together, at the end, without saying which query found which source. Riffer emits them as one <code>WebSearchDone</code>, after the text, with the queries joined by <code>", "</code>.</li>
+  <li>Source <code>title</code>s are domains (<code>"ruby-lang.org"</code>) and <code>url</code>s are Google redirect links (<code>https://vertexaisearch.cloud.google.com/grounding-api-redirect/...</code>).</li>
+  <li>The search parts of a response aren’t sent back on later turns. After a tool call, Gemini searches again if it still needs results.</li>
+</ul>
 
 <h3 id="file-support">File Support</h3>
 
@@ -401,7 +440,7 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">data: </span><span class="n">base64_data</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">)</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Describe this image"</span><span class="p">,</span>
-  <span class="ss">model: </span><span class="s2">"gemini-2.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
   <span class="ss">files: </span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div></div>
@@ -411,9 +450,7 @@
 <h2 id="limitations">Limitations</h2>
 
 <ul>
-  <li><strong>No web search</strong> - Gemini’s standard API does not include a web search tool</li>
   <li><strong>Tool call IDs</strong> - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side</li>
-  <li><strong>String enums only</strong> - Gemini rejects non-string <code>enum</code> values, including on <code>Array, of:</code> items</li>
 </ul>
 
         </article>
@@ -426,10 +463,10 @@
               ><span class="name">Azure OpenAI Provider</span></span
             ></a
           >
-          <a class="doc next" href="/guides/providers/openrouter/"
+          <a class="doc next" href="/guides/providers/google-cloud/"
             ><span
               ><span class="desc">Next</span
-              ><span class="name">OpenRouter Provider</span></span
+              ><span class="name">Google Cloud Providers</span></span
             ><span class="go">→</span></a
           >
         </nav>

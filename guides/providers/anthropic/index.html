@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -192,8 +197,8 @@
           <nav class="toc" aria-label="On this page">
             <span class="toc-label">On this page</span>
             <ul>
-              <li><a href="#installation">Installation</a></li>
               <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#http-client">HTTP Client</a></li>
               <li><a href="#supported-models">Supported Models</a></li>
               <li><a href="#model-options">Model Options</a></li>
               <li><a href="#example">Example</a></li>
@@ -208,13 +213,6 @@
           
 <p>The Anthropic provider connects to Claude models via the Anthropic API.</p>
 
-<h2 id="installation">Installation</h2>
-
-<p>Add the Anthropic gem to your Gemfile:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'anthropic'</span>
-</code></pre></div></div>
-
 <h2 id="configuration">Configuration</h2>
 
 <p>Configure your Anthropic API key:</p>
@@ -224,17 +222,67 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>For anything beyond the API key — timeouts, retries, proxies — supply your own <code>Anthropic::Client</code>:</p>
+<p>When <code>config.anthropic.api_key</code> is unset, the provider reads <code>ANTHROPIC_API_KEY</code>; with neither set it raises <code>Riffer::ArgumentError</code>. Set <code>config.anthropic.base_url</code> (or <code>ANTHROPIC_BASE_URL</code>) to send requests somewhere other than <code>https://api.anthropic.com</code>, such as a gateway or proxy.</p>
+
+<p>Riffer reads no other <code>ANTHROPIC_*</code> variables. The anthropic gem also read <code>ANTHROPIC_AUTH_TOKEN</code> and <code>ANTHROPIC_CUSTOM_HEADERS</code>; riffer does not. The key is already sent as <code>Authorization: Bearer</code>, and custom headers go in the client’s <code>headers:</code> (see <a href="#http-client">HTTP Client</a>).</p>
+
+<h2 id="http-client">HTTP Client</h2>
+
+<p>The provider needs no Anthropic gem. Riffer ships its own Messages API transport, <code>Riffer::Providers::Anthropic::Client</code>, built on <code>Riffer::HTTP::Client</code>. The provider builds one from the configured credentials by default. To change timeouts, add retries or go through a proxy, build your own and assign it to <code>config.anthropic.client</code>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Anthropic</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Anthropic</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
     <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">],</span>
-    <span class="ss">timeout: </span><span class="mi">60</span>
+    <span class="ss">connection: </span><span class="no">Faraday</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">request: </span><span class="p">{</span> <span class="ss">open_timeout: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">read_timeout: </span><span class="mi">120</span> <span class="p">})</span>
   <span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The setting accepts a client instance or a no-argument <code>Proc</code>, resolved on every LLM call — see <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>api_key</code></td>
+      <td>required</td>
+      <td>Sent as <code>Authorization: Bearer &lt;api_key&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>base_url</code></td>
+      <td><code>https://api.anthropic.com</code></td>
+      <td>API origin; requests go to <code>&lt;base_url&gt;/v1/messages</code></td>
+    </tr>
+    <tr>
+      <td><code>headers</code></td>
+      <td><code>{}</code></td>
+      <td>Sent on every request; replaces riffer’s headers of the same name</td>
+    </tr>
+    <tr>
+      <td><code>connection</code></td>
+      <td>Faraday defaults, 10s open / 600s read</td>
+      <td>Your own <code>Faraday::Connection</code>; see <a href="/guides/configuration/#connections">Connections</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Timeouts, retries, proxies, beta headers and errors are covered in <a href="/guides/configuration/#connections">Configuration → Connections</a>. An API error becomes a <code>Riffer::APIError</code> whose message carries the Anthropic error type, e.g. <code>Anthropic API error (401): authentication_error: Invalid bearer token</code>. No requests are retried unless your connection adds retries.</p>
+
+<p>The <code>anthropic-version</code> header is pinned to <code>2026-10-21</code>. To send another version, pass it in <code>headers:</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Anthropic</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">],</span>
+  <span class="ss">headers: </span><span class="p">{</span><span class="s1">'anthropic-version'</span> <span class="o">=&gt;</span> <span class="s1">'2023-06-01'</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Version <code>2026-10-21</code> removed <code>temperature</code>, <code>top_p</code> and <code>top_k</code>; sending any of them returns a 400. Pin <code>2023-06-01</code> to keep using them. See Anthropic’s <a href="https://platform.claude.com/docs/en/api/versioning">API versions</a> for the other changes.</p>
+
+<p>The setting accepts a client instance or a no-argument <code>Proc</code>, resolved on every LLM call — see <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>. An <code>Anthropic::Client</code> from the anthropic gem is not accepted and raises <code>Riffer::ArgumentError</code>.</p>
 
 <h2 id="supported-models">Supported Models</h2>
 
@@ -247,32 +295,11 @@
 
 <h2 id="model-options">Model Options</h2>
 
-<h3 id="temperature">temperature</h3>
-
-<p>Controls randomness:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span>
-</code></pre></div></div>
-
 <h3 id="max_tokens">max_tokens</h3>
 
 <p>Maximum tokens in response:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
-</code></pre></div></div>
-
-<h3 id="top_p">top_p</h3>
-
-<p>Nucleus sampling parameter:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">top_p: </span><span class="mf">0.95</span>
-</code></pre></div></div>
-
-<h3 id="top_k">top_k</h3>
-
-<p>Top-k sampling parameter:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">top_k: </span><span class="mi">250</span>
 </code></pre></div></div>
 
 <h3 id="thinking">thinking</h3>

@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -407,6 +412,8 @@
   <span class="ss">files: </span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div></div>
+
+<p>Converse requires every document to have a name, unique across the request, made only of letters, digits, single spaces, hyphens, parentheses and square brackets, and at most 200 characters long. Riffer builds it from the file’s <code>filename</code>: the extension is dropped, other characters become hyphens, the name is cut to 200 characters, a document without a filename is named <code>document</code>, and a repeated name gets a counter (<code>invoice</code>, <code>invoice (2)</code>). The model can see the name.</p>
 
 <p>Any other URL scheme (e.g. <code>https://</code>) isn’t something Bedrock accepts as a reference, so riffer downloads the file itself and sends the raw bytes — see <a href="/guides/configuration/#file-downloads">File Downloads</a> for the <code>allow_downloads</code> policy this requires.</p>
 

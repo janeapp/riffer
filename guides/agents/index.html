@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -398,7 +403,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>With <code>strategy: :prompted</code>, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in <code>session.messages</code>, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (<code>"&lt;string&gt;"</code>, enum values as <code>"a | b"</code>, an <code>AnyOf</code> field as its first variant), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: <code>response.content</code> is the reply’s JSON text, <code>response.structured_output</code> holds the validated object, and a reply that fails parsing or validation ends with <code>:invalid_structured_output</code>. Because nothing forces the model to comply, expect more <code>:invalid_structured_output</code> outcomes than with the native strategy.</p>
+<p>With <code>strategy: :prompted</code>, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in <code>session.messages</code>, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (<code>"&lt;string&gt;"</code>, enum values as <code>"a | b"</code>, an <code>AnyOf</code> field as its first variant, or as <code>"&lt;integer&gt; | &lt;string&gt;"</code> when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: <code>response.content</code> is the reply’s JSON text, <code>response.structured_output</code> holds the validated object, and a reply that fails parsing or validation ends with <code>:invalid_structured_output</code>. Because nothing forces the model to comply, expect more <code>:invalid_structured_output</code> outcomes than with the native strategy.</p>
 
 <table>
   <thead>
@@ -539,9 +544,27 @@
 
 <p>An optional <code>AnyOf</code> field can also be <code>null</code>.</p>
 
+<p>A variant can be a primitive type instead of a block, with its own <code>description:</code>, <code>enum:</code> or <code>format:</code>, and one field can mix both kinds:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="o">::</span><span class="no">AnyOf</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"A count, or a word like 'several'"</span> <span class="k">do</span>
+    <span class="n">variant</span> <span class="no">Integer</span>
+    <span class="n">variant</span> <span class="no">String</span>
+  <span class="k">end</span>
+  <span class="n">optional</span> <span class="ss">:due</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="o">::</span><span class="no">AnyOf</span> <span class="k">do</span>
+    <span class="n">variant</span> <span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"date"</span>
+    <span class="n">variant</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"none"</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Each primitive variant is sent as its own <code>anyOf</code> branch. A value whose type matches no variant fails validation: <code>quantity must be a integer or string</code>. A value of the right type that fails every variant gets each variant’s problems: <code>due must match one of the variants: variant 1 (must be a valid date), variant 2 (must be one of: none)</code>.</p>
+
 <h4 id="limitations">Limitations</h4>
 
-<p>A <code>Hash</code> param requires a block, and an <code>Array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code> or <code>of: [Hash]</code>), or with more than one type (<code>of: [Integer, String]</code>), also raises <code>Riffer::ArgumentError</code>. An <code>AnyOf</code> param requires a block with at least two <code>variant</code>s, and can’t be used with <code>of:</code> or <code>enum:</code>. Using <code>enum:</code> on a <code>Hash</code>, or on an <code>Array</code> without <code>of:</code>, also raises <code>Riffer::ArgumentError</code>. So does <code>format:</code> with an unsupported format, on a type other than <code>String</code> or an <code>Array</code> whose innermost type is <code>String</code>, or together with <code>enum:</code>.</p>
+<p>Anthropic and Bedrock reject a structured output schema with more than 16 union-type fields. Every <code>AnyOf</code> field counts, and so does every optional field, since strict mode sends it as nullable.</p>
+
+<p>A <code>Hash</code> param requires a block, and an <code>Array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code> or <code>of: [Hash]</code>), or with more than one type (<code>of: [Integer, String]</code>), also raises <code>Riffer::ArgumentError</code>. An <code>AnyOf</code> param requires a block with at least two <code>variant</code>s, and can’t be used with <code>of:</code> or <code>enum:</code>. A <code>variant</code> takes either a primitive type, with optional <code>description:</code>, <code>enum:</code> or <code>format:</code>, or a block. Anything else raises <code>Riffer::ArgumentError</code>, and so does an <code>Integer</code> variant after a <code>Float</code> variant without <code>enum:</code>, since that <code>Float</code> variant accepts every number and the first match wins. Using <code>enum:</code> on a <code>Hash</code>, or on an <code>Array</code> without <code>of:</code>, also raises <code>Riffer::ArgumentError</code>. So does <code>format:</code> with an unsupported format, on a type other than <code>String</code> or an <code>Array</code> whose innermost type is <code>String</code>, or together with <code>enum:</code>.</p>
 
 <p>Structured output is not compatible with streaming — calling <code>stream</code> on an agent with structured output configured raises <code>Riffer::ArgumentError</code>.</p>
 
@@ -755,18 +778,32 @@
       <td><em>(none — observability only)</em></td>
       <td>Tag only; no request field</td>
     </tr>
+    <tr>
+      <td>Google Cloud (Gemini)</td>
+      <td><code>labels</code> (all tags, rewritten)</td>
+      <td>Ordinary entry; no dedicated user field</td>
+    </tr>
+    <tr>
+      <td>Google Cloud (Claude)</td>
+      <td><code>metadata.user_id</code> <strong>only</strong></td>
+      <td>The only tag forwarded</td>
+    </tr>
   </tbody>
 </table>
 
-<p>If <code>model_options</code> already sets the native field (<code>metadata</code> or <code>request_metadata</code>), the tags are merged into it; a tag wins on a shared key.</p>
+<p>If <code>model_options</code> already sets the native field (<code>metadata</code>, <code>request_metadata</code> or <code>labels</code>), the tags are merged into it; a tag wins on a shared key.</p>
 
 <p><strong>Anthropic silently drops non-<code>user_id</code> tags.</strong> The Messages API has no free-form request-metadata field — only <code>metadata.user_id</code>. So for Anthropic, <code>user_id</code> is forwarded as <code>metadata: {user_id: …}</code> and <strong>every other tag is dropped from the request</strong> (it still appears on spans). This is intentional.</p>
 
-<p><strong>Gemini is observability-only.</strong> Riffer’s Gemini adapter targets the Gemini Developer API (<code>generativelanguage.googleapis.com</code>), whose <code>generateContent</code> request has <strong>no</strong> <code>labels</code> field — sending unknown fields is rejected. So tags are <strong>not</strong> added to the Gemini request; they propagate to spans only. Native request labels (<code>labels</code>, lowercase <code>[a-z0-9_-]</code>, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.</p>
+<p><strong>Gemini is observability-only.</strong> Riffer’s Gemini adapter targets the Gemini Developer API (<code>generativelanguage.googleapis.com</code>), whose <code>generateContent</code> request has <strong>no</strong> <code>labels</code> field — sending unknown fields is rejected. So tags are <strong>not</strong> added to the Gemini request; they propagate to spans only.</p>
+
+<p><strong>Google Cloud rewrites tags into valid labels.</strong> Agent Platform <code>labels</code> keys and values take at most 63 lowercase letters, digits, underscores and dashes, and keys start with a letter. Riffer downcases each tag, replaces any other character with <code>_</code>, cuts it to 63 characters, and drops tags whose key doesn’t start with a letter. <code>agent: "support/triage_agent"</code> goes out as <code>agent: "support_triage_agent"</code>. Labels set in <code>model_options</code> are sent as is. Labels show up in Google Cloud billing reports, so high-cardinality tags such as <code>user_id</code> add one label value per user.</p>
+
+<p>Claude on Google Cloud (<code>anthropic_vertex</code>) follows the Anthropic rule above.</p>
 
 <h3 id="provider-limits-not-enforced">Provider limits (not enforced)</h3>
 
-<p>Riffer does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock <code>requestMetadata</code> ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter <code>metadata</code> ≤16 pairs (OpenRouter: 64-char keys, 512-char values).</p>
+<p>Apart from the Google Cloud rewrite above, riffer does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock <code>requestMetadata</code> ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter <code>metadata</code> ≤16 pairs (OpenRouter: 64-char keys, 512-char values).</p>
 
 <h2 id="expand-your-agent">Expand Your Agent</h2>
 

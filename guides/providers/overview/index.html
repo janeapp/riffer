@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -235,12 +240,22 @@
     <tr>
       <td>Anthropic</td>
       <td><code>anthropic</code></td>
-      <td><code>anthropic</code></td>
+      <td>None</td>
     </tr>
     <tr>
       <td>Gemini</td>
       <td><code>gemini</code></td>
       <td>None</td>
+    </tr>
+    <tr>
+      <td>Google Cloud (Gemini)</td>
+      <td><code>google_cloud</code></td>
+      <td><code>googleauth</code></td>
+    </tr>
+    <tr>
+      <td>Google Cloud (Claude)</td>
+      <td><code>anthropic_vertex</code></td>
+      <td><code>googleauth</code></td>
     </tr>
     <tr>
       <td>OpenRouter</td>
@@ -264,7 +279,9 @@
   <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>                                     <span class="c1"># Azure OpenAI</span>
   <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>  <span class="c1"># Bedrock</span>
   <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>                         <span class="c1"># Anthropic</span>
-  <span class="n">model</span> <span class="s1">'gemini/gemini-2.5-flash-lite'</span>                                <span class="c1"># Gemini</span>
+  <span class="n">model</span> <span class="s1">'gemini/gemini-3.5-flash-lite'</span>                                <span class="c1"># Gemini</span>
+  <span class="n">model</span> <span class="s1">'google_cloud/gemini-3.5-flash-lite'</span>                          <span class="c1"># Google Cloud (Gemini)</span>
+  <span class="n">model</span> <span class="s1">'anthropic_vertex/claude-haiku-5-5'</span>                           <span class="c1"># Google Cloud (Claude)</span>
   <span class="n">model</span> <span class="s1">'openrouter/anthropic/claude-sonnet-4.6'</span>                      <span class="c1"># OpenRouter</span>
   <span class="n">model</span> <span class="s1">'mock/any'</span>                                                    <span class="c1"># Mock provider</span>
 <span class="k">end</span>
@@ -292,7 +309,7 @@
     </tr>
     <tr>
       <td>Anthropic</td>
-      <td><code>config.anthropic.api_key</code></td>
+      <td><code>config.anthropic.api_key</code>, <code>config.anthropic.base_url</code></td>
     </tr>
     <tr>
       <td>Amazon Bedrock</td>
@@ -300,7 +317,11 @@
     </tr>
     <tr>
       <td>Gemini</td>
-      <td><code>config.gemini.api_key</code></td>
+      <td><code>config.gemini.api_key</code>, <code>config.gemini.base_url</code></td>
+    </tr>
+    <tr>
+      <td>Google Cloud (Gemini, Claude)</td>
+      <td><code>config.google_cloud.project_id</code>, <code>.location</code>, <code>.credentials</code></td>
     </tr>
     <tr>
       <td>OpenRouter</td>
@@ -469,6 +490,12 @@
 <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:gemini</span><span class="p">)</span>
 <span class="c1"># =&gt; Riffer::Providers::Gemini</span>
 
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:google_cloud</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::GoogleCloud</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:anthropic_vertex</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::AnthropicVertex</span>
+
 <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:openrouter</span><span class="p">)</span>
 <span class="c1"># =&gt; Riffer::Providers::OpenRouter</span>
 
@@ -486,6 +513,7 @@
   <li><a href="/guides/providers/mock/">Mock</a> - Mock provider for testing</li>
   <li><a href="/guides/providers/custom/">Custom Providers</a> - Creating your own provider</li>
   <li><a href="/guides/providers/gemini/">Gemini</a> - Gemini models via Google GenAI API</li>
+  <li><a href="/guides/providers/google-cloud/">Google Cloud</a> - Gemini and Claude models on Agent Platform (formerly Vertex AI)</li>
   <li><a href="/guides/providers/openrouter/">OpenRouter</a> - Unified gateway across many vendors</li>
 </ul>
 

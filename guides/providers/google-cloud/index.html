@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Google Cloud Providers — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.55.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">12</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/testing/"
+                  ><span class="num">13</span> Testing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">14</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">15</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">16</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">17</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">18</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/google-cloud/" class="active" aria-current="page"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">08</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">09</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">10</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 07</span></p>
+          <h1>Google Cloud Providers</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#installation">Installation</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#locations-and-data-residency">Locations and Data Residency</a></li>
+              <li><a href="#http-client">HTTP Client</a></li>
+              <li><a href="#supported-models">Supported Models</a></li>
+              <li><a href="#gemini-models-google_cloud">Gemini Models (google_cloud)</a></li>
+              <li><a href="#claude-models-anthropic_vertex">Claude Models (anthropic_vertex)</a></li>
+              <li><a href="#limitations">Limitations</a></li>
+            </ul>
+          </nav>
+          
+<p>Two providers connect to models hosted on Gemini Enterprise Agent Platform (formerly Vertex AI), authenticating with Google Cloud credentials instead of an API key:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th>Identifier</th>
+      <th>Models</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Riffer::Providers::GoogleCloud</code></td>
+      <td><code>google_cloud</code></td>
+      <td>Gemini</td>
+    </tr>
+    <tr>
+      <td><code>Riffer::Providers::AnthropicVertex</code></td>
+      <td><code>anthropic_vertex</code></td>
+      <td>Claude</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Both read <code>config.google_cloud</code> and send requests through the same client, <code>Riffer::Providers::GoogleCloud::Client</code>.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add the <code>googleauth</code> gem to your Gemfile:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'googleauth'</span>
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">project_id</span> <span class="o">=</span> <span class="s1">'my-project'</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">location</span> <span class="o">=</span> <span class="s1">'us-central1'</span> <span class="c1"># Optional, defaults to "global"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>project_id</code></td>
+      <td><code>nil</code> (required)</td>
+      <td>The Google Cloud project that owns the Agent Platform quota and billing</td>
+    </tr>
+    <tr>
+      <td><code>location</code></td>
+      <td><code>"global"</code></td>
+      <td>The Agent Platform location requests are sent to; picks the endpoint (see below)</td>
+    </tr>
+    <tr>
+      <td><code>credentials</code></td>
+      <td><code>nil</code> (Application Default Credentials)</td>
+      <td>A <code>googleauth</code> credentials object</td>
+    </tr>
+    <tr>
+      <td><code>client</code></td>
+      <td><code>nil</code></td>
+      <td>A client instance or no-argument <code>Proc</code> (see <a href="#http-client">HTTP Client</a>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>project_id</code> and <code>location</code> accept a <code>String</code> or <code>nil</code> and raise <code>Riffer::ArgumentError</code> naming the setting for anything else. Setting <code>location</code> to <code>nil</code> restores <code>"global"</code>. Without a <code>project_id</code> (and no <code>client</code>), the first request raises <code>Riffer::ArgumentError</code>.</p>
+
+<h3 id="credentials">Credentials</h3>
+
+<p>With <code>credentials</code> unset, riffer uses <a href="https://cloud.google.com/docs/authentication/application-default-credentials">Application Default Credentials</a>. <code>googleauth</code> checks, in order:</p>
+
+<ol>
+  <li>The service account key file named by <code>GOOGLE_APPLICATION_CREDENTIALS</code>.</li>
+  <li>Your own Google account, after you run <code>gcloud auth application-default login</code> (local development).</li>
+  <li>The service account attached to the machine on Compute Engine, Cloud Run, or GKE.</li>
+</ol>
+
+<p>To use a specific identity, pass any <code>googleauth</code> credentials object:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">project_id</span> <span class="o">=</span> <span class="s1">'my-project'</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">credentials</span> <span class="o">=</span> <span class="no">Google</span><span class="o">::</span><span class="no">Auth</span><span class="o">::</span><span class="no">ServiceAccountCredentials</span><span class="p">.</span><span class="nf">make_creds</span><span class="p">(</span>
+    <span class="ss">json_key_io: </span><span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="no">ENV</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s1">'GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY'</span><span class="p">)),</span>
+    <span class="ss">scope: </span><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">GoogleCloud</span><span class="o">::</span><span class="no">Client</span><span class="o">::</span><span class="no">SCOPE</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Riffer caches the access token and refreshes it shortly before it expires.</p>
+
+<h2 id="locations-and-data-residency">Locations and Data Residency</h2>
+
+<p>The location decides the endpoint a request is sent to:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><code>location</code></th>
+      <th>Endpoint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>global</code></td>
+      <td><code>https://aiplatform.googleapis.com</code></td>
+    </tr>
+    <tr>
+      <td><code>us</code>, <code>eu</code> (multi-region)</td>
+      <td><code>https://aiplatform.{us,eu}.rep.googleapis.com</code></td>
+    </tr>
+    <tr>
+      <td>Any region, e.g. <code>us-central1</code></td>
+      <td><code>https://{location}-aiplatform.googleapis.com</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>The default <code>"global"</code> location offers no data-residency guarantee.</strong> Google may serve a global request from any region. If your data must stay in a region or jurisdiction, set an explicit regional or multi-region <code>location</code>, and check that the model you use is available there.</p>
+
+<p>A single <code>location</code> applies to every <code>google_cloud/...</code> and <code>anthropic_vertex/...</code> model. To bind one location explicitly, or to reach several locations from one process, use either approach below.</p>
+
+<h3 id="binding-the-client">Binding the client</h3>
+
+<p><code>config.google_cloud.client</code> takes a client instance or a no-argument <code>Proc</code> resolved on every LLM call (see <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>). Both providers use it, and it wins over <code>project_id</code>, <code>location</code>, and <code>credentials</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">GoogleCloud</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">project_id: </span><span class="s1">'my-project'</span><span class="p">,</span>
+    <span class="ss">location: </span><span class="s1">'europe-west4'</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="one-provider-per-location">One provider per location</h3>
+
+<p>To route different agents to different locations, register a provider subclass per location. Riffer constructs providers with no arguments, so the location lives on the class:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">GoogleCloudEurope</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">GoogleCloud</span>
+  <span class="kp">private</span>
+
+  <span class="c1"># Ignore config.google_cloud.client, so this class always uses its own location.</span>
+  <span class="k">def</span> <span class="nf">global_client</span> <span class="o">=</span> <span class="kp">nil</span>
+
+  <span class="k">def</span> <span class="nf">build_client</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">GoogleCloud</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="ss">project_id: </span><span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">project_id</span><span class="p">,</span>
+      <span class="ss">location: </span><span class="s1">'europe-west4'</span><span class="p">,</span>
+      <span class="ss">credentials: </span><span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">google_cloud</span><span class="p">.</span><span class="nf">credentials</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">:google_cloud_eu</span><span class="p">)</span> <span class="p">{</span> <span class="no">GoogleCloudEurope</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>A subclass of <code>Riffer::Providers::AnthropicVertex</code> binds a location for Claude models the same way.</p>
+
+<p>Agents then pick the location by model prefix (<code>model 'google_cloud_eu/gemini-3.5-flash-lite'</code>). Register each subclass once, at boot, and return the same class from the block every time: riffer maps a provider class back to its registry key, and the <a href="/guides/catalog/">catalog</a> looks up pricing and reasoning entries under that key (<code>google_cloud_eu/gemini-3.5-flash-lite</code>).</p>
+
+<h2 id="http-client">HTTP Client</h2>
+
+<p>Riffer ships its own Agent Platform transport, <code>Riffer::Providers::GoogleCloud::Client</code>, built on <code>Riffer::HTTP::Client</code>. The provider builds one from the configured settings by default.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>project_id</code></td>
+      <td>required</td>
+      <td>Project segment of the resource path</td>
+    </tr>
+    <tr>
+      <td><code>location</code></td>
+      <td>required</td>
+      <td>Location segment of the resource path; also picks the endpoint</td>
+    </tr>
+    <tr>
+      <td><code>credentials</code></td>
+      <td><code>nil</code></td>
+      <td>A <code>googleauth</code> credentials object; <code>nil</code> resolves ADC</td>
+    </tr>
+    <tr>
+      <td><code>base_url</code></td>
+      <td>derived from <code>location</code></td>
+      <td>API origin (Private Service Connect, proxies)</td>
+    </tr>
+    <tr>
+      <td><code>headers</code></td>
+      <td><code>{}</code></td>
+      <td>Sent on every request; replaces riffer’s same-name headers</td>
+    </tr>
+    <tr>
+      <td><code>connection</code></td>
+      <td>Faraday defaults, 10s open / 600s read</td>
+      <td>Your own <code>Faraday::Connection</code>; see <a href="/guides/configuration/#connections">Connections</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Timeouts, retries, proxies and errors are covered in <a href="/guides/configuration/#connections">Configuration → Connections</a>. Errors are labelled <code>Google Cloud API error (&lt;status&gt;): &lt;message&gt;</code>.</p>
+
+<p>The class is a default implementation, not a required base: any object implementing the two-method contract works. Paths are relative to <code>v1/projects/{project_id}/locations/{location}/</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Contract</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>post(path, body)</code></td>
+      <td>POST <code>body</code> as JSON to <code>path</code>; return the parsed response <code>Hash</code> (symbol keys); raise <code>Riffer::APIError</code> on a non-success status</td>
+    </tr>
+    <tr>
+      <td><code>post_stream(path, body) { \|chunk\| }</code></td>
+      <td>POST <code>body</code> as JSON to <code>path</code>; yield raw response body chunks; raise <code>Riffer::APIError</code> on a non-success status</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="supported-models">Supported Models</h2>
+
+<p>Use Agent Platform model IDs, prefixed with the provider for the model family:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="s1">'google_cloud/gemini-3.5-flash-lite'</span>
+<span class="n">model</span> <span class="s1">'google_cloud/gemini-3.8-flash'</span>
+<span class="n">model</span> <span class="s1">'anthropic_vertex/claude-haiku-5-5'</span>
+<span class="n">model</span> <span class="s1">'anthropic_vertex/claude-haiku-4-5@20251001'</span>
+</code></pre></div></div>
+
+<p>Model IDs may carry an <code>@version</code> suffix, as Agent Platform’s dated Claude snapshots do; use the ID Model Garden shows.</p>
+
+<h2 id="gemini-models-google_cloud">Gemini Models (<code>google_cloud</code>)</h2>
+
+<h3 id="model-options">Model Options</h3>
+
+<h4 id="temperature">temperature</h4>
+
+<p>Controls randomness:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span>
+</code></pre></div></div>
+
+<h4 id="maxoutputtokens">maxOutputTokens</h4>
+
+<p>Maximum tokens in response:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">maxOutputTokens: </span><span class="mi">4096</span>
+</code></pre></div></div>
+
+<h4 id="topp">topP</h4>
+
+<p>Nucleus sampling:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">topP: </span><span class="mf">0.9</span>
+</code></pre></div></div>
+
+<h4 id="thinkingconfig">thinkingConfig</h4>
+
+<p>Controls thinking, passed through as Agent Platform expects:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">thinkingConfig: </span><span class="p">{</span><span class="ss">thinkingLevel: </span><span class="s2">"low"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>The agent-level <a href="/guides/agents/#reasoning"><code>reasoning</code></a> setting writes <code>thinkingConfig: {thinkingLevel: "&lt;level&gt;"}</code> by default. To map a model differently, add a <a href="/guides/catalog/#reasoning">catalog</a> entry under its <code>google_cloud/...</code> key.</p>
+
+<h4 id="web_search">web_search</h4>
+
+<p>Enable grounding with Google Search. Pass <code>true</code> to use defaults or a hash to merge into the <code>googleSearch</code> tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">web_search: </span><span class="kp">true</span>
+<span class="n">model_options</span> <span class="ss">web_search: </span><span class="p">{</span><span class="ss">excludeDomains: </span><span class="p">[</span><span class="s2">"example.com"</span><span class="p">]}</span>
+</code></pre></div></div>
+
+<h3 id="basic-generation">Basic Generation</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">GoogleCloud</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span>
+<span class="p">)</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+</code></pre></div></div>
+
+<h3 id="streaming">Streaming</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stream_text</span><span class="p">(</span><span class="ss">prompt: </span><span class="s2">"Tell me a story"</span><span class="p">,</span> <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">---"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="structured-output">Structured Output</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">params</span><span class="p">.</span><span class="nf">required</span><span class="p">(</span><span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span><span class="p">)</span>
+<span class="n">params</span><span class="p">.</span><span class="nf">required</span><span class="p">(</span><span class="ss">:score</span><span class="p">,</span> <span class="no">Float</span><span class="p">)</span>
+<span class="n">structured_output</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">StructuredOutput</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Analyze: 'This is great!'"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">structured_output: </span><span class="n">structured_output</span>
+<span class="p">)</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">structured_output</span>
+</code></pre></div></div>
+
+<p>The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return <code>null</code> for a value it doesn’t know instead of making one up. A <code>Hash</code> param needs a block and an <code>Array</code> param a block or <code>of:</code> (see <a href="/guides/agents/#limitations">Structured Output Limitations</a>).</p>
+
+<h3 id="tool-calling">Tool Calling</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Gets weather"</span>
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:)</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"Sunny in </span><span class="si">#{</span><span class="n">city</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"What's the weather in Tokyo?"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">tools: </span><span class="p">[</span><span class="no">WeatherTool</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Riffer gives each tool call its own <code>call_id</code> (<code>gemini_call_&lt;hex&gt;</code>) and appends the model’s id when there is one. On later turns riffer sends that id back on the function call and its result, so the model can match results to parallel calls of the same tool.</p>
+
+<h3 id="thought-signatures">Thought Signatures</h3>
+
+<p>Gemini 3 models attach an opaque <code>thoughtSignature</code> to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.</p>
+
+<p>Riffer keeps each signature on the assistant message as the <code>data</code> of an <code>:encrypted</code> <a href="/guides/messages/#reasoning">reasoning part</a> tagged <code>format: "google-cloud-generate-content-v1"</code> (<code>Riffer::Providers::GoogleCloud::REASONING_FORMAT</code>). A signature from a function call carries that tool call’s <code>call_id</code> as its <code>id</code>; the text signature has no <code>id</code>. Streams emit them as <code>ReasoningDone</code> events. On later turns riffer puts each signature back on the part it came from. You don’t have to do anything as long as the assistant messages stay in the history.</p>
+
+<p>A function call without an Agent Platform signature goes out with Google’s placeholder signature (<code>skip_thought_signature_validator</code>), which Agent Platform accepts in place of a real one. That happens when the call came from another provider, or from the Gemini Developer API, whose signatures Agent Platform rejects. It covers the first call of each step when that call has no signature for this provider. Google warns that a call without its real signature may degrade the model’s answer, so if you persist sessions, keep the <code>reasoning</code> key when you store messages.</p>
+
+<h3 id="web-search">Web Search</h3>
+
+<p>With <code>web_search</code> set, riffer adds the <code>googleSearch</code> tool and turns on <code>toolConfig.includeServerSideToolInvocations</code>, which is required when Google Search and function tools are used together.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stream_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"What is the latest Ruby version?"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">web_search: </span><span class="kp">true</span>
+<span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span>
+    <span class="nb">puts</span> <span class="s2">"[search complete: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">]"</span>
+    <span class="n">event</span><span class="p">.</span><span class="nf">sources</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"  - </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:title</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:url</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<ul>
+  <li>No <code>WebSearchStatus</code> events are streamed. The queries and sources of a response arrive together, at the end, without saying which query found which source. Riffer emits them as one <code>WebSearchDone</code>, after the text, with the queries joined by <code>", "</code>.</li>
+  <li>Source <code>title</code>s are domains (<code>"ruby-lang.org"</code>) and <code>url</code>s are Google redirect links (<code>https://vertexaisearch.cloud.google.com/grounding-api-redirect/...</code>).</li>
+  <li>After a tool call, the model searches again if it still needs results.</li>
+</ul>
+
+<h3 id="file-support">File Support</h3>
+
+<p>Files are sent inline as base64 (images and documents):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">data: </span><span class="n">base64_data</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Describe this image"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gemini-3.5-flash-lite"</span><span class="p">,</span>
+  <span class="ss">files: </span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>A <code>FilePart.from_url</code> source works too: riffer downloads and base64-encodes it before sending, subject to the <code>allow_downloads</code> policy in <a href="/guides/configuration/#file-downloads">File Downloads</a>.</p>
+
+<h3 id="tags">Tags</h3>
+
+<p>Per-call <a href="/guides/agents/#per-call-tags">tags</a> are sent as request <code>labels</code>, which show up in Google Cloud billing reports. Riffer rewrites each tag into a valid label: downcased, any character other than a letter, digit, <code>_</code> or <code>-</code> replaced with <code>_</code>, and cut to 63 characters. Tags whose key doesn’t start with a letter are dropped. <code>agent: "support/triage_agent"</code> goes out as <code>agent: "support_triage_agent"</code>.</p>
+
+<p>To send fixed labels, set them as a model option; tags are merged over them:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">labels: </span><span class="p">{</span><span class="ss">cost_center: </span><span class="s2">"cc_1234"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="claude-models-anthropic_vertex">Claude Models (<code>anthropic_vertex</code>)</h2>
+
+<p>Claude models use Agent Platform’s Anthropic endpoints (<code>rawPredict</code> and <code>streamRawPredict</code>), which take the Anthropic Messages API body. Riffer builds the same body as the <a href="/guides/providers/anthropic/">Anthropic provider</a>, so the same <a href="/guides/providers/anthropic/#model-options">model options</a> apply (<code>max_tokens</code>, defaulting to <code>4096</code>, <code>thinking</code>, <code>output_config</code>, <code>web_search</code>, …). The model goes in the URL, and <code>anthropic_version: "2026-10-21"</code>, the Anthropic provider’s API version, goes in the body in place of the <code>anthropic-version</code> header. That version rejects <code>temperature</code>, <code>top_p</code> and <code>top_k</code>. Enable each Claude model for your project in Model Garden before calling it.</p>
+
+<p>To send another version, subclass the provider, override <code>anthropic_version</code>, and register the subclass under <code>anthropic_vertex</code>. A registration replaces the built-in under the same identifier, so models and <a href="/guides/catalog/">catalog</a> entries keep their <code>anthropic_vertex/...</code> names:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LegacyAnthropicVertex</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AnthropicVertex</span>
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">anthropic_version</span> <span class="o">=</span> <span class="s2">"vertex-2023-10-16"</span>
+<span class="k">end</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">:anthropic_vertex</span><span class="p">)</span> <span class="p">{</span> <span class="no">LegacyAnthropicVertex</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AnthropicVertex</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"claude-haiku-5-5"</span><span class="p">,</span>
+  <span class="ss">thinking: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"adaptive"</span><span class="p">,</span> <span class="ss">display: </span><span class="s2">"summarized"</span> <span class="p">},</span>
+  <span class="ss">output_config: </span><span class="p">{</span> <span class="ss">effort: </span><span class="s2">"high"</span> <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Claude models on Agent Platform behave as they do on the Anthropic provider:</p>
+
+<ul>
+  <li><strong>Reasoning</strong> is captured as <a href="/guides/messages/#reasoning">reasoning parts</a> tagged <code>format: "anthropic-messages-v1"</code> and sent back on later turns, as described in <a href="/guides/providers/anthropic/#reasoning-replay">Anthropic → Reasoning Replay</a>. Thinking signatures are accepted by both APIs, so a conversation can move between <code>anthropic</code> and <code>anthropic_vertex</code>. The agent-level <a href="/guides/agents/#reasoning"><code>reasoning</code></a> setting uses the Anthropic default; <a href="/guides/catalog/#reasoning">catalog</a> entries go under <code>anthropic_vertex/...</code> keys.</li>
+  <li><strong>Web search:</strong> <code>web_search: true</code> (or a hash of options) adds the <code>web_search_20250305</code> server tool and streams <code>WebSearchStatus</code> / <code>WebSearchDone</code> events.</li>
+  <li><strong>Structured output</strong> is sent as a strict <code>output_config.format</code> JSON schema.</li>
+  <li><strong>Skills</strong> are rendered with the XML skills adapter.</li>
+  <li><strong>Tags:</strong> only the reserved <code>user_id</code> tag is sent, as <code>metadata.user_id</code>.</li>
+  <li><strong>Incomplete streams:</strong> a stream that ends without a <code>message_stop</code> event raises <code>Riffer::IncompleteStreamError</code>.</li>
+</ul>
+
+<p><code>anthropic_vertex</code> never reads <code>config.anthropic</code> or <code>ANTHROPIC_API_KEY</code>. Files are sent inline as base64.</p>
+
+<p>Web search and structured output are partner-model features that an organization policy can turn off. If a request fails with a <code>constraints/vertexai.allowedPartnerModelFeatures</code> violation, an organization policy administrator must allow <code>publishers/anthropic/models/MODEL:web_search</code> or <code>:structured_outputs</code> (or <code>publishers/anthropic</code> for every feature); see <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/control-model-access">Control access to Model Garden models</a>.</p>
+
+<h2 id="limitations">Limitations</h2>
+
+<ul>
+  <li><strong>No <code>gs://</code> file references</strong> - files are always sent inline</li>
+  <li><strong>Tool call IDs</strong> - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side</li>
+</ul>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/gemini/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Gemini Provider</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/openrouter/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">OpenRouter Provider</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

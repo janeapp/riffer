@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -356,7 +361,7 @@
 <span class="n">reg</span><span class="p">.</span><span class="nf">tools</span>    <span class="c1"># =&gt; [&lt;Class:...&gt;, ...]  (Riffer::Mcp::Tool subclasses; .mcp_server_tool_name returns the server-side name)</span>
 </code></pre></div></div>
 
-<p>Discovery failures raise from <code>register</code> directly, typically <code>Faraday::Error</code> for network issues or <code>Riffer::DependencyError</code> if the <code>mcp</code>/<code>faraday</code> gems are missing. Rescue <code>StandardError</code> for graceful degradation:</p>
+<p>Discovery failures raise from <code>register</code> directly, typically <code>Faraday::Error</code> for network issues or <code>Riffer::DependencyError</code> if the <code>mcp</code> gem is missing. Rescue <code>StandardError</code> for graceful degradation:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">begin</span>
   <span class="no">Riffer</span><span class="o">::</span><span class="no">Mcp</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"github"</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
@@ -394,13 +399,12 @@
 
 <h2 id="requirements">Requirements</h2>
 
-<p>The <code>mcp</code> and <code>faraday</code> gems are <strong>optional</strong> dependencies — they are not included in Riffer’s runtime gemspec. To use MCP integration, add both to your own Gemfile:</p>
+<p>The <code>mcp</code> gem is an <strong>optional</strong> dependency — it is not included in Riffer’s runtime gemspec. To use MCP integration, add it to your own Gemfile:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"mcp"</span>
-<span class="n">gem</span> <span class="s2">"faraday"</span>
 </code></pre></div></div>
 
-<p>Faraday is required for the MCP HTTP transport. If either gem is missing when <code>Riffer::Mcp.register</code> is called, a <code>Riffer::DependencyError</code> is raised.</p>
+<p>Its HTTP transport uses Faraday, which Riffer already depends on. If <code>mcp</code> is missing when <code>Riffer::Mcp.register</code> is called, a <code>Riffer::DependencyError</code> is raised.</p>
 
         </article>
 

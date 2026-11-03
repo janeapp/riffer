@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -219,7 +224,7 @@
 
 <p>Providers take no constructor arguments — these settings are the only way to give a provider its credentials.</p>
 
-<p>Credential and endpoint settings — <code>amazon_bedrock.api_token</code> / <code>.region</code>, <code>anthropic.api_key</code>, <code>azure_openai.api_key</code> / <code>.endpoint</code>, <code>gemini.api_key</code>, <code>openai.api_key</code> / <code>.base_url</code>, <code>openrouter.api_key</code> — accept a <code>String</code> or <code>nil</code> and raise <code>Riffer::ArgumentError</code> naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. <code>client</code> is not validated (see <a href="#provider-clients">Provider Clients</a>).</p>
+<p>Credential and endpoint settings — <code>amazon_bedrock.api_token</code> / <code>.region</code>, <code>anthropic.api_key</code> / <code>.base_url</code>, <code>azure_openai.api_key</code> / <code>.endpoint</code>, <code>gemini.api_key</code> / <code>.base_url</code>, <code>google_cloud.project_id</code> / <code>.location</code>, <code>openai.api_key</code> / <code>.base_url</code>, <code>openrouter.api_key</code> — accept a <code>String</code> or <code>nil</code> and raise <code>Riffer::ArgumentError</code> naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. <code>client</code> is not validated (see <a href="#provider-clients">Provider Clients</a>).</p>
 
 <h2 id="accessing-configuration">Accessing Configuration</h2>
 
@@ -251,7 +256,7 @@
   <span class="p">)</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">gemini</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Gemini</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
     <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GEMINI_API_KEY'</span><span class="p">],</span>
-    <span class="ss">read_timeout: </span><span class="mi">120</span>
+    <span class="ss">connection: </span><span class="no">Faraday</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">request: </span><span class="p">{</span> <span class="ss">open_timeout: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">read_timeout: </span><span class="mi">120</span> <span class="p">})</span>
   <span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -280,7 +285,7 @@
     <tr>
       <td>Anthropic</td>
       <td><code>config.anthropic.client</code></td>
-      <td><code>Anthropic::Client</code></td>
+      <td><code>Riffer::Providers::Anthropic::Client</code> (riffer-owned)</td>
     </tr>
     <tr>
       <td>Amazon Bedrock</td>
@@ -291,6 +296,11 @@
       <td>Gemini</td>
       <td><code>config.gemini.client</code></td>
       <td><code>Riffer::Providers::Gemini::Client</code> (riffer-owned, see below)</td>
+    </tr>
+    <tr>
+      <td>Google Cloud</td>
+      <td><code>config.google_cloud.client</code></td>
+      <td><code>Riffer::Providers::GoogleCloud::Client</code> (riffer-owned, see below)</td>
     </tr>
     <tr>
       <td>OpenRouter</td>
@@ -326,11 +336,45 @@
 
 <h3 id="falling-through-to-the-sdk">Falling through to the SDK</h3>
 
-<p>A credential you leave unset in riffer is omitted from the default client rather than passed as <code>nil</code>, so each vendor SDK still applies its own resolution. <code>OPENAI_API_KEY</code> / <code>OPENAI_BASE_URL</code>, <code>ANTHROPIC_API_KEY</code>, and the AWS chains — region from <code>AWS_REGION</code> / <code>AWS_DEFAULT_REGION</code> / shared config, credentials from the environment, the shared credentials file, or an instance/task IAM role — all work with no riffer configuration at all.</p>
+<p>A credential you leave unset in riffer is omitted from the default client rather than passed as <code>nil</code>, so each vendor SDK still applies its own resolution. <code>OPENAI_API_KEY</code> / <code>OPENAI_BASE_URL</code> and the AWS chains — region from <code>AWS_REGION</code> / <code>AWS_DEFAULT_REGION</code> / shared config, credentials from the environment, the shared credentials file, or an instance/task IAM role — all work with no riffer configuration at all.</p>
 
 <p>Two providers deliberately opt out: <code>OpenRouter</code> and <code>AzureOpenAI</code> borrow <code>OpenAI::Client</code> to reach a <strong>different</strong> vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up <code>OPENAI_API_KEY</code> / <code>OPENAI_BASE_URL</code> and send an OpenAI credential to <code>openrouter.ai</code> or your Azure endpoint. With nothing configured they raise instead — set <code>config.openrouter.api_key</code> / <code>OPENROUTER_API_KEY</code>, or <code>config.azure_openai.api_key</code> and <code>.endpoint</code> / <code>AZURE_OPENAI_API_KEY</code> and <code>AZURE_OPENAI_ENDPOINT</code>.</p>
 
-<p>The Gemini provider has no vendor SDK, so riffer ships its own transport: <code>Riffer::Providers::Gemini::Client</code> exposes <code>base_url</code>, <code>open_timeout</code>, <code>read_timeout</code>, <code>write_timeout</code>, and <code>proxy_address</code>/<code>proxy_port</code>. Anything implementing its two-method contract (<code>post</code>, <code>post_stream</code>) can be assigned to <code>config.gemini.client</code> — see <a href="/guides/providers/gemini/">Gemini</a>.</p>
+<p>The Anthropic provider uses no vendor SDK. Riffer reads <code>ANTHROPIC_API_KEY</code> and <code>ANTHROPIC_BASE_URL</code> itself when <code>config.anthropic.api_key</code> / <code>.base_url</code> are unset, and raises <code>Riffer::ArgumentError</code> when no key is found. Its client, <code>Riffer::Providers::Anthropic::Client</code>, takes <code>headers:</code> and a <code>connection:</code> (see <a href="#connections">Connections</a> and <a href="/guides/providers/anthropic/">Anthropic</a>).</p>
+
+<p>The Gemini provider has no vendor SDK, so riffer ships its own transport, <code>Riffer::Providers::Gemini::Client</code>, built on <code>Riffer::HTTP::Client</code> (see <a href="#connections">Connections</a>). Its key falls back to <code>GEMINI_API_KEY</code> when <code>config.gemini.api_key</code> is unset, and raises <code>Riffer::ArgumentError</code> when neither is set. Anything implementing its two-method contract (<code>post</code>, <code>post_stream</code>) can be assigned to <code>config.gemini.client</code> — see <a href="/guides/providers/gemini/">Gemini</a>.</p>
+
+<p>The Google Cloud providers (<code>google_cloud</code> for Gemini, <code>anthropic_vertex</code> for Claude) share their own Agent Platform transport: <code>Riffer::Providers::GoogleCloud::Client</code>, also built on <code>Riffer::HTTP::Client</code>, is bound to one <code>project_id</code> and <code>location</code> and authenticates with <code>config.google_cloud.credentials</code>, or Application Default Credentials when unset. The default <code>"global"</code> location has no data-residency guarantee; see <a href="/guides/providers/google-cloud/#locations-and-data-residency">Google Cloud → Locations and Data Residency</a> for pinning a location and for reaching several locations from one process.</p>
+
+<h3 id="connections">Connections</h3>
+
+<p>Clients built on <code>Riffer::HTTP::Client</code> send requests through a <a href="https://lostisland.github.io/faraday/">Faraday</a> connection. The default uses Faraday’s <code>net_http</code> adapter with a 10-second open timeout, a 600-second read timeout and no retries. To change any of that, pass your own connection as <code>connection:</code>. Riffer’s defaults don’t carry over to a connection you pass in, so set its timeouts yourself, in the form its adapter reads them. Riffer requests absolute URLs and sets the auth headers on each request, so the connection needs no <code>url:</code>.</p>
+
+<p>To send extra headers, pass <code>headers:</code> to the client, or set them on the connection. Either way they go on every request and replace riffer’s auth and version headers of the same name. A replaced auth header is sent as-is, never refreshed. Riffer always sets <code>content-type</code>, <code>accept</code> and <code>accept-encoding</code> itself.</p>
+
+<p>For example, to retry rate limits and server errors with <a href="https://github.com/lostisland/faraday-retry">faraday-retry</a>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gemfile: gem "faraday-retry"</span>
+<span class="nb">require</span> <span class="s2">"faraday/retry"</span>
+
+<span class="n">connection</span> <span class="o">=</span> <span class="no">Faraday</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">request: </span><span class="p">{</span> <span class="ss">open_timeout: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">read_timeout: </span><span class="mi">300</span> <span class="p">})</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="n">f</span><span class="p">.</span><span class="nf">request</span> <span class="ss">:retry</span><span class="p">,</span>
+    <span class="ss">max: </span><span class="mi">2</span><span class="p">,</span>
+    <span class="ss">methods: </span><span class="p">[</span><span class="ss">:post</span><span class="p">],</span>
+    <span class="ss">retry_statuses: </span><span class="p">[</span><span class="mi">429</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">502</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">,</span> <span class="mi">529</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Retrying a streaming request is only safe before any data has arrived. If a retry restarts a stream that already yielded chunks, riffer raises <code>Riffer::Error</code> rather than yield them twice.</p>
+
+<p>Streaming is tested with the default <code>net_http</code> adapter.</p>
+
+<h4 id="errors">Errors</h4>
+
+<ul>
+  <li>A non-success status raises <code>Riffer::APIError</code> (a <code>Riffer::Error</code>). <code>status</code> holds the HTTP status (<code>nil</code> for an error event inside a stream) and <code>body</code> the raw response text.</li>
+  <li>Transport failures are raised as Faraday’s own errors, such as <code>Faraday::TimeoutError</code> and <code>Faraday::ConnectionFailed</code> (both <code>Faraday::Error</code>s).</li>
+</ul>
 
 <h3 id="mcp-model-context-protocol">MCP (Model Context Protocol)</h3>
 
@@ -714,20 +758,8 @@
   </thead>
   <tbody>
     <tr>
-      <td><code>temperature</code></td>
-      <td>Sampling temperature</td>
-    </tr>
-    <tr>
       <td><code>max_tokens</code></td>
       <td>Maximum tokens in response</td>
-    </tr>
-    <tr>
-      <td><code>top_p</code></td>
-      <td>Nucleus sampling parameter</td>
-    </tr>
-    <tr>
-      <td><code>top_k</code></td>
-      <td>Top-k sampling parameter</td>
     </tr>
     <tr>
       <td><code>thinking</code></td>
@@ -746,7 +778,7 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
   <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
-  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
+  <span class="n">model_options</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
 <span class="k">end</span>
 
 <span class="c1"># With extended thinking (Claude 3.7+)</span>

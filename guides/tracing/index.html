@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.54.0</span>
+            <span class="version">v0.55.0</span>
           </div>
         </nav>
       </div>
@@ -166,18 +166,23 @@
                 >
               </li>
               <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
                 <a href="/guides/providers/openrouter/"
-                  ><span class="num">07</span> OpenRouter Provider</a
+                  ><span class="num">08</span> OpenRouter Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/mock/"
-                  ><span class="num">08</span> Mock Provider</a
+                  ><span class="num">09</span> Mock Provider</a
                 >
               </li>
               <li>
                 <a href="/guides/providers/custom/"
-                  ><span class="num">09</span> Creating Custom Providers</a
+                  ><span class="num">10</span> Creating Custom Providers</a
                 >
               </li>
             </ul>
@@ -718,7 +723,7 @@ cache_read.input_tokens      =  800   → 800 of the 1000 were cache hits
 
 <h2 id="provider-names">Provider names</h2>
 
-<p><code>gen_ai.provider.name</code> carries a GenAI-semconv well-known value where one exists: <code>openai</code>, <code>anthropic</code>, <code>aws.bedrock</code>, <code>azure.ai.openai</code>, <code>gcp.gemini</code>, <code>openrouter</code>. A custom provider that doesn’t override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.</p>
+<p><code>gen_ai.provider.name</code> carries a GenAI-semconv well-known value where one exists: <code>openai</code>, <code>anthropic</code>, <code>aws.bedrock</code>, <code>azure.ai.openai</code>, <code>gcp.gemini</code>, <code>gcp.vertex_ai</code>, <code>openrouter</code>. A custom provider that doesn’t override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.</p>
 
 <h2 id="stability">Stability</h2>
 
