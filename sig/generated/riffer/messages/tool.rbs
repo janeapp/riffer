@@ -26,6 +26,6 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   def role: () -> Symbol
 
   # --
-  # : () -> Hash[Symbol, untyped]
-  def to_h: () -> Hash[Symbol, untyped]
+  # : (?parts: bool) -> Hash[Symbol, untyped]
+  def to_h: (?parts: bool) -> Hash[Symbol, untyped]
 end

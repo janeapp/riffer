@@ -32,8 +32,8 @@ class Riffer::Messages::Base
   end
 
   #--
-  #: () -> Hash[Symbol, untyped]
-  def to_h
+  #: (?parts: bool) -> Hash[Symbol, untyped]
+  def to_h(parts: false)
     hash = { role: role, content: content }
     hash[:id] = id if id
     hash

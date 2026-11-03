@@ -33,8 +33,8 @@ class Riffer::Messages::User < Riffer::Messages::Base
   end
 
   #--
-  #: () -> Hash[Symbol, untyped]
-  def to_h
+  #: (?parts: bool) -> Hash[Symbol, untyped]
+  def to_h(parts: false)
     hash = { role: role, content: content } #: Hash[Symbol, untyped]
     hash[:id] = id if id
     hash[:files] = files.map(&:to_h) unless files.empty?
