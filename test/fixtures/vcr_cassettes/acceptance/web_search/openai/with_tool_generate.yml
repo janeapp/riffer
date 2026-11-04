@@ -1,0 +1,543 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto,
+        and what is the latest Ruby version?"}],"model":"gpt-6-luna","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '470'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:31:41 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555a8d69a73eef-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '588'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_c8ab648b3a174887914e73bd99ac61a4
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_06e8748d6aada9e6016aeb6bfd191087d0828387584750198c",
+          "object": "response",
+          "created_at": 1793813501,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813501,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "fc_06e8748d6aada9e6016aeb6bfd8f9487d091aa7a01a5e99b91",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{\"city\":\"Toronto\"}",
+              "call_id": "call_eMBogwkuNzO0aRPBT5jsCBLv",
+              "name": "get_weather"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            {
+              "type": "web_search_preview",
+              "search_content_types": [
+                "text"
+              ],
+              "search_context_size": "medium",
+              "user_location": {
+                "type": "approximate",
+                "city": null,
+                "country": "US",
+                "region": null,
+                "timezone": null
+              }
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 4500,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 4497
+            },
+            "output_tokens": 18,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 4518
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:31:41 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto,
+        and what is the latest Ruby version?"},{"type":"function_call","call_id":"call_eMBogwkuNzO0aRPBT5jsCBLv","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_eMBogwkuNzO0aRPBT5jsCBLv","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-6-luna","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '717'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:31:46 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555a91ea5a3eef-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '4372'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_0b46ab49dce249f4a8a4447cfdb4f79b
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_01f8ebec6c6e8177016aeb6bfdd1e087d0b8686aebf368f060",
+          "object": "response",
+          "created_at": 1793813501,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813506,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "ws_01f8ebec6c6e8177016aeb6bfe711087d0be662ab7c07e5d32",
+              "type": "web_search_call",
+              "status": "completed",
+              "action": {
+                "type": "search",
+                "queries": [
+                  "site:ruby-lang.org/en/news latest Ruby release version",
+                  "latest Ruby version official Ruby"
+                ],
+                "query": "site:ruby-lang.org/en/news latest Ruby release version",
+                "sources": [
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/downloads/releases/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/news/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/downloads/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/news/2026/05/11/ruby-4-0-4-released/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://github.com/ruby/ruby/releases"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/news/2026/03/11/ruby-3-4-9-released/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/news/2026/03/27/ruby-3-2-11-released/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://docs.ruby-lang.org/en/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/downloads/branches/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/admin/translation-status/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/zh_cn/downloads/releases/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/Ruby_%28programming_language%29"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/open_source/docs/RealSpeediOS-104-1721057225.pdf"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://bugs.ruby-lang.org/issues.pdf"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1u0gsty/jruby_94150_released_94x_is_now_eol/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://teiru.net/poignant/poignant-guide.pdf"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://bugs.ruby-lang.org/issues.pdf?f%5B%5D=created_on&op%5Bauthor_id%5D=%3D&op%5Bcreated_on%5D=%3E%3D&v%5Bauthor_id%5D%5B%5D=710&v%5Bcreated_on%5D%5B%5D=2020-12-01"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/RubyGems"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/19czjs5"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://bugs.ruby-lang.org/issues.pdf?assigned_to_id=13%7C3824&set_filter=1&sort=tracker%3Adesc%2Csubject%3Adesc%2Cupdated_on&status_id=%2A"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/Ruby_on_Rails"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1n2of8d"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://zh.wikipedia.org/wiki/Ruby"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/?utm_source=openai"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "rs_01f8ebec6c6e8177016aeb6c00d39487d0ab918071c9470a90",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wC-A2ehXWFxNxEU5Y2ddzij-CSVxK76QrTM259uxkLKm9vqI3b4sanW560I7yZA79n_WUfhKIP0sG0v5mUuGQafYyt5Cn5jxCXfUVrmz9xJj-sVsLNFdA6RqrrxqitG7H_Ys8Z2sRVDSKfITHdgX_HDNfQi7C4Bp_cSJEz9Ha2y3G3cgMk0UKFU3qny8-syGYbVAIFJfm8oybxPiAvJzGKWjDzR_69IXMnIQkWAiu2h55DuEfFUMIQbdZdQ6wXmJtgju-agkaNK6vNukQXl0_rCsKRLLQ9xFz1TOzNwbxxOOewOCxrlH6urGmQwkLOA-0HdCPB9S4C_3KZe0aKxBxK6bh9ftQcr9wC2_1A0A9TVfo403HSF2fiiu2lk6JH0mo7XtT8tsBuuSUE68UBQ6IunI4l4Fi3JisWmXesOiI1VTEuOMKycgoMtrDvD_8KwnzYkkEJOwwZnuHHIhB_jX4CIDqALaJMNgQdOpfCaOSnP1EblaLVZQiK5CZI737TnCekMyjgJng4m9B37-sM5P8_4wD-7NfuHl_EG46kk-U_kN2Da6h8ETqJh5RlPaRDJnj2_5MFgePbsRlRx8Sc2yj2zOiou-N5RVa6EWQrFq7oA-j1-xZxM7N5bo-iiXDprovj4LQqqTIFcJ-44O_1gaB_d9tGeXEjQ_3cGsZURLp1tG4STJS1WM9D6iuoruqlbDTeeYqglVNYoyCjwZ77f3rSbsE1qa0qiy9yMbhAAdBUv_q7W9I9jsHB5vOqngcqzfj5xsdxrhTcmvnNHd53w07OwB0O1nJAG4DX1PZhxr4lNs4rv7KYC3VGWRIbAKUxaJoeY-E32JX4fDWRCeVuhe4veWdCsVBwyfc59gdJemuJ67HrTT0-g9s6AFGnn4Ji3x409Vb-koGCVcyNYOuydB_7xXHJY4MU7Tm6jnJxJQe27q_GHUnczvozPj908G5v1b3UlOp0z7s23CVphSD6ap2cpysNtDnrx9bJXyamwqupG7kc3eVoEcdXC6d21e7kGS7a3rsU7rGwAM19V3KGoyl5OVYzgV6P7IVatB6aqqVCWVk6DRe2hHaO8ti7Dwj2GLQKBGym-A8djAPmK_qKhNReNpYXeJ0-GHXEfSSGwEQx4mfWPXaft4Ps7aMrQof4I-FoQbn-6MqiIc4D83sXJzMcS6f8pPFSqfsEuTurhIbLMlZqnBsic5eg2eD2Gkdrj4QPfM8ui3NggzPBq8gcID2bPVzKJNPN1goIDoqRzS0zVJ7oRiscBVb9Gfm-hJnvk-m6au0_2n_on0F7FiCoqOZknSnEfowwoBnlYTRANoabjJEaBGpcgTE9ADUgzn5KiOVKfI3VdPHBRJCLLp07odp53P99G_-jPlo8e6cfTCPhsuFAGyTQ5Um9ojKP_akeI879C6G8Qhn7yth4j29dQWTjBo9VYNe-FAoq66l8ScIaKqN4iwEf5-CAw3kH0CpO6sl2nVfrzjel-_57LewCtE5AnU6CTarj0s6VjygC-QyxYi_h2ZSMLXRcwBjIMg49LkySKxFcYGgdc_kM3Eegw2eHlUJ5H2AC2se9B52UuVnscTB0nltp_DaqxrzLEbl39A3D3M6F2EJeQWP55AeEBxyExJ-SPVF2Spr3BncOK__GX4EM-0i8foTbeYP4W2xL7LWB63JBD5ncI9jvF0WNuDpzPEqEeFglfL9gjk7NY-20sVTlgTZwHdrODzfAseO7JCJRVbSklO93e_KBwIgCxYPdf-L0lQiJ2kZlwsvzoaj1Ye7BEWyDWYKe3HTAUT_LvBLK3GoTC5MPqSVsvx10HsQUtznbG-cTrkIL_l0TKKMyaRyOEmzZ7qJny9YhfkeEP55c2Oc7Q6dGwHP2BPdqJUxuPOADpcWe3-X6UmCoNk5KnysKOFxV3lJi0Yi5RKd7Mc9QYOE8sN2Vp0TuNL_4Kb0lNQ95W7n6AwwCRPJT18PGHb70d9vS1a3I5ktc-7ak1TUqVp1R9HJjcEBqMuzykbtYl_df3C-bUzTmROO9OY5PsppMRNGyldNQgEO0Mbas8EpLOieS201aEQHCgxWozq_qJRSdv8UHnLN650Q7rCuzeOruJqMYKGZQ4f_INp6VIOERNOC6LS76we84P4L2JvayahCg9shz8IsxxhGmvFPHMHuv-QSNK3e0Z5pYNExeFzFH",
+              "summary": []
+            },
+            {
+              "id": "msg_01f8ebec6c6e8177016aeb6c0180fc87d0825cf1f5e2f47c1d",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [
+                    {
+                      "type": "url_citation",
+                      "end_index": 139,
+                      "start_index": 73,
+                      "title": "Ruby Programming Language",
+                      "url": "https://www.ruby-lang.org/en/?utm_source=openai"
+                    }
+                  ],
+                  "logprobs": [],
+                  "text": "Toronto is **15\u00b0C (59\u00b0F)**. The latest stable Ruby release is **4.0.9**. ([ruby-lang.org](https://www.ruby-lang.org/en/?utm_source=openai))"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 1
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            {
+              "type": "web_search_preview",
+              "search_content_types": [
+                "text"
+              ],
+              "search_context_size": "medium",
+              "user_location": {
+                "type": "approximate",
+                "city": null,
+                "country": "US",
+                "region": null,
+                "timezone": null
+              }
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 8695,
+            "input_tokens_details": {
+              "cache_write_tokens": 38,
+              "cached_tokens": 4497
+            },
+            "output_tokens": 159,
+            "output_tokens_details": {
+              "reasoning_tokens": 106
+            },
+            "total_tokens": 8854
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:31:46 GMT
+recorded_with: VCR 6.4.0

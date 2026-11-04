@@ -1,0 +1,189 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"Be concise."},{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"model":"gpt-6-luna","reasoning":{"effort":"max","summary":"auto"},"metadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '239'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:32:06 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555b1fde7716ae-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1674'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_413b1b90932d4a64a48a078dea4e702d
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_08ccdc38608184a4016aeb6c14890487d092a07af67e7b0649",
+          "object": "response",
+          "created_at": 1793813524,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813526,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_08ccdc38608184a4016aeb6c14f80887d084ec38ddd5ffc08d",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wWhDMCJQx8hzixvj7rkC-QSv2qc6ThLVG9jFAPbfsQF9HN9j9jsfxhDLZR9CVxPsZ191MIIpGMKE2IpbLknjreyfK_sf9WX9SsYKS_o7BH-zgCGviTdAZb42VqBVWZr5wrhFmHP_1Lw54UfiWd_9A96eQfotm7UYL6vYNO1eAEjdxETK6SVqF-DedSanY5vnvUNMeFwbjBy3yvEY61rn6U7LhJoXKU-rRVNmfS0EzJEEAzLvklYElpsAvR24V5SCHokn_hckUGh6oP_A698BUknVGj6NQBrp3FgsKAn0nq3blMLKwGzVrfhxAuA9sl3yKvLxOkw4MBKyHV9sc7OF4RhtAffZmM64px0VmQaAwhQ9F0ngmPLUy12-8F5Fuc-WaR_Hoy7Se4CeecvwMJvkVM3109dsAIZqXClOlknex8g554ALlll_wIdIm_lKZqJPWVo-P9gnevAlRnBU3UMHvYJBghlqW2FNArK9B9yzb3PcQHL1HDjh5UMtkBBV2S-btdW4B9ak0GDauiXsZFEtHNos5s-VnJ4MfecXny-tJOebBcH98bnoJqnQ9I7jSKTCtFtg1k3SP4zo4AynssEuiuGBAvtwJXAeCyWf9bfzdsv4BBzx7ngmEQdPY1v-HoDTygonFHvupQ2iaNIGP4GYrFuRdGUjd7dTkR6EbvS9bRy4Im9UlUPN_Grfrkjrw8TBVhTO2_L8zbGEBAFFzxNZiIY1TXznJjN9FAfFgbXzqHIVwFYQA_iVDlUhzhz6KQsTZL4I92rwFLDKCKO0QArbQwgjIq_YIMl6N9spboiUs9iy9j1my1qwIUqwGs1LjNYDk_Pz-xTx4vnDg3kpXCSYgc1H0k1C25bjPKKEnojZnCgjXe0euGB7Jz6ng-tK-OMVAuxYA2XPCcOyFsSa41LW3N90MSqGL30Y_8iG07f5JiX-WsoUSa7mYMAfg7aU7xPG0JAVOclGpzxJe-1EZ3ob7tLOSFJG8n7Ak7VEQfHVnIm2BYidmNFU4fqxoYlzl_zDmdI-tfwhqimuCRRdTtZaogUCcxyEl4sl91rWsTVU0Gm94l7scEpxVzQShnac4umjZsWRvEjpT4vUioBHg6muNpRnCQm9c3BFeKTPR4AnQfobkDwJTcNG8JCr4WAPe1DCqgo1s6xqg7adB2jc8yawIP5Xxt4zdzfjaPeIC3HEn0nGKys1k2qYDMp7kqRDc-FuW-kem-bB3yYv1aWiIUy1AuCNV-okp5nXR0puE9Q9GP59B8S6J4H-PSmj3suA2fz2rpTR_AvCiOXnb2S6kM9KQsPtvzinDMb6tGTXLyZNw9RlLxOnE9ECyda3qLOBVpxQPkF7jX-TFTI5y-8_0Jibw8KRY9pD1zYEKeBQezi1QUzvxoJ1GnmxRRqYWz5KcykBhBl_ugGK8o--VMLX2W-UhQPeL2QXkIw__cfoJ8wUmNli79G0-0qMzTvkmSCbPUtVXoCAy8p8HH1izH2QEGl18Fgw_mx8I_kXrLpMKxQvSy41mhHNBUe5MaRbP9XYuRcjDdClhI1290Y1rYher3Wap9kNt1sqhjzriw8LN9QRcaTaKndiAs9hXY2OoeMGnORT589a--WeTj3tg9OX3E7kuvUg==",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Calculating multiplication**\n\nI need to compute a simple multiplication: 17 times 23, which equals 391. It's straightforward, just a number. There\u2019s not much to overthink here, and this doesn\u2019t require additional context or complexity. I\u2019ll keep it simple and direct, since the user only needs the result. It\u2019s good to have clarity in math! Alright, I\u2019m confirming the answer is 391."
+                }
+              ]
+            },
+            {
+              "id": "msg_08ccdc38608184a4016aeb6c161c4887d090e7cc72238f4de3",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "391"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "max",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 27,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 26,
+            "output_tokens_details": {
+              "reasoning_tokens": 19
+            },
+            "total_tokens": 53
+          },
+          "user": null,
+          "metadata": {
+            "kind": "agent",
+            "agent": ""
+          }
+        }
+  recorded_at: Wed, 04 Nov 2026 17:32:06 GMT
+recorded_with: VCR 6.4.0

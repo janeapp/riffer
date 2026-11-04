@@ -3,6 +3,7 @@
 require "test_helper"
 require "aws-sdk-bedrockruntime"
 require "googleauth"
+require "openai"
 
 # Acceptance cassettes only replay. To record against the live APIs, set
 # RIFFER_RECORD to a VCR record mode: "once" records missing cassettes, "all"
@@ -116,6 +117,22 @@ ACCEPTANCE_PROVIDERS = {
     configure: -> { Riffer.config.anthropic.api_key = ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.anthropic.api_key = "invalid-api-key" },
     reset: -> { Riffer.config.anthropic.api_key = nil },
+  },
+  openai: {
+    model: "gpt-6-luna",
+    reasoning_levels: %i[low medium high xhigh max],
+    token_limit_options: { max_output_tokens: 20 },
+    invalid_options: { temperature: 5 },
+    # Below max effort, gpt-6-luna sometimes skips reasoning before a simple tool call.
+    thinking_options: { reasoning: "max" },
+    # Prompt caching is automatic and needs no request field.
+    cache_options: {},
+    web_search_options: { search_context_size: "low" },
+    wire_tags: { "metadata" => ACCEPTANCE_TAGS, "safety_identifier" => "u_1" },
+    error_contract: { class: OpenAI::Errors::APIStatusError, status: :status.to_proc, detail: :message.to_proc },
+    configure: -> { Riffer.config.openai.api_key = ENV.fetch("OPENAI_API_KEY", "test_api_key") },
+    break_credentials: -> { Riffer.config.openai.api_key = "invalid-api-key" },
+    reset: -> { Riffer.config.openai.api_key = nil },
   },
 }.freeze
 

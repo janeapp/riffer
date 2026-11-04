@@ -1,0 +1,237 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Extract info from: Jane works at
+        42 King St in Vancouver. No other details are known. Return null for any unknown
+        fields."}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '807'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:29:59 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a555580a3cf0681e-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1646'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_3cbacf9994e5425d897c7940c66fad9c
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_038c9992a06ea44f016aeb6b9630f087d0b6c60980f3bbe65d",
+          "object": "response",
+          "created_at": 1793813398,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813399,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_038c9992a06ea44f016aeb6b96e63087d0880ad78968d0b1c8",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uX9ud2EXw8cf4D6A3q52LJjegp00BXX6nsUCjNe7CtLwWS4P-VL57ggc-IQSuoafafpEaTs1KwiXR0fRUUbVxmC8YwWK5H6Fy2xv5wYsHYfMza2tTmacLYkL5lF69QVORi4ijbrpCKstXvB1BG4YFrO4Dx3wyOpUXEcvztj1NYI5piFtZ4gWh_S0T_kQSyziJdgLNY6Ike7_CPF0f7sl5mOF83__zOZMRjJZOeGItQY8IUEplVufhwc0PaxSyGV8Tcp2umOCMKDd8jcUXPkAXM5lCBEH8CEa07r2NDt4I4__BKKts7us63fj6RbwLEBTMDHlho8augKojonwwxTIC9yWZ7GVzjS2QR5SdncZTKvekxg1VVUC4sc2hwNcstNxxivJf84w3EPO5JVyAWrhYAbGoFecsmWMKPeDH9SqtIA4m8XA-46F2fn208wFFpyuceYYN-uIImdOLYj7kzVA_Gx3ASTj6scbX2dd6OBC6tl6Nt1aCCam8mOABcnw7adAIqCmWyNUsG_MUlS7gPMEZwXx_urpyQer2bi7xfOO3LBlbU-s7zyIoUh68ohZMZUVTayXDcBRtq4I3dCjfgOp2ckNnwqqziPWs5PoX2KY1p-L73l8QwVB20DZxjzfJvKIKBS3tG8m79KZaMNjzNAMoaZMKlcqeG6RveXQEiAUo9Jt8cKfMUwqw7Fe7uLmlDz054XFlPo_gpwlxr7Lcm-AEiN_o8KUjN6PPT_3JtgLhM_lxALbrFYCuIPM4FjsS-tSRcVTafQV4PTPhbldiA-Opo75vGWQ8x_o1XGitGgXnG-Iib3u_lmNvpl-SDmHvZd48DrT6SlQRFjn_wzqgWEjAPBFWhgcRFdJ94o2TawoLBnU2xki8ItyWfKN6Sah-5MHRbOmCOpfoSurRQzP3dhBmCO15hwYPvu9jLMzem6Ob4eWIxN74YgfxgbrajTCnNOEDaFLNu3nu56CtyVyu-pvZtcA3e4ltPd7-TuiMp5mv0IsaMy62_AeMUuieCYheGv-qRoftxF0AvWdUDzIEq3EkwpiHJo092DZ1RFke65O0PDEsUFpSpXjrVaN9hCXakSwDMOwTxl8wMO7tUdraPOvOJD7DQ7WZ3K8EnwQ6-p-32jYqgmObjNjy_gVGrHFZjVwZB3UxAs69vOiLQpd3auTJr3EqMqPDa21Z7ElM_N0dMoguVgXfysaaUin2aDCzgtipDu8EBeMNOzpTQ7qnd8LdNDzbS1Jjbvy121RsK6rbTF7dxc1hHqxb9m2wVdDxtZ7I0lNbrwcFdxj-NHsq0z08m1Nzxv1tFwk0ZxgSOYSCl2CPIzLnclNtPdISQGTbOCEcR2JfIosG1mWzYQfIj5hDGEYV62oZJmAX6gbCWnedJsOosO2NzcYgJ8x7RBNYStL_6JWmqcZzTfzweLI13F9_-UIB-RwSOkEvIv5I58R1ungnwi6tnt1FRCYB5ax8hcVO2nAUEJmp7wwIdBwAi1Y1w-1mmnrq2hQVYqXvycaUZL5cRceCHFQik8mGeXb21sJVior4AUspXY2NViqyhwLQA0j7DKrHGicwXBo8JQqL69JCO8-SEQx5uARw-_bg4yj8Islxbwe1_XyoQiBQdXOc_lkG8LdbHOZaBKXXSr1DvG_SCyL9mnwBPZSvSnaWpxcvj9uKppyjrLLrBfa2KNUbWiZHMpwEdXcmnL3eDnPqNi8ohMcHHsNacxVSjAEX4AW-pVOZ5WYcRj9glg9wOsGkkZ4xXI1IMvgJWCY80j2JNtf4MwhZz6ieVgtHaLOwgxHn4QPZST2-OGiibETYN1-Yv2RTkcV_EytsB1eWGyP6LnchESMDR8D8T7_K6ZUNtI4kQgtN-FepzVGbnws3bZ1Ejpw==",
+              "summary": []
+            },
+            {
+              "id": "msg_038c9992a06ea44f016aeb6b9750f087d0a34a16b5d4922aad",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Person name"
+                  },
+                  "address": {
+                    "type": "object",
+                    "description": "Mailing address",
+                    "properties": {
+                      "street": {
+                        "type": "string",
+                        "description": "Street address"
+                      },
+                      "city": {
+                        "type": "string",
+                        "description": "City"
+                      },
+                      "postal_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Postal or zip code"
+                      },
+                      "country": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Country"
+                      }
+                    },
+                    "required": [
+                      "street",
+                      "city",
+                      "postal_code",
+                      "country"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "name",
+                  "address"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 129,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 74,
+            "output_tokens_details": {
+              "reasoning_tokens": 38
+            },
+            "total_tokens": 203
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:29:59 GMT
+recorded_with: VCR 6.4.0

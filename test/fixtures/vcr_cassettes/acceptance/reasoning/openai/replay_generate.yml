@@ -1,0 +1,415 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Which Canadian provincial capital
+        has the largest population? Get the weather there."}],"model":"gpt-6-luna","reasoning":{"effort":"max","summary":"auto"},"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '457'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:32:23 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555b878f8532a7-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '2033'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_1ba9d3532e564f08adfdfc1c8c2e347d
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_02714f024cc7611a016aeb6c251d1087d0a5e620dd1f325198",
+          "object": "response",
+          "created_at": 1793813541,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813543,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_02714f024cc7611a016aeb6c25acd887d0ad83c632539a56ca",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wn3QxDb3vhy4p58xtT9PBBZ8enH2QoySNnWudU4pumvAG6E8StkdqKr9cdNl36dbRwBmTGrURy2IAvgwoP5CWrgxzzHr79CtGoaaWs4Dv9YM2k4_80b1Quv08gU7NOwqDRCMWn0yG61ySVCNkWkc-2GqqT26XY4LxT9beGzXn6hDYdqFOjW6Ie4CGgsyZcRKAK7mydmuT10HvaNgb1g-t1C2iXTCgsJLyG3NqTsqEZmRp1M2Xb0JznHa_ULU6Vu19wirRDN9FjhMECAqbulUlQHssjuuToBNXsq6Xrs9AjbSDvKJYd7BirNvj8beV5u6Vhp-bQJvvzq7ndRDczEyA9zEEbhORHJyJieedLCndMtyAJyEwBrXuySKs4wwGwKl8YU8onoPTAzroAJy_4X8kT-D791ISj11OkbBMXVyH9fb8SFVgcgTxkUDlNXqsREkHGqr9UqR7gyiWKk42JYWptC58fFI9wx8kEtqsFse7e6AkvHHO4nxbH543anyQmX5T-_KV3ezWxQW0-lNe_kz-QiXzpu0r40OYBCvfZ7j_HRf4SdYjRxw8ldBX8aezgppOlarb5NgdOMrO47XgqFl2fItPKkERhhXlyWqmY3raKOzvEVyNBmAZkMtdlabzFyZ24nqn5_GRWhrVAryGjXGQD_B3p_u3tlkACseetsUdpon4h9y2wt6hU6UNa-VQUj1CFEZG8QTiZG0k8nHn5BhrkuLiopC8THXilib3mhIXrmGRv9RUponi8z-RM-c6-uee2DRwN_N4tOrO8Q9_pdbIBZnaJgpL2cO2SYogIxXguuunFEezf0zqBbj0wfpaFOhiOBQS9jUjd2-YfjaWimo3mpHm5fD1Z9pX20NKkRvaA7PgHEnZt5f4B-qeqMF4963Ouzkau-kf1U0N3ECNv18JW2D_k9rsjY5PQDzyGG9VbFC-vdjKrPOwEJciY1r0-VCQBGBeTvckOHJ_5km6ra7JQVnjoGgMLwMm3Aj6LOqmHLQBrgn3vgdu-eHza5wxWIAv0oWduCJNsUvPDILn_zP2iANIbGcFV4_ULAEGTdBaN-LdrwnKhkOFdl2G-TLP59oWBIJz6P9vgCkybNRBpS5GNEYZTaOfEqoCVKs9K4WV8fVoWStrPAc0876bSTc0PWaf6hqFIo9ybB9Sj3MZnTUwljFO3VoWoHp4tKE5QUPmKWfWnruBp5kB_NrhdnMq5GFcUZOOOowQu3TWKe4VJeWEwiKGiTyPbJbzw1lozGiXzueupoes4j1zJzuRfbf0mFbnBlg_wSHvCxS2yG3Rthwv0VGweTQCOWCU-8zzLcBkAMKBC1eTvZGNx7c6mvibNTWaWswocwAEoOi24tlNEaxnDPMlvo1lcgZ7dqsZ79DN6xiNxk2iMZ7CfV-Fg3B8kZEVaMgwZb9jr12Th5E30NlAz1FWymWRDNi7aaZuzPnUj6zLCUDQxG0g4hrnTiRQE9Gsp6hrioJUBlhIKFd5QyCtRnCFHyVpvs0pWk3apqDQ5k1nV7aqPqLNKRjIcKmAhP7waxqJ1HRvy-wrulkRfOjvaXxojFKLGJfHNSlhWMWPw6_WdVYHcsRddzxHoO_UA_D_Spaz1s1HK6QOJ7o791TOREh6hMgKbgxKLPVF035bMvg8FQv6usdH1WP8xl8W41j0NzqLX3OU6b3kZ0yoqhBuyMfoL2ZkR5t-owRDqOT5a8_-XwkEXAN-186hMrnuEx4PEHnCaZDILJq9GlTQxIeFQeQiCLwu23-WjCuh8cMW5Iqdq_YsO4CkoDXW6v1G4wdjSn5Jx97lMeLsoQLie9Jj3xGaYszQN46hwvdJJPlwXSGhc6tjgW9ZUk0IbRB2TTvcDCCR4ef5MKZ72Z9GfrluZXC2ft8WapFTbCiXVEGyqnWpwxUHPoR4r4fuwiBl4VTz8o1zTbv9LsM3O-99lcGyF-g==",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Determining Toronto's weather**\n\nI need to find out which provincial capital in Canada has the largest population. Toronto is the biggest among them. To provide the user with accurate information, I should also check the weather there. I can use the weather tool and specify Toronto as the location to get the current conditions. Let's make sure to provide detailed weather info once I have it!"
+                }
+              ]
+            },
+            {
+              "id": "fc_02714f024cc7611a016aeb6c27089c87d08a4a440eb25fb501",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{\"city\":\"Toronto\"}",
+              "call_id": "call_QqU8XpFTcj01vv4dL7nmZYJA",
+              "name": "get_weather"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "max",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 63,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 56,
+            "output_tokens_details": {
+              "reasoning_tokens": 36
+            },
+            "total_tokens": 119
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:32:23 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Which Canadian provincial capital
+        has the largest population? Get the weather there."},{"type":"reasoning","id":"rs_02714f024cc7611a016aeb6c25acd887d0ad83c632539a56ca","summary":[{"type":"summary_text","text":"**Determining
+        Toronto''s weather**\n\nI need to find out which provincial capital in Canada
+        has the largest population. Toronto is the biggest among them. To provide
+        the user with accurate information, I should also check the weather there.
+        I can use the weather tool and specify Toronto as the location to get the
+        current conditions. Let''s make sure to provide detailed weather info once
+        I have it!"}],"encrypted_content":"gAAAAABq62wn3QxDb3vhy4p58xtT9PBBZ8enH2QoySNnWudU4pumvAG6E8StkdqKr9cdNl36dbRwBmTGrURy2IAvgwoP5CWrgxzzHr79CtGoaaWs4Dv9YM2k4_80b1Quv08gU7NOwqDRCMWn0yG61ySVCNkWkc-2GqqT26XY4LxT9beGzXn6hDYdqFOjW6Ie4CGgsyZcRKAK7mydmuT10HvaNgb1g-t1C2iXTCgsJLyG3NqTsqEZmRp1M2Xb0JznHa_ULU6Vu19wirRDN9FjhMECAqbulUlQHssjuuToBNXsq6Xrs9AjbSDvKJYd7BirNvj8beV5u6Vhp-bQJvvzq7ndRDczEyA9zEEbhORHJyJieedLCndMtyAJyEwBrXuySKs4wwGwKl8YU8onoPTAzroAJy_4X8kT-D791ISj11OkbBMXVyH9fb8SFVgcgTxkUDlNXqsREkHGqr9UqR7gyiWKk42JYWptC58fFI9wx8kEtqsFse7e6AkvHHO4nxbH543anyQmX5T-_KV3ezWxQW0-lNe_kz-QiXzpu0r40OYBCvfZ7j_HRf4SdYjRxw8ldBX8aezgppOlarb5NgdOMrO47XgqFl2fItPKkERhhXlyWqmY3raKOzvEVyNBmAZkMtdlabzFyZ24nqn5_GRWhrVAryGjXGQD_B3p_u3tlkACseetsUdpon4h9y2wt6hU6UNa-VQUj1CFEZG8QTiZG0k8nHn5BhrkuLiopC8THXilib3mhIXrmGRv9RUponi8z-RM-c6-uee2DRwN_N4tOrO8Q9_pdbIBZnaJgpL2cO2SYogIxXguuunFEezf0zqBbj0wfpaFOhiOBQS9jUjd2-YfjaWimo3mpHm5fD1Z9pX20NKkRvaA7PgHEnZt5f4B-qeqMF4963Ouzkau-kf1U0N3ECNv18JW2D_k9rsjY5PQDzyGG9VbFC-vdjKrPOwEJciY1r0-VCQBGBeTvckOHJ_5km6ra7JQVnjoGgMLwMm3Aj6LOqmHLQBrgn3vgdu-eHza5wxWIAv0oWduCJNsUvPDILn_zP2iANIbGcFV4_ULAEGTdBaN-LdrwnKhkOFdl2G-TLP59oWBIJz6P9vgCkybNRBpS5GNEYZTaOfEqoCVKs9K4WV8fVoWStrPAc0876bSTc0PWaf6hqFIo9ybB9Sj3MZnTUwljFO3VoWoHp4tKE5QUPmKWfWnruBp5kB_NrhdnMq5GFcUZOOOowQu3TWKe4VJeWEwiKGiTyPbJbzw1lozGiXzueupoes4j1zJzuRfbf0mFbnBlg_wSHvCxS2yG3Rthwv0VGweTQCOWCU-8zzLcBkAMKBC1eTvZGNx7c6mvibNTWaWswocwAEoOi24tlNEaxnDPMlvo1lcgZ7dqsZ79DN6xiNxk2iMZ7CfV-Fg3B8kZEVaMgwZb9jr12Th5E30NlAz1FWymWRDNi7aaZuzPnUj6zLCUDQxG0g4hrnTiRQE9Gsp6hrioJUBlhIKFd5QyCtRnCFHyVpvs0pWk3apqDQ5k1nV7aqPqLNKRjIcKmAhP7waxqJ1HRvy-wrulkRfOjvaXxojFKLGJfHNSlhWMWPw6_WdVYHcsRddzxHoO_UA_D_Spaz1s1HK6QOJ7o791TOREh6hMgKbgxKLPVF035bMvg8FQv6usdH1WP8xl8W41j0NzqLX3OU6b3kZ0yoqhBuyMfoL2ZkR5t-owRDqOT5a8_-XwkEXAN-186hMrnuEx4PEHnCaZDILJq9GlTQxIeFQeQiCLwu23-WjCuh8cMW5Iqdq_YsO4CkoDXW6v1G4wdjSn5Jx97lMeLsoQLie9Jj3xGaYszQN46hwvdJJPlwXSGhc6tjgW9ZUk0IbRB2TTvcDCCR4ef5MKZ72Z9GfrluZXC2ft8WapFTbCiXVEGyqnWpwxUHPoR4r4fuwiBl4VTz8o1zTbv9LsM3O-99lcGyF-g=="},{"type":"function_call","call_id":"call_QqU8XpFTcj01vv4dL7nmZYJA","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_QqU8XpFTcj01vv4dL7nmZYJA","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-6-luna","reasoning":{"effort":"max","summary":"auto"},"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '3209'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:32:26 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555b957e9f32a7-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '2831'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_f38bf91bd2084092818da1bb68729943
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_02714f024cc7611a016aeb6c275c4487d0bccc24d7606c2b89",
+          "object": "response",
+          "created_at": 1793813543,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813546,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_02714f024cc7611a016aeb6c27fa6c87d0b21c2db3da9f7ef6",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wqv-OaloBk54Z6ZS1RJ0vWqtObtiUt7UH9yydJLbyr8DkvUXHITF8db3KZOrVYb4yibD2Sf9DvvMDOJLnsbuxstfUxnjfq_EZZvE-tAy_4CgUfYcWBlbzZFcCGoTmtXhyjLRlc8V1ZRSzG5YUXIN5XOJvCiw2Fqrc0D9HNAtUZU_TkfAKJeAwvPYqxwtRcQ0MBHXOXbQ3ltSAVLhbVx2kpXN1AxJ8AeiGWa2QL1sWRh9ARSGzTpGMcoS6h1A6kHrjHTGkBqlozElYVLkSplndD0NX_xPwOqDCe5n7LBjnPttgHJGirggRpfX1zgGd48K0jFdWOYtmBaL5cCtgae9uI2GqPP_F_PHzeR3ETE1_9chCHqcGUoGkhqwn0Ylx-mAzYzHXvxkzjn3xSsdPrVTHQicO3bUoRMBD1UbB84kZy5e2btNxGKaMCkV0LnlyLqgJqXfo8dkXI9FKIJwo0ZrX8I9erQG3i8mi0-JigUnZxLJBLKorBdYOtKOQkXozXcQgYe_eR8j8wt01z7-NC83a1P2-VJJKlfdPLxHtkJtQi8xaHWal4N0kL1HjQUT2XMFwhUUMlPNV-phu3f7n0E4xs4x40u4Dk85zBeNpn7Tm5VlOFUUOCrF1GTObveqODl9pgX4BWe9dBtU6LJhu7mIlVxhgPIxA5U2YFp32EhLKJ3Jl6qHPkiIaA7SUB5fivtlbhe1kDT_1BCli1CduwgUhNA-RX7Ib_DSI6apgKCw25OFPPUpztgdlNPWDd_7KFiPuc9BZ5msnBNNv5suefnHY-zOOg5C057kx2vUiZpzmaT8v07T8lRXU6VdWxMKMrc0ux94jbw9Bs0KNcJelrRBgeudhnao21GtLO3LTM9-5Gwm8YDjVS7G64mF26bMCTp0emAKZj2_jeUyBd98x88DyUovuafwcGmBLCDsTzNhEqYwRXp_ON6SI6ymDs7RfYqZqowuJXGl2Fu972hCG1JqdLjjsJKQFxd65mnBF0O94nYfuBgz2OhGM2cpvRO3VcJ2zclqPJUtad-jV4-SCLehQ8-ZJMP740BXnZGemxIKyjuJ2NtYaRHcErvBpmU5e3dkhMJ_m_m9U-f2Z3wpPa9ICQOYiRsayvhHmC4CFZQNGXhgHJfd4pcaw5IfZqkwB7Fz-F2cMreLBWyCIi2--PMgceE7aD0NFc4CTGbOU0nvlSiQE7DAwLxm7X1MlpVh71w0k-soCfmOTA6bgGKzD5jXFDrG-K7eCg-m9f5PliAWemWlqmy5daNmUKg79uW3tdHlr9u4YoN8G45feg-vIa82DbFPH20zuJxquYXHMhGXXYWRYhY6lbLE3Lq037JZtv00QTF5w0bHDaaX67ymmUHIReNRSqXgyBh0lZUd0UmNMFZEJdCxhmVBKU9wI_VQ0PxadjrB0re3JFQmMkSsLUD2dgEzYLDl6UGbCHbAzTrg2qdDtV9GEbaWFqzd93b7wwEbPCph92kevz8yATe0CeLXTaj2SGrD9qccBcAXr1BgIBrqc1Vtf6lCpQWD8o7LrydGv3gmZixaZkNDjm_xTDjJ7VACOkpjifjAnZjHdx0u5zlzyNI3kf_wEtiyDvttw686ulEjyywAB26j7md8l_L06cqcLp9m6dLxoywqNHxZj5d5dj23pLQdPJg-ROQqdnJ5J9zmNchHW08Z7KTDaB4JFpe52N90MueWFrf0dD5v35ykyVOhLMPy8a9cVcjsdc7u584uIBTGQDhssJZOssjU8N_8BQvIqVrA2vmO_Zt10pnecAqiZmfZt_vT-TDF-OGfpSByBP65nNrMduf9V5Qgc75JosTdjs6FGDq7rChoMybQWln6c_EJ9z-aykRz1Thrt6fUbXqP5hLc_W-x66jDQAmbCGAZvW_0ampgIVkc1Dfx6I0EkUPxnsChA_qnZuB9Ya8g_A4z58_fZ1YT48NAQwK4tPYw0-8GQ_eJuj9qMgc2yXOLbIRZteCBiIMfaMpjhMgbnUUZIfkpKkrtze81wrIf5IMOcrVq76DSxNxVaoDxXElcxmodIamrWr3npMkSZKZ6nHE3a2LgWnZyuMgSPMgL_a73CfEvj-JkhRNkfMoeFcrK8oZNCgVfKP693TnUq65CwsnrzkrgatZGUMkr-5CgcaC-OALsZZ7VoETEzNzEmdkAise5vWdunCDGe0ILAdBM-2mIhG007HJ4fc7KLnTA==",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Clarifying weather for Toronto**\n\nI want to provide a concise answer about Toronto, noting that it has the largest population among provincial capitals. The current temperature is 15\u00b0C, but I should also mention the conditions if they're available, though the tool only provides temperature. I\u2019ll stick to the facts and avoid making anything up. It\u2019s important to clarify that \u201clargest population\u201d refers to the proper municipal population of Toronto, so I want to make that clear."
+                }
+              ]
+            },
+            {
+              "id": "msg_02714f024cc7611a016aeb6c29cd8c87d0ba532ea69060fc6e",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "Toronto is Canada\u2019s most populous provincial capital. It\u2019s currently **15\u00b0C** there."
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "max",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 139,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 80,
+            "output_tokens_details": {
+              "reasoning_tokens": 56
+            },
+            "total_tokens": 219
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:32:26 GMT
+recorded_with: VCR 6.4.0

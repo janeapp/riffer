@@ -1,0 +1,206 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Tag this support ticket: ''I was
+        charged twice this month and need it fixed today.''"}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Tags","items":{"type":"string","enum":["urgent","billing","technical","account"]}}},"required":["tags"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '428'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:29:26 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a555573d28869617-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1128'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_ebefc0c664864bcab60cdda699d84ca1
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_04738e4a6f1b5ba7016aeb6b755fd087d08989f7127a392942",
+          "object": "response",
+          "created_at": 1793813365,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813366,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_04738e4a6f1b5ba7016aeb6b75ded087d086d5528f722aa93d",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62t2n8DeZZZ2kZABN18kMdfCG5tbWW9mPVJZmWIeemBCMxGF7jP7midm-qa88mYvLqYAW3bO9OmVA9pAu2cdHyJ5pqwlUcoNunm2dCuX_i9iEIxKgJEmxOQZzO0tt1_jbmiGCweO-QCjFWbibtISO8cmZdpuC48ixFMr1V5AyoiX2iHC0LsqNWCZ1Lsg-xqo3ndNgyRQw149INFVOrtBBod2yV378Gjj1oO95lx8IEpwNy7NDia72r6qVsVeOBH8Jk5i18KgkcMY-XHv21YRwBbkwjtNRPzflurzkMezHgZUv1xXsRktT6xC9ZDfAcYfZDa4jfY8pGQa77JdWtnpBHUWh2DG7WSAQ2zzi5eBM0vj4jeaLXTuO5yLNcbaWk-GLNU2odJbNdJm-b-V3-DJE4PDUEnhky57vK2rQeNb8BuoenK_PW6QYUfAZgC4ffDXv4Wyyd9SNXWxwDLIU65tNXMxGWpqNue69V5J5dA2M9X0-g7SL32QG-QEIQ2vJR0V4uT87X1LmirICVjJTlOy3Gs4_pl1nQqQVgb1EI3idF3IVrAuM6fFEkgXoJiAa4nveqHQnYMBZl8uDe2AxNYbK9NZ0jCV3CJ1PiYY3bA7u1KXmeRG1Ov3mffHhMOdLsi2XdW61ZM7n44dY5AdKFFMyb_OYUEKH5fQYCvv6SXdIw4WdKzIEnV9BOZOQuPlRgE9BXEtwtE70ijC59BVD5dzaMHo1kXQQa85Oxo5y350k7-RM3iCtfQJV7ilZXgIMehl65WOEa-fxpf9JSdX4eCOWGbt60LYDFW9oJPRetj_pg0dLCTev8WF22LSoyAsBgoO5GZUgX8cUDk-0riVmzWwu_4qD8zIaB0mJTEMRTERtDSZ0H1rnNrLMF8gC9L3xSzFBoqCdT03zkcWAM7LWDY9ZgrEch0VWJctarKzRY7WGPXY54a4Keiy17XH7yBLrcCWAPlpPJ0v6V_qwEs936pj30JuMMOm4XDr6Oct2S_gubmEKbrUBMkzVhHkCjZxLzl-UjmRKQS_biVieivBhYJtJNQx34HzLb5bxufyYczMFSt-wYcnviJAHTSbWoT-pGgR5vSS0O4rbaVRdsjiiM77bBTpvsihmjoxTC9a8jYNlKmcelVE7nxaONvAfaAm9_7UbplK-ZOSVe9Pag403mcX-sXEPrcrSYLm5DvlPqZpwSsC6--USXs4s7mrC1iubwikteYFzbba3x7HYfzf5ivEHRxC3xGhyDdySlw8V0frjxyYIet3LWwMVOZqgRr13hClUut9QdoooMKfcVPC_g_KuF-LTyBh6eQSk5NnmYBAV31SoUk577UlP09C6HL1AFPU0NcKplFebW0MfNpf4ou6WlQE_pDYeKj0Cc_dGzw5Nqukr_TXG2_3gTUn-pCbRWSY7ILnJa9F-IGjIGG4pj5BwSB0HbhqT3riVO-MzcERi9rkvzTVkuuI2B_g_Vimon_BgjxgmoNfQJXc9pOGxyklzAgUbpkIrk7lzxmXtUvdnIpyaWNRemCmJhVduM5pzY3Fgtv-Y6Wzw_4dq2gGo4s-YiI9vMwIrfAzneVY0YyA_nzTL4raJzFCKko_Zu6UlpUxu3N_S3gkpjNQGOF8ymAFaB1iyQ==",
+              "summary": []
+            },
+            {
+              "id": "msg_04738e4a6f1b5ba7016aeb6b761fec87d093ce602317ca9c5b",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"tags\":[\"billing\",\"urgent\"]}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "description": "Tags",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "urgent",
+                        "billing",
+                        "technical",
+                        "account"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "tags"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 66,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 34,
+            "output_tokens_details": {
+              "reasoning_tokens": 17
+            },
+            "total_tokens": 100
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:29:26 GMT
+recorded_with: VCR 6.4.0

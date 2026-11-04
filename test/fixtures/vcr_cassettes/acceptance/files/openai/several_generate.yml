@@ -1,0 +1,181 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"Give
+        the color of the square and the invoice number, in one sentence."},{"type":"input_image","image_url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAb0lEQVR4nO3PAQkAAAyEwO9feoshgnABdLep8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3IPanc8OLDQitxAAAAAElFTkSuQmCC"},{"type":"input_file","file_data":"data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3hbMCAwIDYxMiA3OTJdL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFI+Pj4+L0NvbnRlbnRzIDQgMCBSPj4KZW5kb2JqCjQgMCBvYmoKPDwvTGVuZ3RoIDY5Pj4Kc3RyZWFtCkJUIC9GMSAxOCBUZiA3MiA3MjAgVGQgKEludm9pY2UgSU5WLTQ4MjEgaXMgZHVlIG9uIDIwMjYtMTEtMzAuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwvVHlwZS9Gb250L1N1YnR5cGUvVHlwZTEvQmFzZUZvbnQvSGVsdmV0aWNhPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU0IDAwMDAwIG4gCjAwMDAwMDAxMDUgMDAwMDAgbiAKMDAwMDAwMDIxNyAwMDAwMCBuIAowMDAwMDAwMzM0IDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSA2L1Jvb3QgMSAwIFI+PgpzdGFydHhyZWYKMzk3CiUlRU9GCg==","filename":"invoice.pdf"}]}],"model":"gpt-6-luna"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1307'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:31:18 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55559f5d8fddf5b-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1328'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_6f3c55b0867c40e7bd6651d7334b8ba3
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0c10d397a23fb9db016aeb6be4d52487d085e908044a072652",
+          "object": "response",
+          "created_at": 1793813477,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813478,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0c10d397a23fb9db016aeb6be579a487d0bb16ea57f10a2c10",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62vm3OxG3dthTuzAIXqzZ_ehQEhWJhI7JjxoYnjWR_xd3-Ysb1jM-JdzH7J6L7uXK40XTqXBjeKu0Oo1e2rSEy5jwRhYeHj-wvMxEszbxifOB2dR09RWm57PpExt3qvdae49M13VAc9fwk6zv69UQ8AKfQ6gBRF1stNalrqdd7q-BPd-MEG34vkyZZRiKjlAF07jQvPHDjBiNydbGODl_oQruZfpnhhsmJFPEH1vkvXEOeISSEffQ3l3GyqVIMFJ7xLQBRh0_14V0k2dERLG4cSCJmHAYnid_0oQla0AnYgSXKAdf4PrrrqXbz7KHSwPONYNj0HnM4fD3tlqcVYta4VwH7p6HMIw-_ngQnY_k7y5w9JleFlrAr0GTFGNTicWzmli2BNb6Tp1cK--vFjFT6DzssGYnseehoasDNKqqBLEPhcH_WwDrUrcgIpa7BbYaEVHW5BKeNgYZPR1Ir6fpyvmvDyrgrHywnS_RkX857eS6iMNMyav91pPrjvX1BmIUaqemkoLgN1E8syuV1tfX3p-XxivpkCbCcCLMNQzTuocQK9n-Mb1m3ZS-Kc8Hzi9cePKWvpURIn202iYdQ8-klvwPf_AEUPwucbmOfIRGq-dbH31WUm_GePLjGpCPKiWgYSkJtohHtm6viNfe0OdxhySWxm3-NP4GBfVAqhAejJnv1m3x80lBrYno3Bfh5Ai20s6gdtpEgyKCtNBgTb6Wp5-lWtG47WCnq28Efsn0xg_HvH_BNYfuzWvI-JjJC14OFG6RIa-1NAYr2VRSV7eNLZBrTz_ytvhM-rdzb0RRL2zjM9_NRGTkcHcT5Joyu86sHbhOp_KHZlJ3H4ONw-91XvFgRUwjp5hDlPB3mmkbLGLdXEaTxUwz2r4z849OzEVRN3B-sXkEXgu4KzxyCzOM_6nczEKC5cih6wZD00x2wWa8LtqsXgQ5lv-kr_wPcqCSjz7YwtG5cXhEwN9SgGggRJL8vpQm92HruxmZkkoZSlE2dbFWUgqf6DyZY21VntUNhOGOz6CzdZtL63i0qnnw4zsgp7VFknueWfeIlaZKNcgoFGfCFhjgruuJ9ySLauUh2EzhjKH8eIxbnBSEOHZRjl67sXYJG0O-RPr5B-nA7cDNojuuaZM4WjPjhYktYqYsgx-eNBFMvJre3haWe6DeDQS9OBI4ldvT1d8nGvxReJGIPrDrxWCHVKczCSt7RGtmyv0KOwvxXANQHrrQAnI9p0U-VANZuM2OBeU_UmrYSYQfIx0c1lnjmM9iikqEPNjuKizBM7Fq6S_BdZ7CzBxL-ezXDCfVfpbQSgX11CJvanOJX089Fw6yAVO2gN-oLjujiqk1-urQjVrTaXGVpH5FSTjl8Hsk6zejBP1B1dwC15DM-Q7f2yU0n7L82jUCzOV5JsvgqklX99R2d5aaAwN09YqzEOnzBdxsJkkeciQz5bLWpr0lgGzirwce-IX26KroxRPVwuwnspyYj8CIMtW7MhWieTfEgcjJmKQL-VALA9uVOgWDQ7bTgjdcLxkgHCNR5rYzjJ7dBIU365QBgCJy2CKJ5S-vzfL7jTi_0ueILWcZLXOnD0zQdT8HisFad9M9zJdiozyBplAFpLBwvLK1Cs0jzIw-h3r8IOUwAzRHIhtEC0MeaPJeeYn-R7NrDyWmHkwohVErB4Op2ZACX86vjMVGQ==",
+              "summary": []
+            },
+            {
+              "id": "msg_0c10d397a23fb9db016aeb6be5ac6c87d09e80d8ebae586cf5",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "The square is red, and the invoice number is INV-4821."
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 64,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 43,
+            "output_tokens_details": {
+              "reasoning_tokens": 22
+            },
+            "total_tokens": 107
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:31:18 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,189 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Order A-17 has 2 items: a book
+        costing $12.99 and a pen costing $1.50\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order
+        identifier\"},\"items\":{\"type\":\"array\",\"description\":\"Line items\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Product
+        name\"},\"price\":{\"type\":\"number\",\"description\":\"Price in dollars\"},\"quantity\":{\"type\":\"integer\",\"description\":\"Quantity
+        ordered\"}},\"required\":[\"name\",\"price\"],\"additionalProperties\":false}}},\"required\":[\"order_id\",\"items\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"order_id\":\"<string>\",\"items\":[{\"name\":\"<string>\",\"price\":\"<number>\",\"quantity\":\"<integer>\"}]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"model":"gpt-6-luna"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1122'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:30:03 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a555581f6d57281f-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1509'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_3c3c202eb8ac42529f6c25971e6ac93c
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0ef79defa5d159d5016aeb6b9995ac87d0bbfed384c5be1a97",
+          "object": "response",
+          "created_at": 1793813401,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813403,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0ef79defa5d159d5016aeb6b9a249c87d099dc89b1400c4285",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62ub-AMdKa1bVHb-cjZk7aC1HhI4XlSeS5FxduCcvz4BYsy2UwTXPMBV-2YpfNGwBn5QKr0e8RDWpMsjHHcxsV71vGkFO5iRI3UQGMg0A0SXkpYNjSo3mgysO9iS9TbLzSV9HhQzNugyW9h-q0JHEZiU4hAGN9yvI58qsV-VjomvWd_vPb7HY-xiKNKr3bMzyyPS3FFba3v0dIcpMZ0FFipJm-ThLJyeTkObLPeFDCaUHDM9iQq1axWCrPFZ6pmo_jFco3vlMQe0GnVfy5mq45g4vlshs_s_Iae79Zkq5EjwFvPB0eEpratb4IoIC2Vt7GSm-51PlokNg-HNIocKa6e7zaz52XTOMaAHhG4T-RipXebzf1dObWFURLRxgrgpN8pwcPWmZYbgYftLYIQt7ct3ZcECNYip2y9HvKaJgPLiXKjW5g2sXMkJ1v0Z-QeVss4t_KumTcGIFLuPAAY6YcfYJxQO3EXF9u81DeEUu1s7HVU0I5eFhaiY8l6q-li0Q4AT80Ed3MnWu4hBLBqMoJXkhGQJu4AZHptHM8idJfcc6GwWzYzWqzFJxUr7I-yXYhLW0j_GgScCbmQWdPoU3c9y4kEeEVvE6o22kC4F1Mhp1Q3n7U6zDxcpyclgJvq_Dp5H51tg7HDxlZrcNtd8evSmCJkHvLV90vuToytTDKw0L8666LUi--lnCDe518jPfZLfLH8dfBE3ElLLvhe4z1DGMtDmVU1Bob2qpbJLzWgP4lnvxKC_fgTAutNJIyJwOwRnQMhjauEaM37TQbVb6i3higZitn4aqnY8FBBVuDzCJ0-J2NMjR2zaf4RW79pFe4YbIGWItXJiyh04TdvRh_Zwr1O6TKrbQ7iYwBvveAAGK_r5UiKx4vTD5llG8fMj9QMm6Z-fDKvxyD_nf2rLNoV1nLkSoNhBKpfb1_5ttwZ4U2SKQRwBBW4Gj4S6rsIfS8h8975Ft6WMjoR_ZWi-XWZNlTwHyNtVy4GrNUzLe1mxX6QNxrKQV0OJeEaKoPRJ2uz-h0OrurCOXTw5McoqmSxps4tmEQoo3EKFeUsr_tV1L60Uq3tn5wGBzi39_7CgPmUkIVSKwsXVIu24Ro-2dSrvae-VK7C5Iy275yfdRzXOABi93GH_zxirqyra9GDy7LWGYU5vzsmspK0s9vDeIgbDAfEmEkA-9b5yAwdiIK74Q9LsLGs3Wq9k35f88Jk227XxF6fJszyr0BmZBsP0u-T5BTPcP8430sWqwjCCbWFW-sbrcTA-Q5Kj0VG_QB2eNWSLEtsCaofzazbx1qs2nMRIMywpEtfoP8TXl8oAyR4Pw6HE5zv2OCZ0XcMBLn-o5pyAFw-AhBDat4_-ptox5B88JD-VMwEd_xLg93zP9bYhivCqgwGoSc18lZegd3blRv9YlD2rBPP5tcaUvQWV-RaTBkTacdtFxAULvpjcR1NoDl0nnkWBaiIAroYE9w39kwUxfF441VosfE74DhOxbccGO8ZBOR6aTPzYuA3tMuBdZC5yG9sc157UQ4gVFH0LZE30JGcP4UUC4Pltfo6PFfoFT8-7kG_hLWyBAxQj7i1bQs-3d-62vF7t3BNEpMs0WM6cIGvhSFZuIBZxYgOgu18-WYfj6a3zguDcmno3uwIWiFvGlEKiAojVe7EYke5LoSXgHMfJoYuA-rWnX42gyYGsrEnl4lTPkOp5Y9UEN1Ef9qr9NURQL5uFaM4WTc0_rT1Rpvk7NLGdn0xKy8mE23k1xJdnjMxaDnzt0f632JAcXAyN9m5QtIB6aXxamdVNEZUKy58Bm9di3vg5LEbXqxrh-5Y4DyVoco0NmasddpERJUCq5rrVciABVIlB9q8z1--1O67BRkm4FwOVAjwGIC8t4g6KKKSnBv7OWR7vR4hsMsw=",
+              "summary": []
+            },
+            {
+              "id": "msg_0ef79defa5d159d5016aeb6b9a9ff887d081d214725692a5d3",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"order_id\":\"A-17\",\"items\":[{\"name\":\"book\",\"price\":12.99,\"quantity\":1},{\"name\":\"pen\",\"price\":1.5,\"quantity\":1}]}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 225,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 84,
+            "output_tokens_details": {
+              "reasoning_tokens": 38
+            },
+            "total_tokens": 309
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:30:03 GMT
+recorded_with: VCR 6.4.0

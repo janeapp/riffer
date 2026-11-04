@@ -1,0 +1,216 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Classify the session: yoga class,
+        in-person format."}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '475'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:32:02 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555b0d6e4f1328-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1247'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_b6c8a422e34a47f993ab8a3abc6c17db
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0da7cd8eb8a87012016aeb6c11923c87d0abeb9911641583e1",
+          "object": "response",
+          "created_at": 1793813521,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813522,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0da7cd8eb8a87012016aeb6c121cdc87d09d9f27de48bd6756",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wSZoTj22QF2JWZEmZziKdSkqHE9ezhZ4-r1YbBHujMRMb2IZESB77tP9Ue1eSy9TDhSiEEt0mFN7mAF9zPiSRiKE8l_Sig54sCFYLYjUFGBmxOWcefg_Sqk4ELmuz7T3Ej9jupf8q3YctX7WdJmna-7D271RetWqS-u4cDEcyF1O_T4orrAvCFaRRQVdZJJYSRgbf-o2pZS4sQLeO9p_XLKGMA_iSnt8exLNoHaVr5TQb21TrfMsrRger9D2L09k85RexnEY8h9erkTJowSRq1dmMZWNJLPn5VtEDcEyEeMq7gGPeMOZjVbuHY2oqXM-_IduL6Fezy9oyE0lbHDMtxgQWfP0u9bj5_zfdK0Kwxl-Cn41fBtTi1lalVDBYt8akEcit5XiqXSfvt0RDbKazgUIFEEq2v1fEEWoR9OsI9_ehyX__MRGex7aaiBPqYZKcgN2Nc8crCR7icNrhYXxyQaBWAv-oTPFYYJt4H2vgCi3Ox1HE4-1HLgD0jriYnBxsV1uyVFcg8gUe7L89sxPD2EZ5v2a9qwiZl2l7qZ-QZ47KE_LuFIB36e6VRkD2hitzjAiI0JEFJFe9JIsihrRAHKlZJJgo-Z_WHKVhP_cTMJPwpAqT1nvk3NHWQguJmefOFkYgSjQVaPFpceGxmHOipNOMGaY2FFKXqPy7-UU74tnz1rzlhmMWMeQOvFnvO4xy4cUCoPyd5DKDSC9XwT3hffdJeJtU8giQ0ZQxrmSrLAAatP9yLLycKMvO4HKO910snIyL5cNNgOJKiXml3bIqGROosZVqBkhvr74eZMf3AWLXbKNM9B40gZaFIxF_4TTcZmXXBRix5SapVITL7xyz0Nw1x9Y4yzkgoKCmaVSrSWRP9LsPRhld0vrfK5TToLQmJf5M6qN4fvLeIkD7iOeWzJfBfxTRdEgtS_6UaB9qhiXWEqFm4McA0hvkPzyb_BKo2EDMLXd7Cju3PWW1me8b2nW3tfZDrW52u9HCtiZM-Rh8sBPa4v0hwINA5VBfBtSPexqr56V3lxbZWz01vKSzZhGQpnZZPFOTH6Xj8RQJiiquoDCEdSzfwiVKj4U0Tib6-J8rm7WtZgYGaY0roB_nC5CSkyLl1Km5Rf1qhOcdym0QfTzwlMy_b5FbaLvvX0dFBoyfbe1g_6sh44G4Jg44sMrUT1p8rHd8LB5QqJ5IXYRVnMg4tM92wqypI0YG6Aqh1i7tTkhggvANGFjnVKGD2HZmfb_JTYqclSi2XKiJWu1m2A8GdxJqGkC8K8kF8HG5HCk9i1s5rJvE6Ed7NKBZ62OhiYiiunDTvhnSZe-Fx5NyzNn7s8dlIYe6R8Tww7oAOvWcSkttXVPSM6PP6haVGxDE1NNIGTjods4m248vgIMJZpXRfg8eRx3Yy647Ke1kGc52PSGUb2UqMhfOFekAd6sa3omTLj0ydiWP0ds3TpTG2YOjvUPjAmxDjayMotRsctSuzrIDPH03B1Z2DALmzp7o7q6a9uHHbdKX79t75iTnPNsxRfukSZonAPWfXeaXBMkltEQpJtKWzvgOkxqJElOet3j458gLK8O14yqMKCJDYpevWQKqGYXJQpCnLdrFyotKfwFdaO6OmEoo5r9tCpsmBzCHY8xEun6seX5-JZSTaD1qeFtRVc-Z7EhvohyJSzkG4nU9889eCHNVi4bLF9g==",
+              "summary": []
+            },
+            {
+              "id": "msg_0da7cd8eb8a87012016aeb6c126c2087d0a0cb107a98f9a10b",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"yoga class\",\"session_type\":\"in_person\"}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Session name"
+                  },
+                  "session_type": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "in_person",
+                          "online",
+                          "both"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Type of session"
+                  }
+                },
+                "required": [
+                  "name",
+                  "session_type"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 77,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 44,
+            "output_tokens_details": {
+              "reasoning_tokens": 22
+            },
+            "total_tokens": 121
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:32:02 GMT
+recorded_with: VCR 6.4.0

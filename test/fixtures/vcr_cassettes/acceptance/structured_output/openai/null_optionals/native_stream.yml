@@ -1,0 +1,192 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Extract info from: Jane works at
+        42 King St in Vancouver. No other details are known. Return null for any unknown
+        fields."}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '821'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:29:56 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55558018fcd1421-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '193'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_9a8f997733144741a8c9da21b8e5d34b
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_025f3a178564f8ca016aeb6b94cd5087d08081375274ccef7a","object":"response","created_at":1793813396,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"json_schema","description":null,"name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_025f3a178564f8ca016aeb6b94cd5087d08081375274ccef7a","object":"response","created_at":1793813396,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"json_schema","description":null,"name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"rs_025f3a178564f8ca016aeb6b95452c87d0a50ed2e7c237519e","type":"reasoning","content":[],"encrypted_content":"gAAAAABq62uVYQWyPvifhg9sqShr2Mv8rN7F3K5sUn8CZWwIgGluN_fszQmMzYC6u_hHAqYncEDuGH4HpB4Iy3hdLb4YinyCDoW07xowJychf_w06I1C9sBtYeukOjq8YfYSS0MXyz_Iuw1VJY1HY6Fm4Q-YlwyQu8qchbdTlufMxoMrZDyLOq_a5evVQOTFSFMmAxwqYBYkXpuZcOFVeLRZ6W-AbDLqnwcvaMXqrS-FU_mqMqWOpRrK-gSvXdiowrX36jYLDQfMjAavpdcG5L_xAOKEk2CDJ3NxGpsoCFfW3xJXiA1VjRlhi7rSsp6RsEE6JSNXW0V4rLoXUxrqnXpRzex4ag9F_tsEAu1BItvuLsQhNYmcIcyCPggXVCtG9CGmtciBIz4H_7lo9J3oGRGRxRFGH_PTYDkVIfcjr1RsX-7Rt8xMpegEEq0i70lnynuu3K_wSg-sYDo7ySEgCDRR8fQTZ0AU7yu6tn2PcHwcLnKV-Vw9ORLqDhTMJuYcneYvubcCFgCU4EupgsPp9pGzF6rxyd9PCS16AGEOxI4G5K8hjCkk3sDWklC8AWSOxDINTrN71ji1tcRrGmFxJ8VY8EaHjNKM4E4qRA7XnyvH8ZKVEGUYl4zhL1UyxU8Ab8oqxoWSm21TpVgLsP69BLQJTAsfLtEE0VqvFEmzM0zukGE_AUer0ew_2LSQYa_CdWXhYlMwTLwgfKxsz29InwAWqSsygRwOL3QMPY4MFe_WSrJfjK9-Y6rXL0TAttFO-UgouY0mnnbj2kvwzYsaSfe9GdFW8APWyssltUhlwaKtmz_PuLoOgoohl_W-nln2crKWKe4xoIKNKsospmdJb2Gv7hXiaRcfeoxcRWu1JnHHnLMHjfI82kMMxjlajokAsQudL7ZYrPny8NlMt-JvRTq496mKLTiDLwXICgmUQQKWrXHcQ_l2NO6sQVnRMEbjBm4WAIQ-V8vLRUHZrlUSfxMzk6Wpkaju6dvHIUVTV3wT7YAmYiictqwq7VTM_Y4BuO5eD1yIqj-Z_rPjHVh3l6GEgYtdNoGvGjAlIpcUriCGkcIoNrrmRpLSJ7sMjHmaLJHfCV0E63ZwAgACUbjyAWwiJzW02m4CuQbXN6BJ0YGLwTZ8NVEXOQ-b7DHFU1Sugv1SMaMOmJh0tQWUSzXA-Z7Xv9PQ2GuCbSqleh7FjPpcLN-hDoIx9P4YboM9TQrJOj1QpF77xx_B","summary":[]},"output_index":0,"sequence_number":2}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"rs_025f3a178564f8ca016aeb6b95452c87d0a50ed2e7c237519e","type":"reasoning","content":[],"encrypted_content":"gAAAAABq62uVprV5due139nfbkKgu4RGvOyruqwCyVza9cgT_dqaakxPR7_zu2Uer8b4A_c9vZie4wrIxWRzMjMZ_2aSmymJLhhnP7s6AzCwS27TpVkCAFS2Y0iu50DbZ1b2f_DbiRZ-EK-R6LmvYv0jh3_nYV09HQiTdFXks-GLyWcMXp6VR3y88sD-rG5H9PTi3EJLGF-LIc6CPD7DzLN8gr5enpd3hGFBz9uAmvVa4YL27fBO1bEnARRKBWpfPy9zmM7XKeiBrXpqNg-LM9AK6AHdRwqGr7MEmryOPA-QMN_1iqXC1oTxo3SH5F1kEREP6guXXrT7lPJ9DuRB7gsCoUpOpRsBFzHUlzQAMBWrgUNgPq5HovffqfPrSP0o2_FIC4UMPL_efLLE-QVk3xuop7heP8GMLEdzFHM-CXn9wvNBnt-N1ZSuXRk_QVJ8DjrLX6mulwFNsVgROBUOnuu5xLxFrew066zEh34yyVJgljhC5fpsuWIWi9iFDzSDf244aqVHhYgPMlTTgFMLNzU-NUA37W_sAj7DDMV649uNbsD2d9vyiiLa9vxAwIXZQ_gJ3Kwwi_i0zlmh2ZQ_Mp0sblceCZ6LH4Epb2Ksr3Tyg6wj8DyiBSBcER84QTKCroSU5ghOpaHKTfvEpOVNoW8f6tZ9nG8I6XJJrnkENzkFaH-PsJZf6ap-K4ulkZHlACKxukwwF9UZEEoYD3C2BOi2MY2UkCIQBUKNXP0FE9s23M2iHDH0w4-ZtKvxicbzd1F1bFyF3wWogwlfCvLCBv7Q-9i9YRExDKHsqUkDMdxHw9r56DEhxm0OyskwJRPYF6iAUl3u0lggeOrjoWqwmR_MLsD9FXewuaOB1O0rgiGc73kV8QFPKMvtegNSLWV6QZQ18ZCXabyVJh2sT5fDiVPI5jPMWFUlor2rRNSj9yZGSFw6jeDKF0u87_PpRZleZpIHmr3qAJJcNAibxACoteAuf_bUUKcuohtHYBVyc6YPu59s2s3-cHmmjWwarWUodKGhHmuLGlLW1hLRZt4yxa1jPAlKFSu9V4r4vpHYXwiCC46sW2AtHP1DBwQSwwXc2Sz9qajb5tpO0EMCeDrvAatLhIqqbZQYYpONBDCV8Gqk-v2yNLNyiYL7pj-pD0YRXo60Vi-W6qNu5tYE2QuoTFgphxTWGIL-sTlP-aGW32vW8ZLR3dsf38N3Swoabdf0TSxi7B02LsCtJDlXRxe2TxYVpSVC_NF7D1yFrNBy-owM0mdYbxylFFhxYQFb_UcHmNkCce4Es1iMHR4jmm5eFLSRxnXLp3kT5zKagedFwixCeIIfDXtwaUIKarFBfe9B2xeEoO-kPUAGbK-hxRVlSkU3TJt-r_gXdVEgKbjT_SPNUudf9y31_3O9JDKIzbAMNnlNLgpgIiR27xomnCWvdvxp7rqJBgk88C03pad_ZIV2zPMPshHZkNA-WVLLeENOfhoxF7sEuhXKK1qdE4woA2yeFkiroXKO6k3VJgENIUgLDilIfBHWE1OFCxdhWhpK8tNeQTAh454uXqkFI2_tsu6DvklcFXQ2BokdkB0ls220kBY7a7vV00twZ7fj3wdEgwT0dDuNEdcB_l4yxXeW-4sRLSOjnCc6I09IyDX7w0tVmfm74_utRL6fhDLGokPDtpkwyAw7D6je0wUlnEtVywGeiKX5qWwQQIbwRP0GSUX3JpkUT3-ZDRnHItOtPlwOKGHfum4EK-MQOazcxAT5W7QepmF9pBmygJrGnrWt1IWOLmizp7j9LcYKBnnq-YXYqKAjrs4FsIz193mVLMEraHPXNTLb8__DFbBVGNnYpCXOw8_CjlKZhBHvJg9EbezaFkw7njM38L5g","summary":[]},"output_index":0,"sequence_number":3}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":1,"sequence_number":4}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","output_index":1,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":5}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"{\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"bk72JjqUnYOkdj","output_index":1,"sequence_number":6}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"name","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"4S9MhynwBs8o","output_index":1,"sequence_number":7}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\":\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"YM1iyGUmIQd7h","output_index":1,"sequence_number":8}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"Jane","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"aiCULFZL3Cma","output_index":1,"sequence_number":9}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\",\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"rOwfAYUpqAzsv","output_index":1,"sequence_number":10}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"address","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"MomoS8dBs","output_index":1,"sequence_number":11}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\":{\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"jDopIi62PIqn","output_index":1,"sequence_number":12}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"street","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"vM7Ny8tCSp","output_index":1,"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\":\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"B69MbCkcYpbWu","output_index":1,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"42","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"fcG83778XVRxu4","output_index":1,"sequence_number":15}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" King","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"YJMMn9SZSnj","output_index":1,"sequence_number":16}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" St","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"NhYRvKJ3SrfhT","output_index":1,"sequence_number":17}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\",\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"kG4bM3442P99c","output_index":1,"sequence_number":18}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"city","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"TuNeUJvCwZxg","output_index":1,"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\":\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"aJVJm3rYUXsvS","output_index":1,"sequence_number":20}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"V","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"9kKG6HGOo9aWFSC","output_index":1,"sequence_number":21}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"ancouver","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"oSi5tMe6","output_index":1,"sequence_number":22}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\",\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"NZNB08vXoIXL5","output_index":1,"sequence_number":23}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"postal","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"8zseoydtJg","output_index":1,"sequence_number":24}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"_code","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"Va09dApvRv6","output_index":1,"sequence_number":25}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\":","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"res5wkUzT055lD","output_index":1,"sequence_number":26}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"null","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"HqzKGgsqUsFL","output_index":1,"sequence_number":27}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",\"","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"zLpXW7kmFdoLhQ","output_index":1,"sequence_number":28}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"country","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"67otja6C9","output_index":1,"sequence_number":29}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\":","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"OAAZPbWpTTPAJH","output_index":1,"sequence_number":30}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"null","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"xwzbPtGvQMpQ","output_index":1,"sequence_number":31}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"}}","item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"obfuscation":"2MZMGYeXjvxtdy","output_index":1,"sequence_number":32}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","logprobs":[],"output_index":1,"sequence_number":33,"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","output_index":1,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"},"sequence_number":34}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"}],"phase":"final_answer","role":"assistant"},"output_index":1,"sequence_number":35}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_025f3a178564f8ca016aeb6b94cd5087d08081375274ccef7a","object":"response","created_at":1793813396,"status":"completed","access_programs":null,"background":false,"completed_at":1793813397,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"rs_025f3a178564f8ca016aeb6b95452c87d0a50ed2e7c237519e","type":"reasoning","content":[],"encrypted_content":"gAAAAABq62uV8ueCLEqvznNxevXyg3JECyGpySQMKJpvs0zUklB2qS7OhxJSEQDBkHcJ1CE52UXtnJJX34vtgXogvtud3dNeyMr1HW5QpDYTJqxQh99gcNhtsDdNFLBS_eROET0eX6P4gI_vT5uR63N6i6G-8XVVUscLkWbnMbcElOGKzqVmUrw_hbq5Rx2l6s7jjPb1ECuPajkPCQ70qhXN0KWpNOcZFP10Ii_rZzQ24I8zcoNSg9O82fMdS0DZ-l0KMEInbEQV33ex17UATEa1QiEa1VcqHmJzUfXXthTASDabSVpkYXmBY_9mFZsaRfZrKhtm64EY_r3GZX60mkCsf8aK-dSp_MDIQA3W4z9_ThlZ0DwTE279XDm_s7Vfc_1APAG00jta29B8v-E_pMkCsWLe_n6xkY8HvZVAP6wF1DTNN796THZtlW040gCS1_a8lVV8s8GQwji6TSA7Z4Us07c9uY6C80-rt4FAe9NfGrrBz_dEOIIAVFeHZL1kskim65o3usPD9VnheaeCEOmqxcKW1Z3OhA92aADtfvLWlPO7yPUZBKZu-bf-W3DexLsSnQczupQKdilgm8Sytbe5qL1-npEhoeuynuPLUOSuw5PnvMrxEXVqHnzs8_Sl1H9Ommkh2jbSIcJ4CxYsbhuhCuLE1wFv6ALaYC6K0Si2FnD_HJOpj8pqBsFvn80hO2z2JgZIyMbsNgLVlHxG5mmNcCG5izLH7H8X8Eygpz9XUpmZKdVSZC13HgNTaN0jq9ULDLMrW3A49jnXeLCfxCGrEhDBAKFHs8JbILvhCdjqP2kiZfyPhbMhKEW9ODlZcj97Yj1yDkGQvp6SLf8mCShLPdSg6tmR-xs3Sp_QV9uK5tJ6hFHW-SxMVWTqp13-KpM6eAU1-CKn_7i6sGNb-2GRJf9hTyZ8A4mzW1pMJJRpzgVpOLxpxRSUWGzWhl5WNCMBv3ARPukjpO13H7_KpmPp2VHDgyuuXIFgmVbanKSxEnaTLqw_qnLAf0fNIeyebgdsysPmJ75eS2RldkvVnWSAnb-W8gGwPVYO7PTuhuvcbz4ERB-Qzk_eN9w1JHyVIziy1jTylHVknIT-jCddWQZsM0dGsL6Vb7Sr_iE_3RBnG8d4JRinxB_-ThewyyqReI6szf5FUMpwZ-UWhBh5ravwoadO-kbsfXw2ifQWfmUiedQ6Du0ZBRDIY_YvCtPvCbyljOUzhKNzXS35mbHN-VW3TFkbkdZmFx3HJeGERg4rVNGzJmfmHvQYKtmRms-nJ7t9J_e904N13Ykk9cIHS5zCQcutTqZo6o6HzcqFDvB8JNXUB3ZYUv_oPTkVrJEGUxFASOR33-Ue67Lt6dEaKCOIBQO3Di7FGfdHY3uvCLlSKXyUiHfDx1XlxTeeM1EK2exp5bBZbewJfF4JEWnV_S2jyWuYnbZRSB7VctkKajFvHI5As754iW-pmK7NUyOMoRJvjvElvMhX87aeJhSJ7a10qraJFjyk4sH6IUZtSdbhH8YFtoqijH4iAB6qCLL4q__BnGvscFVuTlzDDdCfRSvaKJ2HnQXhcHP70LtYTo-lEW2GZxcORvlMg_ZRu2xu3dxjZu5s42oU6wZHXXHDlM0BAqxvbxWI_I9ah-7WvGZhqoayVrte8GQMinfdHI4xzOU5qESuH3AlaePTIWmVF8Tzp00iTZzPwQC6k-3ZxQ0qEj7q3W7aJzHNjoyrxu3c6D3wxA3KNUwbKfse6VaAPjvAColcCsWCXR3PAjuDVYP2vFsEWLxbG1sQhSQtvVanNCIJeReiFFsMU2Mm7QptzEnxP-rtmFrBcgJpSm1EZCRa8HTyHYh3yuI7GPEjrg35EMGopmYp30wA","summary":[]},{"id":"msg_025f3a178564f8ca016aeb6b95bfb887d0b4b7d7dd44599583","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"json_schema","description":null,"name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":129,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":71,"output_tokens_details":{"reasoning_tokens":35},"total_tokens":200},"user":null,"metadata":{}},"sequence_number":36}
+
+  recorded_at: Wed, 04 Nov 2026 17:29:58 GMT
+recorded_with: VCR 6.4.0
+...

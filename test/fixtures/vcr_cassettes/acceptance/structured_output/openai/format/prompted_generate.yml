@@ -1,0 +1,190 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Book a visit starting 2026-10-26T09:30:00-04:00
+        at clinic 550e8400-e29b-41d4-a716-446655440000. The patient gave no email.\n\nWhen
+        you give your final answer, respond with only a JSON object that conforms
+        to the following JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"model":"gpt-6-luna"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1150'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:31:06 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55559aa695c0da3-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '2139'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_ad5933720c554d6d80381eadb4169173
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_05b427d2561bd7ad016aeb6bd9960887d09529c98e8ee86e2d",
+          "object": "response",
+          "created_at": 1793813465,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813466,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_05b427d2561bd7ad016aeb6bda296c87d0b6a9954a0ee10250",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62va8YJmZxW75tYnOJMMi7wQLA2kWKdjXL2Xa-ec4M-kbkn1sNcjveASs111X0NhOHi40xfbZ1UlNQ8mSKO6mqmvGR_qSezbzDgAJIKjbf41ivMVVIutRdzl5naeBh9dpD_pnUewSTvEUl9lBsvFgNwZy8__hEGCavDz3IPjDlk8_ZxWBaSM3EecJtisvrDcjqHHamEhXK_gY8TZnZUnNY3Kn7uiFAjZGL7GkJ7DQyCrxdIv2Me_JaAMGtVCdsKC9exC41jVq0dZeVEfdLn7fEG19NOkUUJ4jLHsNUJ3cJj191V8pwwUuI34q9UgwePEH8404C-ItR6leI1FZbuhgxH6paCKJnOOnFNEssGJFDeflcBjod7v0DVEHqkiT0uCbXpl0kiFErEELSe6WOKVMVFJ1r6cNkZptK4mF9Qi6iYMq0_uziteSTz5Yoc-SaLUSfxjFQKkkU8ASnVVNHXDzoeoUu7h5C4RFoeq19n8URqB4HAl5VKjBkb-ozZK-Fr6Qoyz5HujREAwu-hGZRQ1N0zQN140ULN_q4adneXdWkm4jwksqDjAwlv1Ah7aoTR4qz7PyALYopA8LG-EcXGtG7gI_XHw9MD1rFP7i9KAQFQKZX68BDXs5LhdjXS1ttAC-WegTNPdnet7CCtnFyorZtfSasxnVX5KdeSyPJPb1G4H9nRquPAkDZAa-ChCUMc0H9Y6iHEreWjYDT8IGFbtiVrWMNcU_NsdorRw8NktrjzUUjOwu8mohJXtI8bHi-zMy7_48SC5nOEKkleRGO7qsA2qc96kR7cR_3QhHQMxJa3LrzVK3JBWl9SXBuDbi2xs1USrYAf8pdU0FVeEHhd4t-oifvZy3isX_BHyIRGeR3qBaEqz7vWEZRIH5cWONTo86xITwk0OmCMqLFq3BBGy4vsj-IL1ltzdgkbzGfDkruwb30AJanv7v5jf2ENDWA4a2gTueinbnO57r5zpqdCNa18Qz46x2GWVD3EEmiIG9rYW69Fp72N06JwO-Pnn9ZSIjujHpleHTUhmKleTmqFAolKRcnVZsQAWS8fvJ1ugJE9KvrKt9mIIW_zZdY9i37GDhR7NpkHI94neLnc2NinjLtvFC9BLPScdAOpFQT1CKWqjvEJPIG3M6AR8sr4hXy8MeiEL-pP546oDfOqMIxGR1sahPz8f16GLeF46WvMldbmCQaUr-XIrWP4ae8K-W1qsZQ_3kBDQjw7FJ6ucIAbq9IFxcGGEdvMWeZxFDwqKGWuTuAUpszMJ5hY6eif9lNhL-F3ME5h7e-TZyPpDzveP4IODLH6vWzV_Fu0mwdyPkl_EEUGo87ItiDboUubnk15Klv1zMy-4nAAEencWPlQT1L0nI-EUgS1oshKufMI_HelmC9iH4T445Xx1c73RhpFULHJrPkUPfI7ydPQwyjUNPe2O6jswSEOUptaUWTQHHb0F24ixqjqzfF019G5KeEIwhzHPwbsSlHtttqkz-0Zr4cFg2K6bojHUx1qh_P1e7l7Ti6wpZ1Q-xuhpiHOiOFsdSGwfB-Mk_aVcX6lqldrjVP53IXMZJLkN4tymeGYrOyhYtjQs90tlIwgUgeh-kad9bLIbjdnes9tLSJNZUearYBLK-lY3aAIbdgxqKvVHAR_JC5Go441Vz4kfsjqy-6TG-zaRsU80bnxRctY-h3P8M_XhQ5p3gk2z3_d89TxvxHerm3t9M9HypglCvog3CLunnAZ1SKuLXHLhE9a08uF18-B5NUZkeF1DB3tHa1eV7dMcmo0=",
+              "summary": []
+            },
+            {
+              "id": "msg_05b427d2561bd7ad016aeb6bda7b7487d091cf86cefceaece1",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 251,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 88,
+            "output_tokens_details": {
+              "reasoning_tokens": 28
+            },
+            "total_tokens": 339
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:31:06 GMT
+recorded_with: VCR 6.4.0

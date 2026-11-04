@@ -1,0 +1,191 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Save a note with the full text
+        of a 300-word story about a lighthouse keeper."}],"model":"gpt-6-luna","max_output_tokens":20,"tools":[{"type":"function","name":"save_note","description":"Save
+        a note","parameters":{"type":"object","properties":{"body":{"type":"string","description":"The
+        full note text"}},"required":["body"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '407'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:30:30 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55558ccaf4acc88-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1285'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_8add213d4570446096c1ac57c737f7d8
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_048ab4d950defe14016aeb6bb5498087d0976e50b6cc22e024",
+          "object": "response",
+          "created_at": 1793813429,
+          "status": "incomplete",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": null,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": {
+            "reason": "max_output_tokens"
+          },
+          "instructions": null,
+          "max_output_tokens": 20,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_048ab4d950defe14016aeb6bb65cac87d0af08dcd3a9990d29",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62u2W-9CphSqv5aRBKKuGe1SPH3fnEMuGLTB7oT_lD8dtf4JcTLIRKsa6q0BIuemaI70NUbB1M2f05dZB-k7TLtLIk9sYeV0avYvsY-CqemUc5w851LLuwJVXthxl6rc2gCdykLeWug1JPingyEgxGI4OyrxoFYjQRrhiBcIlFV-qJv_BP3vqvk9oBv2mGq6APCECDW_5pQ2_vdevAgpF2AVeV3AWDhXLI0dViR55EyMLz7Sq92xi-r-_pYdx_mGpxZ52mlWma0qYGLbJM6M5jusLRuIVXCQH5U1FgULocSiAiczufB_KmK7U448UmKwKLQC5T-vu7j_-dQVpu0oG0OSzUq6RPAatw0qLHVEqUGva1NSXGp5Im_-dkADnRaTUcRqqFkSZ3Le8oQK0dD5FBUNT6RHRPs4IXEFLx6fkwZszQxI8NdQlvZMSuzN749ojs-5JSQUa7DVUMzdv_9HJ5gBv6NjgmjTQKuO65zPH8MKV1NZ6bnPPSLDPv_wWv_NfMwI73C7QekM_ftj6R9wNYDPn7Ek77qXC5HO764cP3p3TMLUXGty1L21xk4CzQ1Sv8GSaVHLr-1i4o7kMLx9DAtGyvnDaiv-ZCpUexNJs9vGGGfjHPQzo5v2VTlUOJVQIH0sjO818UwY6XVPfINPdjx0kBSUYzrScgCTvfkeksEGFGRCWaIRb8i_omhO1ELOQMElq2CjQJselVPhIu13CJfY2cuYArtX2XEH2TWrhLZCKToW_sVo2OSCGjSkNQPyDCSzqeD_SYx2jqgtbVWKyRsiNfhpR0FK0Eobb6RhOb_mSc_6xs1Id4s9bCcPL9rUOFpMHxibWIvJAPFwGMeTPp7elLOTtS6nbtjtsFSdWGevUMsUW-OB1tJmjmjXZXNYcIP4tF7ljojT-0J3H7axG0uTxWluclXUa96byKkHYxFXoDsCDVuUgJbXKV7vq9cHvb48irUljBStupEY-1RzTFvwBQ3apOp1JhbZLf4pWzWy59SACMl4iBqpq69FNMMYVkh1imkbcl6JlGIYASLYTL-0hu2YZLbc6utBJ96oNFhkDLTiu1F0rM4JcTtypmUPIma6gwdzCC7W0Sa9EC_ZbLy1f97FsHMdT2PYls064AWeUEDDQmTnqSHGqRvm4pJk73dhW8_5axcr9jf-c9bOt21o3cjMEU221BKc8tB3IpDdQMgCxvpOVeXEglkqAU4TtATxvpT7KoDVAvTr2j4Zj8AZlx0JxfDdL3La4Yyn5hCbKxUS6yDtvDJ3IpOshSlmFu7UZ2DNbHyyiwigMIJIB0Xs3OKZkXRHPHJsnCrswJlhKPALjUM1h_mdzyvvs-uqVjbT",
+              "summary": []
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Save a note",
+              "name": "save_note",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "description": "The full note text"
+                  }
+                },
+                "required": [
+                  "body"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 64,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 20,
+            "output_tokens_details": {
+              "reasoning_tokens": 20
+            },
+            "total_tokens": 84
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:30:30 GMT
+recorded_with: VCR 6.4.0

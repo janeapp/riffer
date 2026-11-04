@@ -1,0 +1,189 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Row 1 has seats 1, 2 and 3. Row
+        2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o x, o x o, o
+        x x. Game 2''s rows are: o o x, x x o, o x x.\n\nWhen you give your final
+        answer, respond with only a JSON object that conforms to the following JSON
+        Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":\"array\",\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"rows\":[[\"<integer>\"]],\"boards\":[[[\"x
+        | o\"]]]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}],"model":"gpt-6-luna"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1011'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:30:59 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a555597e095ce3a4-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1525'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_c1b6e305b6634e0aad653da0040db609
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0fb9c75a85607575016aeb6bd1ac2c87d0a55d9690caec1896",
+          "object": "response",
+          "created_at": 1793813457,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813459,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0fb9c75a85607575016aeb6bd231b487d08c9f648caf2a56dd",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62vT9tTfgTmX_EfSa5FZ2FnurfIMeE4GgHqTM844ueXLpJX05Qj99WWipFItDZIkwU8prgL89TxMCCun9waOh3ELZrYAIXrXtkumgnVSCbAA-25qRI61lPgRsmEk2f2Z2ZEk_sZAA8QQhqTzNWZm5F2h76RxVtYPZ2jWEIWYRmjY8otUF_8NnhvAL992izzb41irGxhLyO-kQifelFqThF1GqjnNnt-Xw7ys-LrRDY5a1UNIteUVgWa49dnpbbFCQgju1ciJxB6sCA_QrAA8cCCuNQXJMdkTmV5bk4vfOSPD7UBBmoAeQ7o_TA32u7qRHCnMKqTeoCzjRokOeKoRUcD_xMzFb6aGWdsrdhKQC9nILK928cUGcZwfXRFlOmV8Uf0_GUAqurjB9xcbVx-dUBeNfaTiTgOMv0P0u-RULRnEPa4HFHqzE0YJM3liHBGeRYtVHyiQ1FyvmSK4sj7qnDt2ERiGHiUo0ww5WLzRh73gjfNy--nE3X3-083Sbq6nIDQeNs6ApGko6yNC3BZeToSvHsKVzkFOmDOedQCKlrZmSfeCrcKk1db-hUMWzG20Ul8X83T6EGumBJiiP5W5Bud-0v_gi-z7GMa_aAa1x-XRM5BMgA1hZsOWOQEqnXCQ1vbmqmiXUe8QQppgnzNl75wzUxeHamYnx9WmGAibc3YOKeAY_Y-mqdqTdHpj6qPyWVAKkr5iUCsrTKNTvfFWUC6msI66ewgR0Soevm0Wipvvd43uwcPN5KOLB6uUHcXYdryVMj-oZD8ytRIX2r4VyFL5fvgT_hbGqAETb6wlwTG019Qd-jEQWL6vQhfQbR2rSPPo1rG-l2L3QXdCzuB7sKm_OIWWmNd74M6RzMY3HR-AGPEGWPzgZTnbc7EIkXZ8Mp8VtsWHTnY0m3b20e4TvTsJczHTgeEG4TWsmaeb4ORr3DBB6ulOTXRxC3hM8HLM3i1CuwRymf3mq_7bE5TETfoWuolgrccfaDvESgFTDPp8tnsFI9tljOptwacsc3xN-gDOe5RVpnEJelzYMsN3ix-b6x96njYPPQ5CO-pDbZqTV_ltwQajq_GxyucPtXeNkT4SWoOcax3GZ7Mi6O7bE4LhhMKpfDf01pn5UhWcn8THlagpYnCfHMXNls122k88mLO-TbWhtSQZeMmV-KQkCaqYyQ1YJZw2gb9SrtcdmLeusddhV2lszPSslRmCS5BFWPlE6zJUOIDGB7gfcTnQ8bB1fTPOUVIpaKKQPQHpVlIe_0jGdjhDZliAbqIat9N-vSYuZtojUGWrr8ErdfPXqTipgcnGIoAcVASX2L6BOaMBuSW7JN9gBT9CQh1tvZNkdfIEOee52PfRXATMhrJqQeyJ4qWztQVjFynh_CtFcaAlLV1d6ONaj8tjyYOPE7SHI3bNR-TdvEnvUlXqDaQbMYINQ5tnjcmuowtBWaT4Nl1_LUP-J1qNyZu9JAgnBhWz4G8Z5FHsH35ngUbKHjKT5i2WGAc0l1crsTPIGuyIIRFJ99EYeNbXJmGvXdarY-YgASkgXc8exsAFueNOxRjx0pqmgDerMW8XgJIFwljT-kNMPEY7glmCOIwRjma0YO-U9IZf6XeILN_M6ZlhxCOo3qCJE4PNi7EIqBX7YJgMllm4egQS3Wv22aLz22M8CoKBDdhE05CKdH8JcD1Za5TI5FTzDDZ0cQ4uUt9Y-HUm8GyVHvSzttqN4tzkadmYODjNd1-pIpliGXmp-ydHyGoDGfHM3f9I9S0nEC7MfnZyFAOC8mQIA6Mo08nhFl-mytN6tBVcl0-RZmOSu8l-xUmgLIWpKzDK6eV7ygPs6fcOtycyfR-Rghu5GpIGFXlFRMU1l95KJMcPl4J0BxCs08cw5CbaLJI0k9-digXLMB1gB0hnLnt6VDKG2DRwWGIv0iiqNSxi",
+              "summary": []
+            },
+            {
+              "id": "msg_0fb9c75a85607575016aeb6bd2a8a487d09556822c8339e86b",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"rows\":[[1,2,3],[4,5]],\"boards\":[[[\"x\",\"o\",\"x\"],[\"o\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]],[[\"o\",\"o\",\"x\"],[\"x\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]]]}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 244,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 117,
+            "output_tokens_details": {
+              "reasoning_tokens": 48
+            },
+            "total_tokens": 361
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:30:59 GMT
+recorded_with: VCR 6.4.0

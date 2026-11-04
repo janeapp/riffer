@@ -1,0 +1,190 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Extract the address from: John
+        likes long walks by the lake\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"result\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"error_code\":{\"type\":\"string\",\"description\":\"Why
+        no address\",\"enum\":[\"no_address\",\"multiple_addresses\"]},\"error_message\":{\"type\":\"string\",\"description\":\"Explanation
+        of the error\"}},\"required\":[\"error_code\",\"error_message\"],\"additionalProperties\":false}],\"description\":\"The
+        address, or why none was found\"}},\"required\":[\"result\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"result\":{\"street\":\"<string>\",\"city\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"model":"gpt-6-luna"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1226'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:27:53 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55554f3faeac4cf-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1604'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_f0c8f269a028455f9167e03fa49ba1b1
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0a2d1c46b6e22e3f016aeb6b17bc4887d09d568aff16575d22",
+          "object": "response",
+          "created_at": 1793813271,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813273,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0a2d1c46b6e22e3f016aeb6b18494887d091ad4d3fdb7ab57c",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62sZu_xrkOkNFi_mRVVylgMIZMczkOj1r9hLKTGf2YFv2ZQ5foqHy0m6WLMqv01bpSDsnGVbkdyt2TKmNIncaVME8zJb6aRdUkitqE0FT_iOun9D69kXnFgpzSigYbHZmxFc6yisrwhk1SfMslzQrbuHBFA_A3REdye0trNlOZBbDtmruY6QY6InIQqAnegGhZgYuYF3KlhPU7Mlh3gUEMhjnC9xyhL1SbTadYe_s_7Yn9EilARw6ST-A62Pk9DwG5iMvsAJGsf5MuO0Q8n1sXKMH5o9GWJ7aBDQB7qmMtGTKsnEopc5qL9M2-sAJII2IUPSXvWrUGIf5NnwPDZtm3H37AkDZF-AwFmw4iQmlAKoQDxU9mTkj-k3EdgIUCy3DPOo8__liOVjbUfkXt39GLC9OaIVmxWgf5QlZHNX6mBHXEl17Et7Zfunrvj1Yf3pL3mJb0K9DgTk9A1RQNDyKiafsXfWALTpdskI1L9T_jZMXHKdDfCGkBLx8hyqIOeq0A59brH4qHdpElIWDpztxVRirJMMXpnNFOUdgtcmyldGD48w9-9EEMUoPKDWGDM-r6kZ80ghArgUu55x08lOGOSeSl-dY6GRPz6vvuBxx3x0oy7exoGToZVuo3JNHtZ0wMcnhGMVyG2FLbbV7Pa0hWagvjOUdHD_t2iT5AY9v2eDzCyWxjGDahfdVyPSjNGBrdEHfjaooXCjHveMVxu5WDz_fAHz8y5mTVB0H0phY3eY0nSPTGsJJpwbIc70vNQ8wJjMET_hagzP5PeiYeZe8r8rvGuyvx1WH8rufWbnHpTOWYVysQLbZU-hLcXnNdGRPvxGqn2qphYUWLcgG2ilZ1NP7tdLbAuUHUeujSQxKjju26Kn72inMRyJB1G5kfMqyr8w9rR2Q6yTrSdrvXgRSoTBXA6BGRChGzxjJleewT7FhSOvtjA3SijAICoTP2YZUciwgC3F07AqogrYrfc2sVWVblnVv25_lBr8qr73i3FajAWxgdx7SNyduZi1XMDeECSEmhwc6wk7eV5gEpq6xK82ova3b04oFRjn3ke4q5sw_SDRQxMcb8ElwQRhAd2tLfngLE3QaCO60K4PXfvHGrpHudq8KGssLItWqSjGNKFgZhmZLaxVSHYWTOkBd9BnvpSRVCdZD3OIVDXqU6ckDbdlDNXoc4aBSl3mm-uV6ZhuBxp-GfBkiFztOYCKkVa-q0Fdp3xJS3yndCLsQyZvY70Y7xDG4Ab39IOWdHL_j1XTnAiHLaLGvwnhoycrIxPUVeXhTe3kNHH9O35xFatbfYk3WP6s7NLjIQ_bWVeFDTNhc1XoHW0xbbFhNSCEK_6kQBPX9PICpiIzH6jW965eXmqBHpD-4iqOqdTo-AGUb5EutT4YNkfKWAuwnpZ7O9uBU8DEo7WdV_c41_YM-PvW-zwJdVPP6-vhrk-xM3CCigja4kDUWaNporDw5ToDCmPCDLQAjSi0WUFPpYvlx_WZFKydUKrKtOpQ-XOXpzZIHSqqlzgiJqKBqZZl1ALaKPjrFmkju46tU9mnXy-TSBe8ldVn2ZEWTyWOGZCAdzD1e2WBw3Y=",
+              "summary": []
+            },
+            {
+              "id": "msg_0a2d1c46b6e22e3f016aeb6b18782c87d08553b05a011c63b3",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"result\":{\"error_code\":\"no_address\",\"error_message\":\"No address was found in the provided text.\"}}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 230,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 42,
+            "output_tokens_details": {
+              "reasoning_tokens": 14
+            },
+            "total_tokens": 272
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:27:53 GMT
+recorded_with: VCR 6.4.0

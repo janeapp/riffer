@@ -1,0 +1,189 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"Be concise."},{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"model":"gpt-6-luna","reasoning":{"effort":"medium","summary":"auto"},"metadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '242'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:32:20 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5555b786c8d6cfb-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '2189'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_074f235942234fe08047c0e96ea8cf2d
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_09847d23b5e5c30d016aeb6c22c1f087d08f88f469e4afd0e3",
+          "object": "response",
+          "created_at": 1793813538,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813540,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_09847d23b5e5c30d016aeb6c238e8c87d08a643e7705d98c6f",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wkbKMkg83rbzJQ9nCqQ-6JHC4MVu7GPVd0_20GkT1ZnENwNaXsfx2Yabyw5yFChlUU0iCHOYimSdBFmHBGDAMro_7a0t5YlFXdwnkQeKTOv7fc_8Xli70hVLtS2R1VMcl-LGx9UBa9DeHzKdYaTJ9beMJwGAsKPmcBmDH8J-2L-h_9skl_VUH5BbSQt2YgPl4pKo2iBkgGuIPu1WEHWtEpGoFFqPFLfaADVPTxxL-3DbHQc-JFVMUaM-3PM46zgi5O5oao35heEA89iJFG28WPfixCW-F9OoZmFSIOeLPQhFHjyi31bDLm8uE4Yfn5eMvlLvBlTulSCaaZ8mdV-G4QXOhS_ylqgr4v3-fKxHofCDjVx9bcHn_C7Vcsf9vQZzB1LmlSr26HaVqa-XO2j9M3MYvM3g2cZjpJK6t0Snlsaq-fPtCzy8x8WLyk4AjvB0GLcRG71fD0qIrPLkKCJcIu3Fle1YRlhwIH_8BQOLahuAe93qk2ahPJaI6ZwEZu1_IhQ_Ddk83t3VvzNCBvRaWdtFJmUDaiRcKXQAh3dBV1i3TYgViTuPA0WwWxdS9EjXU2M1SyEp6Dno1P5bKf5rWyC7vao61HETc5r1EKux4mOPLiGlyAPzdPbxDpqMfLu3vNwKIAsj-sdsAdPERHHs7-btDbb-3pU_OiSsZz7ciq7oGYWFQoD8x_A1Ci1ZQ4M3BgRvK7MT-3NjlBp9oVMfA1377EPn97ZmavUHyruICA6wtUxTyU29sD-W0R6swOlXZ0NILqU14PtCofY5Aha8lJtWi2PytsOcdmRoLRC_zWBj6GTlL7etVslOhSBnD9MAMfoqhjo3oHIsY3qasybnhhqy9imN4ES3bsEjws5lYzUKId6llEtP0pNyoRPzHCzy07E3yWzwKQUMKchRgJZ-6DOxyts1qmPg9s4t_dAo0U8dgQDiaN1Pcuh5aMIYXFmQDyvVbzfFepqmo92TfQcbu-ceqUXcVrsIL3TBCumZpKyTP4fH-QU_UvSpR7u-D2pL74s_eU94_DBRWCdAygFrbkOZZNzwcSkuV9NAe0nuITC3Fa5kPlXmXzoe3kROO8j2OMXpwCi8aPYZdyuHX1WZjxYfAoz4ndWPz5XxiIsHpygwvSrLF02T6g91UdmpSKuchfq18XXBxbp8LcNKEubrnJA1RuVZ1Qdu5uxI53SwZP_sum3cfh2W2O6ofeDy6SQFJNRlbavD-_UP6J2NM2qQzEbBL743-bkMUBPVMNemokImg9pqUlmsgVdfsryPjtifDZ08Nu7KZACHzumq1NMN5dCcGXUOpkahwo-9LHw7kMjF_gv_Amwe-GS-c7HZy-nYWhjObp00nzl7UrVoGe_Kz3miSmGV1UwD97w2nKJLCT9Frev4Y29FNwLB-N8JfOC7NHh3L6QPhWY50csfplvayTO1Nvr0jTk1ReVqwpgYrTWstEIfAIMfdOuh3DjDtErF8CxpDe1ksxr8V2x_jCxBZ9VS0p2O4_iab8zfjzb6YJOgUYicJRLexX6qyaP1heeVEP1u2yN5aelL_1TqSUf5u8HvJfW97dzovz6rJMlKDclIs=",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Calculating correctly**\n\nI need to make sure I'm calculating 391 accurately. It\u2019s such a straightforward request, but I always want to double-check and ensure I get it right! If there's more detail to consider or any specific aspects the user wants me to focus on, I should be aware of that, too. Alright, I'm ready to provide a clear and accurate answer for the calculation of 391! Let's go ahead and detail what\u2019s needed."
+                }
+              ]
+            },
+            {
+              "id": "msg_09847d23b5e5c30d016aeb6c24d9c887d0b401f709cdef7caf",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "391"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 27,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 21,
+            "output_tokens_details": {
+              "reasoning_tokens": 14
+            },
+            "total_tokens": 48
+          },
+          "user": null,
+          "metadata": {
+            "kind": "agent",
+            "agent": ""
+          }
+        }
+  recorded_at: Wed, 04 Nov 2026 17:32:20 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,242 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Extract the address from: John
+        lives at 123 Main St, Toronto"}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"}},"required":["street","city"],"additionalProperties":false},{"type":"object","properties":{"error_code":{"type":"string","description":"Why
+        no address","enum":["no_address","multiple_addresses"]},"error_message":{"type":"string","description":"Explanation
+        of the error"}},"required":["error_code","error_message"],"additionalProperties":false}],"description":"The
+        address, or why none was found"}},"required":["result"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '838'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:27:44 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55554c17867ebbf-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1200'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_0fa0dd230b8348aa9f3147c49b73197e
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_09749b2daae1d519016aeb6b0fb6bc87d0b7500d96e3f3969d",
+          "object": "response",
+          "created_at": 1793813263,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813264,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_09749b2daae1d519016aeb6b10644087d0a46d367e70fe2fc0",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62sQIgekVRNF3Smcdw2Ln7sRtrx4b2FlXm4TvfdyUi7XQRrjDz6g0nOyiXSGQ5v_GILWQGbGX9QeL9jcn2JW2A0Le0y2W4wbNT3DzD0tzBAan0cTuMKVQyDkVXXKuI7g6FsH3D-kBGUPafQc1_NsBSmq588_f7ZO8OEEGo2Swuy3nHR-IRtt6DkOoMQfAAQDWE-AiWcD0dnA5PBpsQLdcPUO0AEmOQ8oWkZse3ynnrsNRcTRcH6-FPQd2PSeDLMH8ZfSCd47JsuULMbiU_UaSG1A96Qt-6gK4okA1d67RuIv9acYDi1MrmSbbfaiqGvoasMcRbA2U42Xi7wg2r7y6ZLkCmIgMD37_vyJxvsI9i6U0SrlJ2cJi5dY3arRiNL3hrvwAzJVn7B523KYgcn6e94z2TT0U0O7iLTDGPp_rP2KCeprNxTs5MNnujm3-HLZ0EmN8C2GQXXIR-HgRGt-Du4xKMDT3SZiAlPSk98iBgW_OKh2enTG0tacTv8b1SWf4eOoNFmW7QqytT54-JYqVJMXqtcnDDpY8GsJGPjVUK0a06eebKEhNMfjR7pNMZodkrtrKb-Otw-VvdfDTHsYjvDN-sX5lzMq4qt7xXBwUDyQbNqum2hjUnbhDTFX1MnOwxcr1vlkGwjWA2ZiKIDVrGjlFosOfWVhSVfjxOr5DJU5nF7lAR8v6rkjCmcJ3YCc7cIz72Imt0aATzhro1HHrN3_ER2iyaisJhAX18oPFglgMtGq2rUP60M0J8ggZPAl3ij66eHgj_hcbINi_8TRJw988XAexJ1XrFUe4_E7qS06Ob8imRMV_lepYw--CH1KMtYxoRgt8AWZim3ZmeC6UzoivVqLON60bpVFa8IMpoE9b3qk9oiwHDU--aBlnAwVRoypBUNcbfyeAJu_9-cceEcal11KdlbEZ2J5nNlfQNm5O3F-xyiIcadHSJ5k9X5eFmjrDGRY_qcco9ZXvtpDIBQkoT5fGJ0GSZUmAWzzhdapSCs3E9ccqepw0YwfIDzcbsKHv-yTzgQeqSP7q72w_lh7-3EDduFa5K42Nd_s-B2_rwqYkqvfLB3PkedcYwA6GZdXCKR2mIDvja1oVQ5aH6bbcCEQCJUpI2CrxVVbmTYrulea9L-LYo5_GVaISH6DJpmcNE_uCNBXA6GBUclN5HKNNzq-g1Wj4blkuEhkp5Z_1K6YsJJP1Etbvuyto2IOiD_aHrEDhj8oOLiSZAZVxcSg7Vfqok5riwMyA2zm_q4t-f2vYmOcFkjO6ke8o7YE-S-olEjrg-Dxb5JF0iZIY4--bX6yNF3-CrNFqW2Weyr-bdKFfWsRn_WeTYVKJiw4PFFBAXWWJHyDk0hc2inAceTgHzkk_ByQqZz0KLEiy27alIM46UJs7Hi8GdcEUtm2ZoKkwvZfVJ4g1xSbN6SZLJTkguldGGvE4F_vCmH23uWDyEYePartzHTG4lenbIggLqXqcPXui6FU87_HVB-oeqIHZE-BvVI716KkleTnacCvY_-pyWeN1d9iqWLbMLAkFQ_VYFhDrYOQoLPLQiYfb0Mo4vRRPK25TxUPteUlpMs4LKN8vo4cmX4fAOszqtW2LtdYl5kOgnK3XgrolL1KE4Y6b32QmbpVPG6DLvLGOVAneKV7fQvfbjfSM8DOmJeWYsHkwx8l-Zo6XbO19jOP9k-AesqMsHw6s7DfhOJQqZu7P80k18nMHOCj6wRRxkIKOb9SRGYKZS6Tg0lPpIB0XxDeKw==",
+              "summary": []
+            },
+            {
+              "id": "msg_09749b2daae1d519016aeb6b10b0c887d09139465635cf0933",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"result\":{\"street\":\"123 Main St\",\"city\":\"Toronto\"}}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "result": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "street": {
+                            "type": "string",
+                            "description": "Street address"
+                          },
+                          "city": {
+                            "type": "string",
+                            "description": "City"
+                          }
+                        },
+                        "required": [
+                          "street",
+                          "city"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "error_code": {
+                            "type": "string",
+                            "description": "Why no address",
+                            "enum": [
+                              "no_address",
+                              "multiple_addresses"
+                            ]
+                          },
+                          "error_message": {
+                            "type": "string",
+                            "description": "Explanation of the error"
+                          }
+                        },
+                        "required": [
+                          "error_code",
+                          "error_message"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ],
+                    "description": "The address, or why none was found"
+                  }
+                },
+                "required": [
+                  "result"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 125,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 49,
+            "output_tokens_details": {
+              "reasoning_tokens": 27
+            },
+            "total_tokens": 174
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:27:44 GMT
+recorded_with: VCR 6.4.0

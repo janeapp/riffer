@@ -1,0 +1,209 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Analyze the sentiment of: ''I love
+        this product, it is amazing!''"}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"sentiment":{"type":"string","description":"The
+        sentiment","enum":["positive","neutral","negative"]},"score":{"type":"number","description":"Confidence
+        between 0 and 1"}},"required":["sentiment","score"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '471'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 17:27:47 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a55554d36c100fc7-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '1223'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_67e3a469f3a54beda7968811b16ad57e
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_061aae1b0706e63b016aeb6b12915487d08aa00ad7692b4253",
+          "object": "response",
+          "created_at": 1793813266,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793813267,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_061aae1b0706e63b016aeb6b13296887d082da1d28e43f87f4",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62sTE5Hy81WHn6Fq24K-k7J4fYiR5xzTWZ1QnX6vjSe_AjjRTI7drGY7_Ene3jXB-GtJXyMro1BrpMDr0JfLBn5lt1tFTFPFVFJTIh5PYosh6zh-treFd8X-l24k_s-jZrf-GHJoMY4Zt499XCYQU1RahWG-qZrFzKI8uxGSZLKwaADmLIvRMuONsYKcK4kccdbhlLGrwavqIXA3Vqq_qX1trbz537aYA8AKh0Tg9p1-cfJH074xjR8aPuiFWZaWUtoNE7L0T1UGRYw5KMD7M1eYjrusGgEHFoi7p6Vy0QvYA8GkmLh3iUlQv1ebVawX5WQUx3XTmUDOHgqh8WX-mDatoVyAbp1ZXkzFyyqQOEiI1u8ikd-qVFVJCwuQ0gSJ7yX_On8lfET26kn20acqi2CTKHw-5LTqDBHV0ad1yERS8c6pgszvndZP7SPP3Y1kaIze8jSjLmgJ2n9X2ZEZdgiRA5fLjAbFloo52BW4IfbUE-32FdK00W2aMyM1EEYvLNjkgXtHMY3QlRa4-5rBgwvWTSiYZzf95jteM-uuLbx9ctCgNl6-tectVnxvVeIzIG4e2sX7dmSCo3vfG4B0IXBd_IzGRRrE2KSjFN1ixV8HoPZbP9CJvirDmNKDyxn7ZgQT6QOD9d4NSXeIMq8g-LJRvLQzHlE8CHjVdM4yjM4roVM6iPclB9YaeF_e5tnItkYoREZ6ZyTFu-dywnmHq8oOuR6y_mRBURdozI-69lA80mv39zWG_oqPxNClx-cZBGtcxYhqwKl2GA04m8NID54KkEDv5Z4JzyrQFue876CQ6JAj3XjjrwMzWfxyqIoBspdoSWYXPpKHsHS5sG9maIK86C0lbr0v11RPNiWqjU5yLc2s0iq_ZdHhf2PVykULNQAQ7j4RVKgIqvRhl6MdlkmmcPYAbJQ2WoM00LkBFyhGBY8YkgrXU7XttaG3s61BuK4IZ6ljdALE2VHyPWVLSvD10eVIdi3Pvv5TAOqdVAWzVEEyTYE8GmsdoGaDhDUEFTVlmPtz14roBhS5NmR-yXIM-rSL_kwm_J84eYmVR9PRPnaZN6CDeuXyJNhVkm3N17J4mTnn5esrS3rtpj8JmjRD9UctMYBycIcaAz0nF7DYq1Q-YTLuE2uUNqbB84k0IrjS7JBlMcAyME-KBfYiS4XhbMLxyWLOXumR3PgNrqOBw4qgXG311XzN17ffgQQulLY6pKAgPcj2fYX8r2y1TW34swQvxBqPkNaGl6PnHAu7-PjNqG4ev-wYkLHYmiaG7HMgyyFuF3LdZYJkpwiwEOM6CkOpqHQDqjZ4z7OtkDxRm9Ec39Kz2B6Hwb3AMzmlLsjdPhPjgezwwElt_L18erRKWzQhNnKBZA6NYm-aMhH_H9cKGEz33H_0_IK3TvODBjHozLbWYkl6-5lOULyL5sBSkd1kbd6DYvPqgeaNfgeSJUc6V0lY63ut6Qiac3_B_TEB5vE46SKKy58TYRdVKqIEexRCYAgcbWu7YmaA4i8OLa02mLfoLh4xBvv5es8_eh_xIgxWjSoPuScq2t1SvIf3USbrorJfO2iYuLgRQemuWRNo5ytuCmo8SW2SlkDRKTKgPE8wr5PCvqF82EdyaqxXvg==",
+              "summary": []
+            },
+            {
+              "id": "msg_061aae1b0706e63b016aeb6b134e5887d0a90205b72813f421",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"sentiment\":\"positive\",\"score\":0.99}"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sentiment": {
+                    "type": "string",
+                    "description": "The sentiment",
+                    "enum": [
+                      "positive",
+                      "neutral",
+                      "negative"
+                    ]
+                  },
+                  "score": {
+                    "type": "number",
+                    "description": "Confidence between 0 and 1"
+                  }
+                },
+                "required": [
+                  "sentiment",
+                  "score"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 73,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 36,
+            "output_tokens_details": {
+              "reasoning_tokens": 15
+            },
+            "total_tokens": 109
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 17:27:47 GMT
+recorded_with: VCR 6.4.0
