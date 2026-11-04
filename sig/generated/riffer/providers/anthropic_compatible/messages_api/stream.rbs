@@ -34,7 +34,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
-  # The caller reads finish reason and usage from here so it can price the usage.
+  # The caller reads the text, finish reason and usage from here, since one turn
+  # can take several streams.
   # --
   # : () -> Hash[Symbol, untyped]
   def finish!: () -> Hash[Symbol, untyped]
@@ -60,10 +61,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # --
   # : (Hash[Symbol, untyped]) -> void
   def apply_message_delta: (Hash[Symbol, untyped]) -> void
-
-  # --
-  # : (Riffer::Providers::_EventSink) -> void
-  def stop_message: (Riffer::Providers::_EventSink) -> void
 
   # --
   # : (Hash[Symbol, untyped]) -> void

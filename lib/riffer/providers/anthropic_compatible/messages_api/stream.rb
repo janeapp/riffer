@@ -68,12 +68,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     when "content_block_delta" then apply_delta(event, yielder)
     when "content_block_stop" then stop_block(event, yielder)
     when "message_delta" then apply_message_delta(event)
-    when "message_stop" then stop_message(yielder)
+    when "message_stop" then @completed = true
     when "error" then raise_stream_error(event)
     end
   end
 
-  # The caller reads finish reason and usage from here so it can price the usage.
+  # The caller reads the text, finish reason and usage from here, since one turn
+  # can take several streams.
   #--
   #: () -> Hash[Symbol, untyped]
   def finish!
@@ -178,14 +179,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     usage = event[:usage]
     # Usage counts are cumulative; a field the delta omits keeps its start value.
     @message[:usage] = (@message[:usage] || {}).merge(usage.compact) if usage
-  end
-
-  #--
-  #: (Riffer::Providers::_EventSink) -> void
-  def stop_message(yielder)
-    @completed = true
-    text = @message[:content].filter_map { |block| block[:text] if block[:type] == "text" }.join
-    yielder << Riffer::StreamEvents::TextDone.new(text) unless text.empty?
   end
 
   #--
