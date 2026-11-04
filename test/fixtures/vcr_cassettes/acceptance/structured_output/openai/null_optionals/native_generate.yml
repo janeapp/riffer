@@ -18,8 +18,6 @@ http_interactions:
       - application/json
       User-Agent:
       - OpenAI::Client/Ruby 0.97.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -67,32 +65,12 @@ http_interactions:
       - CF-Ray
       - CF-Ray
       - X-Request-ID, Server-Timing-Total
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
       - '1646'
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
-      X-Ratelimit-Limit-Requests:
-      - '30000'
-      X-Ratelimit-Limit-Tokens:
-      - '180000000'
-      X-Ratelimit-Remaining-Requests:
-      - '29999'
-      X-Ratelimit-Remaining-Tokens:
-      - '180000000'
-      X-Ratelimit-Reset-Requests:
-      - 2ms
-      X-Ratelimit-Reset-Tokens:
-      - 0s
       X-Request-Id:
       - req_3cbacf9994e5425d897c7940c66fad9c
-      Set-Cookie:
-      - __cf_bm=J9mKtQuD1XSGUSALNceqMAjxxP.cP6FfH9qLxqTF6jA-1793813398.1161141-1.0.1.1-09IXgRlO_t2NqDdEde4nBNhDaZyUND2XpQm7_cutwsE4YZ2VE9euFJ7tAsCisfeXcCUtFw.uW9O8iXPLaAoNj2qJjX.hZwFqng6p2hjvzHDRyGJu8MjuwX.yV5QvPajJ;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 17:59:59 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:

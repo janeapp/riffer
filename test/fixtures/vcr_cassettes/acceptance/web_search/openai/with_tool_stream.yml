@@ -16,8 +16,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.97.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -65,32 +63,12 @@ http_interactions:
       - CF-Ray
       - CF-Ray
       - X-Request-ID, Server-Timing-Total
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
       - '275'
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
-      X-Ratelimit-Limit-Requests:
-      - '30000'
-      X-Ratelimit-Limit-Tokens:
-      - '180000000'
-      X-Ratelimit-Remaining-Requests:
-      - '29999'
-      X-Ratelimit-Remaining-Tokens:
-      - '179994756'
-      X-Ratelimit-Reset-Requests:
-      - 2ms
-      X-Ratelimit-Reset-Tokens:
-      - 1ms
       X-Request-Id:
       - req_3ea63251801f4787918da3d2ee8bd0fa
-      Set-Cookie:
-      - __cf_bm=4_gyAOXMXU8U1kSJs6XoEwbId8oEFzY4gCpaj8fBrlY-1793813495.8855944-1.0.1.1-v4uvzxP6FirisnXt.x6hq21oUc.SpY56SVHVAJh8cYyw9drtU2Cj357jz6BLiwSAOM6pNunKxqKQk3xP6ammTiTxLyULdpmt4oSIGebZnsl9JiyF1BDHfBH1HFXTUerM;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 18:01:36 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
@@ -153,8 +131,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.97.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -202,32 +178,12 @@ http_interactions:
       - CF-Ray
       - CF-Ray
       - X-Request-ID, Server-Timing-Total
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
       - '274'
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
-      X-Ratelimit-Limit-Requests:
-      - '30000'
-      X-Ratelimit-Limit-Tokens:
-      - '180000000'
-      X-Ratelimit-Remaining-Requests:
-      - '29999'
-      X-Ratelimit-Remaining-Tokens:
-      - '179994663'
-      X-Ratelimit-Reset-Requests:
-      - 2ms
-      X-Ratelimit-Reset-Tokens:
-      - 1ms
       X-Request-Id:
       - req_69a19f6d27604a2184b8aa234a27ab74
-      Set-Cookie:
-      - __cf_bm=Bx9j2xZ.DaxCfVljt_5exdd8_YlDGzcRf9ZxSAhpUPk-1793813497.5539742-1.0.1.1-vFDetfgnCDBqyMLwL0phKXgE.B0gRh1N83gmrlNFDvoe0zlZkjDrZxGodIUzpJaj3JC4PY7j3nDb2DFleNoOlo4HodF6okHPpAGiRdlZYN4ucRQbDlKIwVjfaJXYb9YX;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 18:01:37 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:

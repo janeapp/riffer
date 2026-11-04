@@ -16,8 +16,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.97.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -65,32 +63,12 @@ http_interactions:
       - CF-Ray
       - CF-Ray
       - X-Request-ID, Server-Timing-Total
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
       - '317'
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
-      X-Ratelimit-Limit-Requests:
-      - '30000'
-      X-Ratelimit-Limit-Tokens:
-      - '180000000'
-      X-Ratelimit-Remaining-Requests:
-      - '29999'
-      X-Ratelimit-Remaining-Tokens:
-      - '179999415'
-      X-Ratelimit-Reset-Requests:
-      - 2ms
-      X-Ratelimit-Reset-Tokens:
-      - 0s
       X-Request-Id:
       - req_939b215ad42a4a3994f5818c9afa7666
-      Set-Cookie:
-      - __cf_bm=hWy5rW9VgWYykDLXaZ3leaqTocXnn14VpXd2oHHFF9Q-1793813554.4906416-1.0.1.1-jKPB7XSObtzS3RefcGhzVZfuNDC211DgnNxcPWaRgWdYoEEQIaeTQVEQy95bT8zjEUFdjMTS_VTqccH5yTSY2U0ey7t6iOjPAFdscLxU4uDoIboL6LY_y7cxHcUWslEI;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 18:02:34 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
@@ -120,8 +98,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.97.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -171,20 +147,12 @@ http_interactions:
       - CF-Ray
       - CF-Ray
       - X-Request-ID, Server-Timing-Total
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
       - '308'
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
       X-Request-Id:
       - req_10a77c25b7264abfb6d7a19f375a77d5
-      Set-Cookie:
-      - __cf_bm=qZC7CF7F0A640ZEtAnjnR7TEaA_HiEwELpr_7PpomPs-1793813557.1499236-1.0.1.1-.aG0i6gCJDrPcv4jGNKYjH8Il8sNFWUt23BNzwA3kJUsylyT.GE.10V1MwY3Lv_sMc4_u6uqv44AKu.k7rR.ZHCYqZs0TEPyYeDWihs9miV4_v1VmstqHZbbzRyUpBix;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 18:02:37 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:

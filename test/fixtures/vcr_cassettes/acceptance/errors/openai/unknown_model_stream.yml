@@ -13,8 +13,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.97.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -62,20 +60,12 @@ http_interactions:
       - CF-Ray
       - CF-Ray
       - X-Request-ID, Server-Timing-Total
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
       - '129'
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
       X-Request-Id:
       - req_9f49c505ffe2432f9146a94408e1dcc1
-      Set-Cookie:
-      - __cf_bm=S30imuL71Ax1Gxm71Yq6A_pOeCrh5Jf9wWbb4FyNqOU-1793813373.7898233-1.0.1.1-61Hc5KA1S9z8ccT.MztlR2XG3Lte05E1pxFI23z4bAZs59ij1bSCeEbsx.W8erc_g9mq69HzWnMqYYEhBKP4xlRCENnFSOwKfDa8eRzecrB9x0KjLoEWgv5pT64sy96h;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 17:59:33 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
