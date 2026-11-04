@@ -77,6 +77,7 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
 
     expect(stream_events.grep(Riffer::StreamEvents::ToolCallDone).map(&:arguments)).must_equal ['{"city": "Tor']
     expect(stream_events.grep(Riffer::StreamEvents::FinishReasonDone).map(&:finish_reason)).must_equal [:length]
+    expect(stream_events.grep(Riffer::StreamEvents::TextDone)).must_be_empty
   end
 
   it "raises IncompleteStreamError when the stream ends without message_stop" do
