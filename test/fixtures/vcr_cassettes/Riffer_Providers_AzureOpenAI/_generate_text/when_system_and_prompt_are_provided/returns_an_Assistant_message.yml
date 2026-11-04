@@ -14,8 +14,6 @@ http_interactions:
       - application/json
       User-Agent:
       - OpenAI::Client/Ruby 0.55.0
-      Host:
-      - riffer-testing-eastus2-resource.cognitiveservices.azure.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -49,18 +47,6 @@ http_interactions:
       - application/json
       Skip-Error-Remapping:
       - 'true'
-      X-Ratelimit-Limit-Requests:
-      - '250'
-      X-Ratelimit-Limit-Tokens:
-      - '250000'
-      X-Ratelimit-Remaining-Requests:
-      - '243'
-      X-Ratelimit-Remaining-Tokens:
-      - '249979'
-      X-Ratelimit-Reset-Requests:
-      - '0'
-      X-Ratelimit-Reset-Tokens:
-      - '0'
       Azureai-Requested-Tier:
       - default
       Azureai-Processed-Tier:

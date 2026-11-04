@@ -19,8 +19,6 @@ http_interactions:
       - b122f81f-4b2a-4660-9e7e-1b7725e461da
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
       X-Amz-Date:
       - 20261028T175223Z
       X-Amz-Content-Sha256:
@@ -73,8 +71,6 @@ http_interactions:
       - 6cfdf076-d36d-42e3-a6a7-081f56dcbaab
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
       X-Amz-Date:
       - 20261028T175224Z
       X-Amz-Content-Sha256:
@@ -128,8 +124,6 @@ http_interactions:
       - 0146047e-2c52-428c-8296-20ef43be0d74
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
       X-Amz-Date:
       - 20261028T175225Z
       X-Amz-Content-Sha256:

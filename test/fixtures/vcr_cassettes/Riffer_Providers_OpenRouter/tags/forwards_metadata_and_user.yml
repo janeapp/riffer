@@ -14,8 +14,6 @@ http_interactions:
       - application/json
       User-Agent:
       - OpenAI::Client/Ruby 0.68.0
-      Host:
-      - openrouter.ai
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:

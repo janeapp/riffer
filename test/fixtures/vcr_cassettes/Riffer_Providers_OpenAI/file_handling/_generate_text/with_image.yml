@@ -14,8 +14,6 @@ http_interactions:
       - application/json
       User-Agent:
       - OpenAI::Client/Ruby 0.55.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -53,34 +51,14 @@ http_interactions:
       - keep-alive
       Server:
       - cloudflare
-      X-Ratelimit-Limit-Requests:
-      - '30000'
-      X-Ratelimit-Limit-Tokens:
-      - '180000000'
-      X-Ratelimit-Remaining-Requests:
-      - '29999'
-      X-Ratelimit-Remaining-Tokens:
-      - '180000000'
-      X-Ratelimit-Reset-Requests:
-      - 2ms
-      X-Ratelimit-Reset-Tokens:
-      - 0s
       Openai-Version:
       - '2020-10-01'
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
       - req_99e90beec53b48d79c2133a1b731cf80
       Openai-Processing-Ms:
       - '5902'
       Cf-Cache-Status:
       - DYNAMIC
-      Set-Cookie:
-      - __cf_bm=hWc.UmUTRHbOXcJY.LY6GeuBrsgQnaat0KTMyzbObSg-1773687167.8679569-1.0.1.1-W5iT7oNfmrn3L_IyDRHIz11K1q7bfSetfHHm1cw93dGeiXj43V_y.GIDCbuApJMz.hk5CamuBRtUpdncNXZt7XWNQ9wzIaHj6eFXoGUdqbBDJyt80bCaQEUrcfvxGeJh;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
-        19:22:53 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:

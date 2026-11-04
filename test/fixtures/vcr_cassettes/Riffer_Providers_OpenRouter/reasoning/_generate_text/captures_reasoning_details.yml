@@ -14,8 +14,6 @@ http_interactions:
       - application/json
       User-Agent:
       - OpenAI::Client/Ruby 0.91.0
-      Host:
-      - openrouter.ai
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -57,10 +55,6 @@ http_interactions:
       - gen-1790123452-nPjNFGokO5io3A986qKQ
       Access-Control-Expose-Headers:
       - X-Generation-Id,X-Provider-Name,request-id,cf-ray
-      Set-Cookie:
-      - __cf_bm=Eis5ihUfsSmFUq_IUeDCve7AUlvMq4Syjsf2u593MCM-1790123452.5615554-1.0.1.1-KBtcd_mWTJeZ3J4PrEyqB_lsyxZdKXl78m8o3qIAnivZsfRsjYFXpkixk7WRoOHfIbZkmVkMkY9R.2aTSFaZPef7idRxgxcoGkOOmD6X7XHZAArB6hYkyz115yiyd81m;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
-        23 Sep 2026 01:00:53 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
