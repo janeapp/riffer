@@ -65,7 +65,7 @@ describe "Acceptance: files" do
         end
 
         # Providers that download the file get the fixture from the stubbed
-        # downloader; Anthropic fetches the URL itself, so it must be real.
+        # downloader; Anthropic and OpenAI fetch the URL themselves, so it must be real.
         describe "from a URL" do
           before do
             Riffer.config.files.allow_downloads = true

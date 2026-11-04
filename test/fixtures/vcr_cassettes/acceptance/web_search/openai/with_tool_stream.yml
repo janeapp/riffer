@@ -1,0 +1,232 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto,
+        and what is the latest Ruby version?"}],"model":"gpt-5.4-mini","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview"}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '486'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:30:27 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fda7dac4a1fa1-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '231'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179994858'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 1ms
+      X-Request-Id:
+      - req_3c706acce08143858371fd23e0aed62e
+      Set-Cookie:
+      - __cf_bm=0RytYXOZF6fI.CuF9CxabblVdqMKmZ1xbV6jW5D.Srw-1793755826.8317964-1.0.1.1-64I3mSmu8Q3FzFSF.3A8lmRCse9eU4t9.vI2lSxaChZLmGoxdT_bjEWvJhoSrkaXWUVlmjjMytDMEoklaQTnTv3Hg2SqlerhiXJEjBJPQjD4SyAz8DtSsFAEqN5PzeMm;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 02:00:27 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0802737e6b887225016aea8ab2e7b087d09f099e784ecc12cf","object":"response","created_at":1793755826,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview","search_content_types":["text"],"search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0802737e6b887225016aea8ab2e7b087d09f099e784ecc12cf","object":"response","created_at":1793755826,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview","search_content_types":["text"],"search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","type":"function_call","status":"in_progress","arguments":"","call_id":"call_xPiygeGtsrrn6YDwdqqPDuUg","name":"get_weather"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","obfuscation":"xc85T8o5qOghhx","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"city","item_id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","obfuscation":"SMEmIIE30rqp","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","obfuscation":"0BKLJAPxWLQbN","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"Toronto","item_id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","obfuscation":"q9sfswjUb","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","obfuscation":"VkDHQBgIngIsaM","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"city\":\"Toronto\"}","item_id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","output_index":0,"sequence_number":8}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_xPiygeGtsrrn6YDwdqqPDuUg","name":"get_weather"},"output_index":0,"sequence_number":9}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0802737e6b887225016aea8ab2e7b087d09f099e784ecc12cf","object":"response","created_at":1793755826,"status":"completed","access_programs":null,"background":false,"completed_at":1793755827,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"fc_0802737e6b887225016aea8ab3608887d0ac2eba90ebfb0b17","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_xPiygeGtsrrn6YDwdqqPDuUg","name":"get_weather"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview","search_content_types":["text"],"search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":4500,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":4352},"output_tokens":18,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":4518},"user":null,"metadata":{}},"sequence_number":10}
+
+  recorded_at: Wed, 04 Nov 2026 01:30:27 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto,
+        and what is the latest Ruby version?"},{"type":"function_call","call_id":"call_xPiygeGtsrrn6YDwdqqPDuUg","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_xPiygeGtsrrn6YDwdqqPDuUg","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-5.4-mini","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview"}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '733'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:30:27 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fda825a461fa1-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '344'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179994822'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 1ms
+      X-Request-Id:
+      - req_bc3ac2b42e6844bd8c914cafab6d72c0
+      Set-Cookie:
+      - __cf_bm=drwTT5MRwV5dPs79VPDRxjZwRpTXJm73eIuGoWvhxIw-1793755827.5789216-1.0.1.1-._XQnBtyjvMzUnXTK25unPr2y37OjkuK5UcqhUrsO2XQ0TbvlMcAKl5mtFDkjTHHL5fBOA4mkHkvkwNukwrzjro.4q8bNzJMwTS1YmipkJ1un4M8W2dfOP12KOPfzhXW;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 02:00:27 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZXZlbnQ6IHJlc3BvbnNlLmNyZWF0ZWQKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2UuY3JlYXRlZCIsInJlc3BvbnNlIjp7ImlkIjoicmVzcF8wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiM2E1MTQ4N2QwYTU1ZTU0MWU1MGQxMmY4MCIsIm9iamVjdCI6InJlc3BvbnNlIiwiY3JlYXRlZF9hdCI6MTc5Mzc1NTgyNywic3RhdHVzIjoiaW5fcHJvZ3Jlc3MiLCJhY2Nlc3NfcHJvZ3JhbXMiOm51bGwsImJhY2tncm91bmQiOmZhbHNlLCJjb21wbGV0ZWRfYXQiOm51bGwsImVycm9yIjpudWxsLCJmcmVxdWVuY3lfcGVuYWx0eSI6MC4wLCJpbWFnZSI6eyJjb250ZXh0X2NvbXByZXNzaW9uIjoiZGlzYWJsZWQifSwiaW5jb21wbGV0ZV9kZXRhaWxzIjpudWxsLCJpbnN0cnVjdGlvbnMiOm51bGwsIm1heF9vdXRwdXRfdG9rZW5zIjpudWxsLCJtYXhfdG9vbF9jYWxscyI6bnVsbCwibW9kZWwiOiJncHQtNS40LW1pbmktMjAyNi0wMy0xNyIsIm1vZGVyYXRpb24iOm51bGwsIm91dHB1dCI6W10sInBhcmFsbGVsX3Rvb2xfY2FsbHMiOnRydWUsInByZXNlbmNlX3BlbmFsdHkiOjAuMCwicHJldmlvdXNfcmVzcG9uc2VfaWQiOm51bGwsInByb21wdF9jYWNoZV9rZXkiOm51bGwsInByb21wdF9jYWNoZV9yZXRlbnRpb24iOiJpbl9tZW1vcnkiLCJyZWFzb25pbmciOnsiY29udGV4dCI6ImN1cnJlbnRfdHVybiIsImVmZm9ydCI6Im5vbmUiLCJtb2RlIjoic3RhbmRhcmQiLCJzdW1tYXJ5IjpudWxsfSwic2FmZXR5X2lkZW50aWZpZXIiOm51bGwsInNlcnZpY2VfdGllciI6ImF1dG8iLCJzdG9yZSI6ZmFsc2UsInRlbXBlcmF0dXJlIjoxLjAsInRleHQiOnsiZm9ybWF0Ijp7InR5cGUiOiJ0ZXh0In0sInZlcmJvc2l0eSI6Im1lZGl1bSJ9LCJ0b29sX2Nob2ljZSI6ImF1dG8iLCJ0b29sX3VzYWdlIjp7ImltYWdlX2dlbiI6eyJpbnB1dF90b2tlbnMiOjAsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImltYWdlX3Rva2VucyI6MCwidGV4dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjowLCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsiaW1hZ2VfdG9rZW5zIjowLCJ0ZXh0X3Rva2VucyI6MH0sInRvdGFsX3Rva2VucyI6MH0sIndlYl9zZWFyY2giOnsibnVtX3JlcXVlc3RzIjowfX0sInRvb2xzIjpbeyJ0eXBlIjoiZnVuY3Rpb24iLCJkZXNjcmlwdGlvbiI6IkdldCB0aGUgY3VycmVudCB3ZWF0aGVyIGZvciBhIGNpdHkiLCJuYW1lIjoiZ2V0X3dlYXRoZXIiLCJvdXRwdXRfc2NoZW1hIjpudWxsLCJwYXJhbWV0ZXJzIjp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7ImNpdHkiOnsidHlwZSI6InN0cmluZyIsImRlc2NyaXB0aW9uIjoiVGhlIGNpdHkgbmFtZSJ9fSwicmVxdWlyZWQiOlsiY2l0eSJdLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6ZmFsc2V9LCJzdHJpY3QiOnRydWV9LHsidHlwZSI6IndlYl9zZWFyY2hfcHJldmlldyIsInNlYXJjaF9jb250ZW50X3R5cGVzIjpbInRleHQiXSwic2VhcmNoX2NvbnRleHRfc2l6ZSI6Im1lZGl1bSIsInVzZXJfbG9jYXRpb24iOnsidHlwZSI6ImFwcHJveGltYXRlIiwiY2l0eSI6bnVsbCwiY291bnRyeSI6IlVTIiwicmVnaW9uIjpudWxsLCJ0aW1lem9uZSI6bnVsbH19XSwidG9wX2xvZ3Byb2JzIjowLCJ0b3BfcCI6MC45OCwidHJ1bmNhdGlvbiI6ImRpc2FibGVkIiwidXNhZ2UiOm51bGwsInVzZXIiOm51bGwsIm1ldGFkYXRhIjp7fX0sInNlcXVlbmNlX251bWJlciI6MH0KCmV2ZW50OiByZXNwb25zZS5pbl9wcm9ncmVzcwpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5pbl9wcm9ncmVzcyIsInJlc3BvbnNlIjp7ImlkIjoicmVzcF8wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiM2E1MTQ4N2QwYTU1ZTU0MWU1MGQxMmY4MCIsIm9iamVjdCI6InJlc3BvbnNlIiwiY3JlYXRlZF9hdCI6MTc5Mzc1NTgyNywic3RhdHVzIjoiaW5fcHJvZ3Jlc3MiLCJhY2Nlc3NfcHJvZ3JhbXMiOm51bGwsImJhY2tncm91bmQiOmZhbHNlLCJjb21wbGV0ZWRfYXQiOm51bGwsImVycm9yIjpudWxsLCJmcmVxdWVuY3lfcGVuYWx0eSI6MC4wLCJpbWFnZSI6eyJjb250ZXh0X2NvbXByZXNzaW9uIjoiZGlzYWJsZWQifSwiaW5jb21wbGV0ZV9kZXRhaWxzIjpudWxsLCJpbnN0cnVjdGlvbnMiOm51bGwsIm1heF9vdXRwdXRfdG9rZW5zIjpudWxsLCJtYXhfdG9vbF9jYWxscyI6bnVsbCwibW9kZWwiOiJncHQtNS40LW1pbmktMjAyNi0wMy0xNyIsIm1vZGVyYXRpb24iOm51bGwsIm91dHB1dCI6W10sInBhcmFsbGVsX3Rvb2xfY2FsbHMiOnRydWUsInByZXNlbmNlX3BlbmFsdHkiOjAuMCwicHJldmlvdXNfcmVzcG9uc2VfaWQiOm51bGwsInByb21wdF9jYWNoZV9rZXkiOm51bGwsInByb21wdF9jYWNoZV9yZXRlbnRpb24iOiJpbl9tZW1vcnkiLCJyZWFzb25pbmciOnsiY29udGV4dCI6ImN1cnJlbnRfdHVybiIsImVmZm9ydCI6Im5vbmUiLCJtb2RlIjoic3RhbmRhcmQiLCJzdW1tYXJ5IjpudWxsfSwic2FmZXR5X2lkZW50aWZpZXIiOm51bGwsInNlcnZpY2VfdGllciI6ImF1dG8iLCJzdG9yZSI6ZmFsc2UsInRlbXBlcmF0dXJlIjoxLjAsInRleHQiOnsiZm9ybWF0Ijp7InR5cGUiOiJ0ZXh0In0sInZlcmJvc2l0eSI6Im1lZGl1bSJ9LCJ0b29sX2Nob2ljZSI6ImF1dG8iLCJ0b29sX3VzYWdlIjp7ImltYWdlX2dlbiI6eyJpbnB1dF90b2tlbnMiOjAsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImltYWdlX3Rva2VucyI6MCwidGV4dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjowLCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsiaW1hZ2VfdG9rZW5zIjowLCJ0ZXh0X3Rva2VucyI6MH0sInRvdGFsX3Rva2VucyI6MH0sIndlYl9zZWFyY2giOnsibnVtX3JlcXVlc3RzIjowfX0sInRvb2xzIjpbeyJ0eXBlIjoiZnVuY3Rpb24iLCJkZXNjcmlwdGlvbiI6IkdldCB0aGUgY3VycmVudCB3ZWF0aGVyIGZvciBhIGNpdHkiLCJuYW1lIjoiZ2V0X3dlYXRoZXIiLCJvdXRwdXRfc2NoZW1hIjpudWxsLCJwYXJhbWV0ZXJzIjp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7ImNpdHkiOnsidHlwZSI6InN0cmluZyIsImRlc2NyaXB0aW9uIjoiVGhlIGNpdHkgbmFtZSJ9fSwicmVxdWlyZWQiOlsiY2l0eSJdLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6ZmFsc2V9LCJzdHJpY3QiOnRydWV9LHsidHlwZSI6IndlYl9zZWFyY2hfcHJldmlldyIsInNlYXJjaF9jb250ZW50X3R5cGVzIjpbInRleHQiXSwic2VhcmNoX2NvbnRleHRfc2l6ZSI6Im1lZGl1bSIsInVzZXJfbG9jYXRpb24iOnsidHlwZSI6ImFwcHJveGltYXRlIiwiY2l0eSI6bnVsbCwiY291bnRyeSI6IlVTIiwicmVnaW9uIjpudWxsLCJ0aW1lem9uZSI6bnVsbH19XSwidG9wX2xvZ3Byb2JzIjowLCJ0b3BfcCI6MC45OCwidHJ1bmNhdGlvbiI6ImRpc2FibGVkIiwidXNhZ2UiOm51bGwsInVzZXIiOm51bGwsIm1ldGFkYXRhIjp7fX0sInNlcXVlbmNlX251bWJlciI6MX0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfaXRlbS5hZGRlZApkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfaXRlbS5hZGRlZCIsIml0ZW0iOnsiaWQiOiJ3c18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNDQ1NzA4N2QwYmY0ZjY3ZjUzZDI4OTcwNSIsInR5cGUiOiJ3ZWJfc2VhcmNoX2NhbGwiLCJzdGF0dXMiOiJpbl9wcm9ncmVzcyJ9LCJvdXRwdXRfaW5kZXgiOjAsInNlcXVlbmNlX251bWJlciI6Mn0KCmV2ZW50OiByZXNwb25zZS53ZWJfc2VhcmNoX2NhbGwuaW5fcHJvZ3Jlc3MKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2Uud2ViX3NlYXJjaF9jYWxsLmluX3Byb2dyZXNzIiwiaXRlbV9pZCI6IndzXzBjODAwMDU0MjkxN2U4MWIwMTZhZWE4YWI0NDU3MDg3ZDBiZjRmNjdmNTNkMjg5NzA1Iiwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjN9CgpldmVudDogcmVzcG9uc2Uud2ViX3NlYXJjaF9jYWxsLnNlYXJjaGluZwpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS53ZWJfc2VhcmNoX2NhbGwuc2VhcmNoaW5nIiwiaXRlbV9pZCI6IndzXzBjODAwMDU0MjkxN2U4MWIwMTZhZWE4YWI0NDU3MDg3ZDBiZjRmNjdmNTNkMjg5NzA1Iiwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjR9CgpldmVudDogcmVzcG9uc2Uud2ViX3NlYXJjaF9jYWxsLmNvbXBsZXRlZApkYXRhOiB7InR5cGUiOiJyZXNwb25zZS53ZWJfc2VhcmNoX2NhbGwuY29tcGxldGVkIiwiaXRlbV9pZCI6IndzXzBjODAwMDU0MjkxN2U4MWIwMTZhZWE4YWI0NDU3MDg3ZDBiZjRmNjdmNTNkMjg5NzA1Iiwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjV9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X2l0ZW0uZG9uZQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfaXRlbS5kb25lIiwiaXRlbSI6eyJpZCI6IndzXzBjODAwMDU0MjkxN2U4MWIwMTZhZWE4YWI0NDU3MDg3ZDBiZjRmNjdmNTNkMjg5NzA1IiwidHlwZSI6IndlYl9zZWFyY2hfY2FsbCIsInN0YXR1cyI6ImNvbXBsZXRlZCIsImFjdGlvbiI6eyJ0eXBlIjoic2VhcmNoIiwicXVlcmllcyI6WyJsYXRlc3QgUnVieSB2ZXJzaW9uIG9mZmljaWFsIFJ1YnkgcmVsZWFzZSBuZXdzIl0sInF1ZXJ5IjoibGF0ZXN0IFJ1YnkgdmVyc2lvbiBvZmZpY2lhbCBSdWJ5IHJlbGVhc2UgbmV3cyIsInNvdXJjZXMiOlt7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL2Rvd25sb2Fkcy9yZWxlYXNlcy8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL25ld3MvMjAyNi8wOS8xNS9ydWJ5LTQtMC03LXJlbGVhc2VkLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL2Rvd25sb2Fkcy8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8yMDI2LyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8yMDI2LzA3LzE0L3J1YnktNC0wLTYtcmVsZWFzZWQvIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9uZXdzLzIwMjYvMTAvMjIvcnVieS00LTAtOC1yZWxlYXNlZC8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL25ld3MvMjAyNi8xMC8yMy9ydWJ5LTMtNC0xMi1yZWxlYXNlZC8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL25ld3MvMjAyNi8xMC8yMy9ydWJ5LTQtMC05LXJlbGVhc2VkLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8yMDI2LzA1LzExL3J1YnktNC0wLTQtcmVsZWFzZWQvIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9uZXdzLzIwMjYvMTAvMjMvcnVieS0zLTMtMTMtcmVsZWFzZWQvIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly9idWdzLnJ1YnktbGFuZy5vcmcvaXNzdWVzLnBkZiJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vYnVncy5ydWJ5LWxhbmcub3JnL2lzc3Vlcy5wZGY/ZiU1QiU1RD1jcmVhdGVkX29uJm9wJTVCYXV0aG9yX2lkJTVEPSUzRCZvcCU1QmNyZWF0ZWRfb24lNUQ9JTNFJTNEJnBlcl9wYWdlPTUwJnYlNUJhdXRob3JfaWQlNUQlNUIlNUQ9NzEwJnYlNUJjcmVhdGVkX29uJTVEJTVCJTVEPTIwMjAtMTItMDEifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL2J1Z3MucnVieS1sYW5nLm9yZy9pc3N1ZXMucGRmP3Blcl9wYWdlPTIwMCJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vYnVncy5ydWJ5LWxhbmcub3JnL2lzc3Vlcy5wZGY/ZiU1QiU1RD1jcmVhdGVkX29uJm9wJTVCYXV0aG9yX2lkJTVEPSUzRCZvcCU1QmNyZWF0ZWRfb24lNUQ9JTNFJTNEJnYlNUJhdXRob3JfaWQlNUQlNUIlNUQ9NzEwJnYlNUJjcmVhdGVkX29uJTVEJTVCJTVEPTIwMjAtMTItMDEifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL2J1Z3MucnVieS1sYW5nLm9yZy9pc3N1ZXMucGRmP2Fzc2lnbmVkX3RvX2lkPTQlN0MzODI0JTdDNzQwOCU3QzU0OTU1JTdDNjgzMyU3QzY4MzUmc2V0X2ZpbHRlcj0xJnNvcnQ9c3RhdHVzJTJDaWQlM0FkZXNjJTJDc3ViamVjdCUzQWRlc2Mmc3RhdHVzX2lkPSUyQSJ9XX19LCJvdXRwdXRfaW5kZXgiOjAsInNlcXVlbmNlX251bWJlciI6Nn0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfaXRlbS5hZGRlZApkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfaXRlbS5hZGRlZCIsIml0ZW0iOnsiaWQiOiJtc2dfMGM4MDAwNTQyOTE3ZTgxYjAxNmFlYThhYjY0ZDI0ODdkMGFkMDVjNzU5ZjIxNzAxYjYiLCJ0eXBlIjoibWVzc2FnZSIsInN0YXR1cyI6ImluX3Byb2dyZXNzIiwiY29udGVudCI6W10sInBoYXNlIjoiZmluYWxfYW5zd2VyIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJvdXRwdXRfaW5kZXgiOjEsInNlcXVlbmNlX251bWJlciI6N30KCmV2ZW50OiByZXNwb25zZS5jb250ZW50X3BhcnQuYWRkZWQKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2UuY29udGVudF9wYXJ0LmFkZGVkIiwiY29udGVudF9pbmRleCI6MCwiaXRlbV9pZCI6Im1zZ18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNjRkMjQ4N2QwYWQwNWM3NTlmMjE3MDFiNiIsIm91dHB1dF9pbmRleCI6MSwicGFydCI6eyJ0eXBlIjoib3V0cHV0X3RleHQiLCJhbm5vdGF0aW9ucyI6W10sImxvZ3Byb2JzIjpbXSwidGV4dCI6IiJ9LCJzZXF1ZW5jZV9udW1iZXIiOjh9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEiLCJjb250ZW50X2luZGV4IjowLCJkZWx0YSI6IlRvcm9udG8gaXMgKioxNcKwQyoqIHJpZ2h0IG5vdy4gIFxuXG5UaGUgbGF0ZXN0IiwiaXRlbV9pZCI6Im1zZ18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNjRkMjQ4N2QwYWQwNWM3NTlmMjE3MDFiNiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiJiYWtXIiwib3V0cHV0X2luZGV4IjoxLCJzZXF1ZW5jZV9udW1iZXIiOjl9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEiLCJjb250ZW50X2luZGV4IjowLCJkZWx0YSI6IiBSdWJ5IHZlcnNpb24gaXMgKio0LjAuOSoqLCBhY2NvcmRpbmcgdG8gdGhlIG9mZmljaWFsIiwiaXRlbV9pZCI6Im1zZ18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNjRkMjQ4N2QwYWQwNWM3NTlmMjE3MDFiNiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiI4OU9DcnQ0RzlLciIsIm91dHB1dF9pbmRleCI6MSwic2VxdWVuY2VfbnVtYmVyIjoxMH0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YSIsImNvbnRlbnRfaW5kZXgiOjAsImRlbHRhIjoiIFJ1Ynkgc2l0ZS4gKFtydWJ5LWxhbmcub3JnXShodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL2Rvd25sb2Fkcy8/dXRtX3NvdXJjZT1vcGVuYWkpKSIsIml0ZW1faWQiOiJtc2dfMGM4MDAwNTQyOTE3ZTgxYjAxNmFlYThhYjY0ZDI0ODdkMGFkMDVjNzU5ZjIxNzAxYjYiLCJsb2dwcm9icyI6W10sIm9iZnVzY2F0aW9uIjoicVh6WlJHMHoiLCJvdXRwdXRfaW5kZXgiOjEsInNlcXVlbmNlX251bWJlciI6MTF9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuYW5ub3RhdGlvbi5hZGRlZApkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5hbm5vdGF0aW9uLmFkZGVkIiwiYW5ub3RhdGlvbiI6eyJ0eXBlIjoidXJsX2NpdGF0aW9uIiwiZW5kX2luZGV4IjoxODUsInN0YXJ0X2luZGV4IjoxMDksInRpdGxlIjoiRG93bmxvYWQgUnVieSB8IFJ1YnkiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL2Rvd25sb2Fkcy8/dXRtX3NvdXJjZT1vcGVuYWkifSwiYW5ub3RhdGlvbl9pbmRleCI6MCwiY29udGVudF9pbmRleCI6MCwiaXRlbV9pZCI6Im1zZ18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNjRkMjQ4N2QwYWQwNWM3NTlmMjE3MDFiNiIsIm91dHB1dF9pbmRleCI6MSwic2VxdWVuY2VfbnVtYmVyIjoxMn0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfdGV4dC5kb25lCmRhdGE6IHsidHlwZSI6InJlc3BvbnNlLm91dHB1dF90ZXh0LmRvbmUiLCJjb250ZW50X2luZGV4IjowLCJpdGVtX2lkIjoibXNnXzBjODAwMDU0MjkxN2U4MWIwMTZhZWE4YWI2NGQyNDg3ZDBhZDA1Yzc1OWYyMTcwMWI2IiwibG9ncHJvYnMiOltdLCJvdXRwdXRfaW5kZXgiOjEsInNlcXVlbmNlX251bWJlciI6MTMsInRleHQiOiJUb3JvbnRvIGlzICoqMTXCsEMqKiByaWdodCBub3cuICBcblxuVGhlIGxhdGVzdCBSdWJ5IHZlcnNpb24gaXMgKio0LjAuOSoqLCBhY2NvcmRpbmcgdG8gdGhlIG9mZmljaWFsIFJ1Ynkgc2l0ZS4gKFtydWJ5LWxhbmcub3JnXShodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL2Rvd25sb2Fkcy8/dXRtX3NvdXJjZT1vcGVuYWkpKSJ9CgpldmVudDogcmVzcG9uc2UuY29udGVudF9wYXJ0LmRvbmUKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2UuY29udGVudF9wYXJ0LmRvbmUiLCJjb250ZW50X2luZGV4IjowLCJpdGVtX2lkIjoibXNnXzBjODAwMDU0MjkxN2U4MWIwMTZhZWE4YWI2NGQyNDg3ZDBhZDA1Yzc1OWYyMTcwMWI2Iiwib3V0cHV0X2luZGV4IjoxLCJwYXJ0Ijp7InR5cGUiOiJvdXRwdXRfdGV4dCIsImFubm90YXRpb25zIjpbeyJ0eXBlIjoidXJsX2NpdGF0aW9uIiwiZW5kX2luZGV4IjoxODUsInN0YXJ0X2luZGV4IjoxMDksInRpdGxlIjoiRG93bmxvYWQgUnVieSB8IFJ1YnkiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL2Rvd25sb2Fkcy8/dXRtX3NvdXJjZT1vcGVuYWkifV0sImxvZ3Byb2JzIjpbXSwidGV4dCI6IlRvcm9udG8gaXMgKioxNcKwQyoqIHJpZ2h0IG5vdy4gIFxuXG5UaGUgbGF0ZXN0IFJ1YnkgdmVyc2lvbiBpcyAqKjQuMC45KiosIGFjY29yZGluZyB0byB0aGUgb2ZmaWNpYWwgUnVieSBzaXRlLiAoW3J1YnktbGFuZy5vcmddKGh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vZG93bmxvYWRzLz91dG1fc291cmNlPW9wZW5haSkpIn0sInNlcXVlbmNlX251bWJlciI6MTR9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X2l0ZW0uZG9uZQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfaXRlbS5kb25lIiwiaXRlbSI6eyJpZCI6Im1zZ18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNjRkMjQ4N2QwYWQwNWM3NTlmMjE3MDFiNiIsInR5cGUiOiJtZXNzYWdlIiwic3RhdHVzIjoiY29tcGxldGVkIiwiY29udGVudCI6W3sidHlwZSI6Im91dHB1dF90ZXh0IiwiYW5ub3RhdGlvbnMiOlt7InR5cGUiOiJ1cmxfY2l0YXRpb24iLCJlbmRfaW5kZXgiOjE4NSwic3RhcnRfaW5kZXgiOjEwOSwidGl0bGUiOiJEb3dubG9hZCBSdWJ5IHwgUnVieSIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vZG93bmxvYWRzLz91dG1fc291cmNlPW9wZW5haSJ9XSwibG9ncHJvYnMiOltdLCJ0ZXh0IjoiVG9yb250byBpcyAqKjE1wrBDKiogcmlnaHQgbm93LiAgXG5cblRoZSBsYXRlc3QgUnVieSB2ZXJzaW9uIGlzICoqNC4wLjkqKiwgYWNjb3JkaW5nIHRvIHRoZSBvZmZpY2lhbCBSdWJ5IHNpdGUuIChbcnVieS1sYW5nLm9yZ10oaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9kb3dubG9hZHMvP3V0bV9zb3VyY2U9b3BlbmFpKSkifV0sInBoYXNlIjoiZmluYWxfYW5zd2VyIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJvdXRwdXRfaW5kZXgiOjEsInNlcXVlbmNlX251bWJlciI6MTV9CgpldmVudDogcmVzcG9uc2UuY29tcGxldGVkCmRhdGE6IHsidHlwZSI6InJlc3BvbnNlLmNvbXBsZXRlZCIsInJlc3BvbnNlIjp7ImlkIjoicmVzcF8wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiM2E1MTQ4N2QwYTU1ZTU0MWU1MGQxMmY4MCIsIm9iamVjdCI6InJlc3BvbnNlIiwiY3JlYXRlZF9hdCI6MTc5Mzc1NTgyNywic3RhdHVzIjoiY29tcGxldGVkIiwiYWNjZXNzX3Byb2dyYW1zIjpudWxsLCJiYWNrZ3JvdW5kIjpmYWxzZSwiY29tcGxldGVkX2F0IjoxNzkzNzU1ODMwLCJlcnJvciI6bnVsbCwiZnJlcXVlbmN5X3BlbmFsdHkiOjAuMCwiaW1hZ2UiOnsiY29udGV4dF9jb21wcmVzc2lvbiI6ImRpc2FibGVkIn0sImluY29tcGxldGVfZGV0YWlscyI6bnVsbCwiaW5zdHJ1Y3Rpb25zIjpudWxsLCJtYXhfb3V0cHV0X3Rva2VucyI6bnVsbCwibWF4X3Rvb2xfY2FsbHMiOm51bGwsIm1vZGVsIjoiZ3B0LTUuNC1taW5pLTIwMjYtMDMtMTciLCJtb2RlcmF0aW9uIjpudWxsLCJvdXRwdXQiOlt7ImlkIjoid3NfMGM4MDAwNTQyOTE3ZTgxYjAxNmFlYThhYjQ0NTcwODdkMGJmNGY2N2Y1M2QyODk3MDUiLCJ0eXBlIjoid2ViX3NlYXJjaF9jYWxsIiwic3RhdHVzIjoiY29tcGxldGVkIiwiYWN0aW9uIjp7InR5cGUiOiJzZWFyY2giLCJxdWVyaWVzIjpbImxhdGVzdCBSdWJ5IHZlcnNpb24gb2ZmaWNpYWwgUnVieSByZWxlYXNlIG5ld3MiXSwicXVlcnkiOiJsYXRlc3QgUnVieSB2ZXJzaW9uIG9mZmljaWFsIFJ1YnkgcmVsZWFzZSBuZXdzIiwic291cmNlcyI6W3sidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vZG93bmxvYWRzL3JlbGVhc2VzLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8yMDI2LzA5LzE1L3J1YnktNC0wLTctcmVsZWFzZWQvIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9uZXdzLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vZG93bmxvYWRzLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9uZXdzLzIwMjYvIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9uZXdzLzIwMjYvMDcvMTQvcnVieS00LTAtNi1yZWxlYXNlZC8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL25ld3MvMjAyNi8xMC8yMi9ydWJ5LTQtMC04LXJlbGVhc2VkLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8yMDI2LzEwLzIzL3J1YnktMy00LTEyLXJlbGVhc2VkLyJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vbmV3cy8yMDI2LzEwLzIzL3J1YnktNC0wLTktcmVsZWFzZWQvIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9uZXdzLzIwMjYvMDUvMTEvcnVieS00LTAtNC1yZWxlYXNlZC8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL3d3dy5ydWJ5LWxhbmcub3JnL2VuL25ld3MvMjAyNi8xMC8yMy9ydWJ5LTMtMy0xMy1yZWxlYXNlZC8ifSx7InR5cGUiOiJ1cmwiLCJ1cmwiOiJodHRwczovL2J1Z3MucnVieS1sYW5nLm9yZy9pc3N1ZXMucGRmIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly9idWdzLnJ1YnktbGFuZy5vcmcvaXNzdWVzLnBkZj9mJTVCJTVEPWNyZWF0ZWRfb24mb3AlNUJhdXRob3JfaWQlNUQ9JTNEJm9wJTVCY3JlYXRlZF9vbiU1RD0lM0UlM0QmcGVyX3BhZ2U9NTAmdiU1QmF1dGhvcl9pZCU1RCU1QiU1RD03MTAmdiU1QmNyZWF0ZWRfb24lNUQlNUIlNUQ9MjAyMC0xMi0wMSJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vYnVncy5ydWJ5LWxhbmcub3JnL2lzc3Vlcy5wZGY/cGVyX3BhZ2U9MjAwIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly9idWdzLnJ1YnktbGFuZy5vcmcvaXNzdWVzLnBkZj9mJTVCJTVEPWNyZWF0ZWRfb24mb3AlNUJhdXRob3JfaWQlNUQ9JTNEJm9wJTVCY3JlYXRlZF9vbiU1RD0lM0UlM0QmdiU1QmF1dGhvcl9pZCU1RCU1QiU1RD03MTAmdiU1QmNyZWF0ZWRfb24lNUQlNUIlNUQ9MjAyMC0xMi0wMSJ9LHsidHlwZSI6InVybCIsInVybCI6Imh0dHBzOi8vYnVncy5ydWJ5LWxhbmcub3JnL2lzc3Vlcy5wZGY/YXNzaWduZWRfdG9faWQ9NCU3QzM4MjQlN0M3NDA4JTdDNTQ5NTUlN0M2ODMzJTdDNjgzNSZzZXRfZmlsdGVyPTEmc29ydD1zdGF0dXMlMkNpZCUzQWRlc2MlMkNzdWJqZWN0JTNBZGVzYyZzdGF0dXNfaWQ9JTJBIn0seyJ0eXBlIjoidXJsIiwidXJsIjoiaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9kb3dubG9hZHMvP3V0bV9zb3VyY2U9b3BlbmFpIn1dfX0seyJpZCI6Im1zZ18wYzgwMDA1NDI5MTdlODFiMDE2YWVhOGFiNjRkMjQ4N2QwYWQwNWM3NTlmMjE3MDFiNiIsInR5cGUiOiJtZXNzYWdlIiwic3RhdHVzIjoiY29tcGxldGVkIiwiY29udGVudCI6W3sidHlwZSI6Im91dHB1dF90ZXh0IiwiYW5ub3RhdGlvbnMiOlt7InR5cGUiOiJ1cmxfY2l0YXRpb24iLCJlbmRfaW5kZXgiOjE4NSwic3RhcnRfaW5kZXgiOjEwOSwidGl0bGUiOiJEb3dubG9hZCBSdWJ5IHwgUnVieSIsInVybCI6Imh0dHBzOi8vd3d3LnJ1YnktbGFuZy5vcmcvZW4vZG93bmxvYWRzLz91dG1fc291cmNlPW9wZW5haSJ9XSwibG9ncHJvYnMiOltdLCJ0ZXh0IjoiVG9yb250byBpcyAqKjE1wrBDKiogcmlnaHQgbm93LiAgXG5cblRoZSBsYXRlc3QgUnVieSB2ZXJzaW9uIGlzICoqNC4wLjkqKiwgYWNjb3JkaW5nIHRvIHRoZSBvZmZpY2lhbCBSdWJ5IHNpdGUuIChbcnVieS1sYW5nLm9yZ10oaHR0cHM6Ly93d3cucnVieS1sYW5nLm9yZy9lbi9kb3dubG9hZHMvP3V0bV9zb3VyY2U9b3BlbmFpKSkifV0sInBoYXNlIjoiZmluYWxfYW5zd2VyIiwicm9sZSI6ImFzc2lzdGFudCJ9XSwicGFyYWxsZWxfdG9vbF9jYWxscyI6dHJ1ZSwicHJlc2VuY2VfcGVuYWx0eSI6MC4wLCJwcmV2aW91c19yZXNwb25zZV9pZCI6bnVsbCwicHJvbXB0X2NhY2hlX2tleSI6bnVsbCwicHJvbXB0X2NhY2hlX3JldGVudGlvbiI6ImluX21lbW9yeSIsInJlYXNvbmluZyI6eyJjb250ZXh0IjoiY3VycmVudF90dXJuIiwiZWZmb3J0Ijoibm9uZSIsIm1vZGUiOiJzdGFuZGFyZCIsInN1bW1hcnkiOm51bGx9LCJzYWZldHlfaWRlbnRpZmllciI6bnVsbCwic2VydmljZV90aWVyIjoiZGVmYXVsdCIsInN0b3JlIjpmYWxzZSwidGVtcGVyYXR1cmUiOjEuMCwidGV4dCI6eyJmb3JtYXQiOnsidHlwZSI6InRleHQifSwidmVyYm9zaXR5IjoibWVkaXVtIn0sInRvb2xfY2hvaWNlIjoiYXV0byIsInRvb2xfdXNhZ2UiOnsiaW1hZ2VfZ2VuIjp7ImlucHV0X3Rva2VucyI6MCwiaW5wdXRfdG9rZW5zX2RldGFpbHMiOnsiaW1hZ2VfdG9rZW5zIjowLCJ0ZXh0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjAsIm91dHB1dF90b2tlbnNfZGV0YWlscyI6eyJpbWFnZV90b2tlbnMiOjAsInRleHRfdG9rZW5zIjowfSwidG90YWxfdG9rZW5zIjowfSwid2ViX3NlYXJjaCI6eyJudW1fcmVxdWVzdHMiOjF9fSwidG9vbHMiOlt7InR5cGUiOiJmdW5jdGlvbiIsImRlc2NyaXB0aW9uIjoiR2V0IHRoZSBjdXJyZW50IHdlYXRoZXIgZm9yIGEgY2l0eSIsIm5hbWUiOiJnZXRfd2VhdGhlciIsIm91dHB1dF9zY2hlbWEiOm51bGwsInBhcmFtZXRlcnMiOnsidHlwZSI6Im9iamVjdCIsInByb3BlcnRpZXMiOnsiY2l0eSI6eyJ0eXBlIjoic3RyaW5nIiwiZGVzY3JpcHRpb24iOiJUaGUgY2l0eSBuYW1lIn19LCJyZXF1aXJlZCI6WyJjaXR5Il0sImFkZGl0aW9uYWxQcm9wZXJ0aWVzIjpmYWxzZX0sInN0cmljdCI6dHJ1ZX0seyJ0eXBlIjoid2ViX3NlYXJjaF9wcmV2aWV3Iiwic2VhcmNoX2NvbnRlbnRfdHlwZXMiOlsidGV4dCJdLCJzZWFyY2hfY29udGV4dF9zaXplIjoibWVkaXVtIiwidXNlcl9sb2NhdGlvbiI6eyJ0eXBlIjoiYXBwcm94aW1hdGUiLCJjaXR5IjpudWxsLCJjb3VudHJ5IjoiVVMiLCJyZWdpb24iOm51bGwsInRpbWV6b25lIjpudWxsfX1dLCJ0b3BfbG9ncHJvYnMiOjAsInRvcF9wIjowLjk4LCJ0cnVuY2F0aW9uIjoiZGlzYWJsZWQiLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjg4MDEsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiY2FjaGVkX3Rva2VucyI6NDQ4MH0sIm91dHB1dF90b2tlbnMiOjEwMiwib3V0cHV0X3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjM4fSwidG90YWxfdG9rZW5zIjo4OTAzfSwidXNlciI6bnVsbCwibWV0YWRhdGEiOnt9fSwic2VxdWVuY2VfbnVtYmVyIjoxNn0KCg==
+  recorded_at: Wed, 04 Nov 2026 01:30:30 GMT
+recorded_with: VCR 6.4.0

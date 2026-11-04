@@ -1,0 +1,300 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Book an online visit on 2026-11-03
+        for Ada Lovelace (ada@example.com): a 30-minute checkup, then a 15-minute
+        vaccination. Any room is fine."}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"book_visit","description":"Book
+        a clinic visit","parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The
+        patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email
+        address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
+        the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"services":{"type":"array","description":"Services
+        to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room
+        number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1335'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:24:02 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fd11afc8f629c-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '214'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999346'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_dbe356bdace844a8a0f96605c6d6c2aa
+      Set-Cookie:
+      - __cf_bm=juzWzlNvzJz4J1UTm.5BzLrCfrm1.ZgKVd3ebSXus28-1793755442.3947785-1.0.1.1-vn3qkOB3t3HY9iCgpv8e2dv4ZeE8tAiMoLSj2T8pV6xYOzvlLkc6IHqJEj6NH0WYp8YS5v6pqFMurOdSNtXmbMyGcW8PPStelr3aOgQG5QPLk6aUMeLt92pM92RG2M3G;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:54:02 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0ead4e9efc295b76016aea893275b887d0b02a0b27344a658a","object":"response","created_at":1793755442,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0ead4e9efc295b76016aea893275b887d0b02a0b27344a658a","object":"response","created_at":1793755442,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","type":"function_call","status":"in_progress","arguments":"","call_id":"call_US8Tyl8TUKiqSD719UP2odWU","name":"book_visit"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"3cVbwzWJn585rb","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"patient","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"tVEFBDsCQ","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"22tYjP8hwms0","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"QzVJc9HCph7J","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"uXFwhqoy3Y048","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"Ada","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"4A5ejG1kXj0x0","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" Lov","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"whVLkzEmTOAo","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"el","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"VI2XkelMW8gDWo","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"ace","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"jeZ9ccvZGVRIJ","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"IhK5rQvyl94V0","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"email","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"CLy5IeaaIP4","output_index":0,"sequence_number":13}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"uleQqeTVVCICC","output_index":0,"sequence_number":14}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"ada","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"JxfsrGC53JdDm","output_index":0,"sequence_number":15}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"@example","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"zp68YPIC","output_index":0,"sequence_number":16}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":".com","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"QX2gX4n5sZtQ","output_index":0,"sequence_number":17}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"bTBSIjdwP98694","output_index":0,"sequence_number":18}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"UnTHoPUQh3zxc0","output_index":0,"sequence_number":19}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"visit","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"zcOeOdF22W8","output_index":0,"sequence_number":20}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"_type","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"desKuqG5RkG","output_index":0,"sequence_number":21}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"qTP97eVa0BWcU","output_index":0,"sequence_number":22}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"online","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"l7vHfASlar","output_index":0,"sequence_number":23}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"phIMEjj6X90U2","output_index":0,"sequence_number":24}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"visit","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"AUJB7L3W5iT","output_index":0,"sequence_number":25}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"_on","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"ynL6Q3jzrWDv5","output_index":0,"sequence_number":26}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"tuONDpxyIU7s8","output_index":0,"sequence_number":27}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"bVXnlI3d9nyEn","output_index":0,"sequence_number":28}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"xQClUvn9wjt0vhP","output_index":0,"sequence_number":29}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"2LyVeHJkMfPGm09","output_index":0,"sequence_number":30}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"nYU3hqsvfMay65","output_index":0,"sequence_number":31}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"zC2xO1QXSvVdXL5","output_index":0,"sequence_number":32}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"03","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"tCrKguyUDKAotj","output_index":0,"sequence_number":33}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"WzMg6jICJEg6B","output_index":0,"sequence_number":34}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"services","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"T5knaWnR","output_index":0,"sequence_number":35}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":[","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"6IZoCVrrpubI7","output_index":0,"sequence_number":36}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"nDYgMd9JxZSxdl","output_index":0,"sequence_number":37}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"Fv96pWVS6DWS","output_index":0,"sequence_number":38}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"J0D45KswRT7aa","output_index":0,"sequence_number":39}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"check","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"jGJPHPPKIPw","output_index":0,"sequence_number":40}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"up","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"I8UmqlTqwIOMVT","output_index":0,"sequence_number":41}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"eOPPJDa0Mcdkr","output_index":0,"sequence_number":42}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"minutes","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"4bwu53ELv","output_index":0,"sequence_number":43}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"Tegtcex9QfaxBJ","output_index":0,"sequence_number":44}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"30","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"RURjTC4t8rD7WC","output_index":0,"sequence_number":45}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"},{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"TZIhRtb71CW6","output_index":0,"sequence_number":46}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"ZIXQe1FeUm6I","output_index":0,"sequence_number":47}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"xRgiBD6jmVeni","output_index":0,"sequence_number":48}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"vacc","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"YMyse0ej3pAs","output_index":0,"sequence_number":49}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"ination","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"SyZsczRhu","output_index":0,"sequence_number":50}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"DUcepLtazxpmS","output_index":0,"sequence_number":51}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"minutes","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"DvXpTAEdb","output_index":0,"sequence_number":52}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"7jbJFQjKXHFLdg","output_index":0,"sequence_number":53}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"15","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"gWearUsnyqS51t","output_index":0,"sequence_number":54}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"OtALD3ApFTi3P8I","output_index":0,"sequence_number":55}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"],\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"rOFkWkck6H9wH","output_index":0,"sequence_number":56}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"room","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"9bnhldWQcT4S","output_index":0,"sequence_number":57}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"3Nd838YuxCVUV","output_index":0,"sequence_number":58}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"any","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"NVBlQaSkr70i7","output_index":0,"sequence_number":59}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"edVa67xvmFL5XJ","output_index":0,"sequence_number":60}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","output_index":0,"sequence_number":61}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","type":"function_call","status":"completed","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","call_id":"call_US8Tyl8TUKiqSD719UP2odWU","name":"book_visit"},"output_index":0,"sequence_number":62}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0ead4e9efc295b76016aea893275b887d0b02a0b27344a658a","object":"response","created_at":1793755442,"status":"completed","access_programs":null,"background":false,"completed_at":1793755443,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","type":"function_call","status":"completed","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","call_id":"call_US8Tyl8TUKiqSD719UP2odWU","name":"book_visit"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":200,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":71,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":271},"user":null,"metadata":{}},"sequence_number":63}
+
+  recorded_at: Wed, 04 Nov 2026 01:24:03 GMT
+recorded_with: VCR 6.4.0
+...

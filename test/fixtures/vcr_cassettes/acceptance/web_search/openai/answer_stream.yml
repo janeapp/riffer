@@ -1,0 +1,162 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the latest stable Ruby
+        version? Answer in one sentence."}],"model":"gpt-5.4-mini","include":["web_search_call.action.sources"],"tools":[{"type":"web_search_preview"}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '225'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:24:52 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fd2520b212810-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '295'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179995188'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 1ms
+      X-Request-Id:
+      - req_4f6ba33eab9b44d0bf2eb9697915b5c9
+      Set-Cookie:
+      - __cf_bm=oT_o5NlumY2GH.F1fxN4j5qv1WyElQ3QWfGKuoPh0as-1793755492.1627104-1.0.1.1-VXF.ZaCRu3vd1gru2CRUuxgrKyLKS6vgQ0LI30J9yTAugj0LbCyE8IMwyEoXefMXO8k1SdmZki5HcXdXH__lOb8Vt9rOSjzALZ.hbeVsoICvkQF6Wnnn_5BMmDCVN67K;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:54:52 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0064c64231418d2a016aea8964378087d084cb775aba0a5330","object":"response","created_at":1793755492,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"web_search_preview","search_content_types":["text"],"search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0064c64231418d2a016aea8964378087d084cb775aba0a5330","object":"response","created_at":1793755492,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"web_search_preview","search_content_types":["text"],"search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"ws_0064c64231418d2a016aea8964b85487d09be78f87457666c0","type":"web_search_call","status":"in_progress"},"output_index":0,"sequence_number":2}
+
+        event: response.web_search_call.in_progress
+        data: {"type":"response.web_search_call.in_progress","item_id":"ws_0064c64231418d2a016aea8964b85487d09be78f87457666c0","output_index":0,"sequence_number":3}
+
+        event: response.web_search_call.searching
+        data: {"type":"response.web_search_call.searching","item_id":"ws_0064c64231418d2a016aea8964b85487d09be78f87457666c0","output_index":0,"sequence_number":4}
+
+        event: response.web_search_call.completed
+        data: {"type":"response.web_search_call.completed","item_id":"ws_0064c64231418d2a016aea8964b85487d09be78f87457666c0","output_index":0,"sequence_number":5}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"ws_0064c64231418d2a016aea8964b85487d09be78f87457666c0","type":"web_search_call","status":"completed","action":{"type":"search","queries":["Ruby latest stable version official release site"],"query":"Ruby latest stable version official release site","sources":[{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?per_page=200"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?f%5B%5D=created_on&op%5Bauthor_id%5D=%3D&op%5Bcreated_on%5D=%3E%3D&v%5Bauthor_id%5D%5B%5D=710&v%5Bcreated_on%5D%5B%5D=2020-12-01"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?assigned_to_id=4%7C3824%7C7408%7C54955%7C6833%7C6835&set_filter=1&sort=status%2Cupdated_on%3Adesc%2Cpriority%3Adesc&status_id=%2A"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?assigned_to_id=13%7C3824&set_filter=1&sort=tracker%3Adesc%2Csubject%3Adesc%2Cupdated_on&status_id=%2A"}]}},"output_index":0,"sequence_number":6}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"ws_0064c64231418d2a016aea89689f3087d085f9b9007eb69215","type":"web_search_call","status":"in_progress"},"output_index":1,"sequence_number":7}
+
+        event: response.web_search_call.in_progress
+        data: {"type":"response.web_search_call.in_progress","item_id":"ws_0064c64231418d2a016aea89689f3087d085f9b9007eb69215","output_index":1,"sequence_number":8}
+
+        event: response.web_search_call.searching
+        data: {"type":"response.web_search_call.searching","item_id":"ws_0064c64231418d2a016aea89689f3087d085f9b9007eb69215","output_index":1,"sequence_number":9}
+
+        event: response.web_search_call.completed
+        data: {"type":"response.web_search_call.completed","item_id":"ws_0064c64231418d2a016aea89689f3087d085f9b9007eb69215","output_index":1,"sequence_number":10}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"ws_0064c64231418d2a016aea89689f3087d085f9b9007eb69215","type":"web_search_call","status":"completed","action":{"type":"search","queries":["site:ruby-lang.org ruby 3.4.0 released official","site:ruby-lang.org ruby latest stable version 3.4.x official"],"query":"site:ruby-lang.org ruby 3.4.0 released official","sources":[{"type":"url","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url","url":"https://www.ruby-lang.org/en/downloads/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/09/23/ruby-3-4-11-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/10/23/ruby-3-4-12-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/downloads/branches/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2024/12/25/ruby-3-4-0-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/03/11/ruby-3-4-9-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/06/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2025/10/07/ruby-3-4-7-released/"},{"type":"url","url":"https://redmine.ruby-lang.org/issues.pdf?per_page=50"},{"type":"url","url":"https://redmine.ruby-lang.org/issues.pdf"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?per_page=200"}]}},"output_index":1,"sequence_number":11}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":2,"sequence_number":12}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","output_index":2,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"The latest stable Ruby version is **Ruby 4.0.9**. ","item_id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","logprobs":[],"obfuscation":"hbTEiZ4D4oT02D","output_index":2,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"([ruby-lang.org](https://www.ruby-lang.org/en/downloads/?utm_source=openai))","item_id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","logprobs":[],"obfuscation":"7d74","output_index":2,"sequence_number":15}
+
+        event: response.output_text.annotation.added
+        data: {"type":"response.output_text.annotation.added","annotation":{"type":"url_citation","end_index":126,"start_index":50,"title":"Download Ruby | Ruby","url":"https://www.ruby-lang.org/en/downloads/?utm_source=openai"},"annotation_index":0,"content_index":0,"item_id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","output_index":2,"sequence_number":16}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","logprobs":[],"output_index":2,"sequence_number":17,"text":"The latest stable Ruby version is **Ruby 4.0.9**. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/?utm_source=openai))"}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","output_index":2,"part":{"type":"output_text","annotations":[{"type":"url_citation","end_index":126,"start_index":50,"title":"Download Ruby | Ruby","url":"https://www.ruby-lang.org/en/downloads/?utm_source=openai"}],"logprobs":[],"text":"The latest stable Ruby version is **Ruby 4.0.9**. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/?utm_source=openai))"},"sequence_number":18}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","type":"message","status":"completed","content":[{"type":"output_text","annotations":[{"type":"url_citation","end_index":126,"start_index":50,"title":"Download Ruby | Ruby","url":"https://www.ruby-lang.org/en/downloads/?utm_source=openai"}],"logprobs":[],"text":"The latest stable Ruby version is **Ruby 4.0.9**. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/?utm_source=openai))"}],"phase":"final_answer","role":"assistant"},"output_index":2,"sequence_number":19}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0064c64231418d2a016aea8964378087d084cb775aba0a5330","object":"response","created_at":1793755492,"status":"completed","access_programs":null,"background":false,"completed_at":1793755498,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"ws_0064c64231418d2a016aea8964b85487d09be78f87457666c0","type":"web_search_call","status":"completed","action":{"type":"search","queries":["Ruby latest stable version official release site"],"query":"Ruby latest stable version official release site","sources":[{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?per_page=200"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?f%5B%5D=created_on&op%5Bauthor_id%5D=%3D&op%5Bcreated_on%5D=%3E%3D&v%5Bauthor_id%5D%5B%5D=710&v%5Bcreated_on%5D%5B%5D=2020-12-01"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?assigned_to_id=4%7C3824%7C7408%7C54955%7C6833%7C6835&set_filter=1&sort=status%2Cupdated_on%3Adesc%2Cpriority%3Adesc&status_id=%2A"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?assigned_to_id=13%7C3824&set_filter=1&sort=tracker%3Adesc%2Csubject%3Adesc%2Cupdated_on&status_id=%2A"}]}},{"id":"ws_0064c64231418d2a016aea89689f3087d085f9b9007eb69215","type":"web_search_call","status":"completed","action":{"type":"search","queries":["site:ruby-lang.org ruby 3.4.0 released official","site:ruby-lang.org ruby latest stable version 3.4.x official"],"query":"site:ruby-lang.org ruby 3.4.0 released official","sources":[{"type":"url","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url","url":"https://www.ruby-lang.org/en/downloads/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/09/23/ruby-3-4-11-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/10/23/ruby-3-4-12-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/downloads/branches/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2024/12/25/ruby-3-4-0-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/03/11/ruby-3-4-9-released/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2026/06/"},{"type":"url","url":"https://www.ruby-lang.org/en/news/2025/10/07/ruby-3-4-7-released/"},{"type":"url","url":"https://redmine.ruby-lang.org/issues.pdf?per_page=50"},{"type":"url","url":"https://redmine.ruby-lang.org/issues.pdf"},{"type":"url","url":"https://bugs.ruby-lang.org/issues.pdf?per_page=200"},{"type":"url","url":"https://www.ruby-lang.org/en/downloads/?utm_source=openai"}]}},{"id":"msg_0064c64231418d2a016aea896aa96487d0a7e383c1ede2f971","type":"message","status":"completed","content":[{"type":"output_text","annotations":[{"type":"url_citation","end_index":126,"start_index":50,"title":"Download Ruby | Ruby","url":"https://www.ruby-lang.org/en/downloads/?utm_source=openai"}],"logprobs":[],"text":"The latest stable Ruby version is **Ruby 4.0.9**. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/?utm_source=openai))"}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":2}},"tools":[{"type":"web_search_preview","search_content_types":["text"],"search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":12098,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":127,"output_tokens_details":{"reasoning_tokens":92},"total_tokens":12225},"user":null,"metadata":{}},"sequence_number":20}
+
+  recorded_at: Wed, 04 Nov 2026 01:24:58 GMT
+recorded_with: VCR 6.4.0
+...

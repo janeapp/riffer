@@ -1,0 +1,93 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Say hello"}],"model":"gpt-5.4-mini","temperature":5,"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '102'
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:23:16 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '237'
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fcffa4f035467-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '12'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_6b73cafe5bcf4daeb937b80c734b56e0
+      Set-Cookie:
+      - __cf_bm=aHkFoJYRg2VBorztaZ6CTlEbHXXGxjhS.Wn6ijpk6FA-1793755396.2031882-1.0.1.1-lionE0spe5FHeX__vtpgFp4_WiVoWd3hvCo8YCP32YVS_3nkQ2_QB5HHyAqQ9Wz87dj00GiNjEeulvM9C7nLWWNoDU5ndHJfnSkPQqyNco1a_HKaLwm9MocDCzTMD_9D;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:53:16 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "error": {
+            "message": "Invalid 'temperature': decimal above maximum value. Expected a value <= 2.0, but got 5 instead.",
+            "type": "invalid_request_error",
+            "param": "temperature",
+            "code": "decimal_above_max_value"
+          }
+        }
+  recorded_at: Wed, 04 Nov 2026 01:23:16 GMT
+recorded_with: VCR 6.4.0

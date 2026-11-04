@@ -1,0 +1,174 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Write a 500-word essay about the
+        sea."}],"model":"gpt-5.4-mini","max_output_tokens":20,"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '137'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:24:35 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fd1e55a8876dc-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '255'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999823'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_fb31d08ba2a548da9eff67ca8254ae66
+      Set-Cookie:
+      - __cf_bm=1iBOY910ob6GoPJ4ZbiYJrNyb.9CT4JM245q1HtwhLI-1793755474.7796545-1.0.1.1-mq9oovzZkWzEe7nPwLZwrKcM4FSTk5F9WGICjBKZvP5qqiuDfXp8wsGlwRKXoQHJcQiMLCzP4ePkC5TNX1N8OB7UAZ42iyqOc9mlatyXfBA4uKxPiDwt25Z5YrVjyB.q;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:54:35 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0a6ada49c9a2848e016aea8952da2887d0aa727d64d90eda68","object":"response","created_at":1793755474,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":20,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0a6ada49c9a2848e016aea8952da2887d0aa727d64d90eda68","object":"response","created_at":1793755474,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":20,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":2}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":3}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"The","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"t2f0TJgOXUxMP","output_index":0,"sequence_number":4}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" sea","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"CNbPCZeYB5J5","output_index":0,"sequence_number":5}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" has","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"pGBXn6w5BhCP","output_index":0,"sequence_number":6}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" always","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"A2g9mdYyW","output_index":0,"sequence_number":7}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" held","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"9190Brd3nDz","output_index":0,"sequence_number":8}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"0vMBVZFnHfJ1TV","output_index":0,"sequence_number":9}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" powerful","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"iLhoTSh","output_index":0,"sequence_number":10}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" place","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"q7oj5n2JDJ","output_index":0,"sequence_number":11}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" in","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"Yv5VkpZipnrCz","output_index":0,"sequence_number":12}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"4mrA06RlmWjg","output_index":0,"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" human","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"1tlcFmqGEj","output_index":0,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" imagination","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"LLIQ","output_index":0,"sequence_number":15}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"lgXxvFpA8qWfi2D","output_index":0,"sequence_number":16}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" It","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"qd79I2N46vJbG","output_index":0,"sequence_number":17}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" is","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"afSm5IUlf6tr1","output_index":0,"sequence_number":18}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" vast","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"pzDdGHzYYrM","output_index":0,"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"obfuscation":"9SRErtjy1sITxr3","output_index":0,"sequence_number":20}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","logprobs":[],"output_index":0,"sequence_number":21,"text":"The sea has always held a powerful place in the human imagination. It is vast,"}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"The sea has always held a powerful place in the human imagination. It is vast,"},"sequence_number":22}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","type":"message","status":"incomplete","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"The sea has always held a powerful place in the human imagination. It is vast,"}],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":23}
+
+        event: response.incomplete
+        data: {"type":"response.incomplete","response":{"id":"resp_0a6ada49c9a2848e016aea8952da2887d0aa727d64d90eda68","object":"response","created_at":1793755474,"status":"incomplete","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":{"reason":"max_output_tokens"},"instructions":null,"max_output_tokens":20,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"msg_0a6ada49c9a2848e016aea89536d4087d0aa32736f0f8bd6db","type":"message","status":"incomplete","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"The sea has always held a powerful place in the human imagination. It is vast,"}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":16,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":20,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":36},"user":null,"metadata":{}},"sequence_number":24}
+
+  recorded_at: Wed, 04 Nov 2026 01:24:35 GMT
+recorded_with: VCR 6.4.0
+...

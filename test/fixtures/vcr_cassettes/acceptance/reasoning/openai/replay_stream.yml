@@ -1,0 +1,236 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5.4-mini","reasoning":{"effort":"high","summary":"auto"},"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '421'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:22:36 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fceff48d1ff4c-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '204'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999487'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_90e4b0d042be485aafc5f64a2c99944d
+      Set-Cookie:
+      - __cf_bm=4oVXRDnewJ1jwJEp7odOypCklYVfA2iUXHX5OoUa2Ac-1793755356.046673-1.0.1.1-hQSuS4AeH36ZRGUWAJS_GY0.vVz8EbYw5kANLJhRbVdv6ISLGpVpBlkfzP76p5mLHs1TVGH4O9fP3lr4wVQVSEgEJO.8OeDqRk.YebuU9SDVLHcm_iPhY2ulfVFHB8O5;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:52:36 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_071e5b1ae0d43941016aea88dc1acc87d08019ac453ffc1bdd","object":"response","created_at":1793755356,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"high","mode":"standard","summary":"detailed"},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_071e5b1ae0d43941016aea88dc1acc87d08019ac453ffc1bdd","object":"response","created_at":1793755356,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"high","mode":"standard","summary":"detailed"},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"rs_071e5b1ae0d43941016aea88dc9c9887d0b999421ffe1948c1","type":"reasoning","content":[],"encrypted_content":"gAAAAABq6ojcnF1PtVTqCt5uWD8eqjh87m1AlqmSunCLiSK4-2Cb0amKfj6KPFBOSv3LO-K_r374nwnfOH5SxMQrIRvHimgjw-dOA7kVEtNR8WkbrNOn9k1Dhy2c9gSM6Yd5CJRPmGrhzKHGOhgmy4xB2Ug5VoeZh5Q9SsnmnTFBB4t5HVtlR7nn_nWf8PbkfnBrwScJMgoBnvTQ2HhhzmsizaCpYvpkgo0yR0BEWzFiUjTzZWe7hNbhDpv2lcjwT1pBy5AOErOT0CT48FG0JPwqs4t3J_qOSUoCKD6IaA7vkELlh6ncf1BVKSkv3L30Vzw1zVAq_9IC7CmxzxSnXS30hvHI_j-aShneZfRMytYPZT-S1USyGRy7rkfxr8Khqqs-puxZZt0sX4dam-9sYJie_zbYX5Bp6O6f56e352-XpZKyxj-Z8Hf_W_w78ENmP7ZXVnhcWfI1CvVsyF8eldSHnWe2ucgSBZ7oBo5xKg-yuRtGzDzS--BinhwZsBrV2kHjZzsL4ukItQkcCD2JGWEyZ4cKIUwr8uZ0stMef7FV-jbIy8jtzgNkd-covSBp9KDNsTtg4LSJKTe7c6UmDKpG31GD2K0VxPCO4sEVo_Z0SYIufhOI4nxHEc9hHSAheQ1JDG395StErZfFOFQzrwz5yMwxWHuqQjA1DANCjFOvTuMkMu39wMwiM3T2ojZ0KVDAtlA6scf8kwLhtQh5amEW8DwyN1vWqPzoFRWjkzLwzj8sdBIfUvDLyn7yaDmGLIG-Vnwhq_Kf_Uj5WVb5XwwCiT85NSttnwrm6JN9ryb6w1uZhM1LCzqywI0-WT-yNfzE4D6eYuXzb7i2wWRfjFUiJb_5xV4PbO7_NsxSLdwDJQcwX6vtB6Y0s1OmYx6IpuA9L6Bfz3h378logkWgFe0_CpiWgtWrCP3laJU8iwnaLJ8NMzVLe41m-Zhqjseu7yYVw4ShPO9OrGsNuPmIMuQ4r4bLuDNdvutvzRtsHsU6NwPfVQczSUnLEZc9RgVIPpb08gYtdSGUk6An2bQ6kTN6HJrRDqqWEkWnAN5yKtMOb6ujJG4oZkT4WUpl22lae1qtxeJopjF52AYnGfGneGChYTemfnb7hagTvvByIPDqODXRXyRxeZeJXHg1T_BoRqueNnwwqrVcdBzScNhFHwEM2VbK5iIUyFDguYCb_ozrzgGhx3LWVWvBdNiIT0dwPC-aZXt7AVLdnMJpWpqRAsOq0yI7eJA1DQ==","summary":[]},"output_index":0,"sequence_number":2}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"rs_071e5b1ae0d43941016aea88dc9c9887d0b999421ffe1948c1","type":"reasoning","content":[],"encrypted_content":"gAAAAABq6ojdS4CXcbmfRPrLNGRZ7_6SmJmYrGplkTzMS54IzlSySU0pRATzF9XHvvukzuegP-XfprBcGMx-npkr1aufnDf5OM7aMosmHgE8Kw_NhsxKjUZw-aEGIcw8plca79-IZVwopxeku4jyJXrYCj9zHWr8JtZL2rcDJTZwVEJcIt99cdNIIXoa2LCttqjADtubwZ512Wwz7SiQbFpJhdwctcexJf9kaqeCKXEKrdfVEOE0v00CDTeF_Hk8mEVstvu8XOMhP2OqcAAAO704ZEVxLYOi5UZ0EKjd2jPwKagihRdXoPOImy6xPva5OHiz03oQ7pfvA1YUYfYO9gniG0ULrS2Y09loG2G86vrPPOYsOSqkXVmiNIbu_f7z3K5uq7oPT4Zyl-aA-NRGZAiAgGQ_hHe7cUKfBrUijy7uyE4eP8oSJpBslk4hdmTWNrgm1I3LOxTRbEhqNnZQLVmh0P3FB9KMiDrgEulJbqQLsb18D4r4mvHMhhSOTg-aqZ18WB9JfniP7thC2irdq7S0CVcWYm99bNlX0K2DZmw-WIbgzqgEuDG1rlnbTTkx8ZRvEeAZ8oXUQhxalrh0tORwnuKUyxANNbhxQSys2JVoM47lVai4Z-nWUGNsypRynwwljO1XI7EwXa_L-mJfhlyrzQHfkE4LTPM3vVoZLtx4Ti3pO7RvMJqXd-gxPEu908bYkNRmVx4R6441b0Gtd6iRVqny2PDW8XMLSxLPEvtYZAWdYivr0xa2y_EK2Wj7c3CI6sfF6MQ2B2LjNC0x_LKmBz6xHOP0-2V8DuL81oDGMmAno_Vlg84EgTYzQSw_3yb0M33cBEnf-mv1M767MgYM6WGvnG2KJwgH9wxBiaVsbQexZAq1gKOzgdE-_EoC4bZ6Xuz4wnfdWpBYYa2C3d8ppHJlA7epqAqRGvPJXnfpQJOwo2jMhmwPfLcTX8B4n9gmr01FAT9zRI3Vupxh463Y_uMsrGl1qkbVWf4c7kwQR4tuvhcdy-_bbgf7HVC-1qin2c04Hymcopn-gUnMnzruMgDLiTvXbdc7kp-1eCSfTHee7RRUSWW5bXL3okwNLOtkZ8_eGTAbarvoAiqE2rqyqg2m-omQKIBKT7RvMhPxWLo0NkE2QzeVwYdam6Ih5Aoxdd2VFZ4cAhfNaI2c8yovxyQn3Wh0XvzLIYLkZ5q3kHbjhBfitbL9lxNjh-Ek1VUDHoSUyqWSZnso-SmOClQllVDapXdzLqXS_ChOKdFK_iF1eQZpoCxQ1pMpnGhStRwKWWg3LLvYGUyuGjqQqkUU1-LE1O9VtyAzQWYyQWP1OXSW6BIAPSNKkUjAbpRnqaU_Zfb-SVT4HkSWac_OukDgIlesxA5OR7CUcrxBGmjx9d_cJzERtIIF_vDEUYPUo6Y4jDDaAOnDXdgMfiPv8UDauixpY-FHtrpM7aaUtHO-UxFqOBg2e--xlAmPtXtMY62o3jd7z7nT_FCyAYzy4na7qlvXJLJGXg7os7LjFkh8N2YW9IEuFVrKb9k7WRXx5TwT-HsL3hREfjLD7yS6cUfJccXMz6iFiGVHjQ35JFmCmzX56m7MNJUGfomqdt4CZHMaJ1ACap-QBLj2aaL87UEHBrVJsk1cByWFWHhruNmkrQacBfNkOPFd35aM_Rfqm7_XzRUzgpnSBxwM7gsYQDArAf_AaixJ2oRxQYOzn3sXqL5M2l3PKjM=","summary":[]},"output_index":0,"sequence_number":3}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","type":"function_call","status":"in_progress","arguments":"","call_id":"call_xVkWW5kOTh0Id9IsThJqacap","name":"get_weather"},"output_index":1,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","obfuscation":"YM3RhJofqzTHRK","output_index":1,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"city","item_id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","obfuscation":"6JY9QIY8yuOr","output_index":1,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","obfuscation":"CJZzWeeCL0bHZ","output_index":1,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"Toronto","item_id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","obfuscation":"kjjpLpdYD","output_index":1,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","obfuscation":"dqqwlZdYkPm25W","output_index":1,"sequence_number":9}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"city\":\"Toronto\"}","item_id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","output_index":1,"sequence_number":10}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_xVkWW5kOTh0Id9IsThJqacap","name":"get_weather"},"output_index":1,"sequence_number":11}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_071e5b1ae0d43941016aea88dc1acc87d08019ac453ffc1bdd","object":"response","created_at":1793755356,"status":"completed","access_programs":null,"background":false,"completed_at":1793755357,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"rs_071e5b1ae0d43941016aea88dc9c9887d0b999421ffe1948c1","type":"reasoning","content":[],"encrypted_content":"gAAAAABq6ojdUuvU49gK6-ovSw15uNaWj_S5-slnvH7J25dI3mDk5JpadnQVMNJ0dXBITS0OwSFydX776zuehAbfIQFgWAORRmvs1keGpX5y0nCyK4vX2Ko8kLk-4Hiqer2qN-x_Mlkhr99EBma2lwo0ZFmWOPfa0ds9yjpO7GowbuYqnvJsIAn7d_DPhbiCwDOueJ0WQH25jxWRqyKOyQGaUQJu79JVD_ZqRAKyIzO4hHFtwR_0Sr4W_eDknbBemNAD3G2J9hqkfzFFE7DuPxuqvEJuJjs-rLbOVgW49RLkAWVPNxxjc15ql2l06tgLDEw6gB2X48HL8KP6DSf8BNMAh5khUcbTsidFrzdCOwAlGNTUH6oRLEedYG8Vjqxgb0ZPrajnntmIJlqYs8I1BSCfAk7O1mJt39LAyKaSyhpWN0ZpfqeMcm2sx8onKSXcpOR4qA2_fA7sRqjr_Jtf6U6cVe6gnVjeeYHeaxZfZCloR6fIixGCRM4MK_uLmvI0mdaEpHKDpF6wKsR222rjsML7_TWSUQJLXeGJx3SmxEfBoQSbILWz4-jX9mJvhEvhcXg7YMWj5RiyMITqERc-Hl1uTRcCwUROs1n5Y5-5oTd8AJV1XuGFFnYQ9xrz7EB3R6FnfJgAf7iazVErQyCDy5Y9835VQwpM_DIC7Frm-vZvQz4FA365DZfTAznart6nBxp12zgBcCktQdUIq9niSWLtbnnKOj38VnmI6vtmAu1_Gbaogh7Ns2UkkOE1-_Ib1ZDX5_wpoNxC9MhJqoK9cGiHa2QHRCgasncbRRdV3z9HUHBc0ksovw8yE1RIH-DC5GVYZp3OlaUWPxQ3wuk8m1EZ0j9tplQdhUlCzXNS5MHObYDY30Uhbj5fCNmGhUbO7awP3gW-M_mzJCqEZcuGrEeAmWYkE01LTDSk6Si_S6AwiOgyWAWQQfVuQGCc_evU5OOXSaoxO5hYryHxqxKKNtiCC1yFGupXUnD8ku-dz7x6_fJfry1Ob8-LFrRndg6cS2gpwZZAxyugewGJlrvy16JJB19YQwStq2puvFKrPl9iMBptItEKA5h3JaqqugOtu_v-3yYLdLOqJDlRv94aboTuiT0dbPYpcx-J441zpYN6w9VbVXM59mH8Slzyjip8qKFVaEO_f9JN2WIwN6BcKpPr2zljlXc8vJgs2U4Ew4awdbBHOvfvplKqxcT9UH4udxXKWwQS4AyprcResOCixXW5lP-af5BYzsNCdeLyKrJr_JrWtnOUicLZqindPUsGiVbcdWeaLQrLII6Lvw9S24guMnOiCyUzMNkyiXSTDb9CP2lYEu7MgYc-dRCRL-t0-pptJlI1voSmhRjRQVuqyEYZACUcE-kxixZqngxhj6uNSa8gzJWvE3JKKKFdsBmxs0iQtO1Ml0-aKInYCnZOiNVLRQMs900DLr89y5SRnKdhkT0Ct9pePNmoWef9ljHZOwUDJo50JzvBMrbpuCwbGx3qPjPxG3HBWbv1uwOAMC79xC0gfes5shO4icJqGrw2TgQ4S61g0ATZ0jMiS6AsKx8ioKMGNzpmD9uh6PkWOSi6ldDwqe96JwzXR90z0x2HLV8WlsOS8wa9P5ukAOVmjGTC4FJMJvfMzoIKNieoNR853wU-RHqJZiRyOyC72Zc9q2sV60bzKRY2OPVXe8GUlJOs4EvMxfd4Dgb-Lz-QdBfWpS2NpmoHvPU=","summary":[]},{"id":"fc_071e5b1ae0d43941016aea88dda94887d09fb9bb4de823804f","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_xVkWW5kOTh0Id9IsThJqacap","name":"get_weather"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"high","mode":"standard","summary":"detailed"},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":56,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":40,"output_tokens_details":{"reasoning_tokens":20},"total_tokens":96},"user":null,"metadata":{}},"sequence_number":12}
+
+  recorded_at: Wed, 04 Nov 2026 01:22:37 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"reasoning","id":"rs_071e5b1ae0d43941016aea88dc9c9887d0b999421ffe1948c1","summary":[],"encrypted_content":"gAAAAABq6ojdS4CXcbmfRPrLNGRZ7_6SmJmYrGplkTzMS54IzlSySU0pRATzF9XHvvukzuegP-XfprBcGMx-npkr1aufnDf5OM7aMosmHgE8Kw_NhsxKjUZw-aEGIcw8plca79-IZVwopxeku4jyJXrYCj9zHWr8JtZL2rcDJTZwVEJcIt99cdNIIXoa2LCttqjADtubwZ512Wwz7SiQbFpJhdwctcexJf9kaqeCKXEKrdfVEOE0v00CDTeF_Hk8mEVstvu8XOMhP2OqcAAAO704ZEVxLYOi5UZ0EKjd2jPwKagihRdXoPOImy6xPva5OHiz03oQ7pfvA1YUYfYO9gniG0ULrS2Y09loG2G86vrPPOYsOSqkXVmiNIbu_f7z3K5uq7oPT4Zyl-aA-NRGZAiAgGQ_hHe7cUKfBrUijy7uyE4eP8oSJpBslk4hdmTWNrgm1I3LOxTRbEhqNnZQLVmh0P3FB9KMiDrgEulJbqQLsb18D4r4mvHMhhSOTg-aqZ18WB9JfniP7thC2irdq7S0CVcWYm99bNlX0K2DZmw-WIbgzqgEuDG1rlnbTTkx8ZRvEeAZ8oXUQhxalrh0tORwnuKUyxANNbhxQSys2JVoM47lVai4Z-nWUGNsypRynwwljO1XI7EwXa_L-mJfhlyrzQHfkE4LTPM3vVoZLtx4Ti3pO7RvMJqXd-gxPEu908bYkNRmVx4R6441b0Gtd6iRVqny2PDW8XMLSxLPEvtYZAWdYivr0xa2y_EK2Wj7c3CI6sfF6MQ2B2LjNC0x_LKmBz6xHOP0-2V8DuL81oDGMmAno_Vlg84EgTYzQSw_3yb0M33cBEnf-mv1M767MgYM6WGvnG2KJwgH9wxBiaVsbQexZAq1gKOzgdE-_EoC4bZ6Xuz4wnfdWpBYYa2C3d8ppHJlA7epqAqRGvPJXnfpQJOwo2jMhmwPfLcTX8B4n9gmr01FAT9zRI3Vupxh463Y_uMsrGl1qkbVWf4c7kwQR4tuvhcdy-_bbgf7HVC-1qin2c04Hymcopn-gUnMnzruMgDLiTvXbdc7kp-1eCSfTHee7RRUSWW5bXL3okwNLOtkZ8_eGTAbarvoAiqE2rqyqg2m-omQKIBKT7RvMhPxWLo0NkE2QzeVwYdam6Ih5Aoxdd2VFZ4cAhfNaI2c8yovxyQn3Wh0XvzLIYLkZ5q3kHbjhBfitbL9lxNjh-Ek1VUDHoSUyqWSZnso-SmOClQllVDapXdzLqXS_ChOKdFK_iF1eQZpoCxQ1pMpnGhStRwKWWg3LLvYGUyuGjqQqkUU1-LE1O9VtyAzQWYyQWP1OXSW6BIAPSNKkUjAbpRnqaU_Zfb-SVT4HkSWac_OukDgIlesxA5OR7CUcrxBGmjx9d_cJzERtIIF_vDEUYPUo6Y4jDDaAOnDXdgMfiPv8UDauixpY-FHtrpM7aaUtHO-UxFqOBg2e--xlAmPtXtMY62o3jd7z7nT_FCyAYzy4na7qlvXJLJGXg7os7LjFkh8N2YW9IEuFVrKb9k7WRXx5TwT-HsL3hREfjLD7yS6cUfJccXMz6iFiGVHjQ35JFmCmzX56m7MNJUGfomqdt4CZHMaJ1ACap-QBLj2aaL87UEHBrVJsk1cByWFWHhruNmkrQacBfNkOPFd35aM_Rfqm7_XzRUzgpnSBxwM7gsYQDArAf_AaixJ2oRxQYOzn3sXqL5M2l3PKjM="},{"type":"function_call","call_id":"call_xVkWW5kOTh0Id9IsThJqacap","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_xVkWW5kOTh0Id9IsThJqacap","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-5.4-mini","reasoning":{"effort":"high","summary":"auto"},"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2506'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:22:38 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fcf0a5cefff4c-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '224'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999427'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_fe70756486ba46439ab5408b25874555
+      Set-Cookie:
+      - __cf_bm=7TaAS.p2cVi23HqHbztx2HWe49X6PZcoYCCWRHn.Yxg-1793755357.8186576-1.0.1.1-_k1uMxnUuASUmlFSBKk5TLU68ODOMDhgiGmvL6.0XF2tW0OS0B81DsQdahkRQbQKQuVvdZ2PR0MjVjap595dwFftuBmKaFgl8Dmglz666LhEJcT5lAw6.1o1Hcqdkys1;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:52:38 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZXZlbnQ6IHJlc3BvbnNlLmNyZWF0ZWQKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2UuY3JlYXRlZCIsInJlc3BvbnNlIjp7ImlkIjoicmVzcF8wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZGRmMjQ4N2QwYWE1NGU1YjE5NTgwZThlOCIsIm9iamVjdCI6InJlc3BvbnNlIiwiY3JlYXRlZF9hdCI6MTc5Mzc1NTM1Nywic3RhdHVzIjoiaW5fcHJvZ3Jlc3MiLCJhY2Nlc3NfcHJvZ3JhbXMiOm51bGwsImJhY2tncm91bmQiOmZhbHNlLCJjb21wbGV0ZWRfYXQiOm51bGwsImVycm9yIjpudWxsLCJmcmVxdWVuY3lfcGVuYWx0eSI6MC4wLCJpbWFnZSI6eyJjb250ZXh0X2NvbXByZXNzaW9uIjoiZGlzYWJsZWQifSwiaW5jb21wbGV0ZV9kZXRhaWxzIjpudWxsLCJpbnN0cnVjdGlvbnMiOm51bGwsIm1heF9vdXRwdXRfdG9rZW5zIjpudWxsLCJtYXhfdG9vbF9jYWxscyI6bnVsbCwibW9kZWwiOiJncHQtNS40LW1pbmktMjAyNi0wMy0xNyIsIm1vZGVyYXRpb24iOm51bGwsIm91dHB1dCI6W10sInBhcmFsbGVsX3Rvb2xfY2FsbHMiOnRydWUsInByZXNlbmNlX3BlbmFsdHkiOjAuMCwicHJldmlvdXNfcmVzcG9uc2VfaWQiOm51bGwsInByb21wdF9jYWNoZV9rZXkiOm51bGwsInByb21wdF9jYWNoZV9yZXRlbnRpb24iOiJpbl9tZW1vcnkiLCJyZWFzb25pbmciOnsiY29udGV4dCI6ImN1cnJlbnRfdHVybiIsImVmZm9ydCI6ImhpZ2giLCJtb2RlIjoic3RhbmRhcmQiLCJzdW1tYXJ5IjoiZGV0YWlsZWQifSwic2FmZXR5X2lkZW50aWZpZXIiOm51bGwsInNlcnZpY2VfdGllciI6ImF1dG8iLCJzdG9yZSI6ZmFsc2UsInRlbXBlcmF0dXJlIjoxLjAsInRleHQiOnsiZm9ybWF0Ijp7InR5cGUiOiJ0ZXh0In0sInZlcmJvc2l0eSI6Im1lZGl1bSJ9LCJ0b29sX2Nob2ljZSI6ImF1dG8iLCJ0b29sX3VzYWdlIjp7ImltYWdlX2dlbiI6eyJpbnB1dF90b2tlbnMiOjAsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImltYWdlX3Rva2VucyI6MCwidGV4dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjowLCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsiaW1hZ2VfdG9rZW5zIjowLCJ0ZXh0X3Rva2VucyI6MH0sInRvdGFsX3Rva2VucyI6MH0sIndlYl9zZWFyY2giOnsibnVtX3JlcXVlc3RzIjowfX0sInRvb2xzIjpbeyJ0eXBlIjoiZnVuY3Rpb24iLCJkZXNjcmlwdGlvbiI6IkdldCB0aGUgY3VycmVudCB3ZWF0aGVyIGZvciBhIGNpdHkiLCJuYW1lIjoiZ2V0X3dlYXRoZXIiLCJvdXRwdXRfc2NoZW1hIjpudWxsLCJwYXJhbWV0ZXJzIjp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7ImNpdHkiOnsidHlwZSI6InN0cmluZyIsImRlc2NyaXB0aW9uIjoiVGhlIGNpdHkgbmFtZSJ9fSwicmVxdWlyZWQiOlsiY2l0eSJdLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6ZmFsc2V9LCJzdHJpY3QiOnRydWV9XSwidG9wX2xvZ3Byb2JzIjowLCJ0b3BfcCI6MC45OCwidHJ1bmNhdGlvbiI6ImRpc2FibGVkIiwidXNhZ2UiOm51bGwsInVzZXIiOm51bGwsIm1ldGFkYXRhIjp7fX0sInNlcXVlbmNlX251bWJlciI6MH0KCmV2ZW50OiByZXNwb25zZS5pbl9wcm9ncmVzcwpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5pbl9wcm9ncmVzcyIsInJlc3BvbnNlIjp7ImlkIjoicmVzcF8wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZGRmMjQ4N2QwYWE1NGU1YjE5NTgwZThlOCIsIm9iamVjdCI6InJlc3BvbnNlIiwiY3JlYXRlZF9hdCI6MTc5Mzc1NTM1Nywic3RhdHVzIjoiaW5fcHJvZ3Jlc3MiLCJhY2Nlc3NfcHJvZ3JhbXMiOm51bGwsImJhY2tncm91bmQiOmZhbHNlLCJjb21wbGV0ZWRfYXQiOm51bGwsImVycm9yIjpudWxsLCJmcmVxdWVuY3lfcGVuYWx0eSI6MC4wLCJpbWFnZSI6eyJjb250ZXh0X2NvbXByZXNzaW9uIjoiZGlzYWJsZWQifSwiaW5jb21wbGV0ZV9kZXRhaWxzIjpudWxsLCJpbnN0cnVjdGlvbnMiOm51bGwsIm1heF9vdXRwdXRfdG9rZW5zIjpudWxsLCJtYXhfdG9vbF9jYWxscyI6bnVsbCwibW9kZWwiOiJncHQtNS40LW1pbmktMjAyNi0wMy0xNyIsIm1vZGVyYXRpb24iOm51bGwsIm91dHB1dCI6W10sInBhcmFsbGVsX3Rvb2xfY2FsbHMiOnRydWUsInByZXNlbmNlX3BlbmFsdHkiOjAuMCwicHJldmlvdXNfcmVzcG9uc2VfaWQiOm51bGwsInByb21wdF9jYWNoZV9rZXkiOm51bGwsInByb21wdF9jYWNoZV9yZXRlbnRpb24iOiJpbl9tZW1vcnkiLCJyZWFzb25pbmciOnsiY29udGV4dCI6ImN1cnJlbnRfdHVybiIsImVmZm9ydCI6ImhpZ2giLCJtb2RlIjoic3RhbmRhcmQiLCJzdW1tYXJ5IjoiZGV0YWlsZWQifSwic2FmZXR5X2lkZW50aWZpZXIiOm51bGwsInNlcnZpY2VfdGllciI6ImF1dG8iLCJzdG9yZSI6ZmFsc2UsInRlbXBlcmF0dXJlIjoxLjAsInRleHQiOnsiZm9ybWF0Ijp7InR5cGUiOiJ0ZXh0In0sInZlcmJvc2l0eSI6Im1lZGl1bSJ9LCJ0b29sX2Nob2ljZSI6ImF1dG8iLCJ0b29sX3VzYWdlIjp7ImltYWdlX2dlbiI6eyJpbnB1dF90b2tlbnMiOjAsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImltYWdlX3Rva2VucyI6MCwidGV4dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjowLCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsiaW1hZ2VfdG9rZW5zIjowLCJ0ZXh0X3Rva2VucyI6MH0sInRvdGFsX3Rva2VucyI6MH0sIndlYl9zZWFyY2giOnsibnVtX3JlcXVlc3RzIjowfX0sInRvb2xzIjpbeyJ0eXBlIjoiZnVuY3Rpb24iLCJkZXNjcmlwdGlvbiI6IkdldCB0aGUgY3VycmVudCB3ZWF0aGVyIGZvciBhIGNpdHkiLCJuYW1lIjoiZ2V0X3dlYXRoZXIiLCJvdXRwdXRfc2NoZW1hIjpudWxsLCJwYXJhbWV0ZXJzIjp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7ImNpdHkiOnsidHlwZSI6InN0cmluZyIsImRlc2NyaXB0aW9uIjoiVGhlIGNpdHkgbmFtZSJ9fSwicmVxdWlyZWQiOlsiY2l0eSJdLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6ZmFsc2V9LCJzdHJpY3QiOnRydWV9XSwidG9wX2xvZ3Byb2JzIjowLCJ0b3BfcCI6MC45OCwidHJ1bmNhdGlvbiI6ImRpc2FibGVkIiwidXNhZ2UiOm51bGwsInVzZXIiOm51bGwsIm1ldGFkYXRhIjp7fX0sInNlcXVlbmNlX251bWJlciI6MX0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfaXRlbS5hZGRlZApkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfaXRlbS5hZGRlZCIsIml0ZW0iOnsiaWQiOiJtc2dfMDcxZTViMWFlMGQ0Mzk0MTAxNmFlYTg4ZGU2OGE4ODdkMGE1ZDA0MDQ5NWYyMzUyOGYiLCJ0eXBlIjoibWVzc2FnZSIsInN0YXR1cyI6ImluX3Byb2dyZXNzIiwiY29udGVudCI6W10sInBoYXNlIjoiZmluYWxfYW5zd2VyIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJvdXRwdXRfaW5kZXgiOjAsInNlcXVlbmNlX251bWJlciI6Mn0KCmV2ZW50OiByZXNwb25zZS5jb250ZW50X3BhcnQuYWRkZWQKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2UuY29udGVudF9wYXJ0LmFkZGVkIiwiY29udGVudF9pbmRleCI6MCwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsIm91dHB1dF9pbmRleCI6MCwicGFydCI6eyJ0eXBlIjoib3V0cHV0X3RleHQiLCJhbm5vdGF0aW9ucyI6W10sImxvZ3Byb2JzIjpbXSwidGV4dCI6IiJ9LCJzZXF1ZW5jZV9udW1iZXIiOjN9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEiLCJjb250ZW50X2luZGV4IjowLCJkZWx0YSI6IlRoZSIsIml0ZW1faWQiOiJtc2dfMDcxZTViMWFlMGQ0Mzk0MTAxNmFlYTg4ZGU2OGE4ODdkMGE1ZDA0MDQ5NWYyMzUyOGYiLCJsb2dwcm9icyI6W10sIm9iZnVzY2F0aW9uIjoieHNQMnY3a0NoOFRRRiIsIm91dHB1dF9pbmRleCI6MCwic2VxdWVuY2VfbnVtYmVyIjo0fQoKZXZlbnQ6IHJlc3BvbnNlLm91dHB1dF90ZXh0LmRlbHRhCmRhdGE6IHsidHlwZSI6InJlc3BvbnNlLm91dHB1dF90ZXh0LmRlbHRhIiwiY29udGVudF9pbmRleCI6MCwiZGVsdGEiOiIgd2VhdGhlciIsIml0ZW1faWQiOiJtc2dfMDcxZTViMWFlMGQ0Mzk0MTAxNmFlYTg4ZGU2OGE4ODdkMGE1ZDA0MDQ5NWYyMzUyOGYiLCJsb2dwcm9icyI6W10sIm9iZnVzY2F0aW9uIjoiZno0MnR6YzQiLCJvdXRwdXRfaW5kZXgiOjAsInNlcXVlbmNlX251bWJlciI6NX0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YSIsImNvbnRlbnRfaW5kZXgiOjAsImRlbHRhIjoiIGluIiwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiJ2YXlnTnVNWGZ1clVEIiwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjZ9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEiLCJjb250ZW50X2luZGV4IjowLCJkZWx0YSI6IiBUb3JvbnRvIiwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiJaMzFXcU9hQyIsIm91dHB1dF9pbmRleCI6MCwic2VxdWVuY2VfbnVtYmVyIjo3fQoKZXZlbnQ6IHJlc3BvbnNlLm91dHB1dF90ZXh0LmRlbHRhCmRhdGE6IHsidHlwZSI6InJlc3BvbnNlLm91dHB1dF90ZXh0LmRlbHRhIiwiY29udGVudF9pbmRleCI6MCwiZGVsdGEiOiIgaXMiLCJpdGVtX2lkIjoibXNnXzA3MWU1YjFhZTBkNDM5NDEwMTZhZWE4OGRlNjhhODg3ZDBhNWQwNDA0OTVmMjM1MjhmIiwibG9ncHJvYnMiOltdLCJvYmZ1c2NhdGlvbiI6InlMd0Izb2R3cXp6bFoiLCJvdXRwdXRfaW5kZXgiOjAsInNlcXVlbmNlX251bWJlciI6OH0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YSIsImNvbnRlbnRfaW5kZXgiOjAsImRlbHRhIjoiICoqIiwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiJmdXVFZ3JJTUpuSVd6Iiwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjl9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2Uub3V0cHV0X3RleHQuZGVsdGEiLCJjb250ZW50X2luZGV4IjowLCJkZWx0YSI6IjE1IiwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiJTazhNc2ZVV2k4TmJ1QiIsIm91dHB1dF9pbmRleCI6MCwic2VxdWVuY2VfbnVtYmVyIjoxMH0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YSIsImNvbnRlbnRfaW5kZXgiOjAsImRlbHRhIjoiwrBDIiwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiI0S0FzcGYyd0R5a3p5cSIsIm91dHB1dF9pbmRleCI6MCwic2VxdWVuY2VfbnVtYmVyIjoxMX0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5kZWx0YSIsImNvbnRlbnRfaW5kZXgiOjAsImRlbHRhIjoiKioiLCJpdGVtX2lkIjoibXNnXzA3MWU1YjFhZTBkNDM5NDEwMTZhZWE4OGRlNjhhODg3ZDBhNWQwNDA0OTVmMjM1MjhmIiwibG9ncHJvYnMiOltdLCJvYmZ1c2NhdGlvbiI6IjVhNzMzMmFibE1IVnQ5Iiwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjEyfQoKZXZlbnQ6IHJlc3BvbnNlLm91dHB1dF90ZXh0LmRlbHRhCmRhdGE6IHsidHlwZSI6InJlc3BvbnNlLm91dHB1dF90ZXh0LmRlbHRhIiwiY29udGVudF9pbmRleCI6MCwiZGVsdGEiOiIuIiwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib2JmdXNjYXRpb24iOiJsalNnM1VvbFd3N2pQaFQiLCJvdXRwdXRfaW5kZXgiOjAsInNlcXVlbmNlX251bWJlciI6MTN9CgpldmVudDogcmVzcG9uc2Uub3V0cHV0X3RleHQuZG9uZQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5vdXRwdXRfdGV4dC5kb25lIiwiY29udGVudF9pbmRleCI6MCwiaXRlbV9pZCI6Im1zZ18wNzFlNWIxYWUwZDQzOTQxMDE2YWVhODhkZTY4YTg4N2QwYTVkMDQwNDk1ZjIzNTI4ZiIsImxvZ3Byb2JzIjpbXSwib3V0cHV0X2luZGV4IjowLCJzZXF1ZW5jZV9udW1iZXIiOjE0LCJ0ZXh0IjoiVGhlIHdlYXRoZXIgaW4gVG9yb250byBpcyAqKjE1wrBDKiouIn0KCmV2ZW50OiByZXNwb25zZS5jb250ZW50X3BhcnQuZG9uZQpkYXRhOiB7InR5cGUiOiJyZXNwb25zZS5jb250ZW50X3BhcnQuZG9uZSIsImNvbnRlbnRfaW5kZXgiOjAsIml0ZW1faWQiOiJtc2dfMDcxZTViMWFlMGQ0Mzk0MTAxNmFlYTg4ZGU2OGE4ODdkMGE1ZDA0MDQ5NWYyMzUyOGYiLCJvdXRwdXRfaW5kZXgiOjAsInBhcnQiOnsidHlwZSI6Im91dHB1dF90ZXh0IiwiYW5ub3RhdGlvbnMiOltdLCJsb2dwcm9icyI6W10sInRleHQiOiJUaGUgd2VhdGhlciBpbiBUb3JvbnRvIGlzICoqMTXCsEMqKi4ifSwic2VxdWVuY2VfbnVtYmVyIjoxNX0KCmV2ZW50OiByZXNwb25zZS5vdXRwdXRfaXRlbS5kb25lCmRhdGE6IHsidHlwZSI6InJlc3BvbnNlLm91dHB1dF9pdGVtLmRvbmUiLCJpdGVtIjp7ImlkIjoibXNnXzA3MWU1YjFhZTBkNDM5NDEwMTZhZWE4OGRlNjhhODg3ZDBhNWQwNDA0OTVmMjM1MjhmIiwidHlwZSI6Im1lc3NhZ2UiLCJzdGF0dXMiOiJjb21wbGV0ZWQiLCJjb250ZW50IjpbeyJ0eXBlIjoib3V0cHV0X3RleHQiLCJhbm5vdGF0aW9ucyI6W10sImxvZ3Byb2JzIjpbXSwidGV4dCI6IlRoZSB3ZWF0aGVyIGluIFRvcm9udG8gaXMgKioxNcKwQyoqLiJ9XSwicGhhc2UiOiJmaW5hbF9hbnN3ZXIiLCJyb2xlIjoiYXNzaXN0YW50In0sIm91dHB1dF9pbmRleCI6MCwic2VxdWVuY2VfbnVtYmVyIjoxNn0KCmV2ZW50OiByZXNwb25zZS5jb21wbGV0ZWQKZGF0YTogeyJ0eXBlIjoicmVzcG9uc2UuY29tcGxldGVkIiwicmVzcG9uc2UiOnsiaWQiOiJyZXNwXzA3MWU1YjFhZTBkNDM5NDEwMTZhZWE4OGRkZGYyNDg3ZDBhYTU0ZTViMTk1ODBlOGU4Iiwib2JqZWN0IjoicmVzcG9uc2UiLCJjcmVhdGVkX2F0IjoxNzkzNzU1MzU3LCJzdGF0dXMiOiJjb21wbGV0ZWQiLCJhY2Nlc3NfcHJvZ3JhbXMiOm51bGwsImJhY2tncm91bmQiOmZhbHNlLCJjb21wbGV0ZWRfYXQiOjE3OTM3NTUzNTgsImVycm9yIjpudWxsLCJmcmVxdWVuY3lfcGVuYWx0eSI6MC4wLCJpbWFnZSI6eyJjb250ZXh0X2NvbXByZXNzaW9uIjoiZGlzYWJsZWQifSwiaW5jb21wbGV0ZV9kZXRhaWxzIjpudWxsLCJpbnN0cnVjdGlvbnMiOm51bGwsIm1heF9vdXRwdXRfdG9rZW5zIjpudWxsLCJtYXhfdG9vbF9jYWxscyI6bnVsbCwibW9kZWwiOiJncHQtNS40LW1pbmktMjAyNi0wMy0xNyIsIm1vZGVyYXRpb24iOm51bGwsIm91dHB1dCI6W3siaWQiOiJtc2dfMDcxZTViMWFlMGQ0Mzk0MTAxNmFlYTg4ZGU2OGE4ODdkMGE1ZDA0MDQ5NWYyMzUyOGYiLCJ0eXBlIjoibWVzc2FnZSIsInN0YXR1cyI6ImNvbXBsZXRlZCIsImNvbnRlbnQiOlt7InR5cGUiOiJvdXRwdXRfdGV4dCIsImFubm90YXRpb25zIjpbXSwibG9ncHJvYnMiOltdLCJ0ZXh0IjoiVGhlIHdlYXRoZXIgaW4gVG9yb250byBpcyAqKjE1wrBDKiouIn1dLCJwaGFzZSI6ImZpbmFsX2Fuc3dlciIsInJvbGUiOiJhc3Npc3RhbnQifV0sInBhcmFsbGVsX3Rvb2xfY2FsbHMiOnRydWUsInByZXNlbmNlX3BlbmFsdHkiOjAuMCwicHJldmlvdXNfcmVzcG9uc2VfaWQiOm51bGwsInByb21wdF9jYWNoZV9rZXkiOm51bGwsInByb21wdF9jYWNoZV9yZXRlbnRpb24iOiJpbl9tZW1vcnkiLCJyZWFzb25pbmciOnsiY29udGV4dCI6ImN1cnJlbnRfdHVybiIsImVmZm9ydCI6ImhpZ2giLCJtb2RlIjoic3RhbmRhcmQiLCJzdW1tYXJ5IjoiZGV0YWlsZWQifSwic2FmZXR5X2lkZW50aWZpZXIiOm51bGwsInNlcnZpY2VfdGllciI6ImRlZmF1bHQiLCJzdG9yZSI6ZmFsc2UsInRlbXBlcmF0dXJlIjoxLjAsInRleHQiOnsiZm9ybWF0Ijp7InR5cGUiOiJ0ZXh0In0sInZlcmJvc2l0eSI6Im1lZGl1bSJ9LCJ0b29sX2Nob2ljZSI6ImF1dG8iLCJ0b29sX3VzYWdlIjp7ImltYWdlX2dlbiI6eyJpbnB1dF90b2tlbnMiOjAsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImltYWdlX3Rva2VucyI6MCwidGV4dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjowLCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsiaW1hZ2VfdG9rZW5zIjowLCJ0ZXh0X3Rva2VucyI6MH0sInRvdGFsX3Rva2VucyI6MH0sIndlYl9zZWFyY2giOnsibnVtX3JlcXVlc3RzIjowfX0sInRvb2xzIjpbeyJ0eXBlIjoiZnVuY3Rpb24iLCJkZXNjcmlwdGlvbiI6IkdldCB0aGUgY3VycmVudCB3ZWF0aGVyIGZvciBhIGNpdHkiLCJuYW1lIjoiZ2V0X3dlYXRoZXIiLCJvdXRwdXRfc2NoZW1hIjpudWxsLCJwYXJhbWV0ZXJzIjp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7ImNpdHkiOnsidHlwZSI6InN0cmluZyIsImRlc2NyaXB0aW9uIjoiVGhlIGNpdHkgbmFtZSJ9fSwicmVxdWlyZWQiOlsiY2l0eSJdLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6ZmFsc2V9LCJzdHJpY3QiOnRydWV9XSwidG9wX2xvZ3Byb2JzIjowLCJ0b3BfcCI6MC45OCwidHJ1bmNhdGlvbiI6ImRpc2FibGVkIiwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjoxMTYsImlucHV0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiY2FjaGVkX3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE0LCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MH0sInRvdGFsX3Rva2VucyI6MTMwfSwidXNlciI6bnVsbCwibWV0YWRhdGEiOnt9fSwic2VxdWVuY2VfbnVtYmVyIjoxN30KCg==
+  recorded_at: Wed, 04 Nov 2026 01:22:38 GMT
+recorded_with: VCR 6.4.0

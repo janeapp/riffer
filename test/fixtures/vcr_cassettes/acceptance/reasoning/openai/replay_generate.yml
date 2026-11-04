@@ -1,0 +1,445 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5.4-mini","reasoning":{"effort":"high","summary":"auto"},"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '407'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:22:34 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fcee91c83ba39-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '2009'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '180000000'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_be2b4ee09cc544d4bf1911ecebb83ee4
+      Set-Cookie:
+      - __cf_bm=CaazjIl5WlrBGHaPstAHnPcxKDzoiDVKtyt4_MUVKEY-1793755352.49712-1.0.1.1-GQO8oJ4XHneLQAfnL6TOntRTiXbieAPx5w1jbEG_.bJuIedlgHsFLEHgEc2QDYrdFprsfXS_xZ097Wr.6uYVBjI964pdi.8cv.hIHtK.yCnit45_tcIr1Udi4jFsX1xp;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:52:34 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0c2382fe7f957ecc016aea88d8b14487d0a1645ca482582a91",
+          "object": "response",
+          "created_at": 1793755352,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793755354,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5.4-mini-2026-03-17",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0c2382fe7f957ecc016aea88d9417887d096dc9789a3b12de5",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq6ojaOKHiG3blruSmIwIujFkpsDE45FeL63s1a0pnM_MvAeXtluNEWEhg3obcceVmCVPk2xxqhUtt4qnd3ltBjdnaID8tKe4BQBkW-q1CSZndjXC7cSspqSfg7FvvBEkhDfDz4xodYe7Kpb6hHSkREznqNvdrnhs5BnimBsNWF43XH56dR7Y10v04vPB4Xyvo4bsjzBA27qklu0MFgt2QDZOhUJVu0ksAsszzJ4qNy6HOBvCFTRZSHRCUos4YsKa-iIb6fSxbMRa2T7Me-v6tTDNDB3dQYJxewpCtzw9bFBvc0HQjofjzZsBaAMVh9fRHrxBnt7j9SsWuw6fTShjzqcbxOq5yK0h1Ilr_k_Yi4SEIxzzJR0AIinSM7Oz2HyrBhXlJZr5a6dakL-abp8CATkFZJTdcbfGhtcnhUbS_7jGKh6Wr3tc8UkuhEKejeSBjID1Ea_qZfY1KFJDHhBC7BZBfgkSNDd3OFqszAcz8uCT-rDXUI3qJppEcdtSTeTBOFyB-PUubxCgGZxslgM8ItD573FRHwJOZvMXD0fbRH4ubl-4u-Xx205x6U2U4zWq14A5l5cfe04oVtt-_bKy0wWLEPfVYjarGgNF4Qsp7R82B9V1Bb-t-A-KvrYqki8w5QPb6tGWrmWt4GhyIivXkRZHmJuGkS3Akfa2Un8UuX6gd8eTkrd5Xg725DpDajyMAqExfWAAVs4k3QqHhP_v4rIDR9rK3mhlOpelQyFpih1BtXNmuPrYm_Tgp0mEC-F1TWzewfxVYWOhlAcwsKf3tSbbfIkfRYWh2qlB8oimXWlFaw9mg_38Ol31umK-8se2IFO7VzFvj0hxwNVN0yS4VaplDhjVIJuVSTvpJ6F-mAJXiPFwD_YeOucP_jIcmjXAGBuYwWLKqx7Xs6dXu2ZUixJ38dDquYV4dvEkECTfSK49ZU8ML23nV1NY_15SaL9k9r6m7765SpAAC222IlY4lD7NA_qtVlDNRMmmgRYdf38atOa-VaCwDTAOB3yYEsUacDTfktLQT2XlKpIKLrIG9cyxehflpq6FxV_irTM5SGArlaN3PE5mat6tcTRRR-szUGrIiWbasdNiRZxI8dHCVKIgAdfO3Y9bzJZJKkmLj8iQcW6cl4LCox89_y1wk4olito9RMXz7M0MwEuKzqanZPgs5tdIkJb3RbF2VwUdMHaSctNZUbPCV7dUa6mi_zvRTB5mJsFe2NUsD8OrGsweJnAFf_4f6GUFle4lRlkfGdGtIX-QB4pTFbKPbCynM7DisGh7cfEgAhGMZsZ6ZIFqp2Cp0q_3_AOjBg-dwuw0Sd-OORKjR2n_SlcGWLfVBnjtVLxCbEKj66zaTTYtPRvtSO3EyO8rcne72EQhP2K61fBqWiIMq0kHvJibjpxVbIWli-DJSf2keuROjVUbPMJPgcN076UukkZVfiNy_oVJ9jVZRe2DNXhRzJJ0J-260UWWvLOuanm4DxBPzzQup1KDkqg89j-XN82XEt345m2MosV8UzOUKaKe0ydJEZA4K665D_IGiFeV8oVYJxDZ2gPNoKkOTWoclkvJqc3g0QzzuejBRNxj88Vm3WCucUDqCcTTkbDT5LdmFEBvVn9-hxzF3p5lwuCh7lCIc9PrF4yZTc_tbdiayiN-YiaCdq7ddTBXvNQ3TRTV_1vtq7mKyn8L_fn8JLdpg37nkdD-0co4bkHV3MDnbVmueBC5iIY19HJ4jI_ZKEvf-jZXbuON3WUbwIuUTckZbvGekoa_NuWWaYbf_ogBWrd54dg7OwhXWqvNNqxAHCOUR8G6EQ07pOAeNoFzyNoUE9ajnqmnFp-ocZyaxH-lu-4pAV-1qHs4FFYNgDci4JzXC3LRmOVMPRRzGTBGbjg==",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Checking Toronto weather**\n\nI need to find out the weather in Toronto using the get_weather tool. It looks like I just need to use one tool for this. I\u2019ll make sure to use the commentary channel when I call the get_weather function, specifying Toronto as the city. It seems pretty straightforward, and I just want to make sure I get the right info for the user, providing clear and helpful details about the weather!"
+                }
+              ]
+            },
+            {
+              "id": "fc_0c2382fe7f957ecc016aea88da6cc487d08fede4478575513b",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{\"city\":\"Toronto\"}",
+              "call_id": "call_cgLiqWMNkRAo41BTkF2Iw9YE",
+              "name": "get_weather"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "high",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 56,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 52,
+            "output_tokens_details": {
+              "reasoning_tokens": 32
+            },
+            "total_tokens": 108
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 01:22:34 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"reasoning","id":"rs_0c2382fe7f957ecc016aea88d9417887d096dc9789a3b12de5","summary":[{"type":"summary_text","text":"**Checking
+        Toronto weather**\n\nI need to find out the weather in Toronto using the get_weather
+        tool. It looks like I just need to use one tool for this. I’ll make sure to
+        use the commentary channel when I call the get_weather function, specifying
+        Toronto as the city. It seems pretty straightforward, and I just want to make
+        sure I get the right info for the user, providing clear and helpful details
+        about the weather!"}],"encrypted_content":"gAAAAABq6ojaOKHiG3blruSmIwIujFkpsDE45FeL63s1a0pnM_MvAeXtluNEWEhg3obcceVmCVPk2xxqhUtt4qnd3ltBjdnaID8tKe4BQBkW-q1CSZndjXC7cSspqSfg7FvvBEkhDfDz4xodYe7Kpb6hHSkREznqNvdrnhs5BnimBsNWF43XH56dR7Y10v04vPB4Xyvo4bsjzBA27qklu0MFgt2QDZOhUJVu0ksAsszzJ4qNy6HOBvCFTRZSHRCUos4YsKa-iIb6fSxbMRa2T7Me-v6tTDNDB3dQYJxewpCtzw9bFBvc0HQjofjzZsBaAMVh9fRHrxBnt7j9SsWuw6fTShjzqcbxOq5yK0h1Ilr_k_Yi4SEIxzzJR0AIinSM7Oz2HyrBhXlJZr5a6dakL-abp8CATkFZJTdcbfGhtcnhUbS_7jGKh6Wr3tc8UkuhEKejeSBjID1Ea_qZfY1KFJDHhBC7BZBfgkSNDd3OFqszAcz8uCT-rDXUI3qJppEcdtSTeTBOFyB-PUubxCgGZxslgM8ItD573FRHwJOZvMXD0fbRH4ubl-4u-Xx205x6U2U4zWq14A5l5cfe04oVtt-_bKy0wWLEPfVYjarGgNF4Qsp7R82B9V1Bb-t-A-KvrYqki8w5QPb6tGWrmWt4GhyIivXkRZHmJuGkS3Akfa2Un8UuX6gd8eTkrd5Xg725DpDajyMAqExfWAAVs4k3QqHhP_v4rIDR9rK3mhlOpelQyFpih1BtXNmuPrYm_Tgp0mEC-F1TWzewfxVYWOhlAcwsKf3tSbbfIkfRYWh2qlB8oimXWlFaw9mg_38Ol31umK-8se2IFO7VzFvj0hxwNVN0yS4VaplDhjVIJuVSTvpJ6F-mAJXiPFwD_YeOucP_jIcmjXAGBuYwWLKqx7Xs6dXu2ZUixJ38dDquYV4dvEkECTfSK49ZU8ML23nV1NY_15SaL9k9r6m7765SpAAC222IlY4lD7NA_qtVlDNRMmmgRYdf38atOa-VaCwDTAOB3yYEsUacDTfktLQT2XlKpIKLrIG9cyxehflpq6FxV_irTM5SGArlaN3PE5mat6tcTRRR-szUGrIiWbasdNiRZxI8dHCVKIgAdfO3Y9bzJZJKkmLj8iQcW6cl4LCox89_y1wk4olito9RMXz7M0MwEuKzqanZPgs5tdIkJb3RbF2VwUdMHaSctNZUbPCV7dUa6mi_zvRTB5mJsFe2NUsD8OrGsweJnAFf_4f6GUFle4lRlkfGdGtIX-QB4pTFbKPbCynM7DisGh7cfEgAhGMZsZ6ZIFqp2Cp0q_3_AOjBg-dwuw0Sd-OORKjR2n_SlcGWLfVBnjtVLxCbEKj66zaTTYtPRvtSO3EyO8rcne72EQhP2K61fBqWiIMq0kHvJibjpxVbIWli-DJSf2keuROjVUbPMJPgcN076UukkZVfiNy_oVJ9jVZRe2DNXhRzJJ0J-260UWWvLOuanm4DxBPzzQup1KDkqg89j-XN82XEt345m2MosV8UzOUKaKe0ydJEZA4K665D_IGiFeV8oVYJxDZ2gPNoKkOTWoclkvJqc3g0QzzuejBRNxj88Vm3WCucUDqCcTTkbDT5LdmFEBvVn9-hxzF3p5lwuCh7lCIc9PrF4yZTc_tbdiayiN-YiaCdq7ddTBXvNQ3TRTV_1vtq7mKyn8L_fn8JLdpg37nkdD-0co4bkHV3MDnbVmueBC5iIY19HJ4jI_ZKEvf-jZXbuON3WUbwIuUTckZbvGekoa_NuWWaYbf_ogBWrd54dg7OwhXWqvNNqxAHCOUR8G6EQ07pOAeNoFzyNoUE9ajnqmnFp-ocZyaxH-lu-4pAV-1qHs4FFYNgDci4JzXC3LRmOVMPRRzGTBGbjg=="},{"type":"function_call","call_id":"call_cgLiqWMNkRAo41BTkF2Iw9YE","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_cgLiqWMNkRAo41BTkF2Iw9YE","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-5.4-mini","reasoning":{"effort":"high","summary":"auto"},"tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '3119'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2026 01:22:35 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a54fcef73b41ba39-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '1145'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '180000000'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_afdeda6c0ad3491c99299ee3e1229def
+      Set-Cookie:
+      - __cf_bm=.HY_7RIbe2fSUmHTcHdEDnb7qiW.uj7WJWE2NQe8JuQ-1793755354.7621188-1.0.1.1-2n8Yapi0E2qo8x0bebyCRqbFD7A9n3Dd77OP3NBBk90J0y.IYsU151QNGpcGyQjtr1Nxw0wlrZFoZI26Xykbxbvw.m8jfMCJC1IZul2Uhx_sRRpJ5rxAzSpVsxj_5Zbz;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
+        04 Nov 2026 01:52:35 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0c2382fe7f957ecc016aea88dad2a087d0a066e3da70eb40e7",
+          "object": "response",
+          "created_at": 1793755355,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1793755355,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5.4-mini-2026-03-17",
+          "moderation": null,
+          "output": [
+            {
+              "id": "msg_0c2382fe7f957ecc016aea88dba90087d0810e92d4cec06701",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "The weather in Toronto is **15\u00b0C**."
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "high",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 128,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 14,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 142
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Wed, 04 Nov 2026 01:22:35 GMT
+recorded_with: VCR 6.4.0

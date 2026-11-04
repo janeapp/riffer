@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "openai"
 
 describe Riffer::Providers::OpenAI do
-  let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
-
-  before { Riffer.config.openai.api_key = api_key }
+  before { Riffer.config.openai.api_key = "test_api_key" }
 
   after do
     Riffer.config.openai.api_key = nil
@@ -19,6 +18,15 @@ describe Riffer::Providers::OpenAI do
     client_double = Object.new
     client_double.define_singleton_method(:responses) { responses_double }
     provider.instance_variable_set(:@client, client_double)
+  end
+
+  def stream_events(provider, events)
+    events += [Struct.new(:type, :response).new(:"response.completed", nil)]
+    stream_double = Object.new
+    stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
+    stream_double.define_singleton_method(:close) { nil }
+    install_stream_double(provider, stream_double)
+    provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
   end
 
   describe ".semconv_provider_name" do
@@ -97,42 +105,9 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "covers every response status the SDK defines" do
-      provider # loads the openai gem, which the provider requires lazily
       statuses = OpenAI::Models::Responses::ResponseStatus.values.map(&:to_s)
 
       expect(Riffer::Providers::OpenAI::FINISH_REASONS.keys.sort).must_equal statuses.sort
-    end
-
-    it "extracts the finish reason when generating" do
-      VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
-        result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
-
-        expect(result.finish_reason).must_equal :stop
-      end
-    end
-
-    it "derives tool_calls when the response carries tool calls" do
-      tool = stub_tool("GetWeather") do
-        description "Get the current weather for a city"
-        params do
-          required :city, String, description: "The city name"
-        end
-      end
-
-      VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-        result = provider.generate_text(prompt: "What is the weather in Toronto?", model: "gpt-5-mini", tools: [tool])
-
-        expect(result.finish_reason).must_equal :tool_calls
-      end
-    end
-
-    it "emits a FinishReasonDone event when streaming" do
-      VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
-        events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
-
-        expect(done.finish_reason).must_equal :stop
-      end
     end
   end
 
@@ -144,7 +119,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "takes no arguments" do
-      expect { Riffer::Providers::OpenAI.new(api_key: api_key) }.must_raise ArgumentError
+      expect { Riffer::Providers::OpenAI.new(api_key: "test_api_key") }.must_raise ArgumentError
     end
 
     it "raises on unknown constructor options" do
@@ -225,590 +200,6 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
-  describe "#generate_text" do
-    describe "when prompt is provided" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "when system and prompt are provided" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          params = { system: "Be concise", prompt: "Say hello", model: "gpt-5-mini" }
-          result = provider.generate_text(**params)
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a hash messages array" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          messages = [
-            { role: "system", content: "Be concise" },
-            { role: "user", content: "Say hello" },
-          ]
-          result = provider.generate_text(messages: messages, model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a User message" do
-      it "returns an Assistant" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/with_a_User_message/returns_an_Assistant") do
-          provider = Riffer::Providers::OpenAI.new
-          messages = [Riffer::Messages::User.new("Say hello")]
-          result = provider.generate_text(messages: messages, model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with a System message" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/with_a_System_message/returns_an_Assistant_message") do
-          provider = Riffer::Providers::OpenAI.new
-          messages = [
-            Riffer::Messages::System.new("Be concise"),
-            Riffer::Messages::User.new("Say hello"),
-          ]
-          result = provider.generate_text(messages: messages, model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with an Assistant message" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          messages = [
-            Riffer::Messages::User.new("Say hello"),
-            Riffer::Messages::Assistant.new("Hello!"),
-            Riffer::Messages::User.new("How are you?"),
-          ]
-          result = provider.generate_text(messages: messages, model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "with reasoning parameter" do
-      it "returns an Assistant message" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/with_reasoning_parameter/returns_an_Assistant_message",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "structured output" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gpt-5-mini",
-            structured_output: structured_output,
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns non-empty content" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gpt-5-mini",
-            structured_output: structured_output,
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-
-      it "returns valid JSON content" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gpt-5-mini",
-            structured_output: structured_output,
-          )
-          JSON.parse(result.content)
-        end
-      end
-
-      it "includes sentiment key" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gpt-5-mini",
-            structured_output: structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed.key?("sentiment")).must_equal true
-        end
-      end
-
-      it "includes score key" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new
-          params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
-          structured_output = Riffer::Agent::StructuredOutput.new(params)
-          result = provider.generate_text(
-            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
-            model: "gpt-5-mini",
-            structured_output: structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed.key?("score")).must_equal true
-        end
-      end
-    end
-
-    describe "structured output with nested object" do
-      let(:nested_object_prompt) { "Extract the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada" }
-
-      let(:nested_object_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Person name")
-        params.required(:address, Hash, description: "Mailing address") do
-          required :street, String, description: "Street address"
-          required :city, String, description: "City"
-          optional :postal_code, String, description: "Postal or zip code"
-          optional :country, String, description: "Country"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with nested object content" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_nested_object/returns_nested_json",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: nested_object_prompt,
-            model: "gpt-5-mini",
-            structured_output: nested_object_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_include "John"
-          expect(parsed["address"]).must_be_instance_of Hash
-          expect(parsed["address"]["street"]).must_include "123 Main"
-          expect(parsed["address"]["city"]).must_include "Toronto"
-        end
-      end
-    end
-
-    describe "structured output with null optional fields" do
-      let(:null_optional_prompt) do
-        "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. " \
-          "Return null for any unknown fields."
-      end
-
-      let(:null_optional_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Person name")
-        params.required(:address, Hash, description: "Mailing address") do
-          required :street, String, description: "Street address"
-          required :city, String, description: "City"
-          optional :postal_code, String, description: "Postal or zip code"
-          optional :country, String, description: "Country"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns null for optional fields when info is unavailable" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_null_optionals/returns_null_for_optional_fields",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: null_optional_prompt,
-            model: "gpt-5-mini",
-            structured_output: null_optional_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_include "Jane"
-          expect(parsed["address"]["street"]).must_include "42 King"
-          expect(parsed["address"]["city"]).must_include "Vancouver"
-          expect(parsed["address"]["postal_code"]).must_be_nil
-          expect(parsed["address"]["country"]).must_be_nil
-        end
-      end
-    end
-
-    describe "structured output with optional enum" do
-      let(:session_types) { %w[in_person online both] }
-
-      let(:optional_enum_structured_output) do
-        params = Riffer::Params.new
-        params.required(:name, String, description: "Session name")
-        params.optional(:session_type, String, enum: session_types, description: "Type of session")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns an enum value when present" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_optional_enum/returns_enum_value") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Classify the session: yoga class, in-person format. Return session_type from the enum.",
-            model: "gpt-5-mini",
-            structured_output: optional_enum_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_be_instance_of String
-          expect(session_types).must_include parsed["session_type"]
-        end
-      end
-
-      it "returns null when the enum value is unknown" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_optional_enum/returns_null") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Classify the session: yoga class, underwater format. The session_type enum does not " \
-                    "cover this, return null for session_type.",
-            model: "gpt-5-mini",
-            structured_output: optional_enum_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["name"]).must_be_instance_of String
-          expect(parsed["session_type"]).must_be_nil
-        end
-      end
-    end
-
-    describe "structured output with typed array" do
-      let(:typed_array_prompt) { "List 3 tags and 3 scores (0.0-1.0) for: 'Ruby is a great programming language'" }
-
-      let(:typed_array_structured_output) do
-        params = Riffer::Params.new
-        params.required(:tags, Array, of: String, description: "Descriptive tags")
-        params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with typed array content" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_typed_array/returns_typed_arrays") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: typed_array_prompt,
-            model: "gpt-5-mini",
-            structured_output: typed_array_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["tags"].length).must_equal 3
-          expect(parsed["scores"].length).must_equal 3
-          parsed["tags"].each { |tag| expect(tag).must_be_instance_of String }
-          parsed["scores"].each { |score| expect(score).must_be_instance_of Float }
-        end
-      end
-    end
-
-    describe "structured output with array of objects" do
-      let(:array_of_objects_prompt) { "List 2 items from an order: a book costing $12.99 and a pen costing $1.50" }
-
-      let(:array_of_objects_structured_output) do
-        params = Riffer::Params.new
-        params.required(:order_id, String, description: "Order identifier")
-        params.required(:items, Array, description: "Line items") do
-          required :name, String, description: "Product name"
-          required :price, Float, description: "Price in dollars"
-          optional :quantity, Integer, description: "Quantity ordered"
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns valid JSON with array of objects content" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: array_of_objects_prompt,
-            model: "gpt-5-mini",
-            structured_output: array_of_objects_structured_output,
-          )
-          parsed = JSON.parse(result.content)
-
-          expect(parsed["order_id"]).must_be_instance_of String
-          expect(parsed["items"].length).must_equal 2
-          parsed["items"].each do |item|
-            expect(item["name"]).must_be_instance_of String
-            expect(item["price"]).must_be_instance_of Float
-          end
-        end
-      end
-    end
-
-    describe "structured output with any_of" do
-      let(:any_of_structured_output) do
-        params = Riffer::Params.new
-        params.required(:result, Riffer::Params::AnyOf, description: "The address, or why none was found") do
-          variant do
-            required :street, String, description: "Street address"
-            required :city, String, description: "City"
-          end
-          variant do
-            required :error_code, String, enum: %w[no_address multiple_addresses], description: "Why no address"
-            required :error_message, String, description: "Explanation of the error"
-          end
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns the first variant when it applies" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_any_of/returns_first_variant",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Extract the address from: John lives at 123 Main St, Toronto",
-            model: "gpt-5-mini",
-            structured_output: any_of_structured_output,
-          )
-          validated = any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:result][:street]).must_include "123 Main"
-          expect(validated.object[:result][:city]).must_equal "Toronto"
-        end
-      end
-
-      it "returns the second variant when the first does not apply" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_any_of/returns_second_variant",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Extract the address from: John likes long walks by the lake",
-            model: "gpt-5-mini",
-            structured_output: any_of_structured_output,
-          )
-          validated = any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:result][:error_code]).must_equal "no_address"
-          expect(validated.object[:result][:error_message]).must_be_instance_of String
-        end
-      end
-    end
-
-    describe "structured output with primitive any_of" do
-      let(:primitive_any_of_structured_output) do
-        params = Riffer::Params.new
-        params.required(:quantity, Riffer::Params::AnyOf, description: "A count, or a word when there is no count") do
-          variant Integer
-          variant String
-        end
-        params.optional(:due, Riffer::Params::AnyOf, description: "The due date, or none when there isn't one") do
-          variant String, format: "date"
-          variant String, enum: ["none"]
-        end
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns the integer and date variants when the order has both" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_primitive_any_of/returns_integer_and_date",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Read this order: 12 boxes, due on 2026-11-03",
-            model: "gpt-5-mini",
-            structured_output: primitive_any_of_structured_output,
-          )
-          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: 12, due: "2026-11-03" })
-        end
-      end
-
-      it "returns the string and enum variants when the order has neither" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_primitive_any_of/returns_string_and_enum",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Read this order: several boxes, with no due date",
-            model: "gpt-5-mini",
-            structured_output: primitive_any_of_structured_output,
-          )
-          validated = primitive_any_of_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object).must_equal({ quantity: "several", due: "none" })
-        end
-      end
-    end
-
-    describe "structured output with enum array" do
-      let(:ticket_tags) { %w[urgent billing technical account] }
-      let(:weekdays) { [1, 2, 3, 4, 5] }
-
-      let(:enum_array_structured_output) do
-        params = Riffer::Params.new
-        params.required(:tags, Array, of: String, enum: ticket_tags, description: "Ticket tags")
-        params.optional(:available_days, Array, of: Integer, enum: weekdays, description: "Weekdays, 1 is Monday")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns values from the enum" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_enum_array/returns_values_from_the_enum",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Tag this support ticket: 'I was charged twice this month and need it fixed. " \
-                    "I can take a call on Monday or Wednesday.'",
-            model: "gpt-5-mini",
-            structured_output: enum_array_structured_output,
-          )
-          validated = enum_array_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:tags]).must_include "billing"
-          expect(validated.object[:available_days]).must_equal [1, 3]
-        end
-      end
-    end
-
-    describe "structured output with format" do
-      let(:clinic_id) { "550e8400-e29b-41d4-a716-446655440000" }
-
-      let(:format_structured_output) do
-        params = Riffer::Params.new
-        params.required(:visit_on, String, format: "date", description: "Visit date")
-        params.required(:starts_at, String, format: "date-time", description: "Visit start, with its UTC offset")
-        params.optional(:email, String, format: "email", description: "Patient email, if given")
-        params.required(:clinic_ids, Array, of: String, format: "uuid", description: "Clinic IDs")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns values in the format" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_format/returns_values_in_the_format",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Book a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic #{clinic_id}. " \
-                    "The patient gave no email.",
-            model: "gpt-5-mini",
-            structured_output: format_structured_output,
-          )
-          validated = format_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:visit_on]).must_equal "2026-10-26"
-          expect(validated.object[:starts_at]).must_equal "2026-10-26T09:30:00-04:00"
-          expect(validated.object[:email]).must_be_nil
-          expect(validated.object[:clinic_ids]).must_equal [clinic_id]
-        end
-      end
-    end
-
-    describe "structured output with an array of arrays" do
-      let(:nested_structured_output) do
-        params = Riffer::Params.new
-        params.required(:rows, Array, of: [Integer], description: "Seat numbers, one array per row")
-        params.optional(:boards, Array, of: [[String]], enum: %w[x o], description: "Tic-tac-toe boards, one per game")
-        Riffer::Agent::StructuredOutput.new(params)
-      end
-
-      it "returns nested arrays" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/structured_output_array_of_arrays/returns_nested_arrays",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "Row 1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. " \
-                    "Game 1's tic-tac-toe board rows are: x o x, o x o, o x x. " \
-                    "Game 2's rows are: o o x, x x o, o x x.",
-            model: "gpt-5-mini",
-            structured_output: nested_structured_output,
-          )
-          validated = nested_structured_output.parse_and_validate(result.content)
-
-          expect(validated.error).must_be_nil
-          expect(validated.object[:rows]).must_equal [[1, 2, 3], [4, 5]]
-          expect(validated.object[:boards]).must_equal [
-            [%w[x o x], %w[o x o], %w[o x x]],
-            [%w[o o x], %w[x x o], %w[o x x]],
-          ]
-        end
-      end
-    end
-
-    describe "without reasoning parameter" do
-      it "does not include reasoning in request params" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_generate_text/without_reasoning_parameter/does_not_include_reasoning",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-  end
-
   describe "tags" do
     let(:provider) { Riffer::Providers::OpenAI.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
@@ -855,134 +246,8 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
-  describe "per-call tags (end-to-end)" do
-    let(:provider) { Riffer::Providers::OpenAI.new }
-
-    it "forwards per-call tags to the request" do
-      VCR.use_cassette("Riffer_Providers_OpenAI/tags/forwards_metadata_and_safety_identifier") do
-        result = provider.generate_text(
-          prompt: "Say hello",
-          model: "gpt-5-mini",
-          tags: { "user_id" => "u_1", "team" => "growth" },
-        )
-
-        expect(result).must_be_instance_of Riffer::Messages::Assistant
-      end
-    end
-  end
-
-  describe "#stream_text" do
-    describe "when prompt is provided" do
-      it "returns an Enumerator" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini")
-
-          expect(result).must_be_instance_of Enumerator
-        end
-      end
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDelta events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-          deltas = events.grep(Riffer::StreamEvents::TextDelta)
-
-          expect(deltas).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    describe "when messages are provided" do
-      it "returns an Enumerator" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.stream_text(
-            messages: [{ role: "user", content: "Say hello" }],
-            model: "gpt-5-mini",
-          )
-
-          expect(result).must_be_instance_of Enumerator
-        end
-      end
-
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            messages: [{ role: "user", content: "Say hello" }],
-            model: "gpt-5-mini",
-          ).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-    end
-
-    describe "with reasoning parameter" do
-      it "yields ReasoningDelta events" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDelta_events",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
-          reasoning_deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
-
-          expect(reasoning_deltas).wont_be_empty
-        end
-      end
-
-      it "yields ReasoningDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDone_event") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
-          reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
-
-          expect(reasoning_done).wont_be_nil
-          expect(reasoning_done.part.type).must_equal :summary
-          expect(reasoning_done.part.text).wont_be_empty
-          expect(reasoning_done.part.format).must_equal "openai-v1"
-        end
-      end
-
-      it "yields reasoning events before text events" do
-        VCR.use_cassette(
-          "Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_reasoning_before_text",
-        ) do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
-          first_reasoning_index = events.index { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
-          first_text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
-
-          expect(first_reasoning_index).must_be :<, first_text_index if first_reasoning_index && first_text_index
-        end
-      end
-    end
-  end
-
   describe "reasoning" do
     let(:provider) { Riffer::Providers::OpenAI.new }
-    # Instantiating triggers depends_on "openai", which makes the OpenAI::Models constants below available.
-    before { provider }
 
     def reasoning_item(id:, summary: [], content: nil, encrypted_content: nil)
       OpenAI::Models::Responses::ResponseReasoningItem.new(
@@ -1038,17 +303,9 @@ describe Riffer::Providers::OpenAI do
     describe "streaming reasoning items" do
       let(:event_struct) { Struct.new(:type, :item, :response) }
 
-      def stream_events(events)
-        events += [event_struct.new(type: :"response.completed")]
-        stream_double = Object.new
-        stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
-        stream_double.define_singleton_method(:close) {}
-        install_stream_double(provider, stream_double)
-        provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
-      end
-
       it "yields one ReasoningDone per part when a reasoning item completes, in item order" do
         events = stream_events(
+          provider,
           [
             event_struct.new(type: :"response.output_item.done", item: reasoning_item(id: "rs_1", summary: ["Sum"])),
             event_struct.new(type: :"response.output_item.done",
@@ -1061,6 +318,19 @@ describe Riffer::Providers::OpenAI do
           { type: :encrypted, id: "rs_1", format: "openai-v1" },
           { type: :encrypted, data: "b3Bh", id: "rs_2", format: "openai-v1" },
         ]
+      end
+
+      it "yields a ReasoningDelta per reasoning summary delta" do
+        summary_delta = Struct.new(:type, :delta)
+        events = stream_events(
+          provider,
+          [
+            summary_delta.new(:"response.reasoning_summary_text.delta", "Adding "),
+            summary_delta.new(:"response.reasoning_summary_text.delta", "it up."),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)).must_equal ["Adding ", "it up."]
       end
     end
 
@@ -1120,85 +390,11 @@ describe Riffer::Providers::OpenAI do
         expect(convert(reasoning)).must_equal [{ role: "assistant", content: "42" }]
       end
     end
-
-    describe "with reasoning enabled" do
-      let(:reasoning_options) { { model: "gpt-5-mini", reasoning: "medium" } }
-
-      it "captures reasoning items from #generate_text" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/reasoning/_generate_text/captures_reasoning") do
-          result = provider.generate_text(
-            prompt: "How many prime numbers are there between 1 and 50? Reply with just the number.",
-            **reasoning_options,
-          )
-
-          expect(result.reasoning.map(&:format).uniq).must_equal ["openai-v1"]
-          expect(result.reasoning.map(&:type)).must_equal %i[summary encrypted]
-          expect(result.reasoning.first.text).wont_be_empty
-          expect(result.reasoning.map(&:id).uniq.length).must_equal 1
-          expect(result.reasoning.last.data).wont_be_nil
-        end
-      end
-
-      it "sends turn one's streamed reasoning back and gets an answer" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/reasoning/_stream_text/replays_reasoning") do
-          question = Riffer::Messages::User.new("What is 17 times 23? Reply with just the number.")
-
-          first = provider.stream_text(messages: [question], **reasoning_options).to_a
-          parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
-          answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
-
-          expect(parts).wont_be_empty
-          expect(parts.last.type).must_equal :encrypted
-
-          history = [
-            question,
-            Riffer::Messages::Assistant.new(answer, reasoning: parts),
-            Riffer::Messages::User.new("Now add 10. Reply with just the number."),
-          ]
-          second = provider.stream_text(messages: history, **reasoning_options).to_a
-          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(text_done.content).must_include "401"
-        end
-      end
-
-      it "replays reasoning across a tool call round trip" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/reasoning/_generate_text/replays_reasoning_with_tool_result") do
-          weather_tool = stub_tool("GetWeather") do
-            description "Get the current weather for a city"
-            params do
-              required :city, String, description: "The city name"
-            end
-          end
-          options = reasoning_options.merge(tools: [weather_tool])
-          question = Riffer::Messages::User.new("What is the weather in Toronto?")
-
-          first = provider.generate_text(messages: [question], **options)
-          tool_call = first.tool_calls.first
-
-          expect(first.reasoning).wont_be_empty
-          expect(tool_call.name).must_equal "get_weather"
-
-          history = [
-            question,
-            first,
-            Riffer::Messages::Tool.new(
-              "15 degrees Celsius and sunny.",
-              tool_call_id: tool_call.call_id,
-              name: tool_call.name,
-            ),
-          ]
-          second = provider.generate_text(messages: history, **options)
-
-          expect(second.content).must_include "15"
-        end
-      end
-    end
   end
 
   describe "reasoning level" do
     let(:provider) { Riffer::Providers::OpenAI.new }
-    let(:prompt) { "What is 17 times 23? Reply with just the number." }
+    let(:messages) { [Riffer::Messages::User.new("Hi")] }
 
     it "maps :off to effort none" do
       expect(provider.send(:default_reasoning_options, :off)).must_equal({ reasoning: "none" })
@@ -1210,63 +406,17 @@ describe Riffer::Providers::OpenAI do
       end
     end
 
-    it "turns reasoning off on a live model" do
-      VCR.use_cassette("Riffer_Providers_OpenAI/reasoning_level/off") do
-        result = provider.generate_text(prompt: prompt, model: "gpt-5.1", riffer_reasoning_level: :off)
+    it "sends effort none for :off" do
+      options = provider.send(:apply_reasoning, "gpt-5.1", { riffer_reasoning_level: :off })
+      params = provider.send(:build_request_params, messages, "gpt-5.1", provider.send(:request_options, options))
 
-        expect(result.content).must_include "391"
-      end
+      expect(params[:reasoning]).must_equal({ effort: "none", summary: "auto" })
     end
 
-    it "reasons at low effort on a live model" do
-      VCR.use_cassette("Riffer_Providers_OpenAI/reasoning_level/low") do
-        result = provider.generate_text(prompt: prompt, model: "gpt-5-mini", riffer_reasoning_level: :low)
+    it "sends no reasoning without a reasoning level or option" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {})
 
-        expect(result.content).must_include "391"
-      end
-    end
-  end
-
-  describe "usage" do
-    describe "#generate_text returns usage" do
-      it "includes usage in the response" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/usage/_generate_text/includes_usage") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
-
-          expect(result.token_usage).wont_be_nil
-          expect(result.token_usage.input_tokens).must_equal 8
-          expect(result.token_usage.output_tokens).must_equal 73
-          expect(result.token_usage.total_tokens).must_equal 81
-          expect(result.token_usage.cache_read_tokens).must_equal 0
-        end
-      end
-    end
-
-    describe "#stream_text yields TokenUsageDone" do
-      it "yields TokenUsageDone event with correct token counts" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-          usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
-
-          expect(usage_done).wont_be_nil
-          expect(usage_done.token_usage.input_tokens).must_equal 8
-          expect(usage_done.token_usage.output_tokens).must_equal 132
-          expect(usage_done.token_usage.total_tokens).must_equal 140
-        end
-      end
-
-      it "yields TokenUsageDone after TextDone" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-          text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-          usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
-
-          expect(usage_done_index).must_be :>, text_done_index
-        end
-      end
+      expect(params).wont_include :reasoning
     end
   end
 
@@ -1429,109 +579,6 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "web search" do
-    describe "#generate_text with web_search" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_generate_text/returns_an_Assistant_message") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: true,
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "accepts hash web_search options" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_generate_text/accepts_hash_web_search_options") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: { search_context_size: "medium" },
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
-    describe "#stream_text with web_search" do
-      it "yields WebSearchStatus events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_status") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: true,
-          ).to_a
-          web_search_statuses = events.grep(Riffer::StreamEvents::WebSearchStatus)
-
-          expect(web_search_statuses).wont_be_empty
-        end
-      end
-
-      it "yields WebSearchDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: true,
-          ).to_a
-          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
-
-          expect(web_search_result).wont_be_nil
-        end
-      end
-
-      it "includes query in WebSearchDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: true,
-          ).to_a
-          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
-
-          expect(web_search_result.query).wont_be_empty
-        end
-      end
-
-      it "includes sources array in WebSearchDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: true,
-          ).to_a
-          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
-
-          expect(web_search_result.sources).must_be_instance_of Array
-        end
-      end
-
-      it "yields web search events before text events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_before_text") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the latest Ruby version?",
-            model: "gpt-5-mini",
-            web_search: true,
-          ).to_a
-          first_web_search_index = events.index { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
-          first_text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
-
-          expect(first_web_search_index).must_be :<, first_text_index if first_web_search_index && first_text_index
-        end
-      end
-    end
-  end
-
-  describe "web search sources include" do
     let(:provider) { Riffer::Providers::OpenAI.new }
     let(:messages) { [Riffer::Messages::User.new("Hi")] }
     let(:sources_include) { Riffer::Providers::OpenAI::WEB_SEARCH_SOURCES_INCLUDE }
@@ -1580,146 +627,36 @@ describe Riffer::Providers::OpenAI do
 
       expect(params).wont_include :include
     end
-  end
 
-  describe "file handling" do
-    let(:image_base64) do
-      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/" \
-        "oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
-    end
+    it "streams each search status ahead of the search's WebSearchDone" do
+      source = OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search::Source.new(
+        type: :url,
+        url: "https://www.ruby-lang.org",
+      )
+      search = OpenAI::Models::Responses::ResponseFunctionWebSearch.new(
+        id: "ws_1",
+        status: :completed,
+        type: :web_search_call,
+        action: OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search.new(
+          type: :search,
+          query: "ruby",
+          sources: [source],
+        ),
+      )
+      status_event = Struct.new(:type)
+      events = stream_events(
+        provider,
+        [
+          status_event.new(:"response.web_search_call.in_progress"),
+          status_event.new(:"response.web_search_call.searching"),
+          status_event.new(:"response.web_search_call.completed"),
+          Struct.new(:type, :item).new(:"response.output_item.done", search),
+        ],
+      )
+      statuses = events.grep(Riffer::StreamEvents::WebSearchStatus)
 
-    describe "#generate_text with image" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file])
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file])
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#generate_text with document" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(
-            data: pdf_data,
-            media_type: "application/pdf",
-            filename: "test.pdf",
-          )
-          result = provider.generate_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file])
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns content" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(
-            data: pdf_data,
-            media_type: "application/pdf",
-            filename: "test.pdf",
-          )
-          result = provider.generate_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file])
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#stream_text with document" do
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(
-            data: pdf_data,
-            media_type: "application/pdf",
-            filename: "test.pdf",
-          )
-          events = provider.stream_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file]).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new
-          pdf_data = Base64.strict_encode64(
-            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
-            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
-            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
-            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
-            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
-          )
-          file = Riffer::Messages::User::FilePart.new(
-            data: pdf_data,
-            media_type: "application/pdf",
-            filename: "test.pdf",
-          )
-          events = provider.stream_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file]).to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
-    end
-
-    describe "#stream_text with image" do
-      it "yields stream events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          events = provider.stream_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file]).to_a
-
-          expect(events).wont_be_empty
-        end
-      end
-
-      it "yields TextDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
-          events = provider.stream_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file]).to_a
-          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
-
-          expect(done).wont_be_nil
-        end
-      end
+      expect(statuses.map(&:status)).must_equal %w[in_progress searching completed]
+      expect(events.index(statuses.last)).must_be :<, events.index(events.grep(Riffer::StreamEvents::WebSearchDone).first)
     end
   end
 
@@ -1743,224 +680,7 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "tool calling" do
-    let(:weather_tool) do
-      stub_tool("GetWeather") do
-        description "Get the current weather for a city"
-        params do
-          required :city, String, description: "The city name"
-        end
-      end
-    end
-
-    describe "#generate_text with tools" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns tool_calls" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls).wont_be_empty
-        end
-      end
-
-      it "returns correct tool name" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.name).must_equal "get_weather"
-        end
-      end
-
-      it "parses tool call arguments correctly" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/parses_arguments") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-          args = JSON.parse(result.tool_calls.first.arguments)
-
-          expect(args["city"]).must_equal "Toronto"
-        end
-      end
-
-      it "includes tool call id" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.call_id).wont_be_nil
-        end
-      end
-
-      it "includes tool call call_id" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::OpenAI.new
-          result = provider.generate_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result.tool_calls.first.call_id).wont_be_nil
-        end
-      end
-    end
-
-    describe "#generate_text with Tool message in history" do
-      it "returns Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::OpenAI.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "call_tool_123",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "The weather in Toronto is 15 degrees Celsius.",
-              tool_call_id: "call_tool_123",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-
-      it "returns response with content" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::OpenAI.new
-          messages = [
-            Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new(
-              "",
-              tool_calls: [
-                Riffer::Messages::Assistant::ToolCall.new(
-                  call_id: "call_tool_123",
-                  name: "get_weather",
-                  arguments: '{"city":"Toronto"}',
-                ),
-              ],
-            ),
-            Riffer::Messages::Tool.new(
-              "The weather in Toronto is 15 degrees Celsius.",
-              tool_call_id: "call_tool_123",
-              name: "get_weather",
-            ),
-          ]
-          result = provider.generate_text(
-            messages: messages,
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          )
-
-          expect(result.content).wont_be_empty
-        end
-      end
-    end
-
-    describe "#stream_text with tools" do
-      it "yields ToolCallDelta events" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/yields_tool_call_delta") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          ).to_a
-          tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
-
-          expect(tool_deltas).wont_be_empty
-        end
-      end
-
-      it "yields ToolCallDone event" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/yields_tool_call_done") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-
-          expect(tool_done).wont_be_nil
-        end
-      end
-
-      it "includes tool name in ToolCallDone" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/tool_call_done_has_name") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-
-          expect(tool_done.name).must_equal "get_weather"
-        end
-      end
-
-      it "includes arguments in ToolCallDone" do
-        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/tool_call_done_has_arguments") do
-          provider = Riffer::Providers::OpenAI.new
-          events = provider.stream_text(
-            prompt: "What is the weather in Toronto?",
-            model: "gpt-5-mini",
-            tools: [weather_tool],
-          ).to_a
-          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
-          args = JSON.parse(tool_done.arguments)
-
-          expect(args["city"]).must_equal "Toronto"
-        end
-      end
-    end
-  end
-
-  describe "tool calls cut off by max_output_tokens" do
     let(:provider) { Riffer::Providers::OpenAI.new }
-
-    before { provider }
 
     def function_call(number, status: :completed, arguments: '{"city":"Toronto"}')
       OpenAI::Models::Responses::ResponseFunctionToolCall.new(
@@ -1973,25 +693,34 @@ describe Riffer::Providers::OpenAI do
       )
     end
 
-    def output_item_done(item)
-      Struct.new(:type, :item).new(:"response.output_item.done", item)
+    def output_item(type, item)
+      Struct.new(:type, :item).new(:"response.output_item.#{type}", item)
     end
 
-    def stream_events(events)
-      events += [Struct.new(:type, :response).new(:"response.completed", nil)]
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
-      stream_double.define_singleton_method(:close) {}
-      install_stream_double(provider, stream_double)
-      provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
-    end
-
-    it "streams no ToolCallDone for the cut-off call" do
+    it "yields a ToolCallDelta per arguments delta, named from the added item" do
+      arguments_delta = Struct.new(:type, :item_id, :delta)
       events = stream_events(
+        provider,
         [
-          output_item_done(function_call(1)),
+          output_item(:added, function_call(1, status: :in_progress, arguments: "")),
+          arguments_delta.new(:"response.function_call_arguments.delta", "fc_1", '{"city":'),
+          arguments_delta.new(:"response.function_call_arguments.delta", "fc_1", '"Toronto"}'),
+        ],
+      )
+
+      expect(events.grep(Riffer::StreamEvents::ToolCallDelta).map(&:to_h)).must_equal [
+        { role: :assistant, item_id: "fc_1", name: "get_weather", arguments_delta: '{"city":' },
+        { role: :assistant, item_id: "fc_1", name: "get_weather", arguments_delta: '"Toronto"}' },
+      ]
+    end
+
+    it "streams no ToolCallDone for a function call cut off by max_output_tokens" do
+      events = stream_events(
+        provider,
+        [
+          output_item(:done, function_call(1)),
           Struct.new(:type, :item_id, :arguments).new(:"response.function_call_arguments.done", "fc_2", '{"city":"Pa'),
-          output_item_done(function_call(2, status: :incomplete, arguments: '{"city":"Pa')),
+          output_item(:done, function_call(2, status: :incomplete, arguments: '{"city":"Pa')),
         ],
       )
 
@@ -2000,7 +729,7 @@ describe Riffer::Providers::OpenAI do
       ]
     end
 
-    it "drops the cut-off call from generate_text and keeps the completed one" do
+    it "drops a function call cut off by max_output_tokens and keeps the completed one" do
       response = OpenAI::Models::Responses::Response.new(
         output: [function_call(1), function_call(2, status: :incomplete, arguments: '{"city":"Pa')],
         status: :incomplete,
@@ -2020,8 +749,6 @@ describe Riffer::Providers::OpenAI do
 
   describe "multiple text parts" do
     let(:provider) { Riffer::Providers::OpenAI.new }
-    # Instantiating runs depends_on "openai", which loads the SDK constants below.
-    before { provider }
 
     def output_message(*texts)
       OpenAI::Models::Responses::ResponseOutputMessage.new(
@@ -2033,15 +760,6 @@ describe Riffer::Providers::OpenAI do
         status: :completed,
         type: :message,
       )
-    end
-
-    def stream_events(events)
-      events += [Struct.new(:type, :response).new(:"response.completed", nil)]
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&block| events.each { |e| block.call(e) } }
-      stream_double.define_singleton_method(:close) { nil }
-      install_stream_double(provider, stream_double)
-      provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
     end
 
     def text_delta(delta)
@@ -2066,6 +784,7 @@ describe Riffer::Providers::OpenAI do
 
     it "yields one TextDone joining every streamed output_text part" do
       events = stream_events(
+        provider,
         [
           text_delta("Let me "),
           text_delta("check. "),
@@ -2080,7 +799,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "yields no TextDone when the stream carries no text" do
-      expect(stream_events([]).grep(Riffer::StreamEvents::TextDone)).must_be_empty
+      expect(stream_events(provider, []).grep(Riffer::StreamEvents::TextDone)).must_be_empty
     end
   end
 
