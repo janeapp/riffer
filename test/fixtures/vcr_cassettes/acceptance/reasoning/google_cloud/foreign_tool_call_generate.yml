@@ -5,16 +5,14 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"skip_thought_signature_validator"}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"It
+      string: '{"contents":[{"role":"user","parts":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"skip_thought_signature_validator"}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"It
         is 15 degrees Celsius in Toronto."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
     headers:
       User-Agent:
       - Faraday v2.14.4
-      Authorization:
-      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -26,6 +24,8 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      X-Goog-Request-Id:
+      - WknrapHUL82E9LsP3_jN4QI
       Content-Type:
       - application/json; charset=UTF-8
       Vary:
@@ -33,7 +33,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:26:33 GMT
+      - Wed, 04 Nov 2026 15:03:55 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -56,8 +56,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "It is currently 15 degrees Celsius in Toronto.",
-                    "thoughtSignature": "AY89a18Mt93HZjYmnEs4lXMd42htYrvI1plPAoB+3UG4l7jCTf0MNfqwYyOGhErX7cFb5823qhiywntTIvgvn4HCrSGxTZAm0Y/w87WY6jeEQo7I6XOAwjNlMu0="
+                    "text": "Toronto is the capital of Ontario and the Canadian provincial capital with the largest population. \n\nThe current weather in Toronto is 15 degrees Celsius.",
+                    "thoughtSignature": "AY89a18sjylCJ9sGS3ObjoIYASDFncEXbuq8V53kHv1ryO5jAfu59ainiaYKiRfUwplsyLBhIGH9NarkKqmbe16NgvxE92L0L2uwecoKwZHWJ6VquAsh0sQSolo="
                   }
                 ]
               },
@@ -65,26 +65,26 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 62,
-            "candidatesTokenCount": 11,
-            "totalTokenCount": 73,
+            "promptTokenCount": 69,
+            "candidatesTokenCount": 30,
+            "totalTokenCount": 99,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 62
+                "tokenCount": 69
               }
             ],
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 11
+                "tokenCount": 30
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:26:33.133053Z",
-          "responseId": "OUHhar2PCLeV9LsPlufj8Qw"
+          "createTime": "2026-11-04T15:03:54.780817Z",
+          "responseId": "WknrapHUL82E9LsP3_jN4QI"
         }
-  recorded_at: Wed, 28 Oct 2026 00:26:33 GMT
+  recorded_at: Wed, 04 Nov 2026 15:03:55 GMT
 recorded_with: VCR 6.4.0

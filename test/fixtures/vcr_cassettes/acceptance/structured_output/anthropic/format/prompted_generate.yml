@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Book
-        a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+        a visit starting 2026-10-26T09:30:00-04:00 at clinic 550e8400-e29b-41d4-a716-446655440000.
         The patient gave no email.\n\nWhen you give your final answer, respond with
         only a JSON object that conforms to the following JSON Schema, with no other
         text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
@@ -34,7 +34,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 29 Oct 2026 23:35:37 GMT
+      - Wed, 04 Nov 2026 15:03:40 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -46,31 +46,31 @@ http_interactions:
       Anthropic-Ratelimit-Input-Tokens-Remaining:
       - '10000000'
       Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:35:36Z'
+      - '2026-11-04T15:03:39Z'
       Anthropic-Ratelimit-Output-Tokens-Limit:
       - '2000000'
       Anthropic-Ratelimit-Output-Tokens-Remaining:
       - '2000000'
       Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:35:37Z'
+      - '2026-11-04T15:03:40Z'
       Anthropic-Ratelimit-Requests-Limit:
       - '45000'
       Anthropic-Ratelimit-Requests-Remaining:
       - '44999'
       Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:35:35Z'
+      - '2026-11-04T15:03:39Z'
       Anthropic-Ratelimit-Tokens-Limit:
       - '12000000'
       Anthropic-Ratelimit-Tokens-Remaining:
       - '12000000'
       Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:35:36Z'
+      - '2026-11-04T15:03:39Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
-      - req_011CgXQUjs5gwsJZHF6bbVUS
+      - req_011Cgi6J1SbYyM21PCgoGtEn
       Traceresponse:
-      - 00-1c61b12998ee895e443b93d7f6028f27-ea03a65866a90c3e-01
+      - 00-1e98ac16c38ff378c202fb7f82e40935-01effa3f7e4a1166-01
       Anthropic-Organization-Id:
       - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
       Anthropic-Workspace-Id:
@@ -82,15 +82,15 @@ http_interactions:
       Server:
       - cloudflare
       Server-Timing:
-      - x-originResponse;dur=1403
+      - x-originResponse;dur=1072
       Cf-Cache-Status:
       - DYNAMIC
       X-Robots-Tag:
       - none
       Cf-Ray:
-      - a525ff5fb8a979fd-SEA
+      - a55481b74ef9a328-SEA
     body:
       encoding: ASCII-8BIT
-      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQUkDAyU4PNEVbqdRsM","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSggkKEAgTGAI4AUIIdGhpbmtpbmcSDAsqwHwlyRNnB8LhuRoMYTt+PS5lKfylWr7IIjCArfyX6hRneP5LtrH/50PUOQCHJrqQYj40jKiVJI7oRetKYjdifr4gSjduHBV34rQqnwgUFOqsZ7CVU5s8JHTlraKfXQvKw1UE7lj3bUIuV7qxi/326GKJ+sgEVJQahuQjVEvbcldWVR5X4oWD+fFj6h9Qmkb/ccyiAcZdryYtuI9hvm0NA5OGYoQiOzi78wIgqt1jZEPla4pnO5C3t/3MKViaonEQh8BU4zHm0JyRzPQBGP4DDPOIpFzQhAo4vvaQE9JcZie9z73I8bBt9yTmlOOlZdFJKoNd9BrxsycI5fH6X84csBn49boeVeU/a4XOTPRDc7EIfiquzpkQ7QZfe1aVWgN/Fv4f2FuKT/vBzRDjyVRGBXlbFnZu46DQa1FKZhJ+XWg+9o4r9J9/ypTBFOMKNfaAiFi1XfYbP72FHeGLugfVdiZdUzJoR15/ievxuFmz1YDDJ6GR4ac8TE02cFdOZN2ZxDjoikxYLkJoZgez8jLzIoseUmCtVdkoeACYDsynHHOBp3BzxE7KBMfMyHpE5gML4W1GBgsC0odF+onBMwSNg4gHDeJvqUX3nAoGCDgpoiqyU+v5OjCLyJOK7r2NyWLzw2BOnrbHRqavdhINfMZXDEKIpCUKHxzrVfchmrrZTQrCUvtbzk83956jpdbc7gid6joEIvqKFGZzrRS00ebqi8zZt06vVSSToCkEYavUkxaG5l6+44rG1K3bT45e7lRM5GC8hbZisHu5vItnrPGA3k8mw59hNxZPvCTSehywfRxZkiX27I+GJgI9WFxrC+TCMe8epdiAZ9Fd9SPIG1DnovZzQDUsdR2+j8YBzmbA3CQcBqHposcjAKluk0+FMC72UMzEld8Tls5RFcnm7UuIMKczx1Dnpm+lxqhWgzJlJJ6GDy0nm24QCe+nOBgEu5VPnEUOz2yg7sLcjYtMzZXYl5cixKmaVYw6lJkqDdLhdrQDfN69XBQ/2epgWNRqbZUPfSsY7+xFTwymrmeYG/CfmeuCuiX8WOqGT847VXSJXw1u/1/g+RaMudjUPa0FmYjs5OwgAF2liU/ib3tRSt3MllF/MAyp8zVKO6PYTKCkJaRd/TP8HgTkSk9k53mM14KQQVURx/trwftCFVkkZ0wJ+i1s0wcSK5Vn5HP8RFWwW1+Bx8kOm5DE320I1pv1G4ua3BJYXt/dU7EevPaos4H6EQxBaRnHT61WU5nVvSN5CtyqTM7oWDXwDE8XoUCu5MeqMxNMlYPFNmIUD3z5vNLuUTMAmlMns3xChHh8865PuoDtYzZGPvtEKPhiNybbBkvkQOvb9i3M2JsUC0jAkba23aPBUl+j+mkIbKvvlug4s/t2REL3K9NkhI0wE2F/NM/Hn/lEY3sYGJh0XXB7nCjQ9tpWZKVTJPsG7ICEbhw3HFp1DbbsL/y/rNMsLq2OKSVUMJwzPI/DxoefKVhe3jd61hR2bosCDcwzC3aatRgB"},{"type":"text","text":"{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":387,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":295,"output_tokens_details":{"thinking_tokens":224},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
-  recorded_at: Thu, 29 Oct 2026 23:35:37 GMT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011Cgi6J1nwEHmxwY62nxbDE","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSswcKEAgTGAI4AUIIdGhpbmtpbmcSDDp8DKwBBdloeLLx/RoMAutDzeF2WA532BoFIjBKwN/Agg3s/rjB6B3lWe2v21sZpfY+amAd4XdW0NXb3+njb0ZEYsZnf/uuUNSKLLkq0AbVOI1we2YLIEJFLxoa5HR6O1x7KM91MVdY8awlsVCdod5h1h7eEptLbuQVOr5OYWbIUi2VNDZzG76vdqrbuR9gIMxot6y2eCRSt0HB3pO5PBx88tbV8ApAQh7vvqZv36UDTZxjVNUZwMVC4CojDuvN1hnXmM8aSnQlGjmTSeMt5eCq7RB5yYwIv1DhM2f+sMi4X82GtqCGVpfqwzFqr5b/Uai+SZoHOq+I3lBPDAF+JfvGdNHvnD/4F5VedzYoHD6Wp+1sRS0JRfGoqHzgibxCZLJh1BznL1Kl+bJAQuuibAPQk6owhc+WM1exuBBYkW1ki6nEx/zSpuCoB3aeZJrvKuFrBxukrzBzNnQ4HmX6z5Tip0iWMI2JYsuLMrLc01GzSN2GX2eHvgIfZNGKx8LqjcfbRPgp5SEMbvUbT5Q/fbWnxJ2LFtwCHFLRg5Zqs+LE+aMiOE/1lTippYyTdJ6v1UqM5EZe6xySZUxG9YmCAjgVHXmm9OBoIIYLqAx5/IMozWAFbO1RPmiN8C8QJVL8/NabuzlEFZVN6ohC/zBUg8jdPiD+t74Nw9EcN9BuedHE+gu+lJq4XEY3Z6rQQxRn6zdqKaXu4pQmewHBS53ssE/FKM53muIBrSVZQ60GVc5xDl80IRdj+aeXAxvB7/lsuVzDZUjCcKiDj1Ul1PWxz5XrBXKhpgcNgFr1xfBakPwXo/lXkyT7Z8VVqxEnQDxb5K9eAGFw10X9unvytKW6jZ56S/a7cuNOK4d/y8EDo/mPqAJjk6tXl6skwOTe1YYLu24YgeFzOJN3dnxj/AWrgOaBR+ikG9Hagtd9tczSZdNRjC6xfAh+XUT/nj3/PdsgloPpUlDMvq3a4fa6Gubv95tiHSYGKK4K427KcuJsHwSiYmVy08LRha3HUdbB+i9629y24mF1wQCoQmVelzh0n2jxELQSFemlj8cwTCk5G9p1eO7qoBa6GHyi8LKvRSTrqBkRyK3JiZ3Nh/Zf+xDfGaja73df+vlXT4RKouQifinZ9ZKSc8Hl5MW1MtbIJFPSuJir5VaNXGVu3AOCzZ9hUS2OwhmkI/4i7k1rEUKfi0CRmlS3LxvZpIwBcWvGfLPuTMbXDNszh6NR2llqIJ0X5xgB"},{"type":"text","text":"{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":378,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":192,"output_tokens_details":{"thinking_tokens":121},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Wed, 04 Nov 2026 15:03:40 GMT
 recorded_with: VCR 6.4.0

@@ -5,8 +5,8 @@ http_interactions:
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"Book a visit on 2026-10-26
-        at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+      string: '{"contents":[{"role":"user","parts":[{"text":"Book a visit starting
+        2026-10-26T09:30:00-04:00 at clinic 550e8400-e29b-41d4-a716-446655440000.
         The patient gave no email.\n\nWhen you give your final answer, respond with
         only a JSON object that conforms to the following JSON Schema, with no other
         text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
@@ -42,7 +42,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 27 Oct 2026 23:53:17 GMT
+      - Wed, 04 Nov 2026 15:03:34 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -52,7 +52,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=780
+      - gfet4t7; dur=1092
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -67,7 +67,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}",
-                    "thoughtSignature": "EmAKXgFpFH0Tk9K6wf67wyVEeebg9688/oB93iH8Xj5xZ1KwJ4m9q0hxtJlPZwEx0nRVbPgcufEa55PAzbwCwmAzdQGk2PG5xrXwjJEMej05cRmDH5T4b3xqyLLDrZ6m4hY="
+                    "thoughtSignature": "EmAKXgFpFH0Tzv3AOYbusEQfozO1pRo2vgNmrXV9KLEtWpOvebZGBFVDQHnjOfKBKbDhRO57D8DCs9ToQHU0CLpFl/rFOSggrOAvsn3Dyyqr5TkfRgMtr+I0sjKzfbiZDKw="
                   }
                 ],
                 "role": "model"
@@ -77,19 +77,19 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 290,
+            "promptTokenCount": 287,
             "candidatesTokenCount": 87,
-            "totalTokenCount": 377,
+            "totalTokenCount": 374,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 290
+                "tokenCount": 287
               }
             ],
             "serviceTier": "standard"
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "responseId": "bDnhatnLHN-cz7IP38DswQs"
+          "responseId": "RUnraq27Lb3AqtsPvf-BuQo"
         }
-  recorded_at: Tue, 27 Oct 2026 23:53:17 GMT
+  recorded_at: Wed, 04 Nov 2026 15:03:34 GMT
 recorded_with: VCR 6.4.0
