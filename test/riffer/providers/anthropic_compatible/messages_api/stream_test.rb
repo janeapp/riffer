@@ -34,7 +34,7 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream do
     ]
   end
 
-  it "yields text deltas and one TextDone joining every text block at message stop" do
+  it "yields text deltas and leaves TextDone to the caller" do
     events = feed(
       *text_block(0, "Let me ", "check. "),
       block_start(1, { type: "thinking", thinking: "", signature: "" }),
@@ -47,12 +47,10 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream do
 
     expect(events.grep(Riffer::StreamEvents::TextDelta).map(&:content)).
       must_equal ["Let me ", "check. ", "The answer ", "is 42."]
-    expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal ["Let me check. The answer is 42."]
-    expect(events.last).must_be_instance_of Riffer::StreamEvents::TextDone
-  end
-
-  it "yields no TextDone when the stream carries no text" do
-    expect(feed(message_delta("end_turn")).grep(Riffer::StreamEvents::TextDone)).must_be_empty
+    expect(events.grep(Riffer::StreamEvents::TextDone)).must_be_empty
+    expect(stream.finish![:content].filter_map do |block|
+      block[:text]
+    end).must_equal ["Let me check. ", "The answer is 42."]
   end
 
   it "yields reasoning deltas and one signed ReasoningDone per thinking block" do

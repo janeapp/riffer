@@ -11,10 +11,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     "tool_use" => :tool_calls,
     "refusal" => :content_filter,
     "model_context_window_exceeded" => :context_window,
-    # A paused server-tool turn resumes only by re-sending the response; the
-    # agent loop does not do that, so it has no normalized equivalent.
+    # Paused turns are continued here, so this surfaces only once
+    # PAUSE_TURN_CONTINUATIONS runs out.
     "pause_turn" => :other,
   }.freeze #: Hash[String, Symbol]
+
+  PAUSE_TURN_CONTINUATIONS = 8 #: Integer
+  private_constant :PAUSE_TURN_CONTINUATIONS
 
   # Only parts carrying this tag are replayed, so reasoning captured by another
   # adapter, whose signatures the Messages API may not accept, never reaches the
@@ -59,12 +62,28 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate(params)
-    client.post(messages_path(params[:model], stream: false), request_body(params, stream: false))
+    continue_paused_turn(params) do |request|
+      client.post(messages_path(request[:model], stream: false), request_body(request, stream: false))
+    end
   end
 
+  # The done events cover the whole turn, so they wait until every paused
+  # response has been continued.
   #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
+    message = continue_paused_turn(params) { |request| stream_message(request, yielder) }
+
+    text = message[:content].filter_map { |block| block[:text] if block[:type] == "text" }.join
+    yielder << Riffer::StreamEvents::TextDone.new(text) unless text.empty?
+    yield_finish_reason(yielder, extract_finish_reason(message))
+    usage = extract_token_usage(message)
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage) if usage
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> Hash[Symbol, untyped]
+  def stream_message(params, yielder)
     stream = Stream.new(tools: @current_tools)
     decoder = Riffer::Wire::SSE.new
 
@@ -72,10 +91,37 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
       decoder.feed(chunk) { |data, _event| stream.handle(JSON.parse(data, symbolize_names: true), yielder) }
     end
 
-    message = stream.finish!
-    yield_finish_reason(yielder, extract_finish_reason(message))
-    usage = extract_token_usage(message)
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage) if usage
+    stream.finish!
+  end
+
+  # The API resumes a paused turn when its content comes back as the last
+  # assistant message, unchanged. The responses merge into one turn.
+  #--
+  #: (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
+  def continue_paused_turn(params)
+    response = yield params
+
+    PAUSE_TURN_CONTINUATIONS.times do
+      return response unless response[:stop_reason] == "pause_turn"
+
+      paused = { role: "assistant", content: content_blocks(response) }
+      continuation = yield params.merge(messages: [*params[:messages], paused])
+      response = continuation.merge(
+        content: content_blocks(response) + content_blocks(continuation),
+        usage: merge_usage(response[:usage], continuation[:usage]),
+      )
+    end
+
+    response
+  end
+
+  # Each request is billed for its own input and output, so the counts add up.
+  #--
+  #: (Hash[Symbol, untyped]?, Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]?
+  def merge_usage(first, second)
+    return first || second unless first && second
+
+    first.merge(second) { |_key, a, b| a.is_a?(Integer) && b.is_a?(Integer) ? a + b : b }
   end
 
   # Claude signs each thinking block over every block before it in the turn, so
