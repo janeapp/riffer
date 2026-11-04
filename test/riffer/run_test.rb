@@ -272,7 +272,7 @@ describe Riffer::Agent::Run do
       agent.generate("Analyze")
 
       schema_counts = agent.provider.calls.map do |call|
-        call[:messages].count { |m| m[:content].end_with?(agent.structured_output.prompt_instructions) }
+        call[:messages].count { |m| m[:content]&.end_with?(agent.structured_output.prompt_instructions) }
       end
 
       expect(schema_counts).must_equal [1, 1]
@@ -2067,6 +2067,83 @@ describe Riffer::Agent::Run do
         text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
         expect(text_done).wont_be_nil
+      end
+
+      it "keeps the content of TextDone when it differs from the deltas" do
+        agent = agent_class.new
+        agent.provider.stub_response("Hello world")
+        agent.stream("Hello").each { |_| }
+
+        expect(agent.session.messages.last.parts).must_equal [Riffer::Messages::Assistant::TextPart.new("Hello world")]
+      end
+    end
+
+    describe "building parts from events" do
+      let(:reasoning) { Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1") }
+      let(:search) do
+        Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}", format: "mock-v1")
+      end
+
+      def stream_with(events)
+        agent = agent_class.new
+        agent.provider.define_singleton_method(:stream_text) { |**| events.each }
+        agent.stream("Hello").each { |_| }
+        agent.session.messages.last
+      end
+
+      it "keeps the order of text, server tool and reasoning parts" do
+        message = stream_with(
+          [
+            Riffer::StreamEvents::TextDelta.new("Let me "),
+            Riffer::StreamEvents::TextDelta.new("check."),
+            Riffer::StreamEvents::ServerToolDone.new(search),
+            Riffer::StreamEvents::ReasoningDone.new(reasoning),
+            Riffer::StreamEvents::TextDelta.new("4.0.9"),
+            Riffer::StreamEvents::TextDone.new("Let me check.4.0.9"),
+          ],
+        )
+
+        expect(message.parts).must_equal [
+          Riffer::Messages::Assistant::TextPart.new("Let me check."),
+          search,
+          reasoning,
+          Riffer::Messages::Assistant::TextPart.new("4.0.9"),
+        ]
+      end
+
+      it "adds the TextDone text at the end when no delta arrived" do
+        message = stream_with(
+          [Riffer::StreamEvents::ReasoningDone.new(reasoning), Riffer::StreamEvents::TextDone.new("42")],
+        )
+
+        expect(message.parts).must_equal [reasoning, Riffer::Messages::Assistant::TextPart.new("42")]
+      end
+
+      it "puts a TextDone that differs from the deltas where the text began" do
+        message = stream_with(
+          [
+            Riffer::StreamEvents::TextDelta.new("4"),
+            Riffer::StreamEvents::ReasoningDone.new(reasoning),
+            Riffer::StreamEvents::TextDelta.new("2"),
+            Riffer::StreamEvents::TextDone.new("forty-two"),
+          ],
+        )
+
+        expect(message.parts).must_equal [Riffer::Messages::Assistant::TextPart.new("forty-two"), reasoning]
+      end
+
+      it "ends a text part at a tool call" do
+        message = stream_with(
+          [
+            Riffer::StreamEvents::TextDelta.new("Checking."),
+            Riffer::StreamEvents::ToolCallDone.new(item_id: "c1", call_id: "c1", name: "search", arguments: "{}"),
+          ],
+        )
+
+        expect(message.parts.map(&:class)).must_equal [
+          Riffer::Messages::Assistant::TextPart,
+          Riffer::Messages::Assistant::ToolCall,
+        ]
       end
 
       it "adds system message to messages when instructions are provided" do

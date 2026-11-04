@@ -80,4 +80,10 @@ class Riffer::Agent::Session
   # --
   # : (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
   def rebuild_message: (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
+
+  # A +content+, +tool_calls+ or +reasoning+ edit rebuilds the parts in the default order, which
+  # drops server tool parts; +parts:+ replaces them as given.
+  # --
+  # : (Riffer::Messages::Assistant, Hash[Symbol, untyped]) -> Riffer::Messages::Assistant
+  def rebuild_assistant: (Riffer::Messages::Assistant, Hash[Symbol, untyped]) -> Riffer::Messages::Assistant
 end

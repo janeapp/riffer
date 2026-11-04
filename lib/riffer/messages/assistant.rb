@@ -5,6 +5,13 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # The other reasoning part types carry no prose.
   REASONING_TEXT_TYPES = %i[text summary].freeze #: Array[Symbol]
 
+  PART_TAGS = {
+    Riffer::Messages::Assistant::TextPart => :text,
+    Riffer::Messages::Assistant::ReasoningPart => :reasoning,
+    Riffer::Messages::Assistant::ToolCall => :tool_call,
+    Riffer::Messages::Assistant::ServerToolPart => :server_tool,
+  }.freeze #: Hash[singleton(Riffer::Messages::Assistant::TextPart) | singleton(Riffer::Messages::Assistant::ReasoningPart) | singleton(Riffer::Messages::Assistant::ToolCall) | singleton(Riffer::Messages::Assistant::ServerToolPart), Symbol]
+
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant)) -> Riffer::Messages::Assistant
   def self.from_hash(msg)
@@ -13,6 +20,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     new(
       msg[:content],
       id: msg[:id],
+      parts: msg[:parts]&.map { |part| part_from_hash(part) },
       tool_calls: (msg[:tool_calls] || []).map { |tc| Riffer::Messages::Assistant::ToolCall.from_hash(tc) },
       reasoning: (msg[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
       token_usage: msg[:token_usage] && Riffer::Providers::TokenUsage.from_hash(msg[:token_usage]),
@@ -21,6 +29,24 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
       finish_reason_raw: msg[:finish_reason_raw],
     )
   end
+
+  #--
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart)) -> (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart)
+  def self.part_from_hash(part)
+    return part unless part.is_a?(Hash)
+
+    klass = PART_TAGS.key(part[:part]&.to_sym)
+    unless klass
+      raise Riffer::ArgumentError, "part must be one of #{PART_TAGS.values.inspect}, got #{part[:part].inspect}"
+    end
+
+    klass.from_hash(part.except(:part))
+  end
+  private_class_method :part_from_hash
+
+  # The turn in the order the provider produced it. +content+, +tool_calls+ and +reasoning+ are
+  # views over it.
+  attr_reader :parts #: Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart] # @dynamic parts
 
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
 
@@ -34,20 +60,14 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
   attr_reader :finish_reason_raw #: String? # @dynamic finish_reason_raw
 
+  # Without +parts:+, the parts are built in a fixed order: reasoning, then the content as one
+  # text part, then tool calls.
   #--
-  #: (
-  #    String,
-  #    ?id: String?,
-  #    ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall],
-  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
-  #    ?token_usage: Riffer::Providers::TokenUsage?,
-  #    ?structured_output: Hash[Symbol, untyped]?,
-  #    ?finish_reason: Symbol?,
-  #    ?finish_reason_raw: String?
-  #  ) -> void
+  #: (?String?, ?id: String?, ?parts: Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?) -> void
   def initialize(
-    content,
+    content = nil,
     id: nil,
+    parts: nil,
     tool_calls: [],
     reasoning: [],
     token_usage: nil,
@@ -60,9 +80,14 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
       raise Riffer::ArgumentError, "finish_reason must be one of #{values}, got #{finish_reason.inspect}"
     end
 
-    super(content, id: id)
-    @tool_calls = tool_calls
-    @reasoning = reasoning
+    if parts && (content || !tool_calls.empty? || !reasoning.empty?)
+      raise Riffer::ArgumentError, "pass either parts: or content, tool_calls: and reasoning:, not both"
+    end
+
+    @parts = parts || default_parts(content, tool_calls, reasoning)
+    super(@parts.filter_map { |part| part.text if part.is_a?(Riffer::Messages::Assistant::TextPart) }.join, id: id)
+    @tool_calls = @parts.grep(Riffer::Messages::Assistant::ToolCall) #: Array[Riffer::Messages::Assistant::ToolCall]
+    @reasoning = @parts.grep(Riffer::Messages::Assistant::ReasoningPart) #: Array[Riffer::Messages::Assistant::ReasoningPart]
     @token_usage = token_usage
     @structured_output = structured_output
     @finish_reason = finish_reason
@@ -103,6 +128,12 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #--
   #: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +(other)
+    unless [self, other].all? { |message| described_by_fields?(message) }
+      merged = parts.dup
+      merged << Riffer::Messages::Assistant::TextPart.new("\n\n") unless content.empty? || other.content.empty?
+      return self.class.new(parts: merged.concat(other.parts))
+    end
+
     self.class.new(
       "#{content}\n\n#{other.content}",
       tool_calls: tool_calls + other.tool_calls,
@@ -113,14 +144,30 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = { role: role, content: content } #: Hash[Symbol, untyped]
+    hash = { role: role } #: Hash[Symbol, untyped]
     hash[:id] = id if id
-    hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
-    hash[:reasoning] = reasoning.map(&:to_h) if reasoning?
+    hash[:parts] = parts.map { |part| { part: PART_TAGS.fetch(part.class), **part.to_h } }
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason
     hash[:finish_reason_raw] = finish_reason_raw if finish_reason_raw
     hash
+  end
+
+  private
+
+  #--
+  #: (String?, Array[Riffer::Messages::Assistant::ToolCall], Array[Riffer::Messages::Assistant::ReasoningPart]) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+  def default_parts(content, tool_calls, reasoning)
+    parts = [] #: Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+    parts.concat(reasoning)
+    parts << Riffer::Messages::Assistant::TextPart.new(content) unless content.nil? || content.empty?
+    parts.concat(tool_calls)
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant) -> bool
+  def described_by_fields?(message)
+    message.parts == default_parts(message.content, message.tool_calls, message.reasoning)
   end
 end

@@ -45,9 +45,9 @@ class Riffer::Providers::Base
     in_chat_span(model, messages, options) do |span|
       response = execute_generate(params)
 
-      content = extract_content(response)
-      tool_calls = extract_tool_calls(response)
-      reasoning = extract_reasoning(response)
+      parts = extract_parts(response)
+      content = parts.filter_map { |part| part.text if part.is_a?(Riffer::Messages::Assistant::TextPart) }.join
+      tool_calls = parts.grep(Riffer::Messages::Assistant::ToolCall) #: Array[Riffer::Messages::Assistant::ToolCall]
       token_usage = extract_token_usage(response)
       finish_reason = extract_finish_reason(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
@@ -57,9 +57,7 @@ class Riffer::Providers::Base
       capture_output(span, content: content, tool_calls: tool_calls, finish_reason: finish_reason&.reason)
 
       Riffer::Messages::Assistant.new(
-        content,
-        tool_calls: tool_calls,
-        reasoning: reasoning,
+        parts: parts,
         token_usage: token_usage,
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
@@ -254,6 +252,17 @@ class Riffer::Providers::Base
   def extract_finish_reason(_response)
     # Optional hook, so providers that don't report a finish reason stay valid.
     nil
+  end
+
+  # Override when the provider interleaves blocks in one turn and needs them back in that order.
+  #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+  def extract_parts(response)
+    Riffer::Messages::Assistant.new(
+      extract_content(response),
+      tool_calls: extract_tool_calls(response),
+      reasoning: extract_reasoning(response),
+    ).parts
   end
 
   #--

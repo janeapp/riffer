@@ -11,9 +11,19 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
 
   @tools: Array[singleton(Riffer::Tool)]
 
+  # Each server tool has its own result type (web search run from code execution returns
+  # +code_execution_tool_result+ blocks too), and the API rejects a server_tool_use sent back
+  # without its result. +mcp_tool_result+ pairs with +mcp_tool_use+, which riffer drops, so
+  # its result is dropped too.
+  SERVER_TOOL_RESULT_TYPE: Regexp
+
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def self.reasoning_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ServerToolPart
+  def self.server_tool_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ServerToolPart
 
   # --
   # : (tools: Array[singleton(Riffer::Tool)]) -> void

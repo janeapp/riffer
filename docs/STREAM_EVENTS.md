@@ -55,6 +55,8 @@ event.to_h     # => {role: :assistant, content: "Hello, how can I help you?"}
 
 Fires once per model response, after its last `TextDelta`, and contains the response's full text: every text block the provider returned, concatenated in order, so it always equals the joined `TextDelta` contents. A response that carries no text (for example, only tool calls) emits no `TextDone`.
 
+The agent loop builds the message's [text parts](MESSAGES.md#parts) from the `TextDelta` events: the deltas between two other parts (reasoning, a tool call, a server tool block) form one text part. An adapter that sends no deltas gets one text part, from `TextDone`, at the end of the turn.
+
 ### ToolCallDelta
 
 Emitted when tool call arguments are being streamed:
@@ -155,6 +157,20 @@ event.to_h     # => {role: :assistant, query: "Ruby language", sources: [...]}
 ```
 
 Contains the search query and an array of source hashes with `title` and `url` keys.
+
+### ServerToolDone
+
+Emitted when a block from a tool the provider ran itself (such as web search) is complete. It carries the block for replay; use `WebSearchStatus` and `WebSearchDone` to show progress.
+
+```ruby
+part = Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{...}", format: "anthropic-messages-v1")
+event = Riffer::StreamEvents::ServerToolDone.new(part)
+event.role  # => :assistant
+event.part  # => the ServerToolPart
+event.to_h  # => {role: :assistant, part: {name: "web_search", kind: :call, data: "{...}", format: "anthropic-messages-v1"}}
+```
+
+The agent loop adds `part` to the assistant message's [parts](MESSAGES.md#parts). Only Anthropic emits it today.
 
 ### GuardrailTripwire
 

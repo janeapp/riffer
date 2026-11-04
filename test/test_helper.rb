@@ -72,12 +72,12 @@ def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
 
-def assert_round_trips(object)
+def assert_round_trips(object, omitted: [])
   hash = object.to_h
   parameters = object.class.instance_method(:initialize).parameters
   keywords = parameters.filter_map { |kind, name| name if kind in :key | :keyreq }
   # A fixture that doesn't populate a newly added attribute must fail rather than skip it silently.
-  missing = keywords - hash.keys
+  missing = keywords - omitted - hash.keys
 
   expect(missing).must_be_empty "#{object.class}#to_h omits #{missing.inspect}; populate them in the fixture"
 

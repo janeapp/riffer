@@ -7,7 +7,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
 
   # Only parts carrying this tag are replayed, so reasoning captured by another
   # adapter, whose signatures the Messages API may not accept, never reaches the
-  # request.
+  # request. Server tool parts and text parts that keep their block carry it too.
   REASONING_FORMAT: String
 
   # --
@@ -37,17 +37,17 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
+  # Claude signs each thinking block over every block before it in the turn, so
+  # the blocks go back in the order they came.
   # --
-  # : (Hash[Symbol, untyped]) -> String
-  def extract_content: (Hash[Symbol, untyped]) -> String
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
+  def extract_parts: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
 
+  # The block is kept only when it carries citations, which point into the
+  # search results and go back with the text.
   # --
-  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
-
-  # --
-  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
-  def extract_reasoning: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::TextPart
+  def text_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::TextPart
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
@@ -84,6 +84,15 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?
+  def convert_part: (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?
+
+  # The API rejects text blocks that are empty or only whitespace.
+  # --
+  # : (Riffer::Messages::Assistant::TextPart) -> Hash[Symbol, untyped]?
+  def convert_text_part: (Riffer::Messages::Assistant::TextPart) -> Hash[Symbol, untyped]?
 
   # --
   # : (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]

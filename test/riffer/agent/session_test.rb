@@ -297,6 +297,42 @@ describe Riffer::Agent::Session do
     end
   end
 
+  describe "#update on an assistant with parts" do
+    let(:search) { Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}") }
+    let(:reasoning) { Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1") }
+    let(:assistant) do
+      Riffer::Messages::Assistant.new(
+        id: "a_x",
+        parts: [Riffer::Messages::Assistant::TextPart.new("Let me check."), search, reasoning],
+      )
+    end
+    let(:s) { Riffer::Agent::Session.new(messages: [assistant]) }
+
+    it "keeps the parts when the update doesn't touch content, tool_calls or reasoning" do
+      result = s.update(id: "a_x", finish_reason: :stop)
+
+      expect(result.parts).must_equal assistant.parts
+      expect(result.finish_reason).must_equal :stop
+    end
+
+    it "replaces the parts as given" do
+      parts = [search, Riffer::Messages::Assistant::TextPart.new("Redacted.")]
+      result = s.update(id: "a_x", parts: parts)
+
+      expect(result.parts).must_equal parts
+    end
+
+    it "rebuilds the parts in the default order on a content edit, dropping server tool parts" do
+      result = s.update(id: "a_x", content: "Redacted.")
+
+      expect(result.parts).must_equal [reasoning, Riffer::Messages::Assistant::TextPart.new("Redacted.")]
+    end
+
+    it "raises Riffer::ArgumentError when parts: comes with content:" do
+      expect { s.update(id: "a_x", parts: [search], content: "x") }.must_raise Riffer::ArgumentError
+    end
+  end
+
   describe "#update with tool_call_id:" do
     it "replaces tool result content preserving name and id" do
       result = session.update(tool_call_id: "c_1", content: "rainy")

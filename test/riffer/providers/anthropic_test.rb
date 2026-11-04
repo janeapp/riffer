@@ -1829,6 +1829,26 @@ describe Riffer::Providers::Anthropic do
       Riffer::Messages::Assistant::ReasoningPart.new(**attributes)
     end
 
+    def reasoning_of(response)
+      provider.send(:extract_parts, response).grep(Riffer::Messages::Assistant::ReasoningPart)
+    end
+
+    def search_call_block = { type: "server_tool_use", id: "srvtoolu_1", name: "web_search", input: { query: "ruby" } }
+    def search_result_block = { type: "web_search_tool_result", tool_use_id: "srvtoolu_1", content: [] }
+
+    def code_call_block
+      { type: "server_tool_use", id: "srvtoolu_ce", name: "code_execution", input: { code: "print(1)" } }
+    end
+
+    def code_result_block
+      { type: "code_execution_tool_result", tool_use_id: "srvtoolu_ce",
+        content: { type: "code_execution_result", stdout: "1" }, }
+    end
+
+    def cited_text_block(text)
+      { type: "text", text: text, citations: [{ type: "web_search_result_location", url: "https://ruby-lang.org", encrypted_index: "Eo8B" }] }
+    end
+
     def convert(reasoning, content: "42", tool_calls: [])
       assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
       provider.send(:convert_assistant, assistant)
@@ -1838,7 +1858,7 @@ describe Riffer::Providers::Anthropic do
       it "maps a thinking block onto a text part, keeping its signature" do
         response = build_response([thinking_block("Think", "sig"), text_block("42")])
 
-        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+        expect(reasoning_of(response).map(&:to_h)).must_equal [
           { type: :text, text: "Think", signature: "sig", format: "anthropic-messages-v1" },
         ]
       end
@@ -1846,7 +1866,7 @@ describe Riffer::Providers::Anthropic do
       it "maps a redacted_thinking block onto an encrypted part" do
         response = build_response([redacted_thinking_block("opaque")])
 
-        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+        expect(reasoning_of(response).map(&:to_h)).must_equal [
           { type: :encrypted, data: "opaque", format: "anthropic-messages-v1" },
         ]
       end
@@ -1854,27 +1874,71 @@ describe Riffer::Providers::Anthropic do
       it "keeps several reasoning blocks in response order" do
         response = build_response([thinking_block("One", "sig-1"), redacted_thinking_block("opaque")])
 
-        expect(provider.send(:extract_reasoning, response).map(&:type)).must_equal %i[text encrypted]
+        expect(reasoning_of(response).map(&:type)).must_equal %i[text encrypted]
       end
 
       it "returns no parts when the response carries no thinking" do
-        expect(provider.send(:extract_reasoning, build_response([text_block("42")]))).must_equal []
+        expect(reasoning_of(build_response([text_block("42")]))).must_equal []
       end
 
-      it "keeps every text block around thinking, tool and web search blocks, in order" do
+      it "keeps every block as a part, in response order" do
         response = build_response(
           [
-            thinking_block("Think", "sig"),
             text_block("Searching. "),
-            { type: "server_tool_use", id: "srvtoolu_1", name: "web_search", input: { query: "ruby" } },
-            { type: "web_search_tool_result", tool_use_id: "srvtoolu_1", content: [] },
+            search_call_block,
+            search_result_block,
+            thinking_block("Think", "sig"),
             text_block("Ruby 4.0.1"),
             text_block(" is out."),
             { type: "tool_use", id: "toolu_1", name: "get_weather", input: {} },
           ],
         )
+        provider.instance_variable_set(:@current_tools, [])
 
-        expect(provider.send(:extract_content, response)).must_equal "Searching. Ruby 4.0.1 is out."
+        message = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, response))
+
+        expect(message.parts.map { |part| part.class.name.split("::").last }).must_equal %w[
+          TextPart ServerToolPart ServerToolPart ReasoningPart TextPart TextPart ToolCall
+        ]
+        expect(message.content).must_equal "Searching. Ruby 4.0.1 is out."
+      end
+
+      it "maps web search blocks onto server tool parts holding the block" do
+        call, result = provider.send(:extract_parts, build_response([search_call_block, search_result_block]))
+
+        expect([call.name, call.kind, call.id,
+                call.format,]).must_equal ["web_search", :call, "srvtoolu_1", "anthropic-messages-v1"]
+        expect([result.name, result.kind, result.id]).must_equal ["web_search", :result, "srvtoolu_1"]
+        expect(JSON.parse(result.data, symbolize_names: true)).must_equal search_result_block
+      end
+
+      it "sends a code execution call back with its result, around the web search it ran" do
+        blocks = [code_call_block, search_call_block, search_result_block, code_result_block, text_block("4.0.9")]
+        message = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, build_response(blocks)))
+
+        expect(message.parts.grep(Riffer::Messages::Assistant::ServerToolPart).map { |p| [p.name, p.kind] }).
+          must_equal [["code_execution", :call], ["web_search", :call], ["web_search", :result],
+                      ["code_execution", :result],]
+        expect(provider.send(:convert_assistant, message)[:content]).must_equal blocks
+      end
+
+      it "drops an MCP tool result along with its call" do
+        blocks = [
+          { type: "mcp_tool_use", id: "mcptoolu_1", name: "echo", server_name: "demo", input: {} },
+          { type: "mcp_tool_result", tool_use_id: "mcptoolu_1", is_error: false, content: [] },
+          text_block("done"),
+        ]
+
+        expect(provider.send(:extract_parts, build_response(blocks))).
+          must_equal [Riffer::Messages::Assistant::TextPart.new("done")]
+      end
+
+      it "keeps a text block's citations, and only the text when it has none" do
+        cited, plain = provider.send(:extract_parts, build_response([cited_text_block("4.0.9"), text_block(".")]))
+
+        expect(JSON.parse(cited.data, symbolize_names: true)).must_equal cited_text_block("4.0.9")
+        expect(cited.format).must_equal "anthropic-messages-v1"
+        expect(plain).must_equal Riffer::Messages::Assistant::TextPart.new(".")
       end
 
       it "attaches the parts to the assistant message from generate_text" do
@@ -1910,6 +1974,47 @@ describe Riffer::Providers::Anthropic do
         ]
       end
 
+      it "emits a ServerToolDone for each web search block, ahead of its display event" do
+        events = stream_events(
+          [
+            block_start(0, search_call_block.merge(input: {})),
+            delta(0, { type: "input_json_delta", partial_json: '{"query":"ruby"}' }),
+            block_stop(0),
+            block_start(1, search_result_block),
+            block_stop(1),
+          ],
+        )
+        kinds = events.filter_map do |event|
+          case event
+          when Riffer::StreamEvents::ServerToolDone then event.part.kind
+          when Riffer::StreamEvents::WebSearchStatus, Riffer::StreamEvents::WebSearchDone
+            event.class.name.split("::").last
+          end
+        end
+
+        expect(kinds).must_equal [:call, "WebSearchStatus", :result, "WebSearchDone"]
+        call = events.grep(Riffer::StreamEvents::ServerToolDone).first.part
+
+        expect(JSON.parse(call.data,
+                          symbolize_names: true,)).must_equal search_call_block.merge(input: { query: "ruby" })
+      end
+
+      it "emits a ServerToolDone for a code execution result, without a web search event" do
+        events = stream_events(
+          [
+            block_start(0, code_call_block.merge(input: {})),
+            delta(0, { type: "input_json_delta", partial_json: '{"code":"print(1)"}' }),
+            block_stop(0),
+            block_start(1, code_result_block),
+            block_stop(1),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ServerToolDone).map { |e| [e.part.name, e.part.kind] }).
+          must_equal [["code_execution", :call], ["code_execution", :result]]
+        expect(events.grep(Riffer::StreamEvents::WebSearchDone)).must_be_empty
+      end
+
       it "emits parts in block order and leaves the following text block intact" do
         events = stream_events(
           [*thinking_events(0, "First", signature: "sig-1"), *redacted_events(1, "opaque"), *text_events(2, "4", "2")],
@@ -1936,8 +2041,47 @@ describe Riffer::Providers::Anthropic do
         expect(content[3][:type]).must_equal "tool_use"
       end
 
+      it "sends every block back in its original order, unchanged, after a JSON round trip" do
+        blocks = [
+          text_block("Let me check."),
+          search_call_block,
+          search_result_block,
+          thinking_block("Think", "sig"),
+          cited_text_block("4.0.9"),
+        ]
+        message = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, build_response(blocks)))
+        json = JSON.generate(message.to_h)
+        restored = Riffer::Messages::Base.from_hash(JSON.parse(json, symbolize_names: true))
+
+        expect(provider.send(:convert_assistant, restored)[:content]).must_equal blocks
+      end
+
+      it "skips server tool parts and text blocks from another adapter, keeping the text" do
+        message = Riffer::Messages::Assistant.new(
+          parts: [
+            Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}",
+                                                            format: "mock-v1",),
+            Riffer::Messages::Assistant::TextPart.new("42", data: '{"type":"output_text"}', format: "mock-v1"),
+            Riffer::Messages::Assistant::TextPart.new(""),
+          ],
+        )
+
+        expect(provider.send(:convert_assistant, message)[:content]).must_equal [{ type: "text", text: "42" }]
+      end
+
+      it "sends no whitespace-only text block for the separator added when merging assistant messages" do
+        blocks = [text_block("Let me check."), search_call_block, search_result_block]
+        first = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, build_response(blocks)))
+        merged = first + Riffer::Messages::Assistant.new("Done.")
+        messages = [Riffer::Messages::User.new("Hi"), merged]
+
+        params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {})
+
+        expect(params[:messages].last[:content]).must_equal [*blocks, text_block("Done.")]
+      end
+
       it "replays parts restored from a persisted hash" do
-        captured = provider.send(:extract_reasoning, build_response([thinking_block("Think", "sig")]))
+        captured = reasoning_of(build_response([thinking_block("Think", "sig")]))
         persisted = captured.map { |p| JSON.parse(p.to_h.to_json, symbolize_names: true) }
         restored = persisted.map { |h| Riffer::Messages::Assistant::ReasoningPart.from_hash(h) }
 

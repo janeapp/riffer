@@ -172,10 +172,10 @@ describe Riffer::Providers::Base do
       ]
       provider.generate_text(messages: messages, structured_output: structured_output)
 
-      expect(provider.calls.last[:messages].map { |m| m[:content] }).must_equal [
-        "First\n\nSecond\n\n#{instructions}",
-        "Noted.",
-        "Third\n\n#{instructions}",
+      expect(provider.calls.last[:messages]).must_equal [
+        { role: :user, content: "First\n\nSecond\n\n#{instructions}" },
+        { role: :assistant, parts: [{ part: :text, text: "Noted." }] },
+        { role: :user, content: "Third\n\n#{instructions}" },
       ]
     end
 

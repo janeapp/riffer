@@ -333,6 +333,8 @@ class TokenLimiter < Riffer::Guardrail
 end
 ```
 
+`Assistant.new(text)` builds a new turn with only that text, so this example also drops the response's tool calls and server tool parts. When a guardrail changes the text of a response that carries reasoning, server tool parts or tool calls, rebuild its `parts` instead; see [Messages — Editing a turn](MESSAGES.md#parts).
+
 ### Content Policy Filter
 
 ```ruby

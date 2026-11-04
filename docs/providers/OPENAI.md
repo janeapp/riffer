@@ -96,7 +96,7 @@ Each `reasoning` item in a Responses API output becomes [reasoning parts](../MES
 
 The `:encrypted` part is always present, even when the response carried no `encrypted_content`, so the item's `id` is kept. When streaming, the parts are yielded as `ReasoningDone` events once the item completes; summary text still arrives as `ReasoningDelta` events before that.
 
-On the next request, parts sharing an `id` go back as one `reasoning` item, ahead of the assistant's text and function calls, in their original order and unchanged. This lets reasoning models carry their reasoning across turns and tool-call loops. You don't have to do anything as long as the assistant messages stay in the history; if you persist sessions, keep the `reasoning` key when you store them.
+On the next request, parts sharing an `id` go back as one `reasoning` item, ahead of the assistant's text and function calls, in their original order and unchanged. This lets reasoning models carry their reasoning across turns and tool-call loops. You don't have to do anything as long as the assistant messages stay in the history; if you persist sessions, keep the reasoning when you store them.
 
 With `store` left on (the API default), OpenAI can resolve a replayed item from its `id` alone. With `model_options store: false`, the item can only be replayed from its encrypted payload, so request it explicitly:
 

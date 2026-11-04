@@ -64,19 +64,139 @@ describe Riffer::Messages::Assistant do
       expect { Riffer::Messages::Assistant.from_hash({ content: "Hi", finish_reason: "bogus" }) }.must_raise(Riffer::ArgumentError)
     end
 
-    it "round-trips every attribute" do
+    it "round-trips every attribute through to_h" do
       message = Riffer::Messages::Assistant.new(
-        "Let me search",
         id: "a-1",
-        tool_calls: [Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "search", arguments: "{}")],
-        reasoning: [Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking")],
+        parts: [
+          Riffer::Messages::Assistant::TextPart.new("Let me search", data: "{}", format: "mock-v1"),
+          Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}",
+                                                          format: "mock-v1",),
+          Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking"),
+          Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "search", arguments: "{}"),
+        ],
         token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.42),
         structured_output: { answer: 42 },
         finish_reason: :tool_calls,
         finish_reason_raw: "tool_use",
       )
 
-      assert_round_trips message
+      assert_round_trips message, omitted: %i[tool_calls reasoning]
+    end
+
+    it "builds the parts from the old keys when the hash has no parts" do
+      message = Riffer::Messages::Assistant.from_hash(
+        {
+          role: "assistant",
+          content: "Hi",
+          tool_calls: [{ call_id: "c1", name: "search", arguments: "{}" }],
+          reasoning: [{ type: "text", text: "Thinking" }],
+        },
+      )
+
+      expect(message.parts.map(&:class)).must_equal [
+        Riffer::Messages::Assistant::ReasoningPart,
+        Riffer::Messages::Assistant::TextPart,
+        Riffer::Messages::Assistant::ToolCall,
+      ]
+    end
+
+    it "reads parts in their stored order" do
+      message = Riffer::Messages::Assistant.from_hash(
+        {
+          role: "assistant",
+          parts: [
+            { part: "text", text: "Let me check." },
+            { part: "server_tool", name: "web_search", kind: "call", data: "{}" },
+            { part: "reasoning", type: "text", text: "Thinking" },
+            { part: "tool_call", call_id: "c1", name: "search", arguments: "{}" },
+          ],
+        },
+      )
+
+      expect(message.parts.map(&:class)).must_equal [
+        Riffer::Messages::Assistant::TextPart,
+        Riffer::Messages::Assistant::ServerToolPart,
+        Riffer::Messages::Assistant::ReasoningPart,
+        Riffer::Messages::Assistant::ToolCall,
+      ]
+      expect(message.content).must_equal "Let me check."
+      expect(message.reasoning_text).must_equal "Thinking"
+    end
+
+    it "raises Riffer::ArgumentError on a hash that has parts and content, tool_calls or reasoning" do
+      parts = [{ part: "text", text: "Hi" }]
+
+      [
+        { content: "Hi" },
+        { tool_calls: [{ call_id: "c1", name: "search", arguments: "{}" }] },
+        { reasoning: [{ type: "text", text: "Thinking" }] },
+      ].each do |old_keys|
+        expect do
+          Riffer::Messages::Assistant.from_hash({ role: "assistant", parts: parts, **old_keys })
+        end.must_raise Riffer::ArgumentError
+      end
+    end
+
+    it "accepts parts next to nil content and empty tool_calls and reasoning" do
+      message = Riffer::Messages::Assistant.from_hash(
+        { role: "assistant", content: nil, tool_calls: [], reasoning: [], parts: [{ part: "text", text: "Hi" }] },
+      )
+
+      expect(message.content).must_equal "Hi"
+    end
+
+    it "raises Riffer::ArgumentError on an unknown part tag" do
+      expect do
+        Riffer::Messages::Assistant.from_hash({ role: "assistant", parts: [{ part: "image" }] })
+      end.must_raise Riffer::ArgumentError
+    end
+  end
+
+  describe "#parts" do
+    let(:reasoning) { Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking") }
+    let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "search", arguments: "{}") }
+    let(:server_tool) do
+      Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}", format: "mock-v1")
+    end
+
+    it "builds reasoning, then the content, then tool calls without parts:" do
+      message = Riffer::Messages::Assistant.new("Hi", tool_calls: [tool_call], reasoning: [reasoning])
+
+      expect(message.parts).must_equal [reasoning, Riffer::Messages::Assistant::TextPart.new("Hi"), tool_call]
+    end
+
+    it "has no text part for empty content" do
+      expect(Riffer::Messages::Assistant.new("", tool_calls: [tool_call]).parts).must_equal [tool_call]
+    end
+
+    it "derives content, tool_calls and reasoning from the parts" do
+      message = Riffer::Messages::Assistant.new(
+        parts: [
+          Riffer::Messages::Assistant::TextPart.new("Let me check. "),
+          server_tool,
+          reasoning,
+          Riffer::Messages::Assistant::TextPart.new("Ruby 4.0.9."),
+          tool_call,
+        ],
+      )
+
+      expect(message.content).must_equal "Let me check. Ruby 4.0.9."
+      expect(message.tool_calls).must_equal [tool_call]
+      expect(message.reasoning).must_equal [reasoning]
+    end
+
+    it "doesn't count server tool parts as reasoning" do
+      message = Riffer::Messages::Assistant.new(parts: [server_tool, Riffer::Messages::Assistant::TextPart.new("Hi")])
+
+      expect(message.reasoning?).must_equal false
+    end
+
+    it "raises Riffer::ArgumentError when parts: comes with content, tool_calls: or reasoning:" do
+      parts = [Riffer::Messages::Assistant::TextPart.new("Hi")]
+
+      expect { Riffer::Messages::Assistant.new("Hi", parts: parts) }.must_raise Riffer::ArgumentError
+      expect { Riffer::Messages::Assistant.new(parts: parts, tool_calls: [tool_call]) }.must_raise Riffer::ArgumentError
+      expect { Riffer::Messages::Assistant.new(parts: parts, reasoning: [reasoning]) }.must_raise Riffer::ArgumentError
     end
   end
 
@@ -184,26 +304,54 @@ describe Riffer::Messages::Assistant do
       expect(result.token_usage).must_be_nil
       expect(result.structured_output).must_be_nil
     end
+
+    it "keeps each message's parts in order when either has parts its fields can't rebuild" do
+      search = Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}")
+      a = Riffer::Messages::Assistant.new(parts: [search, Riffer::Messages::Assistant::TextPart.new("First")])
+      b = Riffer::Messages::Assistant.new("Second")
+
+      result = a + b
+
+      expect(result.parts).must_equal [
+        search,
+        Riffer::Messages::Assistant::TextPart.new("First"),
+        Riffer::Messages::Assistant::TextPart.new("\n\n"),
+        Riffer::Messages::Assistant::TextPart.new("Second"),
+      ]
+      expect(result.content).must_equal "First\n\nSecond"
+    end
   end
 
   describe "#to_h" do
-    it "returns hash with role and content" do
-      message = Riffer::Messages::Assistant.new("I can help")
+    it "writes every part tagged and in order, in place of content, tool_calls and reasoning" do
+      message = Riffer::Messages::Assistant.new(
+        id: "a-1",
+        parts: [
+          Riffer::Messages::Assistant::TextPart.new("Hi", data: "{}", format: "mock-v1"),
+          Riffer::Messages::Assistant::ServerToolPart.new(name: "web_search", kind: :call, data: "{}"),
+          Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking"),
+          Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "test", arguments: "{}"),
+        ],
+      )
 
-      expect(message.to_h).must_equal({ role: :assistant, content: "I can help" })
+      expect(message.to_h).must_equal(
+        {
+          role: :assistant,
+          id: "a-1",
+          parts: [
+            { part: :text, text: "Hi", data: "{}", format: "mock-v1" },
+            { part: :server_tool, name: "web_search", kind: :call, data: "{}" },
+            { part: :reasoning, type: :text, text: "Thinking" },
+            { part: :tool_call, call_id: "c1", name: "test", arguments: "{}" },
+          ],
+        },
+      )
     end
 
-    it "includes tool_calls when provided" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "test", arguments: "{}")
-      message = Riffer::Messages::Assistant.new("Using tool", tool_calls: [tool_call])
+    it "writes a content-only message as one text part" do
+      message = Riffer::Messages::Assistant.new("Hi")
 
-      expect(message.to_h[:tool_calls]).must_equal [{ call_id: "c1", name: "test", arguments: "{}" }]
-    end
-
-    it "excludes tool_calls when empty" do
-      message = Riffer::Messages::Assistant.new("No tools")
-
-      expect(message.to_h).must_equal({ role: :assistant, content: "No tools" })
+      expect(message.to_h).must_equal({ role: :assistant, parts: [{ part: :text, text: "Hi" }] })
     end
 
     it "includes usage when provided" do
@@ -325,13 +473,10 @@ describe Riffer::Messages::Assistant do
     it "includes the parts in to_h" do
       message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part])
 
-      expect(message.to_h[:reasoning]).must_equal [{ type: :text, text: "Step one", format: "mock-v1" }]
-    end
-
-    it "omits reasoning from to_h when there are no parts" do
-      message = Riffer::Messages::Assistant.new("Answer")
-
-      expect(message.to_h.key?(:reasoning)).must_equal false
+      expect(message.to_h[:parts]).must_equal [
+        { part: :reasoning, type: :text, text: "Step one", format: "mock-v1" },
+        { part: :text, text: "Answer" },
+      ]
     end
 
     it "round-trips through to_h and from_hash" do

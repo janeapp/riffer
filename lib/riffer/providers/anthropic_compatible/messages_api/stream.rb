@@ -10,6 +10,12 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # @rbs @web_search_query: String?
   # @rbs @completed: bool
 
+  # Each server tool has its own result type (web search run from code execution returns
+  # +code_execution_tool_result+ blocks too), and the API rejects a server_tool_use sent back
+  # without its result. +mcp_tool_result+ pairs with +mcp_tool_use+, which riffer drops, so
+  # its result is dropped too.
+  SERVER_TOOL_RESULT_TYPE = /\A(?!mcp_)\w+_tool_result\z/ #: Regexp
+
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
   def self.reasoning_part(block)
@@ -26,6 +32,20 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     when "redacted_thinking"
       Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: block[:data], format: format)
     end
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ServerToolPart
+  def self.server_tool_part(block)
+    call = block[:type] == "server_tool_use"
+
+    Riffer::Messages::Assistant::ServerToolPart.new(
+      name: call ? block[:name] : block[:type].delete_suffix("_tool_result"),
+      kind: call ? :call : :result,
+      data: JSON.generate(block),
+      id: call ? block[:id] : block[:tool_use_id],
+      format: Riffer::Providers::AnthropicCompatible::MessagesAPI::REASONING_FORMAT,
+    )
   end
 
   #--
@@ -137,11 +157,15 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
       yielder << Riffer::StreamEvents::ReasoningDone.new(part)
     when "server_tool_use"
       block[:input] = parse_input(@partial_json.delete(index).to_s) || {}
+      yielder << Riffer::StreamEvents::ServerToolDone.new(self.class.server_tool_part(block))
       return unless block[:name] == "web_search"
 
       @web_search_query = block[:input]["query"]
       yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: @web_search_query)
-    when "web_search_tool_result"
+    when SERVER_TOOL_RESULT_TYPE
+      yielder << Riffer::StreamEvents::ServerToolDone.new(self.class.server_tool_part(block))
+      return unless block[:type] == "web_search_tool_result"
+
       yielder << Riffer::StreamEvents::WebSearchDone.new(@web_search_query || "", sources: web_search_sources(block))
       @web_search_query = nil
     end
