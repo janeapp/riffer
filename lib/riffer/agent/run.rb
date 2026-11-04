@@ -131,7 +131,6 @@ module Riffer::Agent::Run
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
     # Text deltas between two non-text events form one text part.
     parts = [] #: Array[String | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
-    text_buffer = nil #: String?
     final_text = nil #: String?
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
@@ -142,22 +141,19 @@ module Riffer::Agent::Run
 
       case event
       when Riffer::StreamEvents::TextDelta
-        buffer = text_buffer || (+"").tap { |new_buffer| parts << new_buffer }
-        text_buffer = buffer
+        last = parts.last
         # << rather than +=, which copies the whole buffer per delta (O(n^2)
         # over a stream).
-        buffer << event.content
+        last.is_a?(String) ? last << event.content : parts << event.content.dup
       when Riffer::StreamEvents::TextDone
         final_text = event.content
       when Riffer::StreamEvents::ToolCallDone
-        text_buffer = nil
         parts << Riffer::Messages::Assistant::ToolCall.new(
           call_id: event.call_id,
           name: event.name,
           arguments: event.arguments,
         )
       when Riffer::StreamEvents::ReasoningDone, Riffer::StreamEvents::ServerToolDone
-        text_buffer = nil
         parts << event.part
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage

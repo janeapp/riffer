@@ -186,6 +186,35 @@ class Riffer::Agent::Session
     @messages.reject! { |m| m.is_a?(Riffer::Messages::Tool) && removed_ids.include?(m.tool_call_id) }
   end
 
+  #--
+  #: (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
+  def rebuild_message(old, attrs)
+    case old
+    when Riffer::Messages::Assistant
+      rebuild_assistant(old, attrs)
+    when Riffer::Messages::Tool
+      Riffer::Messages::Tool.new(
+        attrs.fetch(:content, old.content),
+        tool_call_id: old.tool_call_id,
+        name: attrs.fetch(:name, old.name),
+        id: attrs.fetch(:id, old.id),
+        error: attrs.fetch(:error, old.error),
+        error_type: attrs.fetch(:error_type, old.error_type),
+      )
+    when Riffer::Messages::User
+      Riffer::Messages::User.new(
+        attrs.fetch(:content, old.content),
+        id: attrs.fetch(:id, old.id),
+        files: attrs.fetch(:files, old.files),
+      )
+    else
+      old.class.new(
+        attrs.fetch(:content, old.content),
+        id: attrs.fetch(:id, old.id),
+      )
+    end
+  end
+
   # A +content+, +tool_calls+ or +reasoning+ edit rebuilds the parts in the default order, which
   # drops server tool parts; +parts:+ replaces them as given.
   #--
@@ -216,34 +245,5 @@ class Riffer::Agent::Session
       reasoning: attrs.fetch(:reasoning, old.reasoning),
       **options,
     )
-  end
-
-  #--
-  #: (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
-  def rebuild_message(old, attrs)
-    case old
-    when Riffer::Messages::Assistant
-      rebuild_assistant(old, attrs)
-    when Riffer::Messages::Tool
-      Riffer::Messages::Tool.new(
-        attrs.fetch(:content, old.content),
-        tool_call_id: old.tool_call_id,
-        name: attrs.fetch(:name, old.name),
-        id: attrs.fetch(:id, old.id),
-        error: attrs.fetch(:error, old.error),
-        error_type: attrs.fetch(:error_type, old.error_type),
-      )
-    when Riffer::Messages::User
-      Riffer::Messages::User.new(
-        attrs.fetch(:content, old.content),
-        id: attrs.fetch(:id, old.id),
-        files: attrs.fetch(:files, old.files),
-      )
-    else
-      old.class.new(
-        attrs.fetch(:content, old.content),
-        id: attrs.fetch(:id, old.id),
-      )
-    end
   end
 end
