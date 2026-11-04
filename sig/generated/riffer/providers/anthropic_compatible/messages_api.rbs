@@ -50,7 +50,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def stream_message: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> Hash[Symbol, untyped]
 
   # The API resumes a paused turn when its content comes back as the last
-  # assistant message, unchanged. The responses merge into one turn.
+  # assistant message, unchanged.
   # --
   # : (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
   def continue_paused_turn: (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]

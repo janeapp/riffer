@@ -95,7 +95,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   end
 
   # The API resumes a paused turn when its content comes back as the last
-  # assistant message, unchanged. The responses merge into one turn.
+  # assistant message, unchanged.
   #--
   #: (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
   def continue_paused_turn(params)
@@ -105,8 +105,12 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
       return response unless response[:stop_reason] == "pause_turn"
 
       paused = { role: "assistant", content: content_blocks(response) }
-      continuation = yield params.merge(messages: [*params[:messages], paused])
-      response = continuation.merge(
+      request = params.merge(messages: [*params[:messages], paused])
+      # Without the id, the next request starts a new container and loses its files.
+      container_id = response.dig(:container, :id)
+      request[:container] = container_id if container_id
+      continuation = yield request
+      response = response.merge(continuation).merge(
         content: content_blocks(response) + content_blocks(continuation),
         usage: merge_usage(response[:usage], continuation[:usage]),
       )
