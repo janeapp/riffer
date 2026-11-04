@@ -1,0 +1,173 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Row
+        1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board
+        rows are: x o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}],"max_tokens":4096,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":["array","null"],"description":"Tic-tac-toe
+        boards","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows","boards"],"additionalProperties":false}}},"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:35:49 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:35:48Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:35:48Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:48Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:35:48Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQVhoLj9zdshjGQMz6p
+      Traceresponse:
+      - 00-886d926b7997a9f8219565e140b7b328-3b81751a1395bfaa-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=332
+      X-Robots-Tag:
+      - none
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Ray:
+      - a525ffb16b141e0b-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQViBuuC3kNx8XAWqCh","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":457,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}          }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}  }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSzgYKEAgTGAI4AUIIdGhpbmtpbmcSDIddJzN3xhwK9EqWPxoMhqr50dR+tnm7A+iaIjATVOCWjFvO0Ttku+uJ/V3DJyqO51nGXR/pnZK78bZaR55J3tN3RQvoxmjF19/Bdosq6wWrW6eN69kR83idDdNg0NncwqnwM3v+O/A6VPi1IetoA73l5RT3R8+e5t49aW7LGylvRXLynunevR2pjuS7HB0gKI41cJ8JvwCIb+c6xKVDfMD5Gy9GJJ3PqjL9H8E26/A6wbetX4PQlJSIt1gr1bqODL/8/uf/Q82wHv3btTbA2qB56TK3IoCF5EK3o0C1gABg1P4klbaPsfhqSgr2B6V5IIuEzF4hrMX6frOJyW7Q13qlhRtmSVetz0KOQAlGcewYh4rUjO2w4z0SP/cYcZVNi/rr95v+QZTs7VfRaj+o3ZO55wCIvt6XUgpZ+bGOG/gkO9iiwlHzfcYrFssBbfSs/Z+TEiC8lz8HkqVMBbWrxybBQpeYHYiA1J6AnCBodVNHWWSC5t6kh1FdWYHT1E9I04mwBFTGw+GgV3z/F727CUvz97QL34I/nUDhWRwDxplUvBtmFzcoK4GaGxUem3C0aNQUtybjw3sofo4ldFYWTZaWwSPC8gE/UijKNXuEvBsvbSTUwMvEyhkMDsvh/fQgg0p9HJwbWJlXhGr6McxS+MzlslD4YhoueqUTV9la/QWCKToGtB3kZPjQpPJMdI+YcorTKzGBdNtNvKY7EpQyrW0RuckJshPVjOkzS5GxCZ1qJDuVgKPLc30hiKD4aAragSLFJ1G9p/0ncuj5rw0BK5yJh7Xzdz3gQ9RjOcFlivZ49SsXfW9RkVApbVSuH3NM2nWAGUPRhY9CaWnNMV8M0BisIASYjXYtfuIXqSgSFhMLtYfy6ABY4ccuJX8KJzWkQd/xRQcfH/pwnxZB44E0rXx9QKKkfQp+bxuM2C53MGi4QJzGLwrw3SC1Bn3PY7l6wgRR3dJr5n2nGOhUd9OV4sxM1aoAs6ip9wffotP3aez9ee38nkXrFzRd371MVLpMzzYb1py58Ou507M6uCv3e82/ZwvIAweHgZNiLcGOk9aYS7tF5oQWK5zQcvenj4VpDFGDNh4l0Hgalk0YAQ=="}        }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0            }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"rows\":["}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[1,2,"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"3],[4,"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"5]],\"bo"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ards\":[[[\""} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"x\",\"o\",\"x"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"],[\"o\",\""}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"x\",\"o\"],"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[\"o\",\"x\",\""}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"x\"]],["}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[\"o\",\"o\",\""} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"x\"],[\"x"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"x\",\"o\""}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"],[\"o\",\"x"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"x\"]]"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"]}"}              }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1              }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":457,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":188,"output_tokens_details":{"thinking_tokens":108}}             }
+
+        event: message_stop
+        data: {"type":"message_stop"            }
+
+  recorded_at: Thu, 29 Oct 2026 23:35:50 GMT
+recorded_with: VCR 6.4.0
+...

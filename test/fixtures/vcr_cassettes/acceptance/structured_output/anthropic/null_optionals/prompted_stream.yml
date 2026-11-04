@@ -1,0 +1,146 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Extract
+        info from: Jane works at 42 King St in Vancouver. No other details are known.
+        Return null for any unknown fields.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:33:52 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:33:49Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:33:49Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:33:49Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:33:49Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQLvqfGPn3raXxc7BBE
+      Traceresponse:
+      - 00-46e024334417e1e0f07d1d2c80852f83-c9dc03c164df6398-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=164
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525fcc97d205fe0-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQLwJT5P9iNLTmpZ82Q","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":351,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":7,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}  }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}      }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS7wYKEAgTGAI4AUIIdGhpbmtpbmcSDDabEvO2nnVunl1r7RoMxLvB3Njx46BbKXv+IjB8MIN+cF+4cpLqTgFX+FYOlaDRSzOdVD6lo3EkwDR4Q/EsvjTZTmdkJxbMiXUqbDcqjAYrWncowY6Lvwv5OvXdMYA4zMMIzNOW4vD7ZigbQFyP5z0LJB1yVYBDUHoiISZuPQ1o56FmCWrR2/vnX6KTpRFo0c6U1uD6QIuyuZF/GDnt9WQQGGzhxbWrxCQzmCl54ezvb1wDBdLaku2kDMiqNcP7QxTrnqaf245GHPvmQ7IHb1i1o4bGNiMPe6rZfDMwEad0P5bmxa7FRGH7CfhC/J6IMYdyh0fXAEVhcsb3f1skjKLihe3QGl8IMKpSwn+KJdkpnUxT4wlLOtV4d8tDhOngjiB7olJojsU+nCnl8/X2tBWE4xd9un0ip8ZXbYkW3W9uOeptlX/saQopo8SBanF6nRiloxNPbRORe1vn1Vwzby7Y1C+tFUNsa2Qlo10qKMjx+AFIYU3rEoPFSd/qbs5LMkWO/ZMsfew7nxxXgGRL4fIFX1RuTXm2DdWQbldzAGS2eeBatx0hfeezL+it3NjsQ/TOYb9grhYKPh6jq8y/nIaVqykSoANJrY9DKmw3S5ciC3p8DDMByLdmBBIAKRHRGbZO4qUpPiovESG7CFGSx9xpcAlsKvYPxsTHOLIMTE6A0dnfIpxBmQETI5YSsxujrs/o5TTZ5j9t780QbP5Qi3fIlLGM9xc/ekZ47fwUlCYm/xgH2wiu2Ivur2g94AlkB/Wqz5Wo6+5Dl5N3rMgVoF9+KZU2tqy4Jc0/+WmODCbflcim0rQ75JJDRQiP5okaWJDqpZGEh+hnCyzORfg62EBUTwGu+35Me0Y8UtHQ6Xx+DgymXtGRI/SeaKBfIcJ569cPOCmzlIK5ZMZSbUY2FHJ3Ho4mNkpPBesvX/NsAMY3YrcsS0oLI+psi9ulc8OgQ3nSqkkZpnON72f62kCI2TXtk9LxdytJZQ1jNQC5ruU47+axBqK5uoLT7B52EYGBmwTotoORhg39Bx3D8/3CLVtHojFSmmdGGvmAHYP99Qww0/+TdHUqXJJFIy23n/EeORaFXZMVguqMRH3GHz55Z3U8MSe6lPv8piR7npAn48xNqAGjHfBNDhB/sGAYAQ=="}            }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0    }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\"name\":"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"Jane\",\"address\":{"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"street\":\"42 King St"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"city\":\"Vancou"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ver\",\"postal_code\":null"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":",\"country\":null}}"}    }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1              }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":351,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":128,"output_tokens_details":{"thinking_tokens":83}}}
+
+        event: message_stop
+        data: {"type":"message_stop"           }
+
+  recorded_at: Thu, 29 Oct 2026 23:33:52 GMT
+recorded_with: VCR 6.4.0
+...

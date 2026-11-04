@@ -1,0 +1,214 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"}],"max_tokens":4096,"system":[{"type":"text","text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"tools":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:33:53 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:33:53Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:33:53Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:33:52Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:33:53Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQMAArFyVAjQehLNdsu
+      Traceresponse:
+      - 00-2831a59e900ed9ed9a39785bf800f9ea-db9df5f2d50ef18b-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=1030
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525fcdced345396-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQMAYfZhJNpbSTNhduW","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSvgUKEAgTGAI4AUIIdGhpbmtpbmcSDAtYK7zzZe29ZTs7HBoMtXL+1XGJUgl/WIfNIjBgYbBD2/QpgxFDmnsVYaM2mlU9f317gBV6iZy5fvEF/xKrLwiPPu36SbefQmSBCWIq2wQ+uo2AaBsimsemW2TcfmC1IE+I//4C0ahs2Ti0vDzs7hfHn7t99mFVPvLPIIEDFtXyDcGvjauuBL2P5oFOArgMGfU/r8cWeooVyOtCWVWCvVZYv/knMYQC/KSugEnJ+DVuIAbJDCokphCW7SeBfCLStq2ReRr1n6vX7p7Lolc2s9/++EyczYoYaVt1QEHn0NTtBem5LROyuqv1eIOdvb6X7rtEwqzpyOeIvaAzCO9QKZjiw3jHLTqzd9HxZslWgJW3GY9/365g1umT+0lqWWVn6U/4anC9BKdCKcU6yK72+OQtPptna9cGOsXst5EcEBuGxuUbkAhvK2CGGk/nUe31CQoa2oa/Mgd573RhPKR/lyfx1whUZBkfXHDwcgoOBF11zQrc+IPa6GuNb5NtUTxVBZMbe/4228ybxajZVOMceoTmfP7yMClLO2Tu8ZPX28gxeJ3PB0bPAmPJ7NxuMCEfReKCTPQ/mj7UWKq4S1zPu43EdoczoNytfBUWhd93z+1TNLJ2o3ArE5ahQwdLjCtK1mMu4bdeAc5dWs26mQZFo9/UuSvCXipHvMR6PJPaATFcsHzAb5LyvsRYHXHyy/6RWCN5Rx6Rs85nXeIpIJxB/xz20SVxjcEvMu6RtxCRb3t9d3Hflfvv3gMQKpnOMLZjlID6B9vgMHc/DjVLh4co34029F3W8I5fQRHjwrFHF0CKFtC4C2FOZvTByg1BPGw2Pmbb34TaVFhs8EbIJt9Aig21ChUybq2cKUYYs1yYqb2G2spHAE3GUG9YYbAfX2XHvAkI2ya/VZJniLoYAQ=="},{"type":"tool_use","id":"toolu_01CXubAcD8wmtt7pbCwtVBRK","name":"skill_activate","input":{"name":"code-review"},"caller":{"type":"direct"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":634,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":79,"output_tokens_details":{"thinking_tokens":27},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Thu, 29 Oct 2026 23:33:53 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSvgUKEAgTGAI4AUIIdGhpbmtpbmcSDAtYK7zzZe29ZTs7HBoMtXL+1XGJUgl/WIfNIjBgYbBD2/QpgxFDmnsVYaM2mlU9f317gBV6iZy5fvEF/xKrLwiPPu36SbefQmSBCWIq2wQ+uo2AaBsimsemW2TcfmC1IE+I//4C0ahs2Ti0vDzs7hfHn7t99mFVPvLPIIEDFtXyDcGvjauuBL2P5oFOArgMGfU/r8cWeooVyOtCWVWCvVZYv/knMYQC/KSugEnJ+DVuIAbJDCokphCW7SeBfCLStq2ReRr1n6vX7p7Lolc2s9/++EyczYoYaVt1QEHn0NTtBem5LROyuqv1eIOdvb6X7rtEwqzpyOeIvaAzCO9QKZjiw3jHLTqzd9HxZslWgJW3GY9/365g1umT+0lqWWVn6U/4anC9BKdCKcU6yK72+OQtPptna9cGOsXst5EcEBuGxuUbkAhvK2CGGk/nUe31CQoa2oa/Mgd573RhPKR/lyfx1whUZBkfXHDwcgoOBF11zQrc+IPa6GuNb5NtUTxVBZMbe/4228ybxajZVOMceoTmfP7yMClLO2Tu8ZPX28gxeJ3PB0bPAmPJ7NxuMCEfReKCTPQ/mj7UWKq4S1zPu43EdoczoNytfBUWhd93z+1TNLJ2o3ArE5ahQwdLjCtK1mMu4bdeAc5dWs26mQZFo9/UuSvCXipHvMR6PJPaATFcsHzAb5LyvsRYHXHyy/6RWCN5Rx6Rs85nXeIpIJxB/xz20SVxjcEvMu6RtxCRb3t9d3Hflfvv3gMQKpnOMLZjlID6B9vgMHc/DjVLh4co34029F3W8I5fQRHjwrFHF0CKFtC4C2FOZvTByg1BPGw2Pmbb34TaVFhs8EbIJt9Aig21ChUybq2cKUYYs1yYqb2G2spHAE3GUG9YYbAfX2XHvAkI2ya/VZJniLoYAQ=="},{"type":"tool_use","id":"toolu_01CXubAcD8wmtt7pbCwtVBRK","name":"skill_activate","input":{"name":"code-review"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01CXubAcD8wmtt7pbCwtVBRK","content":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}]}],"max_tokens":4096,"system":[{"type":"text","text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"tools":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:33:58 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:33:54Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '1999000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:33:58Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:33:54Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '11999000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:33:54Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQMF7kmja9V5AqpJdW4
+      Traceresponse:
+      - 00-187aac001b6d8f58fb88adfca25fb2ea-745f28470c5d7d2a-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=4961
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525fce41a194d81-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQMFUqFbzrLNBRKsVUx","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS1goKEAgTGAI4AUIIdGhpbmtpbmcSDCEQm40Ur9Q7er+1uRoMjfVgsyLKepPkaLadIjAXP3mQUYRQ8ypjZYBuLL+w8Em4/dU80JiOPbkjvpgH0wi93bS80cZ2UAr+nRkB3wkq8wmkiBLaOXraEwo9P6UAVFVPFFEqZdXbPHdc44pMA7doQaNnxRkWE/naSClV1RbPJ32jW/CMbL860quhTNgbxeaMirRoBe+d6yzhOY2Wx7fBmAyEKQls5aXyfiiwY3ioTUOvdKayoGoweNj2QTZzAmt+UVd7v/xUbvb7LOKxMxmErW3xg82wcVwfmGF6ax320mEd/BQapAjodc5ijBXCUxIyssMKi8MycWwvVIfx4OCXU7lh93/qIj/qriwyh6X9F7hH6DE72HxtjVggdvd9tUVli/RQvkmO3ZvuwagbcjBgQbfuJH9QnU8bluSMl4VWlhI5xG2gxg2fVX5WcePJYrnJYFfJQqhm2GPXkcGEaIQGDn57RaWCfXa8euBCYRBo1DpKOb/6DgcmlOw2MTILeJfdHvOHZ0Fp3LHOpLeq8gGCaZjub2285z+J5ixTDRv/20VSk7hgpbyjMUY5z82hcpDBTfr2rrOwTKdhnRHVdBs1czPgj/uR655lpkUwEJgoyiJ6Sg/PPCkO2+AdT/eSSl0s5qNZDkJ6GmseodvsNnnU1Va7mMLLE3c3jDOgo/HsoZ13opGHwqzAtnSbpJxSM69LA2ouUih5ounqR+gR0gEsSvTvIfvFIES2c1Tm90r0vhsz9mjG21y1K25VQg85p+EG6XbQsASWFDZ+63I7YxW0eoVcegr9n9PSgbIFA+mvpObD6k0H+kfC+9KsxCF9TSIEyKDaHhpnvRUEF0aXBTcA9kCR2mJiwlJuYDMjS783CjbZOmDC0lc6pEQJnwNEUiu2rGgEc3DWdFF/yA3OoXGKGVs+sEYMqeUFDtMvErGZ/L1sCPuEsDO3pWfIDDl7uiXFIPm2zyyX6peUqkocAMDsVFQed+lukBdOySHly+8gD5q+GigNVU2WR+/w1F7i3hRNikYt7y5pRSZrQtvNzeN1Rjl6QPTbPKPVdriCtKG17ut5MI5yvuPCHkSEIOf2CdtEAE4z+42/qRJWBo25Tc9kQ58buj+K6RfWURKE9BP+YOuW6wfyWxkd51/qqJIlaKCeGB7K0exVxKEqOB2ZbM65hI6hNu8SGr5q8L7CBZNvXwgY+72jSYUKCcWcars1FcS1bvNvz73yVp5zOAIG9yIkxyKc7wcH5ZQSpodDJNoan7UBt11EU8GkP6WLPM8zbFhxQTmprAgelILRYaE+cN2c2gu3k6EOwCSzYK/j2SFcZpVfWEJmCOIbRE4Ik9o2kIgutEnPqQMGboGr9lc1OLiFGt17FY+s+WCsRjoDY6gBBj+X4gool//6zclzmLhG0cat3sZ0CaKFTjLAD0PwGm+cz9QEjVhHWs3QLMqNz2uJelXrAto9Cr4E4PGe0oSMmSvlQBx4cIoTkiil1fPTaPgFfl+vowM+YmUXPjk7Xg9mhX0aywE2d/QWwkILN8tpBLzWXYcov4sSQ4119vQBOZW4pfEN+paxADyXzXer3swMMzC6Qwgmt2wEwvRYUCSzpb6XkN/uxiCjEtQrR3NEF41qaQiUqLkT/eHHq0m1ebPQvKZGEmP3wTN5HoiSxEXbJX/v5fxePlxpwWQGfkWQoXwVU0MrYcIiOyKI3Hzn9m6q1wmsFRibbpm4V2w/3h8/yXM+RD0BzkSnVziIQvB2Q43wKlVYKztYlb/Pc6xGwkMZB6iQOEanK80hgCzUwkBQm+moTiigGAE="},{"type":"text","text":"**Review
+        of `def add(a, b) a + b end`**\n\n**Correctness and potential bugs**\n- The
+        method works as intended for numbers, and it is valid Ruby.\n- It has no type
+        checking, so behavior depends on what `+` does for the arguments. `add(1,
+        2)` returns `3`, but `add(\"a\", \"b\")` returns `\"ab\"`, and `add(1, \"2\")`
+        raises `TypeError` (no implicit conversion of String into Integer). `add(nil,
+        1)` raises `NoMethodError`. If the method is meant only for numbers, consider
+        validating input, for example with `raise ArgumentError unless a.is_a?(Numeric)
+        && b.is_a?(Numeric)`. If it is meant to be generic, document that it relies
+        on `+`.\n- Be aware of floating-point results: `add(0.1, 0.2)` returns `0.30000000000000004`.
+        This comes from floating-point arithmetic, not from the method, but it matters
+        if you need exact decimal results (`BigDecimal` or `Rational` would help).\n\n**Style**\n-
+        Formatting is fine as written. In a multi-line file, the usual layout is:\n  ```ruby\n  def
+        add(a, b)\n    a + b\n  end\n  ```\n  The one-line form is valid Ruby but
+        is harder to read in a larger codebase.\n- On Ruby 3.0+, an endless method
+        is a concise alternative: `def add(a, b) = a + b`. It suits one-liners like
+        this, though some teams prefer the conventional form.\n- The name `add` and
+        parameter names `a` and `b` are short but acceptable for a helper this simple.
+        More descriptive names such as `x` and `y`, or `augend` and `addend`, can
+        help if the method is public.\n\n**Performance**\n- No concerns. The method
+        is a single operation with negligible overhead.\n\n**Summary:** The code is
+        correct for numeric inputs and idiomatic enough. The main decision is whether
+        to add type validation, which depends on whether the method is meant to work
+        only with numbers."}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":774,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":905,"output_tokens_details":{"thinking_tokens":259},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Thu, 29 Oct 2026 23:33:59 GMT
+recorded_with: VCR 6.4.0

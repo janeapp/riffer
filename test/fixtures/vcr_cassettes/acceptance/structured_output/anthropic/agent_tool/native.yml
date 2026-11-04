@@ -1,0 +1,180 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"system":[{"type":"text","text":"Answer
+        weather questions. Always look the weather up with the tool."}],"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:36:03 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:36:02Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:36:03Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:59Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:36:02Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQWXCPWCCu5qqrt6Sux
+      Traceresponse:
+      - 00-e5d7ff5a0a24dce9e62a41d4c35f13ae-7ba1ba6501216eaa-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=3954
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525fff6c8403eef-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQWXZECLGRGzMdrr5LM","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS6AcKEAgTGAI4AUIIdGhpbmtpbmcSDItvexMjMD+HQu7NXRoMDVFTgIiMcbC6k7qaIjBeryS9WbuT/07uL4LDq2169ss7I0jr1zr256wZzGYMdilgTqBBluThX9UeNZnTqgQqhQdEfAFDbKdswUMBW/wynlDq8WvsHXW8FsgxcWYW9GEaNj2SZIw3sBDHKUvacB/mAJyWmpkqH2PMj7+vXf2SdVI+KRsveRuJLWftGKz2ENlyglb7WR5lSXqOYX7ZJwMZiadASkBMqWkMcC5VAsoUNz6hDEnfyRLpm4J6eN/js8zM0fp5A4CwALaOS+uv5bSMrHh2wQw8CNm5TrQ53sVIFdxXqsrbR4kkws7MWVADE2ad8DYTG/3EnHoZ0+o2lZWXRJQ3PZ/znkT4ZYWjvcHVqR/VXpynBVW/utuZylHtvTgOfnvc1Lwl/3NiZkZtpctqUKknHx8m6rlnydIfUy37JydY5+IJYevbMqvE7tJReGWCWJIAZjFIHH7GnGgVPEnTw+v+tpFn95pbXufDDYxn3toA1ssXybad8CIsJARpiU1k0XPT/V4nonbB7YFgBcq+YMZVgFZLRUIixtbZbwPpZzQGdOf7Xc1NbM2Ontb0v4j0KQbWV14SZOgiPXmVqnC4voPhuqbePD5sQrPieaBF+bACJ4ne9PALvkGJxzAKiMEK4cTaYIdP03PAYS3Zv8c/cnrdP4HSCcpia8qM3WjZdGkA0Jqky4DzcJigvjH0pOR4kglmDF/brZTZOWUHcoocZY6wOrlG3W9uSneyrhisphE5PTaa98VsIfnyAtzy1LDvLmO8q3nspxSBLU2fY/aD550GjtDBqDAjk6Mtkg/Hkn4NLpBmXcyXEEv/ysmuh7cdu+3GxfnRTNZ782r6dl0jk/A+mgVAt3j7KGUjT4dRgLzd5iPmq88EFz0/ZK6B/6eH/MP1TazbSRqWDbtwh/OuUOVKq8nSqvzpycBsYAfSaaLlyimsO21v/xrbvZ5MBpvYqeLpFKMF0vZMnYyNx5wz7Bt/c+hfCkQE1Hm38jj0EgNn5WexTduVvMB7RdrLnvEx6oVckCYkqkxTwCZ1uG/1mBFI7wiDKeYXjM5EnLXJOUoAuIiVSsFGuORndxhMDZ1aI2kv0coQSMKmcHEBcbBPjVtHYygQamSCUXo/2Ym6KYEaCn8R9Wa78Rz8vCmdnnnonWA3sQXRGsMgluOKTiPJs4CFa9qciV01+e3DR8JEhvzb1fAJ6TwmKmA0px0KipM126m9qHPfxmcci10Uq7YYm4ZJJcq/l1yEGaX2850ZYlk4Zbo08Ov+3Yw6NTeT83X9ub0fBXatGAE="},{"type":"tool_use","id":"toolu_01MzxwAYnbCKeUMNanwSvNbN","name":"get_weather","input":{"city":"Toronto"},"caller":{"type":"direct"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":654,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":158,"output_tokens_details":{"thinking_tokens":106},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Thu, 29 Oct 2026 23:36:03 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS6AcKEAgTGAI4AUIIdGhpbmtpbmcSDItvexMjMD+HQu7NXRoMDVFTgIiMcbC6k7qaIjBeryS9WbuT/07uL4LDq2169ss7I0jr1zr256wZzGYMdilgTqBBluThX9UeNZnTqgQqhQdEfAFDbKdswUMBW/wynlDq8WvsHXW8FsgxcWYW9GEaNj2SZIw3sBDHKUvacB/mAJyWmpkqH2PMj7+vXf2SdVI+KRsveRuJLWftGKz2ENlyglb7WR5lSXqOYX7ZJwMZiadASkBMqWkMcC5VAsoUNz6hDEnfyRLpm4J6eN/js8zM0fp5A4CwALaOS+uv5bSMrHh2wQw8CNm5TrQ53sVIFdxXqsrbR4kkws7MWVADE2ad8DYTG/3EnHoZ0+o2lZWXRJQ3PZ/znkT4ZYWjvcHVqR/VXpynBVW/utuZylHtvTgOfnvc1Lwl/3NiZkZtpctqUKknHx8m6rlnydIfUy37JydY5+IJYevbMqvE7tJReGWCWJIAZjFIHH7GnGgVPEnTw+v+tpFn95pbXufDDYxn3toA1ssXybad8CIsJARpiU1k0XPT/V4nonbB7YFgBcq+YMZVgFZLRUIixtbZbwPpZzQGdOf7Xc1NbM2Ontb0v4j0KQbWV14SZOgiPXmVqnC4voPhuqbePD5sQrPieaBF+bACJ4ne9PALvkGJxzAKiMEK4cTaYIdP03PAYS3Zv8c/cnrdP4HSCcpia8qM3WjZdGkA0Jqky4DzcJigvjH0pOR4kglmDF/brZTZOWUHcoocZY6wOrlG3W9uSneyrhisphE5PTaa98VsIfnyAtzy1LDvLmO8q3nspxSBLU2fY/aD550GjtDBqDAjk6Mtkg/Hkn4NLpBmXcyXEEv/ysmuh7cdu+3GxfnRTNZ782r6dl0jk/A+mgVAt3j7KGUjT4dRgLzd5iPmq88EFz0/ZK6B/6eH/MP1TazbSRqWDbtwh/OuUOVKq8nSqvzpycBsYAfSaaLlyimsO21v/xrbvZ5MBpvYqeLpFKMF0vZMnYyNx5wz7Bt/c+hfCkQE1Hm38jj0EgNn5WexTduVvMB7RdrLnvEx6oVckCYkqkxTwCZ1uG/1mBFI7wiDKeYXjM5EnLXJOUoAuIiVSsFGuORndxhMDZ1aI2kv0coQSMKmcHEBcbBPjVtHYygQamSCUXo/2Ym6KYEaCn8R9Wa78Rz8vCmdnnnonWA3sQXRGsMgluOKTiPJs4CFa9qciV01+e3DR8JEhvzb1fAJ6TwmKmA0px0KipM126m9qHPfxmcci10Uq7YYm4ZJJcq/l1yEGaX2850ZYlk4Zbo08Ov+3Yw6NTeT83X9ub0fBXatGAE="},{"type":"tool_use","id":"toolu_01MzxwAYnbCKeUMNanwSvNbN","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01MzxwAYnbCKeUMNanwSvNbN","content":"It
+        is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"system":[{"type":"text","text":"Answer
+        weather questions. Always look the weather up with the tool."}],"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:36:04 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:36:04Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:36:04Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:36:04Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:36:04Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQWprXuUDAeEckYJMkF
+      Traceresponse:
+      - 00-3afeea3e828391d4542164613c3854bc-b1b066143be43cf7-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=960
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a5260010aacea362-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQWq9eHnu7Vi7PkwuNW","type":"message","role":"assistant","content":[{"type":"text","text":"{\"city\":\"Toronto\",\"celsius\":15}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":835,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":18,"output_tokens_details":{"thinking_tokens":0},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Thu, 29 Oct 2026 23:36:04 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,175 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:35:45 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:35:44Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:35:45Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:44Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:35:44Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQVN2TsiuMbbMYnxn8Q
+      Traceresponse:
+      - 00-415735665378acc5fa9d46237f76f6b4-13f0a636f5f710f4-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=1252
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a525ff94abef6834-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_011CgXQVNPHMQ2y71f5u65iq","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSyQUKEAgTGAI4AUIIdGhpbmtpbmcSDHsbPOmihsoWiT2Z5BoMno3gSNIJrl5v/wTmIjDh+Q+Fpl9adr4A4EWD1Yve/YgLwttE/yyUIiPUuQXkFbSrW9AnebaHT1h+cG5f1BEq5gSAUbnzZP1haM2RQqrIH/hNIimZ3OPsYhxTZ3rgbNPQzxsIoa4ilq6kg0tk76UUlJC5Daua1wGL1TNnlitYVjOp9NiNx1G9b59hTtR0TzOM5CZxuJosRYroAaXsBkZv/7scEV2EDpa4VgrTJYwpqtOLfrrBWPOSMymCKe+PFKRORO9Rl0HD0pWZWA8QzJBXdMIkOWgwyxau12YB8qnYJI7E/iSvCB8xMxu5zYOpg8WG5lQDUYg6r84yLkxOzBFgFKuVb2tO4V+lh3fm1JnFPxYVmp81XAxhXK4emQPUHGyJYzMQQ/mez86F+tMjJKhGwLwqjuih1QvJ3rt7rad9/6WfGZmoZTpvvHYzg8wCn+o5ZCgBGquhgiybyGss9ZRhUBYhf7Y2UvA0CUwYt7TD8Sip8fpxxlIWt/uMzAvI28CKTL3evGJ7aqWyibD8ljftuoJJIe42aYTJs5bzSuMZZJbGzlboHBpB17DhZyzhaV9Y+2ERNWOMd0XjAJuY5C8rPMcHsQ71P5g3wW1ThI2Rlyd7mxLKY9OGaopWV6AypnJKE52iGgevp/5fuqrFFY8xmck5c82Wr5R80oqKnfFd4PQ1ooq3omy2MfX3nLrc3bfc4hB9eSy1iS1J7fNn66MAWZhKvkdjxnBjmHYYqgunXYBwdTeCga07l7AlUPZcnaVv4cFzPQ8U6bKf9+12DFTYgnWF4lZZBZYs3jyRU748SwsH1YJB2DrdrnjSrE9we7M/spKlZGcKdsRyawdyixHz/FViiYpgUXGcfpUDEv3rzROMiqxPkvIUi90ANgil3LiwewJ4NbwK4RgB"},{"type":"tool_use","id":"toolu_0138hd2gTKckMBsxRWU5HJM9","name":"get_weather","input":{"city":"Toronto"},"caller":{"type":"direct"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":83,"output_tokens_details":{"thinking_tokens":31},"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}'
+  recorded_at: Thu, 29 Oct 2026 23:35:45 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSyQUKEAgTGAI4AUIIdGhpbmtpbmcSDHsbPOmihsoWiT2Z5BoMno3gSNIJrl5v/wTmIjDh+Q+Fpl9adr4A4EWD1Yve/YgLwttE/yyUIiPUuQXkFbSrW9AnebaHT1h+cG5f1BEq5gSAUbnzZP1haM2RQqrIH/hNIimZ3OPsYhxTZ3rgbNPQzxsIoa4ilq6kg0tk76UUlJC5Daua1wGL1TNnlitYVjOp9NiNx1G9b59hTtR0TzOM5CZxuJosRYroAaXsBkZv/7scEV2EDpa4VgrTJYwpqtOLfrrBWPOSMymCKe+PFKRORO9Rl0HD0pWZWA8QzJBXdMIkOWgwyxau12YB8qnYJI7E/iSvCB8xMxu5zYOpg8WG5lQDUYg6r84yLkxOzBFgFKuVb2tO4V+lh3fm1JnFPxYVmp81XAxhXK4emQPUHGyJYzMQQ/mez86F+tMjJKhGwLwqjuih1QvJ3rt7rad9/6WfGZmoZTpvvHYzg8wCn+o5ZCgBGquhgiybyGss9ZRhUBYhf7Y2UvA0CUwYt7TD8Sip8fpxxlIWt/uMzAvI28CKTL3evGJ7aqWyibD8ljftuoJJIe42aYTJs5bzSuMZZJbGzlboHBpB17DhZyzhaV9Y+2ERNWOMd0XjAJuY5C8rPMcHsQ71P5g3wW1ThI2Rlyd7mxLKY9OGaopWV6AypnJKE52iGgevp/5fuqrFFY8xmck5c82Wr5R80oqKnfFd4PQ1ooq3omy2MfX3nLrc3bfc4hB9eSy1iS1J7fNn66MAWZhKvkdjxnBjmHYYqgunXYBwdTeCga07l7AlUPZcnaVv4cFzPQ8U6bKf9+12DFTYgnWF4lZZBZYs3jyRU748SwsH1YJB2DrdrnjSrE9we7M/spKlZGcKdsRyawdyixHz/FViiYpgUXGcfpUDEv3rzROMiqxPkvIUi90ANgil3LiwewJ4NbwK4RgB"},{"type":"tool_use","id":"toolu_0138hd2gTKckMBsxRWU5HJM9","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_0138hd2gTKckMBsxRWU5HJM9","content":"It
+        is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Anthropic-Version:
+      - '2026-10-21'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 23:35:46 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-10-29T23:35:45Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-10-29T23:35:46Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '45000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '44999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-10-29T23:35:45Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-10-29T23:35:45Z'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Request-Id:
+      - req_011CgXQVU8pa4L4yVC3KjS7G
+      Traceresponse:
+      - 00-1c0aff0a0df9ce6415ce504d020f2666-bb0e46f698a13be3-01
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Server-Timing:
+      - x-originResponse;dur=481
+      X-Robots-Tag:
+      - none
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Ray:
+      - a525ff9d89cc55d1-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ18wMTFDZ1hRVlVVZWpjTjJVMVFFM0xBOVMiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGV4dCIsInRleHQiOiJJdCdzIGN1cnJlbnRseSAxNcKwQyBpbiBUb3JvbnRvLiJ9XSwiY29udGFpbmVyIjpudWxsLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjUwMCwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE2LCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsidGhpbmtpbmdfdG9rZW5zIjowfSwic2VydmljZV90aWVyIjoic3RhbmRhcmQiLCJpbmZlcmVuY2VfZ2VvIjoiZ2xvYmFsIiwic3BlZWQiOiJzdGFuZGFyZCJ9LCJkaWFnbm9zdGljcyI6bnVsbH0=
+  recorded_at: Thu, 29 Oct 2026 23:35:46 GMT
+recorded_with: VCR 6.4.0

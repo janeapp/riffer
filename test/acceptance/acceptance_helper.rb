@@ -101,6 +101,22 @@ ACCEPTANCE_PROVIDERS = {
       Riffer.config.amazon_bedrock.api_token = nil
     end,
   },
+  anthropic: {
+    model: "claude-haiku-5-5",
+    reasoning_levels: %i[low medium high max],
+    token_limit_options: { max_tokens: 20 },
+    invalid_options: { temperature: 5 },
+    # Below max effort, Haiku 5.5 rarely thinks before a simple tool call.
+    thinking_options: { thinking: { type: "adaptive" }, output_config: { effort: "max" } },
+    cache_options: { cache_control: { type: "ephemeral" } },
+    web_search_options: { max_uses: 2, allowed_domains: ["ruby-lang.org"] },
+    # The Messages API keeps only user_id, as metadata.user_id.
+    wire_tags: { "metadata" => { "user_id" => "u_1" } },
+    error_contract: HTTP_ERROR_CONTRACT,
+    configure: -> { Riffer.config.anthropic.api_key = ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") },
+    break_credentials: -> { Riffer.config.anthropic.api_key = "invalid-api-key" },
+    reset: -> { Riffer.config.anthropic.api_key = nil },
+  },
 }.freeze
 
 def acceptance_cassette(name, &)
@@ -179,17 +195,27 @@ def call_provider(provider, mode, **)
   assistant_from_stream(provider.stream_text(**).to_a)
 end
 
+# Builds the parts in arrival order, as the agent loop does: the text deltas
+# between two other parts form one text part.
 def assistant_from_stream(events)
-  text_done = events.grep(Riffer::StreamEvents::TextDone).last
-  finish = events.grep(Riffer::StreamEvents::FinishReasonDone).last
-  tool_calls = events.grep(Riffer::StreamEvents::ToolCallDone).map do |event|
-    Riffer::Messages::Assistant::ToolCall.new(call_id: event.call_id, name: event.name, arguments: event.arguments)
+  parts = []
+  events.each do |event|
+    case event
+    when Riffer::StreamEvents::TextDelta
+      parts.last.is_a?(String) ? parts.last << event.content : parts << +event.content
+    when Riffer::StreamEvents::ToolCallDone
+      parts << Riffer::Messages::Assistant::ToolCall.new(call_id: event.call_id, name: event.name,
+                                                         arguments: event.arguments,)
+    when Riffer::StreamEvents::ReasoningDone, Riffer::StreamEvents::ServerToolDone
+      parts << event.part
+    end
   end
+  text_done = events.grep(Riffer::StreamEvents::TextDone).last
+  parts << text_done.content if text_done && parts.none?(String)
+  finish = events.grep(Riffer::StreamEvents::FinishReasonDone).last
 
   Riffer::Messages::Assistant.new(
-    text_done&.content || events.grep(Riffer::StreamEvents::TextDelta).map(&:content).join,
-    tool_calls: tool_calls,
-    reasoning: events.grep(Riffer::StreamEvents::ReasoningDone).map(&:part),
+    parts: parts.map { |part| part.is_a?(String) ? Riffer::Messages::Assistant::TextPart.new(part) : part },
     token_usage: events.grep(Riffer::StreamEvents::TokenUsageDone).last&.token_usage,
     finish_reason: finish&.finish_reason,
     finish_reason_raw: finish&.raw_finish_reason,
