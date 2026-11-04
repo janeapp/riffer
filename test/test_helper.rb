@@ -72,8 +72,8 @@ def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
 
-def assert_round_trips(object, omitted: [], **to_h_options)
-  hash = object.to_h(**to_h_options)
+def assert_round_trips(object, omitted: [])
+  hash = object.to_h
   parameters = object.class.instance_method(:initialize).parameters
   keywords = parameters.filter_map { |kind, name| name if kind in :key | :keyreq }
   # A fixture that doesn't populate a newly added attribute must fail rather than skip it silently.
@@ -83,7 +83,7 @@ def assert_round_trips(object, omitted: [], **to_h_options)
 
   reloaded = object.class.from_hash(JSON.parse(JSON.generate(hash), symbolize_names: true))
 
-  expect(reloaded.to_h(**to_h_options)).must_equal hash
+  expect(reloaded.to_h).must_equal hash
 end
 
 def install_in_memory_tracer_provider

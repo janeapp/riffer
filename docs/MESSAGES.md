@@ -57,7 +57,7 @@ msg = Riffer::Messages::Assistant.new("", tool_calls: [
   {id: "call_123", call_id: "call_123", name: "weather_tool", arguments: '{"city":"Tokyo"}'}
 ])
 msg.tool_calls  # => [{id: "call_123", ...}]
-msg.to_h        # => {role: "assistant", content: "", tool_calls: [...]}
+msg.to_h        # => {role: :assistant, parts: [{part: :tool_call, ...}]}
 
 # Accessing token usage data (when available from provider)
 if msg.token_usage
@@ -134,7 +134,7 @@ The `to_h` representation includes `structured_output` only when present:
 
 ```ruby
 msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_output: {sentiment: "positive"})
-msg.to_h  # => {role: :assistant, content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}}
+msg.to_h  # => {role: :assistant, parts: [{part: :text, text: '{"sentiment":"positive"}'}], structured_output: {sentiment: "positive"}}
 ```
 
 #### Reasoning
@@ -170,13 +170,14 @@ A `type` outside the three values raises `Riffer::ArgumentError`. `format` is a 
 
 `reasoning?` is true when the message carries any part. `reasoning_text` joins the `text` of the `:text` and `:summary` parts with blank lines, skipping `:encrypted` parts, and is `nil` when there is nothing to join. The run's final assistant message projects its parts onto `response.reasoning` (see [Agent Lifecycle — Response Attributes](AGENT_LIFECYCLE.md#response-attributes)).
 
-Parts round-trip through `to_h` / `from_hash` like every other message field, so an application that persists sessions can store and replay them. The `reasoning` key is absent from `to_h` when the message has no reasoning parts, and each part omits the fields it doesn't carry:
+Parts round-trip through `to_h` / `from_hash` like every other message field, so an application that persists sessions can store and replay them. `to_h` writes each reasoning part as a [`parts`](#parts) entry tagged `part: :reasoning`, and each part omits the fields it doesn't carry:
 
 ```ruby
 msg.to_h
-# => {role: :assistant, content: "42", reasoning: [
-#      {type: :summary, text: "The user wants the answer.", format: "mock-v1"},
-#      {type: :encrypted, data: "b3BhcXVl", format: "mock-v1"}
+# => {role: :assistant, parts: [
+#      {part: :reasoning, type: :summary, text: "The user wants the answer.", format: "mock-v1"},
+#      {part: :reasoning, type: :encrypted, data: "b3BhcXVl", format: "mock-v1"},
+#      {part: :text, text: "42"}
 #    ]}
 
 Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, ReasoningPart]
@@ -184,12 +185,10 @@ Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, Reaso
 
 **The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no `format` is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
 
-An application that would rather not store reasoning can leave it out when it serializes. With [`to_h(parts: true)`](#parts), drop the reasoning entries of `parts` instead:
+An application that would rather not store reasoning can drop the reasoning entries of `parts` when it serializes:
 
 ```ruby
-hash = msg.to_h.except(:reasoning)
-
-hash = msg.to_h(parts: true)
+hash = msg.to_h
 hash[:parts] = hash[:parts].reject { |part| part[:part] == :reasoning }
 ```
 
@@ -247,23 +246,20 @@ msg.reasoning?  # => true; server tool parts don't count as reasoning
 - Passing `parts:` together with `content`, `tool_calls:` or `reasoning:` raises `Riffer::ArgumentError`.
 - `ServerToolPart#data` holds the provider's block as JSON, unchanged. It follows the same replay contract as reasoning: only the adapter that recognizes its `format` sends it back, and other adapters skip it. The same goes for a `TextPart` that carries `data`; other adapters send its `text`.
 
-`to_h` writes one of two shapes, never both:
-
-- **Default:** `content`, `tool_calls` and `reasoning`. Rebuilt from these, the turn is in the fixed order, without its server tool parts or the `data` of its text parts.
-- **`to_h(parts: true)`:** a `parts` key instead of those three. Each entry is the part's own hash plus a `part` tag (`:text`, `:reasoning`, `:tool_call` or `:server_tool`).
+`to_h` writes the turn as a `parts` key, so it keeps the order, the server tool parts and the `data` of text parts. Each entry is the part's own hash plus a `part` tag (`:text`, `:reasoning`, `:tool_call` or `:server_tool`). It doesn't write `content`, `tool_calls` or `reasoning`; read those from the message:
 
 ```ruby
-msg.to_h(parts: true)
+msg.to_h
 # => {role: :assistant, parts: [
 #      {part: :text, text: "Let me check. "},
 #      {part: :server_tool, name: "web_search", kind: :call, data: "{...}", id: "srvtoolu_1", format: "anthropic-messages-v1"},
 #      ...
 #    ]}
+
+{content: msg.content, tool_calls: msg.tool_calls.map(&:to_h), reasoning: msg.reasoning.map(&:to_h)}
 ```
 
-`from_hash` reads either shape. A hash with `parts` and a non-nil `content`, or a non-empty `tool_calls` or `reasoning`, raises `Riffer::ArgumentError`. Every message accepts `parts:` in `to_h`, and only assistant messages use it, so `messages.map { |msg| msg.to_h(parts: true) }` works on a whole session.
-
-If you persist sessions, store messages with `to_h(parts: true)`. The default shape loses server tool parts and the turn's order, so Anthropic may reject a later turn or search again.
+`from_hash` reads this shape and the older one with `content`, `tool_calls` and `reasoning` keys, so stored sessions still load. Rebuilt from the older shape, the turn is in the fixed order, without server tool parts or the `data` of text parts. A hash with `parts` and a non-nil `content`, or a non-empty `tool_calls` or `reasoning`, raises `Riffer::ArgumentError`.
 
 **Editing a turn.** Riffer sends the parts back as they are. When you change a turn's text (in an output guardrail, or with `Session#update`), keeping the rest of the turn consistent is up to you:
 
@@ -527,7 +523,7 @@ class Riffer::Messages::Base
     raise NotImplementedError
   end
 
-  def to_h(parts: false)
+  def to_h
     hash = {role: role, content: content}
     hash[:id] = id unless id.nil?
     hash
@@ -535,7 +531,7 @@ class Riffer::Messages::Base
 end
 ```
 
-Subclasses implement `role` and optionally extend `to_h` with additional fields. Only `Assistant` uses `parts:`.
+Subclasses implement `role` and optionally extend `to_h` with additional fields. `Assistant` writes `parts` in place of `content`.
 
 ## Editing history after the fact
 

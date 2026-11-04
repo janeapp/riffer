@@ -17,20 +17,16 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Assistant)
 
-    options = {
+    new(
+      msg[:content],
       id: msg[:id],
+      parts: msg[:parts]&.map { |part| part_from_hash(part) },
+      tool_calls: (msg[:tool_calls] || []).map { |tc| Riffer::Messages::Assistant::ToolCall.from_hash(tc) },
+      reasoning: (msg[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
       token_usage: msg[:token_usage] && Riffer::Providers::TokenUsage.from_hash(msg[:token_usage]),
       structured_output: msg[:structured_output],
       finish_reason: msg[:finish_reason]&.to_sym,
       finish_reason_raw: msg[:finish_reason_raw],
-    } #: Hash[Symbol, untyped]
-
-    new(
-      msg[:content],
-      parts: msg[:parts]&.map { |part| part_from_hash(part) },
-      tool_calls: (msg[:tool_calls] || []).map { |tc| Riffer::Messages::Assistant::ToolCall.from_hash(tc) },
-      reasoning: (msg[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
-      **options,
     )
   end
 
@@ -145,22 +141,12 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     )
   end
 
-  # The default shape writes +content+, +tool_calls+ and +reasoning+ in the fixed order, which
-  # drops server tool parts and the +data+ of text parts. <tt>parts: true</tt> writes +parts+
-  # instead of those three.
   #--
-  #: (?parts: bool) -> Hash[Symbol, untyped]
-  def to_h(parts: false)
+  #: () -> Hash[Symbol, untyped]
+  def to_h
     hash = { role: role } #: Hash[Symbol, untyped]
-    if parts
-      hash[:id] = id if id
-      hash[:parts] = @parts.map { |part| { part: PART_TAGS.fetch(part.class), **part.to_h } }
-    else
-      hash[:content] = content
-      hash[:id] = id if id
-      hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
-      hash[:reasoning] = reasoning.map(&:to_h) if reasoning?
-    end
+    hash[:id] = id if id
+    hash[:parts] = parts.map { |part| { part: PART_TAGS.fetch(part.class), **part.to_h } }
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason

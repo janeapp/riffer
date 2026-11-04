@@ -45,8 +45,8 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   end
 
   #--
-  #: (?parts: bool) -> Hash[Symbol, untyped]
-  def to_h(parts: false)
+  #: () -> Hash[Symbol, untyped]
+  def to_h
     hash = { role: role, content: content, tool_call_id: tool_call_id, name: name } #: Hash[Symbol, untyped]
     hash[:id] = id if id
     if error?

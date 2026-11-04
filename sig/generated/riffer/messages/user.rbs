@@ -20,6 +20,6 @@ class Riffer::Messages::User < Riffer::Messages::Base
   def +: (Riffer::Messages::User) -> Riffer::Messages::User
 
   # --
-  # : (?parts: bool) -> Hash[Symbol, untyped]
-  def to_h: (?parts: bool) -> Hash[Symbol, untyped]
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 end

@@ -96,6 +96,8 @@ provider.calls
 expect(provider.calls.last[:messages].last[:content]).to eq("Hi")
 ```
 
+Each message is recorded as its `to_h`, so an assistant message has `parts` rather than `content` (see [Messages — Parts](../MESSAGES.md#parts)).
+
 ## Clearing State
 
 Reset stubbed responses:

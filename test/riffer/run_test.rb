@@ -272,7 +272,7 @@ describe Riffer::Agent::Run do
       agent.generate("Analyze")
 
       schema_counts = agent.provider.calls.map do |call|
-        call[:messages].count { |m| m[:content].end_with?(agent.structured_output.prompt_instructions) }
+        call[:messages].count { |m| m[:content]&.end_with?(agent.structured_output.prompt_instructions) }
       end
 
       expect(schema_counts).must_equal [1, 1]

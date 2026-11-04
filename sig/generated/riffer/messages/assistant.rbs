@@ -60,12 +60,9 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # : (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
 
-  # The default shape writes +content+, +tool_calls+ and +reasoning+ in the fixed order, which
-  # drops server tool parts and the +data+ of text parts. <tt>parts: true</tt> writes +parts+
-  # instead of those three.
   # --
-  # : (?parts: bool) -> Hash[Symbol, untyped]
-  def to_h: (?parts: bool) -> Hash[Symbol, untyped]
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 
   private
 

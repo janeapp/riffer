@@ -2050,7 +2050,7 @@ describe Riffer::Providers::Anthropic do
           cited_text_block("4.0.9"),
         ]
         message = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, build_response(blocks)))
-        json = JSON.generate(message.to_h(parts: true))
+        json = JSON.generate(message.to_h)
         restored = Riffer::Messages::Base.from_hash(JSON.parse(json, symbolize_names: true))
 
         expect(provider.send(:convert_assistant, restored)[:content]).must_equal blocks

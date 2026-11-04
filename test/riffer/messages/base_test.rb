@@ -22,16 +22,6 @@ describe Riffer::Messages::Base do
     it "raises NotImplementedError when role is not implemented" do
       expect { base_message.to_h }.must_raise(NotImplementedError)
     end
-
-    it "accepts parts: on every role and ignores it outside assistant messages" do
-      [
-        Riffer::Messages::System.new("Be helpful"),
-        Riffer::Messages::User.new("Hi"),
-        Riffer::Messages::Tool.new("42", tool_call_id: "c1", name: "answer"),
-      ].each do |message|
-        expect(message.to_h(parts: true)).must_equal message.to_h
-      end
-    end
   end
 
   describe "#has_tool_calls?" do
