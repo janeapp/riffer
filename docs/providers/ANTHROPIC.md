@@ -228,7 +228,7 @@ Each `server_tool_use` block and its result block (`web_search_tool_result`, or 
 
 ### Paused turns
 
-When a server tool loop reaches its iteration limit, Anthropic stops with `stop_reason: "pause_turn"`. Riffer sends the paused content back unchanged as the last message and continues the turn, up to 8 times per call, for `generate_text` and `stream_text` alike. You get one assistant message: every response's parts in order, the summed token usage and the last response's finish reason. A stream yields one `TextDone`, `FinishReasonDone` and `TokenUsageDone` for the whole turn.
+When a server tool loop reaches its iteration limit, Anthropic stops with `stop_reason: "pause_turn"`. Riffer sends the paused content back unchanged as the last message and continues the turn, up to 8 times per call, for `generate_text` and `stream_text` alike. If the response names a `container`, its id goes with the next request, so the turn keeps the same container and its files. You get one assistant message: every response's parts in order, the summed token usage and the last response's finish reason. A stream yields one `TextDone`, `FinishReasonDone` and `TokenUsageDone` for the whole turn.
 
 A turn still paused after 8 continuations ends with finish reason `:other` (`finish_reason_raw` is `"pause_turn"`). Its last server tool call may have no result, and Anthropic rejects a request that adds a user message after it. Call `generate` or `stream` with no prompt to send the turn back and let Claude carry on.
 

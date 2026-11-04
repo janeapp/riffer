@@ -1189,12 +1189,14 @@ describe Riffer::Providers::Anthropic do
       events = [
         {
           type: "message_start",
-          message: { role: "assistant", content: [], usage: segment[:usage].merge(output_tokens: 1) },
+          message: {
+            role: "assistant", content: [], usage: segment[:usage].merge(output_tokens: 1), **segment.slice(:container),
+          },
         },
         *segment[:content].each_with_index.flat_map { |block, index| block_events(index, block) },
         {
           type: "message_delta",
-          delta: { stop_reason: segment[:stop_reason] },
+          delta: { stop_reason: segment[:stop_reason], **segment.slice(:container) },
           usage: { output_tokens: segment[:usage][:output_tokens] },
         },
         { type: "message_stop" },
@@ -1238,6 +1240,7 @@ describe Riffer::Providers::Anthropic do
       segment(content, "end_turn", usage: { input_tokens: 30, output_tokens: 7 })
     end
     let(:resumed) { { role: "assistant", content: paused[:content] } }
+    let(:container) { { id: "container_1", expires_at: "2026-11-03T18:00:00Z" } }
     let(:unanswered) do
       segment([text_block("Searching."), search_call_block("srvtoolu_1")], "pause_turn")
     end
@@ -1266,6 +1269,22 @@ describe Riffer::Providers::Anthropic do
         expect(result.content).must_equal "Let me search.Ruby 4.0."
         expect(result.token_usage.to_h).must_equal({ input_tokens: 40, output_tokens: 12 })
         expect([result.finish_reason, result.finish_reason_raw]).must_equal [:stop, "end_turn"]
+      end
+
+      it "sends the paused response's container id with the continuation" do
+        requests = stub_messages([paused.merge(container: container).to_json, finished.to_json])
+
+        provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests.map { |request| request[:container] }).must_equal [nil, "container_1"]
+      end
+
+      it "sends no container when the paused response has none" do
+        requests = stub_messages([paused.to_json, finished.to_json])
+
+        provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests[1]).wont_include :container
       end
 
       it "resends an unanswered server_tool_use as it came" do
@@ -1322,6 +1341,22 @@ describe Riffer::Providers::Anthropic do
         expect(done_events[0].content).must_equal "Let me search.Ruby 4.0."
         expect([done_events[1].finish_reason, done_events[1].raw_finish_reason]).must_equal [:stop, "end_turn"]
         expect(done_events[2].token_usage.to_h).must_equal({ input_tokens: 40, output_tokens: 12 })
+      end
+
+      it "sends the paused response's container id with the continuation" do
+        requests = stub_messages([sse_body(paused.merge(container: container)), sse_body(finished)])
+
+        provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests.map { |request| request[:container] }).must_equal [nil, "container_1"]
+      end
+
+      it "sends no container when the paused response has none" do
+        requests = stub_messages([sse_body(paused), sse_body(finished)])
+
+        provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests[1]).wont_include :container
       end
 
       it "resends an unanswered server_tool_use as it came" do
