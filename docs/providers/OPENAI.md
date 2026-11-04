@@ -118,6 +118,8 @@ model_options web_search: true
 model_options web_search: {search_context_size: "medium"}
 ```
 
+With web search on, riffer also adds `"web_search_call.action.sources"` to the request's `include`, keeping any entries you pass, so `WebSearchDone` carries the sources OpenAI searched.
+
 ## Example
 
 ```ruby

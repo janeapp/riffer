@@ -3,6 +3,9 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
+  # Without this include, a web_search_call's search action carries no sources.
+  WEB_SEARCH_SOURCES_INCLUDE: String
+
   # The Responses API has no finish_reason field, and an +incomplete+ status is only meaningful
   # together with <tt>incomplete_details.reason</tt>.
   FINISH_REASONS: Hash[String, Symbol | Hash[String, Symbol]]
@@ -109,9 +112,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_function_call_arguments_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
+  # Emitted from the finished item rather than function_call_arguments.done, because only the
+  # item's status marks a call cut off by max_output_tokens, whose arguments can't be run.
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_function_call_arguments_done: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  # : (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_output_item_done_function_call: (untyped, yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void

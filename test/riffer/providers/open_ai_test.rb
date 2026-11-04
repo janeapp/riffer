@@ -1531,6 +1531,57 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "web search sources include" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    let(:messages) { [Riffer::Messages::User.new("Hi")] }
+    let(:sources_include) { Riffer::Providers::OpenAI::WEB_SEARCH_SOURCES_INCLUDE }
+
+    it "asks for the search sources" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", { web_search: true })
+
+      expect(params[:include]).must_equal [sources_include]
+    end
+
+    it "keeps the include entries the caller passed" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5-mini",
+        { web_search: true, include: ["reasoning.encrypted_content"] },
+      )
+
+      expect(params[:include]).must_equal ["reasoning.encrypted_content", sources_include]
+    end
+
+    it "does not repeat a sources include the caller already passed" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5-mini",
+        { web_search: true, include: [sources_include] },
+      )
+
+      expect(params[:include]).must_equal [sources_include]
+    end
+
+    it "does not repeat a sources include the caller passed as a Symbol" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5-mini",
+        { web_search: true, include: [sources_include.to_sym] },
+      )
+
+      expect(params[:include]).must_equal [sources_include.to_sym]
+    end
+
+    it "sends no include without web search" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {})
+
+      expect(params).wont_include :include
+    end
+  end
+
   describe "file handling" do
     let(:image_base64) do
       "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/" \
@@ -1903,6 +1954,67 @@ describe Riffer::Providers::OpenAI do
           expect(args["city"]).must_equal "Toronto"
         end
       end
+    end
+  end
+
+  describe "tool calls cut off by max_output_tokens" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+
+    before { provider }
+
+    def function_call(number, status: :completed, arguments: '{"city":"Toronto"}')
+      OpenAI::Models::Responses::ResponseFunctionToolCall.new(
+        id: "fc_#{number}",
+        call_id: "call_#{number}",
+        name: "get_weather",
+        arguments: arguments,
+        status: status,
+        type: :function_call,
+      )
+    end
+
+    def output_item_done(item)
+      Struct.new(:type, :item).new(:"response.output_item.done", item)
+    end
+
+    def stream_events(events)
+      events += [Struct.new(:type, :response).new(:"response.completed", nil)]
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
+      stream_double.define_singleton_method(:close) {}
+      install_stream_double(provider, stream_double)
+      provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+    end
+
+    it "streams no ToolCallDone for the cut-off call" do
+      events = stream_events(
+        [
+          output_item_done(function_call(1)),
+          Struct.new(:type, :item_id, :arguments).new(:"response.function_call_arguments.done", "fc_2", '{"city":"Pa'),
+          output_item_done(function_call(2, status: :incomplete, arguments: '{"city":"Pa')),
+        ],
+      )
+
+      expect(events.grep(Riffer::StreamEvents::ToolCallDone).map(&:to_h)).must_equal [
+        { role: :assistant, item_id: "fc_1", call_id: "call_1", name: "get_weather", arguments: '{"city":"Toronto"}' },
+      ]
+    end
+
+    it "drops the cut-off call from generate_text and keeps the completed one" do
+      response = OpenAI::Models::Responses::Response.new(
+        output: [function_call(1), function_call(2, status: :incomplete, arguments: '{"city":"Pa')],
+        status: :incomplete,
+        incomplete_details: OpenAI::Models::Responses::Response::IncompleteDetails.new(reason: :max_output_tokens),
+      )
+      responses_double = Object.new
+      responses_double.define_singleton_method(:create) { |_params| response }
+      client_double = Object.new
+      client_double.define_singleton_method(:responses) { responses_double }
+      Riffer.config.openai.client = client_double
+
+      result = provider.generate_text(prompt: "Hi", model: "gpt-5-mini")
+
+      expect(result.tool_calls.map(&:call_id)).must_equal ["call_1"]
     end
   end
 
