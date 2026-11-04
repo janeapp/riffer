@@ -5,28 +5,22 @@ http_interactions:
     uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
     body:
       encoding: UTF-8
-      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
-        in Toronto?"}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+      string: '{"messages":[{"role":"user","content":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
         the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}}}]},"additionalModelRequestFields":{"thinking":{"type":"adaptive"},"output_config":{"effort":"max"}}}'
     headers:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - c88f08bb-1ba6-4d5c-9e0f-444299943e3c
+      - bbc4c8d2-71a1-401a-a0e7-029ab0dea72c
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
-      X-Amz-Date:
-      - 20261028T175037Z
-      X-Amz-Content-Sha256:
-      - bada47bcb836f5d08c0df8e56959ebbe7d94d8c1570cd2d7cb3dae368ade7083
       User-Agent:
       - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
-        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D
       Content-Length:
-      - '466'
+      - '519'
       Accept:
       - "*/*"
   response:
@@ -35,26 +29,30 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 28 Oct 2026 17:50:39 GMT
+      - Wed, 04 Nov 2026 15:04:12 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '1218'
+      - '2684'
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - a4b6eab6-90b0-43dc-9370-b72fd2146183
+      - 8a49ad17-cec5-4fd6-9870-3e7064d1eb56
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":1665},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"CAQSlwQKEggTEAEYAjgBQgh0aGlua2luZxIM5bOLXdnFH9aSrMixGgyMlCLwMSiFLRdM7EsiMGuarVER8td3qqP0bdWoOAx7AVFPsB1OtWZv/r3cKlO+5hlHHwgqdlrJZQh4YrQSTyqyAxDbFImE7WlT+Ll/ORrmZlwOcSt7okfqfb5r4o/yL3L6oIeRv31xzcVULnggJqNIccd/FFyujx1xphmlhO0A6giC9zq/gBd3o/WqIBK6r3F8Q0TeKXvPkIB2955Wc+1Ayt2u2OOk6NEvi/OG8r6e+YP9RW89AkmcqL82kkgnOIBnNl3JxCswbG+WB3dWDXaIb54s1B/2YlzHUYyXEj931zxINmdBZlF6armTb59YEP+mjlcJl3LtpcnaICkjSiQQbuzorO4ZTA1SvdgGWH4YHHvhlzkexZmf4+habni4baSR9gn8fc5LL5MwfWBJrCEhrf2mz5kdAQjwXKOfdHHVYTR9St8mb88TZCLYkYYCp+2B70RTRH3hzJHvRvhWlR1zhyaxzac6khBgIl7r85QuqzZevBU8lzJ17nhv6zahTGCnsuvkEPpsJnzfRS3IAmgihfcN8PGB8RJ8zIoePxL/tQBQMVYXFjkg9aUuVibfvkCdngpyWV4IVyeqTFTymiM5kzLn1rhlMyH2tNFl5J1jn4ZC5QlrtNU10iPkSZeCJmKi00W9Q0M0EJs3LXz6ZyDLwDP4GAE=","text":""}}},{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_5iWion65SP2f7LzxuasnRN","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":394,"outputTokens":82,"serverToolUsage":{},"totalTokens":476}}'
-  recorded_at: Wed, 28 Oct 2026 17:50:39 GMT
+      string: '{"metrics":{"latencyMs":2876},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"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","text":""}}},{"text":"Toronto,
+        the capital of Ontario, is the most populous provincial capital in Canada.
+        I''ll get its weather now."},{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_bJl26MoBnv1kn2nizXcsHd","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":407,"outputTokens":495,"serverToolUsage":{},"totalTokens":902}}'
+  recorded_at: Wed, 04 Nov 2026 15:04:12 GMT
 - request:
     method: post
     uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
     body:
       encoding: UTF-8
-      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
-        in Toronto?"}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"","signature":"CAQSlwQKEggTEAEYAjgBQgh0aGlua2luZxIM5bOLXdnFH9aSrMixGgyMlCLwMSiFLRdM7EsiMGuarVER8td3qqP0bdWoOAx7AVFPsB1OtWZv/r3cKlO+5hlHHwgqdlrJZQh4YrQSTyqyAxDbFImE7WlT+Ll/ORrmZlwOcSt7okfqfb5r4o/yL3L6oIeRv31xzcVULnggJqNIccd/FFyujx1xphmlhO0A6giC9zq/gBd3o/WqIBK6r3F8Q0TeKXvPkIB2955Wc+1Ayt2u2OOk6NEvi/OG8r6e+YP9RW89AkmcqL82kkgnOIBnNl3JxCswbG+WB3dWDXaIb54s1B/2YlzHUYyXEj931zxINmdBZlF6armTb59YEP+mjlcJl3LtpcnaICkjSiQQbuzorO4ZTA1SvdgGWH4YHHvhlzkexZmf4+habni4baSR9gn8fc5LL5MwfWBJrCEhrf2mz5kdAQjwXKOfdHHVYTR9St8mb88TZCLYkYYCp+2B70RTRH3hzJHvRvhWlR1zhyaxzac6khBgIl7r85QuqzZevBU8lzJ17nhv6zahTGCnsuvkEPpsJnzfRS3IAmgihfcN8PGB8RJ8zIoePxL/tQBQMVYXFjkg9aUuVibfvkCdngpyWV4IVyeqTFTymiM5kzLn1rhlMyH2tNFl5J1jn4ZC5QlrtNU10iPkSZeCJmKi00W9Q0M0EJs3LXz6ZyDLwDP4GAE="}}},{"toolUse":{"toolUseId":"tooluse_5iWion65SP2f7LzxuasnRN","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_5iWion65SP2f7LzxuasnRN","content":[{"text":"It
+      string: '{"messages":[{"role":"user","content":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"","signature":"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"}}},{"text":"Toronto,
+        the capital of Ontario, is the most populous provincial capital in Canada.
+        I''ll get its weather now."},{"toolUse":{"toolUseId":"tooluse_bJl26MoBnv1kn2nizXcsHd","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_bJl26MoBnv1kn2nizXcsHd","content":[{"text":"It
         is 15 degrees Celsius in Toronto."}]}}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
         the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}}}]},"additionalModelRequestFields":{"thinking":{"type":"adaptive"},"output_config":{"effort":"max"}}}'
@@ -62,20 +60,14 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 7e3f7659-40fc-4f3d-9705-84335a71a1d3
+      - e8c75b1e-e84e-445c-b84a-189267060a03
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
-      X-Amz-Date:
-      - 20261028T175039Z
-      X-Amz-Content-Sha256:
-      - ad9d94d93d94008fbb2d4b25ed15b0337b6ace2d0f95570764529d97f7b02f0b
       User-Agent:
       - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
-        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D
       Content-Length:
-      - '1546'
+      - '3064'
       Accept:
       - "*/*"
   response:
@@ -84,18 +76,18 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 28 Oct 2026 17:50:40 GMT
+      - Wed, 04 Nov 2026 15:04:15 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '347'
+      - '2075'
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 80725114-27c8-4017-a451-efe9ee664889
+      - 7568ecc6-e03a-4565-9b11-2af437fd86fd
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTEwOX0sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InRleHQiOiJJdCdzIGN1cnJlbnRseSAxNcKwQyBpbiBUb3JvbnRvLiJ9XSwicm9sZSI6ImFzc2lzdGFudCJ9fSwic3RvcFJlYXNvbiI6ImVuZF90dXJuIiwidXNhZ2UiOnsiY2FjaGVSZWFkSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVJlYWRJbnB1dFRva2VucyI6MCwiY2FjaGVXcml0ZUlucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVXcml0ZUlucHV0VG9rZW5zIjowLCJpbnB1dFRva2VucyI6NDk5LCJvdXRwdXRUb2tlbnMiOjE2LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6NTE1fX0=
-  recorded_at: Wed, 28 Oct 2026 17:50:40 GMT
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MjU0NX0sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InJlYXNvbmluZ0NvbnRlbnQiOnsicmVhc29uaW5nVGV4dCI6eyJzaWduYXR1cmUiOiJDQVFTOVFnS0VnZ1RFQUVZQWpnQlFnaDBhR2x1YTJsdVp4SU1TeTZKcFd0U3hkaHZoZWtOR2d3ODVsQ0R0MDl3OXJUZFZmOGlNTW9rbTY1OTQrZ296ZDJ3MDdqZ0pONGd1RjNVaEtVRlh4eHJDRGhhcFlLMldzQ1lXZUt6Z1YvaU5WZEMxY3NmaVNxUUNHUE1mL0tDd3dMeklNY29rNldGbGhtYWoydzlqNzBqY1JnbmNRMElRNHNKbG02VTJ3UitscDJuL3pPWXh1bFA2NGZPdm81cDd1cDJhZ3BuTk1lR3RuaUFZSWlsR2plbUlPZlBQOG8wZTJGclMxWEZMTlR3SjhobDhqMExSRVUybmFTaThnZlBQK2N0dzV5UmJDQ05OazB5akkwN1phbllPVmJRckc1MllqdXZwNlNFMm5Lczd3ZStNcTlvbHhuY2EwdHVOWm9NaDhickRJZVBaNGxuK1BVMmtkOHBXSWk3eTYrT0ZEU04zUmhNQ3YxMktSTmZjblZKU3g5bWVOc095bEJlMjNJYUhyMjlSTUROcVJmbzNCRVdvaHRnRFJ0NzZ4Qk9PaFFOOU1DYkRDazNiUHB3ZTZhUkNXY01tUUw3aGR4WDR6ckcxNnkzNTE1ZHNHUTJDUU9qaWFuUVExRllOOHB4NWhyU2NhN0I0U2ZUcGtRNEd6UjcveHNWTG9WWW5vV0dWYUdIUjJpV0ZhVXMvOGV1Z0N2WlI3TTVxMVBPZS9ES0k0dFF1cWZ6a3AwTlh2eEVBRHBDQlhpeGZ0dzc2Y2RTdDc3ZFIvQ0FhL1NNNzBPWWVkOFhEclpvK2NzcUt1Q0N5R0NxejdkMm9vNjRiVTN6Ym1BREJOenRQKzhmd1N4WkIvRmFqRWxFNm1MME4wZ3hzU0pwTjhqRENSRklSdDVIRm03OU5pbG9aRmtMTDRBbGNDeDZiMkZwOGlESjJDSWM2MlFqRHBPRkkvenVyWEN0cmg3d3ZWMzJFNU9zY3dZdFAyOVFYT1lKZTZxMmYwZTBYcU4vYkNoRUFJTitrSU9MNk1lbTh0OTZXRDlZck5vQk5mdEg2NkNxTkk0c1VMU3hWTjEwUGRlOTlNWGl5dTBVQWZDTHlYdHh3NjlaUFpWMXo4OVp1NVArU2JNU0dMbGFjSjVqcTk1WkNtazB3NUd3MUloRHJ4SjArY2tyV3c1Syt1VUYyd1ZoQ0ExbkRGcUNZZGZ5dlRHTjVSUHNLb2JheDNQL3hxNmZicGo2OXRpNkdHNEsybDZBbUt0TWJiVHU0MS9HaHBJcHowTC96QUZsM0NxVkp3SktzQnJ0alk5M25QendRZkE5dHZzdjFRd2tTbDd6ckp5TCtIRVRITDFYSFhUQm4xUk1ubklrR1hNM3lSWVJjMitYVUg4eTlLZXBQSm5jK1AxN1Z1Y1ZJbjI4dm5DdE5Fd2tiUkYvSlVjaVhJaGVDa3FiQTBVWjV5ZWdCcHdRcWV0ZFBCblNQbmk1R0x0U1g0VnRzR2N1bmtvUjhUMGplQWludHpVKy8yNXloRDQvZzcrc3ZzeE84djFISTNheFdzMmRvWVNzd3dYWFBzUHh0YUVDWVpxRElRcTlqRkdmSXNDVXpXZzJpTHhFNUMxODJGcW9CejZNZFRlRzRyb2RsZXl4NFpmMEZlZC9Sb05sTnVHUWVvem5lb2x0dnlLK3IvcWloVUt4Q2lPZml2YUtIUW5lcEI1R3ZLRnAwVnE2M3FOdCswZ0VSSFN4Q1lmMG5UVlVzN1orRFB3Y3Q1clQzZFdHWmNtTG9ralREV2ZUWFkxaG0rTlNIbmx4WGhBMWU0RVkvcVBHQ01ITWhkRG4wZk9kNzYzSFh3eE9Bb08xek92eHRZK0F4K3hsKzR4MlkrZlhGUlJDVmgrdDByTWs2VHZka3BoMjJObi9yZ0t2b1FjdklxUnFYV2xxQTdtQVRUbnRzclFOckgybGFnRUQ2UmZwOURwallvWFZZR2E0RFJNaG05Q3huWHNkYU1Bbm1GcTArYjh6eFRuWlFWRjlHVHNYR0FFPSIsInRleHQiOiIifX19LHsidGV4dCI6IlRvcm9udG8sIHRoZSBjYXBpdGFsIG9mIE9udGFyaW8sIGhhcyB0aGUgbGFyZ2VzdCBwb3B1bGF0aW9uIG9mIGFueSBDYW5hZGlhbiBwcm92aW5jaWFsIGNhcGl0YWwsIGF0IGFib3V0IDIuOCBtaWxsaW9uIHBlb3BsZS4gVGhlIGN1cnJlbnQgd2VhdGhlciB0aGVyZSBpcyAxNcKwQy4ifV0sInJvbGUiOiJhc3Npc3RhbnQifX0sInN0b3BSZWFzb24iOiJlbmRfdHVybiIsInVzYWdlIjp7ImNhY2hlUmVhZElucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVSZWFkSW5wdXRUb2tlbnMiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VucyI6MCwiaW5wdXRUb2tlbnMiOjkyNSwib3V0cHV0VG9rZW5zIjoyNjUsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjoxMTkwfX0=
+  recorded_at: Wed, 04 Nov 2026 15:04:15 GMT
 recorded_with: VCR 6.4.0

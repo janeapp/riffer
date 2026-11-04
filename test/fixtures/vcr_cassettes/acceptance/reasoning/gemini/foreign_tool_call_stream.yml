@@ -5,8 +5,8 @@ http_interactions:
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"skip_thought_signature_validator"}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"It
+      string: '{"contents":[{"role":"user","parts":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"skip_thought_signature_validator"}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"It
         is 15 degrees Celsius in Toronto."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
@@ -37,7 +37,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Wed, 28 Oct 2026 00:26:04 GMT
+      - Wed, 04 Nov 2026 15:04:03 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -47,26 +47,31 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=422
+      - gfet4t7; dur=490
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
-      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"The
-        weather\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        99,\"candidatesTokenCount\": 2,\"totalTokenCount\": 101,\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 99}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"G0Hhap3TOt-gqtsP46aXgAo\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" in Toronto is currently
-        15 degrees Celsius.\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 99,\"candidatesTokenCount\": 12,\"totalTokenCount\":
-        111,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 99}],\"serviceTier\":
-        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"G0Hhap3TOt-gqtsP46aXgAo\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TEtaYEvqiPc9dADhyqJFkGZp+9jLA1I7fLz5zWZgOMFfaA6ZuB23mTvlUTp2eb8QX7wVL8qdCnfltn4Eq5NiAJ2PsRnYa5KxoBJ7gu/W6snVImQ+TnddajAk=\"}],\"role\":
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"Toronto\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 106,\"candidatesTokenCount\":
+        1,\"totalTokenCount\": 107,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        106}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"Yknrat2cLq3T_PUPtcOWCA\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \" is the capital of Ontario and the Canadian provincial capital
+        with the largest population. \\n\\nCurrently, it\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 106,\"candidatesTokenCount\":
+        21,\"totalTokenCount\": 127,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        106}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"Yknrat2cLq3T_PUPtcOWCA\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \" is 15 degrees Celsius in Toronto.\"}],\"role\": \"model\"},\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 106,\"candidatesTokenCount\":
+        30,\"totalTokenCount\": 136,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        106}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"Yknrat2cLq3T_PUPtcOWCA\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TWXZwQ0Dw6AopJWYxrZGZ2kDjzYGZ4E7HvOcT0yFMe+wHLymUqy8n68WTkbzDI14Cb413Bp4niskneY/VYiB+sIpJA8Oker+gs2Py3nwqzvNlTndvBrlyOEE=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        99,\"candidatesTokenCount\": 12,\"totalTokenCount\": 111,\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 99}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"G0Hhap3TOt-gqtsP46aXgAo\"}\r\n\r\n"
-  recorded_at: Wed, 28 Oct 2026 00:26:04 GMT
+        106,\"candidatesTokenCount\": 30,\"totalTokenCount\": 136,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 106}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"Yknrat2cLq3T_PUPtcOWCA\"}\r\n\r\n"
+  recorded_at: Wed, 04 Nov 2026 15:04:03 GMT
 recorded_with: VCR 6.4.0

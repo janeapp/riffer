@@ -5,8 +5,8 @@ http_interactions:
     uri: https://api.anthropic.com/v1/messages
     body:
       encoding: UTF-8
-      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"What
-        is the weather in Toronto?"}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
         the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}],"stream":true}'
     headers:
@@ -26,7 +26,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 29 Oct 2026 23:33:14 GMT
+      - Wed, 04 Nov 2026 15:02:50 GMT
       Content-Type:
       - text/event-stream; charset=utf-8
       Transfer-Encoding:
@@ -40,31 +40,31 @@ http_interactions:
       Anthropic-Ratelimit-Input-Tokens-Remaining:
       - '10000000'
       Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:33:13Z'
+      - '2026-11-04T15:02:50Z'
       Anthropic-Ratelimit-Output-Tokens-Limit:
       - '2000000'
       Anthropic-Ratelimit-Output-Tokens-Remaining:
       - '2000000'
       Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:33:13Z'
+      - '2026-11-04T15:02:50Z'
       Anthropic-Ratelimit-Requests-Limit:
       - '45000'
       Anthropic-Ratelimit-Requests-Remaining:
       - '44999'
       Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:33:13Z'
+      - '2026-11-04T15:02:50Z'
       Anthropic-Ratelimit-Tokens-Limit:
       - '12000000'
       Anthropic-Ratelimit-Tokens-Remaining:
       - '12000000'
       Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:33:13Z'
+      - '2026-11-04T15:02:50Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
-      - req_011CgXQJG1WVjBTYrPPRh629
+      - req_011Cgi6ENFdCVoQ3UE7UfbbK
       Traceresponse:
-      - 00-2e627b63fce2dae35d90473802cf7c33-16e76c85f0099338-01
+      - 00-b8bb7dcacb560961597ec2e98a9b7087-300a1ecff702127e-01
       Anthropic-Organization-Id:
       - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
       Anthropic-Workspace-Id:
@@ -76,66 +76,66 @@ http_interactions:
       Server:
       - cloudflare
       Server-Timing:
-      - x-originResponse;dur=193
+      - x-originResponse;dur=250
       Cf-Cache-Status:
       - DYNAMIC
       X-Robots-Tag:
       - none
       Cf-Ray:
-      - a525fbe72dedba15-SEA
+      - a55480826d89ad7d-SEA
     body:
       encoding: UTF-8
       string: |+
         event: message_start
-        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011CgXQJGNLM17FEKspSsZA1","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":7,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}       }
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_011Cgi6ENps7tJtEPeaofiSA","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":407,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":7,"service_tier":"standard","inference_geo":"global","speed":"standard"},"diagnostics":null}        }
 
         event: content_block_start
-        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}      }
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}         }
 
         event: ping
         data: {"type": "ping"}
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}    }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}      }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSxQUKEAgTGAI4AUIIdGhpbmtpbmcSDOvF5C8qudiNBd83IhoMIWARGDQRkmi5LaESIjAIzq+c0xcY8U4ZAZitw7z+koiPt72JX28ZAVCcSQol75kag64a4wCS5hXMop0eghQq4gSfkR50uEmTpgpseKxLG4tYbfaKqdy/kRLMRqKNY3pOdsQCQ2BOAUvIKd8y7WVwxb8t1GBs7X+ybb5mlkTIQyDHJ2G+JivtXPyzimaeDlFJgKjDnObxqc67/9y2BXwTE6fjksEyisnRkWijpfeBX5Ufj6C25VoM7v2WMA2UJBRr9y4ZdLeEEb14Ki+IhUnn5wxEb8/95acZZCZ6YVW8TSnGoL7rDLAUGNwTCp6pDqDM6JFL4ScyI1FIxDtJvNITS373Asn1R6Onnqek9cNsh6zMuInVTdRpZSOsEO+YoZEh9ve4s2DlcGY1LRy8ZLCWpM4fnK+T9x7jaPy9bMmtXHoPorqiEfcP3p/7gZ549yGwK62M5ZQDFS4Zi3g5G367wMVz5SRNdz81DYzseNV4jsT2dUuL6X8IePXV1uU6WvuSbl1oWtEL71aK7pqMCkgsT8UeQsgkxhz6q4FBF9YcMSI8k1CXxpZfhnahVI/IZj/yCKFpoZfNs5n6vK2+K/9m+nFwoaiTOaMJsSXCqGbf9AjQmaeY+itF/PDxG0Ab2cw5BmsuEoXGCnU+JRto9ByzTwJxS+uedDRDHt9jDdKOjWucZ2sU8jAWwd9BmmPuT2cWPuZE0Yq+17ei3XEN65Wj948S4HYfZXblzSOa1/m53cC1Vbb1zVXeFS0QCEfVHeoznhixf/EC+4RCYJ4oRXybLu5PPkk8RLDj17gH5T9vIfL97Z7JZtE/BtmVlv3Rdiw1/GYYPwj48GsykRtx8U324HoRQaF+XDxdJksKD0LkvMbJi8NQmmwPHEOi7z7IItnwao1vGAE="}           }
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS7g8KEAgTGAI4AUIIdGhpbmtpbmcSDFXGgkgaDn8vybOM1BoMWqWC+iYCRNV/2CvkIjCdQHG6k4U8lo9zeC3gHqjc1A33CMqDal0mCLAs4GJON+htqSkOW2QcVg8NXXwQo9Yqiw/psUAgLvQtTZEEt11RrMaz9+rsMextKI2xF6T1ymCHTnL1oq3mZnYXuEIDN7+TRCNi1BVrErUwZ6P6BlL5Aipc625j4/gqVOGswufmQh2Y+i6ih/4/8fjRfaTdDOXgrQsmV1Pbb6/kimkFNZewYPJFn3/XkyJbV5uR6II62rRtNvvFKy/BmeH3rbaeK9xNVq9ajwzKQSYK7b/VeW5syW6h5DbfOMzDqR5r1JCKcwLiac+U671atl5K4hIaZn9w0Jv5L6JegZy/sRdSMcL6I2lsrYfrPDEOr7uEWV4Z5GYzRYcL27rFFERNpkM+tXPXNtE5bVuSHXbfq1FajYMu0wBDKVcZtKKqcMTw1K1ebOFEUoemfHlhrRGm/QHDG2AkMtO8P6jA9cCUZlJAzJRAAT+UxWy+hLCAVkQc5phoibOdHUTIxY+dV2Qmz3BDlSksFTVjq+AILIZYEaIt5ptPQbiP31MpJ963q0kRjOrsziv/A0+i+CA23TBMjp9PGEgZv0etrpM7memS6WuCiKl5q5FPHQkkKcXsUM19/9LBM7Gc2Z6x3d01PCqKPErKvLIdbMsxMtK7bsCpnw6vtMrNLB6BE4TQqoP4R5BeSv65OlFxqecI+8nbhyTOWxCqfwQtOZ1wSTX++mHH3vLF/xZ4wNrn//8F41RoYWL1MxMa+atzmXhrJFMbr1R7Avvu0I4VshDWoLfLrB6rb2xjP9K5oWQF9Aj7IG0Q7g0FhX6f3nLoTWIBYeG1SAwBWQRBYPmvarTmD8OGc0UqfhMmb3ipY0cXDmRslQannVCk+/gg8AF+Vwpo6CdUpxO1W295eQQauKBYwcPUw3kReCMUGziglgPyXV8KVgrecnS9vwQzfiqU+v3LZm1fl3ZarkQm9T3NbCY94KTSRw9gz7gPYWT2Dawy8MbSEBHvIlb23mdzFTOnUOpK3dHxy9OGYMccX9WOW1085W/9/8a5t1AowWzdv8MGxgqRflgVaxmT6PBCiRFwoI/4eTuN5ah+4nZThu2dJRvr2NMeOSoitcH/pTEDX83vQY1oS/OlL+VCmZ+j3ecZNXbV9Owet2x5WRAUYlmghXYQU3zjj6JK2VEhhEd9K0RR/+2U2QsYO2wiaUsl0sKVEx4CllBYlzgQfXasthWMOvD5B3QKYJ0VwgwdroTvNcO4p6OCB1fXbYFFw6HslxWGGnEp5Bln+7viBGB/9cbVAVQN6vgjGZOm18cSNysPtWki+clFcxHW8Nh5TlZ03pPNcevNekHUaRhbFtFEjxLLT8I42oW+VINNVs+AvgJUKmxidAe1UAZUjp6b9NPdg6vgGii5Yh2vxsQpjDIkgbP2niYqIVtBuupXGkCA7MnJk3R8oyqZPXck5sCScmVdv1UyB/JszziJLGQYHRSxwoMWBwHOtLmR6zErrTWu95spxdmc28PzqkRKUSkr7kqEpvgeYp81LUAS8ZNC3HuT25/0BU57wupF+IBhQ7Qmv1Glel5F4FsGJ9XpXpZv6sgtpoSmDxe3pKKRn1jM4EF3rNoVVKZ8y7FFz33KbAmVOS4TfPGW7cfeI6OXaWVEgp94LzwckOn2gve9WgrAvj2lOciLKKBMjV4SYkmfR30iLUzBo1d7ink8oZueLo5QaO4sWQorJAojz3E1ClKkqMp+G3hAD0s+fZfJCXYBURsag8YiutOBaZYL8+n6EgTJxLqfBVVFcrHwhzm5/+/wpONR4sndb2f9EhFO8bB1vVuBQc4t2+z3iEV9NnnYmHpg0Kcgq4OIUqqDXHaLBW/Vf8ZYugv0eW5NtUUC23e2scPIQwepN8KWJUGadVVnH9GWDTsu02n/gekFbod+nANLKNArUPxjDEZ6QMkxTSNl0Z2TM6XMn0+2fnorHvCHgDm83UFLLUQNdeVFH8x+j+BU7KT5QaXM53GHrSrFnFjYldYNO8aYpFURqzg3hbAhuAIG12kFSDdfYlyqy5/xDFQniA4zf/XNQMbgofO5It/W0pZMKK8bewHt7gVLMA3r60F74USrDu6RKkcRa1S/dRCORmCjodl+bZhkJS91vWpHgkDhkkf5m8a03NwTSQsFXHZ7O93wYHl0iG4JyHvn3/I7iOS7uvlLYSH0hiwu5QyX+Wbr2zqpm4uqr//30bONE4QZx+nPJLIJR8jwja+HrSR96/yRiHy95RrgGwugWjFCEz3klLm597eTaN5idoRsHFGwUDYV37WpI33VbmhWNxK0/yXdLaXeXfG27D9DEZER38n3XFXlpe3z4lQw5mz8hpDFECS4OEt6MUqLjDAMbA+BvdK99UtWO+7/CuoEJvPcc6hrdAl57f6gzHpJgULDilMK/NeVgvEQN6I5zqiHgcq1xjHHX6VSK0m3Q+3XpAQfXvpkbpEkXAiQOIMZaVFcO1VTPTORrMkXoStQLDyitIjFIh37xDxihB1FwVphavAovedVc9EBkPUSL70WNAbOEPanTDiE4BOUA++MOz9hROTf2868DWxBwOiiGYaM3KjBCO+XU0NmZ4fBF1pG+mDL6Z1uaueBEe7GPKpi1trmIl+LpBzRhawnBkwdDd+jFHIR85XU+xgB"}      }
 
         event: content_block_stop
-        data: {"type":"content_block_stop","index":0         }
+        data: {"type":"content_block_stop","index":0       }
 
         event: content_block_start
-        data: {"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01BNJz8Sg6vSkqNEYsPWB7iR","name":"get_weather","input":{},"caller":{"type":"direct"}}            }
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_015Wp93oRmfUEvdwfJweE9Ba","name":"get_weather","input":{},"caller":{"type":"direct"}}           }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}         }
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}}
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"city\""}         }
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"city\""}    }
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":": \"Toro"} }
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":": \"Toro"}}
 
         event: content_block_delta
-        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"nto\"}"}           }
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"nto\"}"}      }
 
         event: content_block_stop
-        data: {"type":"content_block_stop","index":1        }
+        data: {"type":"content_block_stop","index":1             }
 
         event: message_delta
-        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":394,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":82,"output_tokens_details":{"thinking_tokens":30}}            }
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":407,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":569,"output_tokens_details":{"thinking_tokens":517}}     }
 
         event: message_stop
-        data: {"type":"message_stop"          }
+        data: {"type":"message_stop"               }
 
-  recorded_at: Thu, 29 Oct 2026 23:33:14 GMT
+  recorded_at: Wed, 04 Nov 2026 15:02:53 GMT
 - request:
     method: post
     uri: https://api.anthropic.com/v1/messages
     body:
       encoding: UTF-8
-      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"What
-        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSxQUKEAgTGAI4AUIIdGhpbmtpbmcSDOvF5C8qudiNBd83IhoMIWARGDQRkmi5LaESIjAIzq+c0xcY8U4ZAZitw7z+koiPt72JX28ZAVCcSQol75kag64a4wCS5hXMop0eghQq4gSfkR50uEmTpgpseKxLG4tYbfaKqdy/kRLMRqKNY3pOdsQCQ2BOAUvIKd8y7WVwxb8t1GBs7X+ybb5mlkTIQyDHJ2G+JivtXPyzimaeDlFJgKjDnObxqc67/9y2BXwTE6fjksEyisnRkWijpfeBX5Ufj6C25VoM7v2WMA2UJBRr9y4ZdLeEEb14Ki+IhUnn5wxEb8/95acZZCZ6YVW8TSnGoL7rDLAUGNwTCp6pDqDM6JFL4ScyI1FIxDtJvNITS373Asn1R6Onnqek9cNsh6zMuInVTdRpZSOsEO+YoZEh9ve4s2DlcGY1LRy8ZLCWpM4fnK+T9x7jaPy9bMmtXHoPorqiEfcP3p/7gZ549yGwK62M5ZQDFS4Zi3g5G367wMVz5SRNdz81DYzseNV4jsT2dUuL6X8IePXV1uU6WvuSbl1oWtEL71aK7pqMCkgsT8UeQsgkxhz6q4FBF9YcMSI8k1CXxpZfhnahVI/IZj/yCKFpoZfNs5n6vK2+K/9m+nFwoaiTOaMJsSXCqGbf9AjQmaeY+itF/PDxG0Ab2cw5BmsuEoXGCnU+JRto9ByzTwJxS+uedDRDHt9jDdKOjWucZ2sU8jAWwd9BmmPuT2cWPuZE0Yq+17ei3XEN65Wj948S4HYfZXblzSOa1/m53cC1Vbb1zVXeFS0QCEfVHeoznhixf/EC+4RCYJ4oRXybLu5PPkk8RLDj17gH5T9vIfL97Z7JZtE/BtmVlv3Rdiw1/GYYPwj48GsykRtx8U324HoRQaF+XDxdJksKD0LkvMbJi8NQmmwPHEOi7z7IItnwao1vGAE="},{"type":"tool_use","id":"toolu_01BNJz8Sg6vSkqNEYsPWB7iR","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01BNJz8Sg6vSkqNEYsPWB7iR","content":"It
+      string: '{"model":"claude-haiku-5-5","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"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"},{"type":"tool_use","id":"toolu_015Wp93oRmfUEvdwfJweE9Ba","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_015Wp93oRmfUEvdwfJweE9Ba","content":"It
         is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
         the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}],"stream":true}'
@@ -156,7 +156,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 29 Oct 2026 23:33:15 GMT
+      - Wed, 04 Nov 2026 15:02:53 GMT
       Content-Type:
       - text/event-stream; charset=utf-8
       Transfer-Encoding:
@@ -170,31 +170,31 @@ http_interactions:
       Anthropic-Ratelimit-Input-Tokens-Remaining:
       - '10000000'
       Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:33:14Z'
+      - '2026-11-04T15:02:53Z'
       Anthropic-Ratelimit-Output-Tokens-Limit:
       - '2000000'
       Anthropic-Ratelimit-Output-Tokens-Remaining:
       - '2000000'
       Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:33:14Z'
+      - '2026-11-04T15:02:53Z'
       Anthropic-Ratelimit-Requests-Limit:
       - '45000'
       Anthropic-Ratelimit-Requests-Remaining:
       - '44999'
       Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:33:14Z'
+      - '2026-11-04T15:02:53Z'
       Anthropic-Ratelimit-Tokens-Limit:
       - '12000000'
       Anthropic-Ratelimit-Tokens-Remaining:
       - '12000000'
       Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:33:14Z'
+      - '2026-11-04T15:02:53Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
-      - req_011CgXQJMMihGwDnia4eQE6s
+      - req_011Cgi6EbMBBx2GJgEd6q26q
       Traceresponse:
-      - 00-30214a7450b694f8892203b1357965b7-bd7830c4563bd5e2-01
+      - 00-2daa24a601d93aa0a887b58a111e60f0-77597bf65460328e-01
       Anthropic-Organization-Id:
       - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
       Anthropic-Workspace-Id:
@@ -206,16 +206,16 @@ http_interactions:
       Server:
       - cloudflare
       Server-Timing:
-      - x-originResponse;dur=129
+      - x-originResponse;dur=159
       Cf-Cache-Status:
       - DYNAMIC
       X-Robots-Tag:
       - none
       Cf-Ray:
-      - a525fbeefb8575d9-SEA
+      - a5548095b93adf27-SEA
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        ZXZlbnQ6IG1lc3NhZ2Vfc3RhcnQKZGF0YTogeyJ0eXBlIjoibWVzc2FnZV9zdGFydCIsIm1lc3NhZ2UiOnsibW9kZWwiOiJjbGF1ZGUtaGFpa3UtNS01IiwiaWQiOiJtc2dfMDExQ2dYUUpNZzR5N0E1OTFydGQ3RHB3IiwidHlwZSI6Im1lc3NhZ2UiLCJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6W10sImNvbnRhaW5lciI6bnVsbCwic3RvcF9yZWFzb24iOm51bGwsInN0b3Bfc2VxdWVuY2UiOm51bGwsInN0b3BfZGV0YWlscyI6bnVsbCwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjo0OTksImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjoxLCJzZXJ2aWNlX3RpZXIiOiJzdGFuZGFyZCIsImluZmVyZW5jZV9nZW8iOiJnbG9iYWwiLCJzcGVlZCI6InN0YW5kYXJkIn0sImRpYWdub3N0aWNzIjpudWxsfSAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfc3RhcnQKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19zdGFydCIsImluZGV4IjowLCJjb250ZW50X2Jsb2NrIjp7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IiJ9fQoKZXZlbnQ6IHBpbmcKZGF0YTogeyJ0eXBlIjogInBpbmcifQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjowLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiJJdCJ9ICAgICAgICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjAsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IidzIGN1cnIifSAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjAsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6ImVudGx5IDE1wrAifSAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjowLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiJDIGluIn0gICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MCwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiIFRvcm9udG8uIn0gICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX3N0b3AKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19zdG9wIiwiaW5kZXgiOjAgICAgICB9CgpldmVudDogbWVzc2FnZV9kZWx0YQpkYXRhOiB7InR5cGUiOiJtZXNzYWdlX2RlbHRhIiwiZGVsdGEiOnsic3RvcF9yZWFzb24iOiJlbmRfdHVybiIsInN0b3Bfc2VxdWVuY2UiOm51bGwsInN0b3BfZGV0YWlscyI6bnVsbCwiY29udGFpbmVyIjpudWxsfSwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjo0OTksImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsIm91dHB1dF90b2tlbnMiOjE2LCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsidGhpbmtpbmdfdG9rZW5zIjowfX0gICAgICAgICAgICAgfQoKZXZlbnQ6IG1lc3NhZ2Vfc3RvcApkYXRhOiB7InR5cGUiOiJtZXNzYWdlX3N0b3AiICAgfQoK
-  recorded_at: Thu, 29 Oct 2026 23:33:15 GMT
+        ZXZlbnQ6IG1lc3NhZ2Vfc3RhcnQKZGF0YTogeyJ0eXBlIjoibWVzc2FnZV9zdGFydCIsIm1lc3NhZ2UiOnsibW9kZWwiOiJjbGF1ZGUtaGFpa3UtNS01IiwiaWQiOiJtc2dfMDExQ2dpNkVia1VuYzd2eDFRclRmOG90IiwidHlwZSI6Im1lc3NhZ2UiLCJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6W10sImNvbnRhaW5lciI6bnVsbCwic3RvcF9yZWFzb24iOm51bGwsInN0b3Bfc2VxdWVuY2UiOm51bGwsInN0b3BfZGV0YWlscyI6bnVsbCwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjo5OTksImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjozLCJzZXJ2aWNlX3RpZXIiOiJzdGFuZGFyZCIsImluZmVyZW5jZV9nZW8iOiJnbG9iYWwiLCJzcGVlZCI6InN0YW5kYXJkIn0sImRpYWdub3N0aWNzIjpudWxsfSAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfc3RhcnQKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19zdGFydCIsImluZGV4IjowLCJjb250ZW50X2Jsb2NrIjp7InR5cGUiOiJ0aGlua2luZyIsInRoaW5raW5nIjoiIiwic2lnbmF0dXJlIjoiIn0gICAgICAgICAgICB9CgpldmVudDogcGluZwpkYXRhOiB7InR5cGUiOiAicGluZyJ9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjAsImRlbHRhIjp7InR5cGUiOiJ0aGlua2luZ19kZWx0YSIsInRoaW5raW5nIjoiIn0gICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MCwiZGVsdGEiOnsidHlwZSI6InNpZ25hdHVyZV9kZWx0YSIsInNpZ25hdHVyZSI6IkNBUVNsd2tLRUFnVEdBSTRBVUlJZEdocGJtdHBibWNTREhqZFRwZUpjMkhGV3hKRFZSb003clRMeTlmUDZWT1JkYkU1SWpCZGtmSWFRaVBhNGJLSmVRbGlUa3J3MlowOG5vQWhENzFxTUtacUxvbzhqSnJvQjZoeVVKL3VjNlJGdUxDdHJ2QXF0QWdpSUpacGxiWFhIQlRDNTI5cVVRTDZvMzdCazV0bHNvK0JPaXNkby9kblBrZnpoSGVac0ZRKzMrOFRKTjlXTnlJUnI4YTZrNksrdUJRMlRPYlFNZ3poUFRzNmY2a2FmbGtqYzNmSE01bkw2eUp0TjgrckFwQ0tRQkxnSUVva2RrbDdnM2RHZmQ1SWxaQ25CVEI2d2lMWUEwdDE5V2tVSGFwZURFeEZDVGY0V3VsamxhSXJzaml6RnZvalJXVVJWUlNjdTBONXlIN1VnOE9Hdm40Vk5uWERmTHF4SG1LOW51Um83QzJWOEpDUmtkbW5UT2ljNmlrbnRKenZsb1J1VDZWYkhvalZxSUdSUkZOQUo0ZElwY3V3TU92eHhwaHJtVFV1Vm1XY090cjZkVHNEdy9SSk5zRG5jTThBMytKNk92UExXelpSbFB4WVI3QlRkdUN3YnUvL3daL3VEb0N1ZThmS1JJczdyeW5oZzlPN053NnNKUGhRM0pGeThmcGZ1VVJjbmhJOHlMRGxSY2xNNGxSR1ZGVjYrVDlRK1VZaXlhL3AxaG0vNXRHWnB4MFo3QkU0SzJ5Zm91d1kyMVhERVdyaEF1R1pWOVQxY3l1Rko1NU1JT013UTYxZ293K3ZOcTlEaXl1cDU3Z2pjc0JZSWZmQ0MwYVlJTVJCR3VJbllQZDU5LzBqTmdCaEYyUG9xYmFSSGhrWWZDTGVzOGVVWXBWQk9ZY2dVTCtoOHJRWGhTOTdiRG91Q2Zzc3pYZHp4bm1rZFVVS0Vsd2ZaeCtoTCtrd0V1dEZ0VHB0aXRBMEgxbXU3WUlzMjR3bEtKNGFNZ0l4Rlo0QmE3ejAyc3UyU3BXZlU4T1I3ZFBFU2thYlRxQVRYUDZJQ0Jpb3lqMnh3TW5lenBJWEVWU0ZmL0pPYlUySEpsVG5say9qMUdENGVpK1lBRldCb3dkeWFPYUVnOVZwUXpRajVqMGxncTNETHFIQlVaR3JmOURYZFJNWHN5QkhpekZQNUdUemtxNWZ6N3Fic2piTzdkM2RWYnZqVmVhQ04yZ3V2L0ZCU3Fsb3R2VTNvZWNCaTgvTzdqLzRMVkJ3RUFPTmlIVUgrWFJPTXlyUEFPVnBPZXZkUXg3SnhFU3BZTi8rZC8zSGxULzd5YS8vTzl0K05pTHEzT1RNazVzVW1aODRKSEQ1a2dmZkxIWHJOMHZQNjZweUZieFd2ZFRZckJyV1dKS25NMFNJMlVDanZQakF0K1Ezb2tvWHlXcXo5L3NoK3dDcFZOS1lRZHhMOWg5UlFRK1lJc1J4NDFoamdiZlFOdi9nNlczTlhwMEJjMFkyUWt0VmRVNmo0UldyQnJGNWJLUitDZU4xb3pNQ0o5MTBUM29kMXN6SEFlWFQ3eElVeDcxZXowQzVVUUpsU3NwMlYzdzFkMGVXRHVjTm40MXFMK1hRcVdXbWUyR3VwR3NwSDFIc0JqYS9OblhkZmdmRmc1YklacnhxNlhMT09SdER3YUI3enR3RXl0ZUJUWVZBdVNONTVGSElVWFRGOVMyZnI3eDIxT2hNQ2p0ZnZZYXVIeVBBSlpBZGhGKzBkVkRnQlRkeFpwNDNXN1JVOXV1aGRpODZvUXdJRWdJemlmNzRoNnRYNTlYYlVPeEZHdXBVL3p1OWdkTlpDRTZBV0FQcUdCMzJhditxaDN1SktZQVNUbWNiRnlpUGpLN3ZzcUNTYWZxM0IxaGZUeG1tOXFNNG1KdlRacVJacU91Q1YyUysrQzVFR0Q5Yk83N2YzQ3krQkRiS3RCODAxRmUrUUJwSTZyd1ZXRVJ1aXRyWGh4K3NxcVdOY2VmOS9oQ1orVVhoUDl5dW8zN3JNcFBpN2VHZ1AxdE5NeUZMM2Y1U1AyS3BQV1ExTTFCY0F4RTd2R0hWbHloL1p4Z0IifSAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfc3RvcApkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX3N0b3AiLCJpbmRleCI6MCAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX3N0YXJ0CmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfc3RhcnQiLCJpbmRleCI6MSwiY29udGVudF9ibG9jayI6eyJ0eXBlIjoidGV4dCIsInRleHQiOiIifSAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiVGhlIn0gIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiIGxhcmdlc3QgcHJvdmluY2lhbCBjYXBpdGFsIGlzIn0gICAgICAgICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiICoqVG9yb250byoqLCB0aGUifSAgICAgICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IiBjYXBpdGFsIG9mIE9udGFyaW8sIn0gICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IiB3aXRoIGFib3V0IDIuOCBtaWxsaW9uIn0gICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IiByZXNpZCJ9ICAgICAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjoxLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiJlbnRzIGluIHRoZSBjaXR5IHByb3BlciAoIn0gfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjoxLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiIyMDIxICJ9ICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IkNlbnN1cykuXG5cblRoZSJ9ICAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjoxLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiIgY3VycmVudCJ9ICAgICAgICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiIHdlIn0gICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6ImF0aGVyIGluIFRvcm9udG8gaXMgKioifSAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjoxLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiIxNcKwIn0gICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IkMqKi4ifSAgICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiIFRoZSB3ZSJ9ICAgICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiYXRoZXIgc2VydmljZSJ9ICAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjoxLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiIgb25seSByZXBvcnRlZCJ9ICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MSwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiIHRoZSB0ZW1wZXJhdHVyZSwgc28gSSBkb24ifSAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6Iid0IGhhdmUgZGV0YWlscyBsaWtlIn19CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6IiBjb25kaXRpb25zIG9yIGh1bSJ9ICAgICAgICAgICB9CgpldmVudDogY29udGVudF9ibG9ja19kZWx0YQpkYXRhOiB7InR5cGUiOiJjb250ZW50X2Jsb2NrX2RlbHRhIiwiaW5kZXgiOjEsImRlbHRhIjp7InR5cGUiOiJ0ZXh0X2RlbHRhIiwidGV4dCI6ImlkaXR5LiJ9ICB9CgpldmVudDogY29udGVudF9ibG9ja19zdG9wCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfc3RvcCIsImluZGV4IjoxICAgICAgICAgICAgICAgfQoKZXZlbnQ6IG1lc3NhZ2VfZGVsdGEKZGF0YTogeyJ0eXBlIjoibWVzc2FnZV9kZWx0YSIsImRlbHRhIjp7InN0b3BfcmVhc29uIjoiZW5kX3R1cm4iLCJzdG9wX3NlcXVlbmNlIjpudWxsLCJzdG9wX2RldGFpbHMiOm51bGwsImNvbnRhaW5lciI6bnVsbH0sInVzYWdlIjp7ImlucHV0X3Rva2VucyI6OTk5LCJjYWNoZV9jcmVhdGlvbl9pbnB1dF90b2tlbnMiOjAsImNhY2hlX3JlYWRfaW5wdXRfdG9rZW5zIjowLCJvdXRwdXRfdG9rZW5zIjoyNjgsIm91dHB1dF90b2tlbnNfZGV0YWlscyI6eyJ0aGlua2luZ190b2tlbnMiOjE3NX19ICB9CgpldmVudDogbWVzc2FnZV9zdG9wCmRhdGE6IHsidHlwZSI6Im1lc3NhZ2Vfc3RvcCIgICAgICAgICAgICAgfQoK
+  recorded_at: Wed, 04 Nov 2026 15:02:54 GMT
 recorded_with: VCR 6.4.0

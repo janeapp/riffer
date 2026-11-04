@@ -5,8 +5,8 @@ http_interactions:
     uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
     body:
       encoding: UTF-8
-      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
-        in Toronto?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"toolu_01A","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"toolu_01A","content":[{"text":"It
+      string: '{"messages":[{"role":"user","content":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"toolu_01A","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"toolu_01A","content":[{"text":"It
         is 15 degrees Celsius in Toronto."}]}}]}],"system":[],"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
         the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}}}]}}'
@@ -14,20 +14,14 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 62f2385c-ba1c-431d-9f44-ff06b64ea972
+      - f7429428-4c7e-448a-8e00-1d72d459032e
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
-      X-Amz-Date:
-      - 20261028T175406Z
-      X-Amz-Content-Sha256:
-      - 6016855b1f473a39b840b5d90327949c96afae067ce1e6e25a636fd4ee9a6c12
       User-Agent:
       - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
-        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D
       Content-Length:
-      - '617'
+      - '670'
       Accept:
       - "*/*"
   response:
@@ -36,18 +30,18 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 28 Oct 2026 17:54:07 GMT
+      - Wed, 04 Nov 2026 15:04:09 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '347'
+      - '1810'
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 4c1abee4-5a58-4453-a601-f54aa8661ef8
+      - d4f84b48-e40b-4879-8677-1d7d89ad30b2
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTA1NX0sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InRleHQiOiJJdCdzIGN1cnJlbnRseSAxNcKwQyBpbiBUb3JvbnRvLiJ9XSwicm9sZSI6ImFzc2lzdGFudCJ9fSwic3RvcFJlYXNvbiI6ImVuZF90dXJuIiwidXNhZ2UiOnsiY2FjaGVSZWFkSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVJlYWRJbnB1dFRva2VucyI6MCwiY2FjaGVXcml0ZUlucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVXcml0ZUlucHV0VG9rZW5zIjowLCJpbnB1dFRva2VucyI6NDY4LCJvdXRwdXRUb2tlbnMiOjE2LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6NDg0fX0=
-  recorded_at: Wed, 28 Oct 2026 17:54:07 GMT
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6MTkzNX0sIm91dHB1dCI6eyJtZXNzYWdlIjp7ImNvbnRlbnQiOlt7InJlYXNvbmluZ0NvbnRlbnQiOnsicmVhc29uaW5nVGV4dCI6eyJzaWduYXR1cmUiOiJDQVFTcGdjS0VnZ1RFQUVZQWpnQlFnaDBhR2x1YTJsdVp4SU1ySVV0Qk8wS2RIWUgrTHZRR2d5ajhjaVZkVkJGdVRSMkxRWWlNTHc2TUh3Wlg4ck9xUWQzVmZ6Y1JQZUpRMzVSNTE4SFdWQ2JhVldQVVhqUWtwMHQrZmNNK29DNzdSdGNHRlRPQ0NyQkJpZzhFOWxuQ3A1L1VuKzBkNWpZUXBiSTJMV0NzWVcrSkRMUmN5Yi9acnZXSG9QVnRyWTNkdGcrTDZGbnN6TENkQ1hMNWVyWFJ0cXRuWVdKaTVYN2JWRUdRc1Y1M1g5S05ReExOVmNqQjZtaG5aSHl3VkNYeExGWEpsZFdQbGtOMVVGNFpYN2pLeGEwMVoxcjZJZkdqOGY3MGFPU1JYK2FtRmVuQWIrRG1qK1cyeldjbnpFYWZUNFpLZEZQV3lUNXJmemh5L2NVSWJvOEdvdS9zTm5UOUdIS3NoVmhzVFpPWEhwR1V3cXo4ZHh5NnhWRDc3cWVTc2dwQnNqNDZPNi9GdDVwRWtMMzE2WFhSNCt1WFVFZUF3TUU4WnNDMkttRmRXMjJaYlk4NElxUmRxaHhxaGw3ZTY5RUd4YnFTRllyRE5RZlJQZktiaHpwdHhKRVMwbFNFMGI5U2xwMXFQT1ZVeWVrUDE4NTAyMi8xb1ZDNWxMb2pSRWY1UU5RRm1RYmJxOTZXakhxbmR1MmlYTzNzRzdmZHlOWE5WTWhDSVVEeGM2RUNDaEV6VEJRb2g4dFdJKy92a1pJbzBJZzg1YnBkUk1mNXJCTFYvK3dsMHdwRmxxWmZkUTZYT0hEcG1TbjhPaWswRTEvWG9waUYwU0Z3ZXRCS3pteENLMlNCV2tFR3Y4K09hS3FtekNxNjRzZEh0NU9leEZEODlmOEY3Z3FGZnBCSEs0ZkJ1bk1IeHYyVjV0VHR5QXBGR1ZEcnRBcmZBZjZXRTVLV01WK3RCTWJGblFXemRhaDM5cUVobXVkTmZ1c1p5aUNWeGVsajAwOUxnb1NsVFpwbkN5V0N5enp3UmlwWTFxR0ozdThVNXJnRDhmNHVYclB3NWlQVnExNWlMb0FjcWIxK0txVElTSEdVRGxDR05tTWREYkxOM0prNzF1TXI1L2g3YXZaOUwrZDBvRnZPVmxpR05nT0xwS3ozVzloRXpBNGFWOVZkRXZXUUc4UjA0cFRSVlU5cU1OTGZ0TjV3MDNIUy9HaHpCVnlCNlk2QlNjS1BjUXZhUVJjVlFCVDNyUlIydUhmRXluZEN4Zlh6MDgxeHlRTkVCdUxjQmE2L2QxV2wvaTJUNWpLWUp4c0ZpenRmR3MwTzZXRjgrMG1Jd2t3NEg5b05JeWU5QW5FTmVqL3BWTWZXNHVpbUhyUFpaZzBVcDRoajBvRTRJWnZWTC9oUEFvMHdMMnMyL0JuakpOdHdtWjhFWWFKdU4wRUs3SUVkcDdDa2NZZkp4TEdGNkdqOHZuam8vWi9ENXZuWFRvbnhmei9PNkJnUjdkcSs3NHRCZkl3SmhQYkpaMHB0RjgxY2lpcjBnL0h5OEZIeTdUM1I2cEMwdjlGMlg5cUVHTGVsV2pQMndnL05ObDUrbllWekFZRVN6TFpLaDJHYnVLV3pNRmd0ekU5eGIzbDNUa1I2bUd4QWtBYUQzZDBSQzNDR0FFPSIsInRleHQiOiIifX19LHsidGV4dCI6IlRoZSBsYXJnZXN0IENhbmFkaWFuIHByb3ZpbmNpYWwgY2FwaXRhbCBpcyAqKlRvcm9udG8qKiwgdGhlIGNhcGl0YWwgb2YgT250YXJpbywgd2l0aCBhYm91dCAyLjggbWlsbGlvbiByZXNpZGVudHMgaW4gdGhlIGNpdHkgcHJvcGVyLiBUaGUgY3VycmVudCB3ZWF0aGVyIHRoZXJlIGlzICoqMTXCsEMqKi4ifV0sInJvbGUiOiJhc3Npc3RhbnQifX0sInN0b3BSZWFzb24iOiJlbmRfdHVybiIsInVzYWdlIjp7ImNhY2hlUmVhZElucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVSZWFkSW5wdXRUb2tlbnMiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VucyI6MCwiaW5wdXRUb2tlbnMiOjQ4MSwib3V0cHV0VG9rZW5zIjoyNDAsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjo3MjF9fQ==
+  recorded_at: Wed, 04 Nov 2026 15:04:09 GMT
 recorded_with: VCR 6.4.0

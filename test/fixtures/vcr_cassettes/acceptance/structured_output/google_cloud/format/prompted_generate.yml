@@ -5,8 +5,8 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"Book a visit on 2026-10-26
-        at 9:30am Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000.
+      string: '{"contents":[{"role":"user","parts":[{"text":"Book a visit starting
+        2026-10-26T09:30:00-04:00 at clinic 550e8400-e29b-41d4-a716-446655440000.
         The patient gave no email.\n\nWhen you give your final answer, respond with
         only a JSON object that conforms to the following JSON Schema, with no other
         text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
@@ -20,8 +20,6 @@ http_interactions:
     headers:
       User-Agent:
       - Faraday v2.14.4
-      Authorization:
-      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -33,6 +31,8 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      X-Goog-Request-Id:
+      - QEnravyXM8iA9LsP4oOYKA
       Content-Type:
       - application/json; charset=UTF-8
       Vary:
@@ -40,7 +40,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:04:29 GMT
+      - Wed, 04 Nov 2026 15:03:30 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -64,7 +64,7 @@ http_interactions:
                 "parts": [
                   {
                     "text": "{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}",
-                    "thoughtSignature": "AY89a1+aKisRcdrBUaX33jNukR43nyR6Q4edWH3ffn/UQQHPZP+EBsmkDvIiBqOzNUhJDdXkLRvUJipngQAGDnWTGDkZNx7vSzHcjD+bhvZVCcX5HyAsSEVYdIc="
+                    "thoughtSignature": "AY89a18uxAUKPuBCEXHVWwmmRVQ1zcb8O64Q93jx5ZvlWoH15iASgvIZEtvZHgFH/GcnexvS45ifuITLpXorepn43lmJm9cv1Ls/9gudgzVF+ukT8vKZ6q/aayg="
                   }
                 ]
               },
@@ -72,14 +72,14 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 289,
+            "promptTokenCount": 286,
             "candidatesTokenCount": 87,
-            "totalTokenCount": 376,
+            "totalTokenCount": 373,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 289
+                "tokenCount": 286
               }
             ],
             "candidatesTokensDetails": [
@@ -90,8 +90,8 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:04:28.234766Z",
-          "responseId": "DDzhao6qDraPq8YPlemukAM"
+          "createTime": "2026-11-04T15:03:28.838652Z",
+          "responseId": "QEnravyXM8iA9LsP4oOYKA"
         }
-  recorded_at: Wed, 28 Oct 2026 00:04:29 GMT
+  recorded_at: Wed, 04 Nov 2026 15:03:30 GMT
 recorded_with: VCR 6.4.0

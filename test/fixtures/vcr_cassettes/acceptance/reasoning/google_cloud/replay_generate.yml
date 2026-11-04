@@ -5,15 +5,13 @@ http_interactions:
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+      string: '{"contents":[{"role":"user","parts":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
     headers:
       User-Agent:
       - Faraday v2.14.4
-      Authorization:
-      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -25,6 +23,8 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      X-Goog-Request-Id:
+      - WUnravVlyID0uw_ig5go
       Content-Type:
       - application/json; charset=UTF-8
       Vary:
@@ -32,7 +32,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:02:38 GMT
+      - Wed, 04 Nov 2026 15:03:53 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -60,9 +60,9 @@ http_interactions:
                       "args": {
                         "city": "Toronto"
                       },
-                      "id": "call_162071"
+                      "id": "call_50421"
                     },
-                    "thoughtSignature": "AY89a19NCifz+HwZbxUgZcXSN46sIH+1ltRepjSimKhXY4ZXsew7yZvfXhlD/KUUPXR+M85zyVblg+koamgBerr3+mImvDWc+UXxu4leMDVRCuI1ppkZr5EHtNA="
+                    "thoughtSignature": "AY89a19l/7J3P872zcabm7NyrtibiZYMsVukCJ5vCl236IQBpMJIk/VWV2CItPKHmsNsoh4vE53zK9wtzm3WTucsniUShUw8MKYnUyMgPSlctnhWi0dUHSL7K3o="
                   }
                 ]
               },
@@ -70,14 +70,14 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 35,
+            "promptTokenCount": 42,
             "candidatesTokenCount": 16,
-            "totalTokenCount": 51,
+            "totalTokenCount": 58,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 35
+                "tokenCount": 42
               }
             ],
             "candidatesTokensDetails": [
@@ -88,25 +88,23 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:02:37.487891Z",
-          "responseId": "nTvhatPjHcWV9LsPqNCZ6AI"
+          "createTime": "2026-11-04T15:03:53.013045Z",
+          "responseId": "WUnravVlyID0uw_ig5go"
         }
-  recorded_at: Wed, 28 Oct 2026 00:02:38 GMT
+  recorded_at: Wed, 04 Nov 2026 15:03:53 GMT
 - request:
     method: post
     uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
-        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_162071","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a19NCifz+HwZbxUgZcXSN46sIH+1ltRepjSimKhXY4ZXsew7yZvfXhlD/KUUPXR+M85zyVblg+koamgBerr3+mImvDWc+UXxu4leMDVRCuI1ppkZr5EHtNA="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_162071","name":"get_weather","response":{"result":"It
+      string: '{"contents":[{"role":"user","parts":[{"text":"Which Canadian provincial
+        capital has the largest population? Get the weather there."}]},{"role":"model","parts":[{"functionCall":{"id":"call_50421","name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"AY89a19l/7J3P872zcabm7NyrtibiZYMsVukCJ5vCl236IQBpMJIk/VWV2CItPKHmsNsoh4vE53zK9wtzm3WTucsniUShUw8MKYnUyMgPSlctnhWi0dUHSL7K3o="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_50421","name":"get_weather","response":{"result":"It
         is 15 degrees Celsius in Toronto."}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
         the current weather for a city","parametersJsonSchema":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false}}]}]}'
     headers:
       User-Agent:
       - Faraday v2.14.4
-      Authorization:
-      - Bearer <GOOGLE_CLOUD_ACCESS_TOKEN>
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -118,6 +116,8 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      X-Goog-Request-Id:
+      - WUnraq2wOs2E9LsP3_jN4QI
       Content-Type:
       - application/json; charset=UTF-8
       Vary:
@@ -125,7 +125,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Wed, 28 Oct 2026 00:02:38 GMT
+      - Wed, 04 Nov 2026 15:03:54 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -148,8 +148,8 @@ http_interactions:
                 "role": "model",
                 "parts": [
                   {
-                    "text": "It is 15 degrees Celsius in Toronto.",
-                    "thoughtSignature": "AY89a1/mPRANfcGBK4SviceiYvLVjj5zIPLskbcNQXiiJrLfxQKTdKfasaeQS4YsHpcl8/rZvEH/3Y5f1NVUPYXYQS+FZLe/gdOVS0VHPofSBaDAK+yyJOJGZ/Q="
+                    "text": "The largest Canadian provincial capital by population is **Toronto** (the capital of Ontario). \n\nThe current weather in Toronto is **15 degrees Celsius**.",
+                    "thoughtSignature": "AY89a18Q5DNDePKEdX517cuHHYyxa1uDP+scSAnfI7aFXPDnGAVnR2eXEf+Otg+esQnLn5+bIZLuEIdoDz8e67BJ5kv0J7chmm1QEg0gDqs7/BF3G99uLK1kvB0="
                   }
                 ]
               },
@@ -157,26 +157,26 @@ http_interactions:
             }
           ],
           "usageMetadata": {
-            "promptTokenCount": 62,
-            "candidatesTokenCount": 10,
-            "totalTokenCount": 72,
+            "promptTokenCount": 69,
+            "candidatesTokenCount": 31,
+            "totalTokenCount": 100,
             "trafficType": "ON_DEMAND",
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 62
+                "tokenCount": 69
               }
             ],
             "candidatesTokensDetails": [
               {
                 "modality": "TEXT",
-                "tokenCount": 10
+                "tokenCount": 31
               }
             ]
           },
           "modelVersion": "gemini-3.5-flash-lite",
-          "createTime": "2026-10-28T00:02:38.163362Z",
-          "responseId": "njvhaqL8CbeV9LsPlufj8Qw"
+          "createTime": "2026-11-04T15:03:53.956461Z",
+          "responseId": "WUnraq2wOs2E9LsP3_jN4QI"
         }
-  recorded_at: Wed, 28 Oct 2026 00:02:38 GMT
+  recorded_at: Wed, 04 Nov 2026 15:03:54 GMT
 recorded_with: VCR 6.4.0

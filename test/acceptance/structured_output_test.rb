@@ -289,9 +289,10 @@ describe "Acceptance: structured output" do
             params.required(:clinic_ids, Array, of: String, format: "uuid", description: "Clinic IDs")
           end
         end
+        # The time is already ISO 8601: the scenario checks that the formats reach the
+        # provider, not how well a model converts a spoken time.
         let(:prompt) do
-          "Book a visit on 2026-10-26 at 9:30am Toronto time (UTC-04:00) at clinic #{clinic_id}. " \
-            "The patient gave no email."
+          "Book a visit starting 2026-10-26T09:30:00-04:00 at clinic #{clinic_id}. The patient gave no email."
         end
 
         strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
