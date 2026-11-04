@@ -11,8 +11,6 @@ describe "Acceptance: reasoning" do
       let(:provider) { Riffer::Providers::Repository.find(provider_name).new }
       let(:model) { acceptance_setting(provider_name, :model) }
       let(:cassette_prefix) { "reasoning/#{provider_name}" }
-      # Adaptive reasoning models skip thinking before a tool call they can make
-      # outright, so the city takes a step to work out.
       let(:question) do
         Riffer::Messages::User.new(
           "Which Canadian provincial capital has the largest population? Get the weather there.",
