@@ -4,6 +4,9 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
+  # Without it, a web_search_call's search action carries no sources.
+  WEB_SEARCH_SOURCES_INCLUDE = "web_search_call.action.sources" #: String
+
   # The Responses API has no finish_reason field, and an +incomplete+ status is only meaningful
   # together with <tt>incomplete_details.reason</tt>.
   FINISH_REASONS = {
@@ -94,6 +97,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       web_search_tool = { type: WEB_SEARCH_TOOL_TYPE }
       web_search_tool.merge!(web_search) if web_search.is_a?(Hash)
       openai_tools << web_search_tool
+      params[:include] = [*params[:include], WEB_SEARCH_SOURCES_INCLUDE].uniq
     end
 
     if structured_output
@@ -195,6 +199,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
     typed_response.output.each do |item|
       next unless item.is_a?(::OpenAI::Models::Responses::ResponseFunctionToolCall)
+      # A call cut off by max_output_tokens has truncated arguments that can't be run.
+      next if item.status == :incomplete
 
       tool_calls << Riffer::Messages::Assistant::ToolCall.new(
         call_id: item.call_id,
@@ -247,7 +253,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
-      tool_info: {},
+      tool_names: {},
     } #: Hash[Symbol, untyped]
 
     stream_completed = false
@@ -266,8 +272,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
         when :"response.function_call_arguments.delta"
           handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
-        when :"response.function_call_arguments.done"
-          handle_function_call_arguments_done(event, state: current_state, yielder: yielder)
         when :"response.web_search_call.in_progress"
           handle_web_search_status(event, status: "in_progress", yielder: yielder)
         when :"response.web_search_call.searching"
@@ -276,6 +280,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           handle_web_search_status(event, status: "completed", yielder: yielder)
         when :"response.output_item.done"
           case event.item&.type
+          when :function_call then handle_output_item_done_function_call(event, yielder: yielder)
           when :web_search_call then handle_output_item_done_web_search(event, yielder: yielder)
           when :reasoning then handle_output_item_done_reasoning(event, yielder: yielder)
           end
@@ -299,10 +304,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_item_added_function_call(event, state:, yielder:)
-    state[:tool_info][event.item.id] = {
-      name: decode_tool_name(event.item.name, tools: @current_tools),
-      call_id: event.item.call_id,
-    }
+    state[:tool_names][event.item.id] = decode_tool_name(event.item.name, tools: @current_tools)
   end
 
   #--
@@ -324,23 +326,26 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_function_call_arguments_delta(event, state:, yielder:)
-    tracked = state[:tool_info][event.item_id] || {}
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
       item_id: event.item_id,
-      name: tracked[:name],
+      name: state[:tool_names][event.item_id],
       arguments_delta: event.delta,
     )
   end
 
+  # Emitted from the finished item rather than function_call_arguments.done, because only the
+  # item's status marks a call cut off by max_output_tokens, whose arguments can't be run.
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_function_call_arguments_done(event, state:, yielder:)
-    tracked = state[:tool_info][event.item_id] || {}
+  #: (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_output_item_done_function_call(event, yielder:)
+    item = event.item
+    return if item.status == :incomplete
+
     yielder << Riffer::StreamEvents::ToolCallDone.new(
-      item_id: event.item_id,
-      call_id: tracked[:call_id] || event.item_id,
-      name: tracked[:name],
-      arguments: event.arguments,
+      item_id: item.id,
+      call_id: item.call_id,
+      name: decode_tool_name(item.name, tools: @current_tools),
+      arguments: item.arguments,
     )
   end
 
