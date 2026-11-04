@@ -269,11 +269,11 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     end
   end
 
-  # The API rejects empty text blocks.
+  # The API rejects text blocks that are empty or only whitespace.
   #--
   #: (Riffer::Messages::Assistant::TextPart) -> Hash[Symbol, untyped]?
   def convert_text_part(part)
-    return nil if part.text.empty?
+    return nil if part.text.strip.empty?
 
     data = part.data
     return JSON.parse(data, symbolize_names: true) if data && part.format == REASONING_FORMAT

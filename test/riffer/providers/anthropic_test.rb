@@ -2069,6 +2069,17 @@ describe Riffer::Providers::Anthropic do
         expect(provider.send(:convert_assistant, message)[:content]).must_equal [{ type: "text", text: "42" }]
       end
 
+      it "sends no whitespace-only text block for the separator added when merging assistant messages" do
+        blocks = [text_block("Let me check."), search_call_block, search_result_block]
+        first = Riffer::Messages::Assistant.new(parts: provider.send(:extract_parts, build_response(blocks)))
+        merged = first + Riffer::Messages::Assistant.new("Done.")
+        messages = [Riffer::Messages::User.new("Hi"), merged]
+
+        params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {})
+
+        expect(params[:messages].last[:content]).must_equal [*blocks, text_block("Done.")]
+      end
+
       it "replays parts restored from a persisted hash" do
         captured = reasoning_of(build_response([thinking_block("Think", "sig")]))
         persisted = captured.map { |p| JSON.parse(p.to_h.to_json, symbolize_names: true) }

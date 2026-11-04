@@ -89,7 +89,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # : (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?
   def convert_part: (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?
 
-  # The API rejects empty text blocks.
+  # The API rejects text blocks that are empty or only whitespace.
   # --
   # : (Riffer::Messages::Assistant::TextPart) -> Hash[Symbol, untyped]?
   def convert_text_part: (Riffer::Messages::Assistant::TextPart) -> Hash[Symbol, untyped]?
