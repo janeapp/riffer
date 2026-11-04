@@ -34,40 +34,12 @@ http_interactions:
       - chunked
       Connection:
       - keep-alive
-      Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:36:31Z'
-      Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:36:31Z'
-      Anthropic-Ratelimit-Requests-Limit:
-      - '45000'
-      Anthropic-Ratelimit-Requests-Remaining:
-      - '44999'
-      Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:36:31Z'
-      Anthropic-Ratelimit-Tokens-Limit:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Remaining:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:36:31Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
       - req_011CgXQYqDAvhSHsfNsPVHEn
       Traceresponse:
       - 00-df69e30f9e8334cf81f0c6f787f9ce6f-c94f113b8f2daa21-01
-      Anthropic-Organization-Id:
-      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
-      Anthropic-Workspace-Id:
-      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
       Vary:
       - Accept-Encoding
       Server:
@@ -121,40 +93,12 @@ http_interactions:
       - chunked
       Connection:
       - keep-alive
-      Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:36:32Z'
-      Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:36:32Z'
-      Anthropic-Ratelimit-Requests-Limit:
-      - '45000'
-      Anthropic-Ratelimit-Requests-Remaining:
-      - '44999'
-      Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:36:32Z'
-      Anthropic-Ratelimit-Tokens-Limit:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Remaining:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:36:32Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
       - req_011CgXQYtrgz5jfxewQhk6kH
       Traceresponse:
       - 00-2b12116cc6035c1c8b5c46cd2d17d862-46994bbf734d44e1-01
-      Anthropic-Organization-Id:
-      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
-      Anthropic-Workspace-Id:
-      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
       Vary:
       - Accept-Encoding
       Server:

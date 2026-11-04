@@ -30,6 +30,17 @@ end
 # The AWS SDK otherwise probes EC2 instance metadata for credentials and logs errors.
 ENV["AWS_EC2_METADATA_DISABLED"] = "true"
 
+# These identify the recording account (org, project and workspace ids, quota
+# tiers, the Cloudflare cookie). No client reads them on replay.
+ACCOUNT_RESPONSE_HEADERS = /
+  \A(
+    set-cookie |
+    openai-(organization|project) |
+    anthropic-(organization|workspace)-id |
+    (anthropic|x)-ratelimit-.+
+  )\z
+/ix
+
 VCR.configure do |config|
   config.cassette_library_dir = "test/fixtures/vcr_cassettes"
   config.hook_into :webmock
@@ -55,6 +66,9 @@ VCR.configure do |config|
     # Replay matches on method, URI and body only, so no recording needs them.
     interaction.request.headers.delete("Authorization")
     interaction.request.headers.delete("X-Amz-Security-Token")
+    # Azure puts the resource name in Host; the URI already carries it as a placeholder.
+    interaction.request.headers.delete("Host")
+    interaction.response.headers.reject! { |name, _| name.match?(ACCOUNT_RESPONSE_HEADERS) }
 
     # Sensitive-data placeholders make the URI unparseable, so match the host as text.
     host = interaction.request.uri[%r{\Ahttps?://([^/:]+)}, 1].to_s

@@ -14,8 +14,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.91.0
-      Host:
-      - openrouter.ai
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -59,10 +57,6 @@ http_interactions:
       - gen-1790123432-yf1mFmyGqVLAvSWzng6T
       Access-Control-Expose-Headers:
       - X-Generation-Id,X-Provider-Name,request-id,cf-ray
-      Set-Cookie:
-      - __cf_bm=mCE7V0f71MbO8UeryGi8rZqmaZewTokwzeCylrWIwNc-1790123432.0479903-1.0.1.1-qvpZoDet6XGwiAVTxdQaWck71stPmmXFlqW_6QYiGMdtuEfS9GM2Gu8e.8NzvDpcxK4u8hz5XzGMDTF1QswVoVUJdaNjQ.zqL.LF3qTN8fuBM4I8NYdlu.Yco6_MLkbT;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
-        23 Sep 2026 01:00:33 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -95,8 +89,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.91.0
-      Host:
-      - openrouter.ai
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -140,10 +132,6 @@ http_interactions:
       - gen-1790123433-kc0kgouaXF8zuRkwouPc
       Access-Control-Expose-Headers:
       - X-Generation-Id,X-Provider-Name,request-id,cf-ray
-      Set-Cookie:
-      - __cf_bm=8FALR95vltFXqU4wZMt8zgRv8fwuFJ3bUQ8EXK0lr3w-1790123433.4943333-1.0.1.1-0S7daDrTdn8TF8zeHRGZuObQMQAMbPZ4xgDBNxBFJmJvNfs0S1QxFjJAgFHIhjcCOPX85DzQFvV.cxzuCUBDQ4UF.3sQsq43HAydZIitfjiXuwTgUEJ5ArQP1cHxuSdL;
-        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
-        23 Sep 2026 01:00:34 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")

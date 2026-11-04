@@ -23,8 +23,6 @@ http_interactions:
       - ea236af3-e5db-437b-927a-d34ff51186e7
       Content-Type:
       - application/json
-      Host:
-      - bedrock-runtime.us-east-1.amazonaws.com
       X-Amz-Date:
       - 20261028T175322Z
       X-Amz-Content-Sha256:

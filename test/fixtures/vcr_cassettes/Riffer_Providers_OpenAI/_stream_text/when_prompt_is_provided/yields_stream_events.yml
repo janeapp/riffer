@@ -13,8 +13,6 @@ http_interactions:
       - text/event-stream
       User-Agent:
       - OpenAI::Client/Ruby 0.55.0
-      Host:
-      - api.openai.com
       X-Stainless-Arch:
       - arm64
       X-Stainless-Lang:
@@ -54,20 +52,12 @@ http_interactions:
       - cloudflare
       Openai-Version:
       - '2020-10-01'
-      Openai-Organization:
-      - team-c58089d6-6de8-4174-9362-b238cecaf04f
-      Openai-Project:
-      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
       - req_d5a4c453bad848adbc66d53212408cef
       Openai-Processing-Ms:
       - '50'
       Cf-Cache-Status:
       - DYNAMIC
-      Set-Cookie:
-      - __cf_bm=BwN3ntd9GVD3EQ.gEkf6O33VPNQ.vnZMW5UEdUzGPpY-1773687132.1225777-1.0.1.1-oOuMNJ2k43gOEk0RJ7eg44JPjKG1yCbTPfOJKvlzA9N0B02O1YX1XOyve2pNELc0Bf11eTSwVfhEUnDhuGrCTk9cVmCEm5wCXb__GyeamPEdFAVjv08siGsWXzcjoiiQ;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
-        19:22:12 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:

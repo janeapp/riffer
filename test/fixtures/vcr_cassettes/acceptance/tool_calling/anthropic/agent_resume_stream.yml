@@ -36,40 +36,12 @@ http_interactions:
       - keep-alive
       Cache-Control:
       - no-cache
-      Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:36:33Z'
-      Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:36:33Z'
-      Anthropic-Ratelimit-Requests-Limit:
-      - '45000'
-      Anthropic-Ratelimit-Requests-Remaining:
-      - '44999'
-      Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:36:33Z'
-      Anthropic-Ratelimit-Tokens-Limit:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Remaining:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:36:33Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
       - req_011CgXQYyF7o45tvRsqAPqJM
       Traceresponse:
       - 00-9c2b7c70f75c114f2f784c565ea243e5-e72741ef04d2ba8c-01
-      Anthropic-Organization-Id:
-      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
-      Anthropic-Workspace-Id:
-      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Vary:
@@ -155,40 +127,12 @@ http_interactions:
       - keep-alive
       Cache-Control:
       - no-cache
-      Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:36:33Z'
-      Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:36:33Z'
-      Anthropic-Ratelimit-Requests-Limit:
-      - '45000'
-      Anthropic-Ratelimit-Requests-Remaining:
-      - '44999'
-      Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:36:33Z'
-      Anthropic-Ratelimit-Tokens-Limit:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Remaining:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:36:33Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
       - req_011CgXQZ2Ltuqn9wU9u4Avrb
       Traceresponse:
       - 00-711a4f49399fe638fac9d6a2cdf9547a-c4531087740e4eb6-01
-      Anthropic-Organization-Id:
-      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
-      Anthropic-Workspace-Id:
-      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Vary:
@@ -246,40 +190,12 @@ http_interactions:
       - keep-alive
       Cache-Control:
       - no-cache
-      Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:36:35Z'
-      Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:36:35Z'
-      Anthropic-Ratelimit-Requests-Limit:
-      - '45000'
-      Anthropic-Ratelimit-Requests-Remaining:
-      - '44999'
-      Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:36:35Z'
-      Anthropic-Ratelimit-Tokens-Limit:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Remaining:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:36:35Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
       - req_011CgXQZ7w11xfGgo572tTvt
       Traceresponse:
       - 00-311f86299e84cc13a1d8b3bc8d511eb2-339be8c2a74d6505-01
-      Anthropic-Organization-Id:
-      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
-      Anthropic-Workspace-Id:
-      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Vary:
@@ -367,40 +283,12 @@ http_interactions:
       - keep-alive
       Cache-Control:
       - no-cache
-      Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '10000000'
-      Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-10-29T23:36:36Z'
-      Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '2000000'
-      Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-10-29T23:36:36Z'
-      Anthropic-Ratelimit-Requests-Limit:
-      - '45000'
-      Anthropic-Ratelimit-Requests-Remaining:
-      - '44999'
-      Anthropic-Ratelimit-Requests-Reset:
-      - '2026-10-29T23:36:36Z'
-      Anthropic-Ratelimit-Tokens-Limit:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Remaining:
-      - '12000000'
-      Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-10-29T23:36:36Z'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Request-Id:
       - req_011CgXQZBJPjf6EvgzjSceRP
       Traceresponse:
       - 00-86d81ab565d62bfdfffc8ae4db445557-7022a9065d6b81ac-01
-      Anthropic-Organization-Id:
-      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
-      Anthropic-Workspace-Id:
-      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
       Vary:
       - Accept-Encoding
       Server:
