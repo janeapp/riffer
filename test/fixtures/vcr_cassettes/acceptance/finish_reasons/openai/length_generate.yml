@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Write a 500-word essay about the
-        sea."}],"model":"gpt-5.4-mini","max_output_tokens":20}'
+        sea."}],"model":"gpt-6-luna","max_output_tokens":20}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -35,14 +35,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '123'
+      - '121'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:40 GMT
+      - Wed, 04 Nov 2026 17:30:32 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -50,7 +50,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd2049d312859-SEA
+      - a55558da7cd79a5a-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -66,26 +66,26 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '779'
+      - '1128'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
       X-Request-Id:
-      - req_bfb2e8a2640346818fd04fb81b435ec4
+      - req_93bd81bd2906428cb9cdf6e83e5ff42a
       Set-Cookie:
-      - __cf_bm=WcI7EPral_q6ABxd_XLlrE2_c3lZJ3EOto_QyoYOljE-1793755479.7810175-1.0.1.1-VZ7Vf3AbUEUxAbJTI9CWXOYo0rohSvzRp8G6Za.BRuj5yyvdX0NY5SaQHOOZ9GJXJIwDNY7jquBFHG5uJiSweg7SWD58lAF0Y3K_60J8bAsHs0H_M8ioPXS9bKodWTE9;
+      - __cf_bm=EoRdrkJaaa77XTfCKBP8IbSMsYJIRM4.rU_dE1dNr10-1793813431.4412324-1.0.1.1-8s_HDrkjvVJg3_R5ppYiQAPzlsMmch50BhTQO6.5UVz0R5rMYUqZNle.FDoQN.RbgS_qHlmOOSuWfjbyUlx4Nwd2pN0.fWiaHJ0MX3z0VHEf6vy52Koa9Yb8.a_iCScY;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:40 GMT
+        04 Nov 2026 18:00:32 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_00b8156fe4d5363c016aea8957d93087d08fa1998ebcf559bd",
+          "id": "resp_051840354f1919b4016aeb6bb7b00487d0ad4684fde8305754",
           "object": "response",
-          "created_at": 1793755479,
+          "created_at": 1793813431,
           "status": "incomplete",
           "access_programs": null,
           "background": false,
@@ -104,33 +104,25 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": 20,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_00b8156fe4d5363c016aea895844d487d0a8f3b9a64ff370f2",
-              "type": "message",
-              "status": "incomplete",
-              "content": [
-                {
-                  "type": "output_text",
-                  "annotations": [],
-                  "logprobs": [],
-                  "text": "The sea has long captivated the human imagination, standing at once as a source of life"
-                }
-              ],
-              "phase": "final_answer",
-              "role": "assistant"
+              "id": "rs_051840354f1919b4016aeb6bb8502487d0bd81eadddfe9ce94",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62u409btXF1VSJIugYTa0IS6STeorNNoKC5tQAMktuqERwdlk1lp_d1TVA9O3SYPRfAZ3Cg5Dlr1zPW0J7mB9cSt_Nvk1X8p0MIBGjRvemb_lRbtMJlYjpdbkcQxp5qiDvDbe4oAIUdDqvprOLH_Hzp1uS5BWSTjSWKc8qDqcFolbgPdfasmz2YaAbX5uOinGGegAZ59uAI4bmGvA1OtaG11rRkDzrRv8vzSihcqahBfu-eYy8XsHIP6oxAo5hO66JxtSb2mHZLOMkzX5ZtH8HWoJ7Nr9sDiLaPBPRWSUiEe9zWyl6aTGC5WZP4KVG1i1Eedc3w6bfm9c453fsnpj1TSUycDY7RE-EUCIDL2eBSncoVbRIt-t7LdCwjfWQEw9_XpDD_VO3VbbuxeukV-EkccsWK8FdRUDuq4-ObXHBvSfe48_21OzfLhnJ7LLg0I4XabIl1syGrcc9DXszAWiBLnZ7OAuJUg4elssZ095PvJJxqfIXVlEU_x6rU75QrdX3brmp6tqmBJcw5fxsrDa41aPnjphgXm7OR2UmaBHxvUuaRsI1tjDrgMTaiVQ43Hl8dusUPxlNJXo3l79GkD4233YqIhlkEE2sOJxL0TU5dAgimNTZs15mpgu6x5gFKS5Eq62XoEyJws29Gqq8xC3aWFlYbR-pi35GxKMFaIRBsfn3sG1Dk8AgMv7Nme0QM91colf33Fk3JmkEznwP67PvHG11-3rUFJTQ5vZT4Fw2ijEtyDsmlvMr8v7PzbL1jU8c6Lac9EEeonnVovrk7ZyJn6Qvpr9o5ZSzPZKVlYIsFPY5fuTn78hEPciv3Pc-dp85VhePbJBN5oqxr-fgTWScwpXKO1E7JWZ0mEk7gB3PCdmsftxJfGmTQZ-sBrhC22MhTxgmFnn4Imj0WRiNmi8Z2i3_BwwXNI4H7sm5G9GPi_L1NSkWB5n_V0M5gw3Tk8hWRSsUaC8-K3GDxlw1pvkzfQ1ZSgwEMiIwBh81PnhCkhO63E2bH9lpVBAVPnTAokVDaP7jT9CKRKfIb-8EiKwqEmbzOaUKTDMG9XhcbTfx8OCeWtFDDXwYQG7u7NufU-DHrPODo7acrUIh0BnfFGzsYOjU2dwoAx1HwMG0eO21T4X1fRm6kphFTOCACKWSoy7-O-N3uo_YDi5RshTtcrwe9xFjETvF9pBhUDX3LSNd4jLy_vVQez7KfDGvKN38itCqNoTOhp0OKhPf-DNh4RmDzn6FOXT9lIorjytnxMGn4wUwCPU5ZgVROXYFDP3avNp7NLQyZbvcRFPPXlONfL50QJGrMVyyRGFSRuEpyBSGo9ov0=",
+              "summary": []
             }
           ],
           "parallel_tool_calls": true,
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -175,12 +167,12 @@ http_interactions:
             },
             "output_tokens": 20,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 20
             },
             "total_tokens": 36
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:40 GMT
+  recorded_at: Wed, 04 Nov 2026 17:30:32 GMT
 recorded_with: VCR 6.4.0

@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Row 1 has seats 1, 2 and 3. Row
         2 has seats 4 and 5. Game 1''s tic-tac-toe board rows are: x o x, o x o, o
-        x x. Game 2''s rows are: o o x, x x o, o x x."}],"model":"gpt-5.4-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        x x. Game 2''s rows are: o o x, x x o, o x x."}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
         numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":["array","null"],"description":"Tic-tac-toe
         boards","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows","boards"],"additionalProperties":false},"strict":true}}}'
     headers:
@@ -38,14 +38,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '673'
+      - '671'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:25 GMT
+      - Wed, 04 Nov 2026 17:31:03 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -53,7 +53,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd1a4ab37d571-SEA
+      - a5555995cd7568f2-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -69,7 +69,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '1260'
+      - '1630'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -87,27 +87,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_d7b3941a9f2b4221bf644c18f22b5d0e
+      - req_3fc7bbaeb4194178b86d1fd0befb4256
       Set-Cookie:
-      - __cf_bm=FscURIGMD4iQyrDt0AAL7JGJpkULDtx.DAqchfHL0aQ-1793755464.427447-1.0.1.1-O8N7xbeuWy5dl.o.CNOL6oM8yU0XA2.1fvpGvITs2MX2fxFbbE5ehQ5H4o7h7vwSnDY2NAVUMk_UofctzpuOS4_cAtfzcUoPD5RwFIXYotHfPGVHeH_fYB6UAvhTdrhd;
+      - __cf_bm=988ePYH0j7G5eedTvAWuLeO8Ou_ZmR7Lz.wouhvWslQ-1793813461.4020278-1.0.1.1-vyrsarV7zX8AtnLU7WZL699XLfWSCHwyveqSRc6mY03am3xfzAmpxFwtM4.VeV8AjUHlp9C8C6is8wkR0LfcClDpVra.NOkHhWfhrARQ0PUNAFev3YIvasXd0Fa8Y7d.;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:25 GMT
+        04 Nov 2026 18:01:03 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_061ed04fb312dc91016aea89487e3887d0b7216e39ea3ae027",
+          "id": "resp_0386d8f1a3e5276d016aeb6bd57b5c87d0bf7e6b2ade9aa36f",
           "object": "response",
-          "created_at": 1793755464,
+          "created_at": 1793813461,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755465,
+          "completed_at": 1793813463,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -117,11 +117,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_061ed04fb312dc91016aea8949360887d099f9b660cf0d9f39",
+              "id": "rs_0386d8f1a3e5276d016aeb6bd5fa6087d0a2f5c1b73e8d945f",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62vXpQmshEPNewfTFacaSmS5CvfKAHJzEh9rHc5NgvZ_i6FVsGqBH8EY8UGIPuXDD5X5xnJCbBmvPXST3SmQVarwNTxw2HZC7TJVemMGg-K6Hzkn1NvvvQ57sFMFJEIIOXY0V9MC2l3SAmpR25iTSh1NbI0NAILesG4Od2ZchRWvvLQX6BvQ5BWbn5NECI5iH3GdcSsEVgXBRbmvDI2FYqmQkVFb6VypKcWNHGKrj6mbHejtJHm82VNHLdi9d4e5wH7oCj66ONEaj2nq7bDPUh9GD49BpwlD-QcSFNOP56CFMW_qisJ7vn_u5llGghO3t0xNb-J8e9JHjQkii0y3cltBQu3uuPutMHdqrjKnifpwiA7bBC71VjJ33_NZJ_Ds6dm6vF_iH-8LxOiC4Fq7ZJ5mZj5dTYQ27DfxcvkCOxDrGtX1JX4RaTXYDOzR8urb_rMaFvUIGe-11ye9PXCEUQIbyKf6crMoq9h2ZFvo03fxuDnopsBKNm4rbLDT0mp7cpQQ2qJsK0o--XuUVEkNSHkx1KWb2gOQp6Y55jTwDuzVMM8fZQtblGL1neWsHVnTFficE5wxUoeUcpm03IQ2Hfc18WqjN1_8YnIiK1xND9Re12anfgxr_BeHWMc0wTX5ULr-zE5oR-v7AEYy303KEoBlHnGkFigngCVv-_yp5paLWnZ24rHOivzhltq7pHqrLUYAkW7OwZ2BCW-ZSwFff1LTAnlKJUWR_OyzOFKP1SzyS9x5_2Twqob_BIK1YGsx0KUWqt0QzzS5Shjg9QpgC9JuWZIc2PReEGn9zOXbEY42c8T-OanE4oEapkCguILInqwLwX34fhbjwjCRMfwTAoPdFTu0I73WXgt8LO-m4dLDxEiRq9gj1gaW2MV1FXG-LRbbI5oush_KegVLOWYoPCDv5IXaA8F-TddHtOb_CAw8UtNahhykT_O_EaihbKx7ChL1Rkh0JjLHdqrDGVQgy6GeflosDAmL5ZOm8OlPRsnGvlqRczn5o6fVnFld5VfJBOoe2W6bNyLDb0WBRPHKH7EPBeWEhlEXP4gtFsv6fEhSvxUO2SX1YK5Hrp63_ouAckY-MVWWRGVlCi0FIZ9jRwtG4UobZftjvW3t-GMQz2s8yXGVXx4hgsm3iKj1gIaGHDk0GDukwi1bUjNLcbw9tUUVRVsHXfKDFSM6gr-YteqhBIIwkWSYSbYm5pvn-SZgbJHaY-gB8dayDMQO8Z1bTI-C5Ji1dgNWNH6feiD8u8RLpnk-IU_xGFs7TUZJKGTyM4c0PuykbpxFPqsHH0ck4nEnNqAAL5qI1FuP2onuNH7CQdqevcmtWVvPDmaB4eA5wFOhQuVci306kEyXUL1G4zvlfPYRhxvX7G4K6ytjugqTXNN7lt9j4HyBQFZ3R3IUAC--ZMPR1PJUzhk0KFkf39ULoJJoSAQy5GIFgzpA-uYdaAaa4dgWC6-KyJj_shpOWNP2CSVYlVsWATepF8Tm5KdGOffjIHIR0fuWqcgtOB5TM5OXsk2NByFMYSa9HJguofH-vVm1-Wxl1vjaaDTmv7Jse8jJ9tNJ1VszsBU51Y6IL1bkdNjlCMGh5qQ-hxj3h8I4gfmekLYYtP4cs3aEr9x0kQwV0hG6qUFRDLtTLG9rBUzdU_We68u32kZYoJ6CB234yR8Llg-C1fkNXlG3Ub93y2xIWGRDIj_w-V_gv80es-v1FmbV-NYL74Kmv6tluZgjwaTB4EPZDlxSqjmWSeT-aT2vIa6YiM3cL9COfPaP4sw=",
+              "summary": []
+            },
+            {
+              "id": "msg_0386d8f1a3e5276d016aeb6bd681fc87d08902af746bd0fee0",
               "type": "message",
               "status": "completed",
               "content": [
@@ -140,10 +147,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -229,14 +236,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 70,
+            "output_tokens": 104,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 32
             },
-            "total_tokens": 234
+            "total_tokens": 268
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:25 GMT
+  recorded_at: Wed, 04 Nov 2026 17:31:03 GMT
 recorded_with: VCR 6.4.0

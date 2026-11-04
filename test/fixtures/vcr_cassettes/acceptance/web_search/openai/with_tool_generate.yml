@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"What is the weather in Toronto,
-        and what is the latest Ruby version?"}],"model":"gpt-5.4-mini","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
+        and what is the latest Ruby version?"}],"model":"gpt-6-luna","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview"}]}'
     headers:
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '472'
+      - '470'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:29:59 GMT
+      - Wed, 04 Nov 2026 17:31:41 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -52,7 +52,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd9c78baef4e1-SEA
+      - a5555a8d69a73eef-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -68,7 +68,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '1332'
+      - '588'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -86,27 +86,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_659bde4246e24f1b9940ca099cc000e6
+      - req_c8ab648b3a174887914e73bd99ac61a4
       Set-Cookie:
-      - __cf_bm=QF4dDe8O8dGH72useyFwekN30e1V.f6Xjj_bI9x_ShE-1793755797.6832964-1.0.1.1-gpdJ4FF9LGPLLAc6x3vIvh0b3BzPANQ1OtuuO1.cBJfi3AFc4op4U15PBPYmamtYR8gaRORpYbHEqWen4CSqWEjAnt1ghnx_7sJ72h7v.uoI_9pMC9BlnWvpCDuNQVCh;
+      - __cf_bm=bg6FTS3pFBURWf2wzqN3nNUJlmDdscHcEEtwLFPOfrQ-1793813501.0263095-1.0.1.1-MO5URIPEhIGmUxgMeCiKDphpe6gnCxoIPt5xu.WWx6Qy2fMwq9V7FhM2xcLE7uJWkNGLi.i.p0UUCqcUEkyMMIrVq04GTNPKeIEhzIyL54gqf4q6YUplEzgx2jffV0YP;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:59:59 GMT
+        04 Nov 2026 18:01:41 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_07ca786ba2269bae016aea8a95bf3087d0a4296f008743dd12",
+          "id": "resp_06e8748d6aada9e6016aeb6bfd191087d0828387584750198c",
           "object": "response",
-          "created_at": 1793755797,
+          "created_at": 1793813501,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755799,
+          "completed_at": 1793813501,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -116,15 +116,15 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_07ca786ba2269bae016aea8a96f00c87d0b455f78e287add12",
+              "id": "fc_06e8748d6aada9e6016aeb6bfd8f9487d091aa7a01a5e99b91",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Toronto\"}",
-              "call_id": "call_rWHbaoIxcluPXetq0ZUDo3Xt",
+              "call_id": "call_eMBogwkuNzO0aRPBT5jsCBLv",
               "name": "get_weather"
             }
           ],
@@ -132,10 +132,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -211,7 +211,7 @@ http_interactions:
             "input_tokens": 4500,
             "input_tokens_details": {
               "cache_write_tokens": 0,
-              "cached_tokens": 4352
+              "cached_tokens": 4497
             },
             "output_tokens": 18,
             "output_tokens_details": {
@@ -222,15 +222,15 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:29:59 GMT
+  recorded_at: Wed, 04 Nov 2026 17:31:41 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"What is the weather in Toronto,
-        and what is the latest Ruby version?"},{"type":"function_call","call_id":"call_rWHbaoIxcluPXetq0ZUDo3Xt","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_rWHbaoIxcluPXetq0ZUDo3Xt","output":"It
-        is 15 degrees Celsius in Toronto."}],"model":"gpt-5.4-mini","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
+        and what is the latest Ruby version?"},{"type":"function_call","call_id":"call_eMBogwkuNzO0aRPBT5jsCBLv","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_eMBogwkuNzO0aRPBT5jsCBLv","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-6-luna","include":["web_search_call.action.sources"],"tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true},{"type":"web_search_preview"}]}'
     headers:
@@ -261,14 +261,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '719'
+      - '717'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:30:02 GMT
+      - Wed, 04 Nov 2026 17:31:46 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -276,7 +276,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd9d07ac2f4e1-SEA
+      - a5555a91ea5a3eef-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -292,7 +292,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '2930'
+      - '4372'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -304,33 +304,33 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179996322'
+      - '179996427'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
       - 1ms
       X-Request-Id:
-      - req_d06aa62113f24bc48868e5783dc53752
+      - req_0b46ab49dce249f4a8a4447cfdb4f79b
       Set-Cookie:
-      - __cf_bm=JmBOJnws09i5QS65IWV.deZ7NIObu2QzhjgscMJ6pOc-1793755799.1148949-1.0.1.1-xWp4_pPa5jmr6IhD5jaRKOtYbhEbqmmUWeJ8WE5BD15j0_kpCPxlP70uxXW_.b02dn3Vx8YoizmiqGpvTGUyQvTLQgcblGIeCKxzHnEzYAs1b65W1WjgvZdBEkJAFcY7;
+      - __cf_bm=npe54qvcL4FRZFYC0Kzuk03VIqrwBcIyI4r.1Xxhsrg-1793813501.750083-1.0.1.1-OJ5bBOJ6KrS49Zbmhb17r8yLtH6Ey_lEZLyIGugbofBNsUWiML4DyFBXk0YB.5qbB2SDglpPytvQ2oSVWg6KaEjAe2w1KdtmxyrjyIkH0aZsNZ9gzKOBHdKdBa16WzxG;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 02:00:02 GMT
+        04 Nov 2026 18:01:46 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_02b21fde5af63d80016aea8a9732fc87d0aa829ec2dfe8d00d",
+          "id": "resp_01f8ebec6c6e8177016aeb6bfdd1e087d0b8686aebf368f060",
           "object": "response",
-          "created_at": 1793755799,
+          "created_at": 1793813501,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755802,
+          "completed_at": 1793813506,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -340,19 +340,20 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "ws_02b21fde5af63d80016aea8a97b33c87d0a0499cd2fafa6e51",
+              "id": "ws_01f8ebec6c6e8177016aeb6bfe711087d0be662ab7c07e5d32",
               "type": "web_search_call",
               "status": "completed",
               "action": {
                 "type": "search",
                 "queries": [
-                  "latest Ruby version official release Ruby-lang.org 2026"
+                  "site:ruby-lang.org/en/news latest Ruby release version",
+                  "latest Ruby version official Ruby"
                 ],
-                "query": "latest Ruby version official release Ruby-lang.org 2026",
+                "query": "site:ruby-lang.org/en/news latest Ruby release version",
                 "sources": [
                   {
                     "type": "url",
@@ -360,11 +361,7 @@ http_interactions:
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/downloads/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/09/15/ruby-4-0-7-released/"
+                    "url": "https://www.ruby-lang.org/en/news/"
                   },
                   {
                     "type": "url",
@@ -372,31 +369,7 @@ http_interactions:
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/09/23/ruby-3-4-11-released/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/07/14/ruby-4-0-6-released/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/10/23/ruby-3-4-12-released/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/10/22/ruby-4-0-8-released/"
-                  },
-                  {
-                    "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/10/23/ruby-4-0-9-released/"
+                    "url": "https://www.ruby-lang.org/en/downloads/"
                   },
                   {
                     "type": "url",
@@ -404,15 +377,51 @@ http_interactions:
                   },
                   {
                     "type": "url",
+                    "url": "https://github.com/ruby/ruby/releases"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/news/2026/03/11/ruby-3-4-9-released/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/news/2026/03/27/ruby-3-2-11-released/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://docs.ruby-lang.org/en/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/downloads/branches/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/admin/translation-status/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/zh_cn/downloads/releases/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/Ruby_%28programming_language%29"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/open_source/docs/RealSpeediOS-104-1721057225.pdf"
+                  },
+                  {
+                    "type": "url",
                     "url": "https://bugs.ruby-lang.org/issues.pdf"
                   },
                   {
                     "type": "url",
-                    "url": "https://bugs.ruby-lang.org/issues.pdf?per_page=200"
+                    "url": "https://www.reddit.com/r/ruby/comments/1u0gsty/jruby_94150_released_94x_is_now_eol/"
                   },
                   {
                     "type": "url",
-                    "url": "https://bugs.ruby-lang.org/issues.pdf?f%5B%5D=created_on&op%5Bauthor_id%5D=%3D&op%5Bcreated_on%5D=%3E%3D&per_page=50&v%5Bauthor_id%5D%5B%5D=710&v%5Bcreated_on%5D%5B%5D=2020-12-01"
+                    "url": "https://teiru.net/poignant/poignant-guide.pdf"
                   },
                   {
                     "type": "url",
@@ -420,13 +429,44 @@ http_interactions:
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/downloads/?utm_source=openai"
+                    "url": "https://en.wikipedia.org/wiki/RubyGems"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/19czjs5"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://bugs.ruby-lang.org/issues.pdf?assigned_to_id=13%7C3824&set_filter=1&sort=tracker%3Adesc%2Csubject%3Adesc%2Cupdated_on&status_id=%2A"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/Ruby_on_Rails"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1n2of8d"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://zh.wikipedia.org/wiki/Ruby"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.ruby-lang.org/en/?utm_source=openai"
                   }
                 ]
               }
             },
             {
-              "id": "msg_02b21fde5af63d80016aea8a99a27887d0a6b552737b413361",
+              "id": "rs_01f8ebec6c6e8177016aeb6c00d39487d0ab918071c9470a90",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wC-A2ehXWFxNxEU5Y2ddzij-CSVxK76QrTM259uxkLKm9vqI3b4sanW560I7yZA79n_WUfhKIP0sG0v5mUuGQafYyt5Cn5jxCXfUVrmz9xJj-sVsLNFdA6RqrrxqitG7H_Ys8Z2sRVDSKfITHdgX_HDNfQi7C4Bp_cSJEz9Ha2y3G3cgMk0UKFU3qny8-syGYbVAIFJfm8oybxPiAvJzGKWjDzR_69IXMnIQkWAiu2h55DuEfFUMIQbdZdQ6wXmJtgju-agkaNK6vNukQXl0_rCsKRLLQ9xFz1TOzNwbxxOOewOCxrlH6urGmQwkLOA-0HdCPB9S4C_3KZe0aKxBxK6bh9ftQcr9wC2_1A0A9TVfo403HSF2fiiu2lk6JH0mo7XtT8tsBuuSUE68UBQ6IunI4l4Fi3JisWmXesOiI1VTEuOMKycgoMtrDvD_8KwnzYkkEJOwwZnuHHIhB_jX4CIDqALaJMNgQdOpfCaOSnP1EblaLVZQiK5CZI737TnCekMyjgJng4m9B37-sM5P8_4wD-7NfuHl_EG46kk-U_kN2Da6h8ETqJh5RlPaRDJnj2_5MFgePbsRlRx8Sc2yj2zOiou-N5RVa6EWQrFq7oA-j1-xZxM7N5bo-iiXDprovj4LQqqTIFcJ-44O_1gaB_d9tGeXEjQ_3cGsZURLp1tG4STJS1WM9D6iuoruqlbDTeeYqglVNYoyCjwZ77f3rSbsE1qa0qiy9yMbhAAdBUv_q7W9I9jsHB5vOqngcqzfj5xsdxrhTcmvnNHd53w07OwB0O1nJAG4DX1PZhxr4lNs4rv7KYC3VGWRIbAKUxaJoeY-E32JX4fDWRCeVuhe4veWdCsVBwyfc59gdJemuJ67HrTT0-g9s6AFGnn4Ji3x409Vb-koGCVcyNYOuydB_7xXHJY4MU7Tm6jnJxJQe27q_GHUnczvozPj908G5v1b3UlOp0z7s23CVphSD6ap2cpysNtDnrx9bJXyamwqupG7kc3eVoEcdXC6d21e7kGS7a3rsU7rGwAM19V3KGoyl5OVYzgV6P7IVatB6aqqVCWVk6DRe2hHaO8ti7Dwj2GLQKBGym-A8djAPmK_qKhNReNpYXeJ0-GHXEfSSGwEQx4mfWPXaft4Ps7aMrQof4I-FoQbn-6MqiIc4D83sXJzMcS6f8pPFSqfsEuTurhIbLMlZqnBsic5eg2eD2Gkdrj4QPfM8ui3NggzPBq8gcID2bPVzKJNPN1goIDoqRzS0zVJ7oRiscBVb9Gfm-hJnvk-m6au0_2n_on0F7FiCoqOZknSnEfowwoBnlYTRANoabjJEaBGpcgTE9ADUgzn5KiOVKfI3VdPHBRJCLLp07odp53P99G_-jPlo8e6cfTCPhsuFAGyTQ5Um9ojKP_akeI879C6G8Qhn7yth4j29dQWTjBo9VYNe-FAoq66l8ScIaKqN4iwEf5-CAw3kH0CpO6sl2nVfrzjel-_57LewCtE5AnU6CTarj0s6VjygC-QyxYi_h2ZSMLXRcwBjIMg49LkySKxFcYGgdc_kM3Eegw2eHlUJ5H2AC2se9B52UuVnscTB0nltp_DaqxrzLEbl39A3D3M6F2EJeQWP55AeEBxyExJ-SPVF2Spr3BncOK__GX4EM-0i8foTbeYP4W2xL7LWB63JBD5ncI9jvF0WNuDpzPEqEeFglfL9gjk7NY-20sVTlgTZwHdrODzfAseO7JCJRVbSklO93e_KBwIgCxYPdf-L0lQiJ2kZlwsvzoaj1Ye7BEWyDWYKe3HTAUT_LvBLK3GoTC5MPqSVsvx10HsQUtznbG-cTrkIL_l0TKKMyaRyOEmzZ7qJny9YhfkeEP55c2Oc7Q6dGwHP2BPdqJUxuPOADpcWe3-X6UmCoNk5KnysKOFxV3lJi0Yi5RKd7Mc9QYOE8sN2Vp0TuNL_4Kb0lNQ95W7n6AwwCRPJT18PGHb70d9vS1a3I5ktc-7ak1TUqVp1R9HJjcEBqMuzykbtYl_df3C-bUzTmROO9OY5PsppMRNGyldNQgEO0Mbas8EpLOieS201aEQHCgxWozq_qJRSdv8UHnLN650Q7rCuzeOruJqMYKGZQ4f_INp6VIOERNOC6LS76we84P4L2JvayahCg9shz8IsxxhGmvFPHMHuv-QSNK3e0Z5pYNExeFzFH",
+              "summary": []
+            },
+            {
+              "id": "msg_01f8ebec6c6e8177016aeb6c0180fc87d0825cf1f5e2f47c1d",
               "type": "message",
               "status": "completed",
               "content": [
@@ -435,14 +475,14 @@ http_interactions:
                   "annotations": [
                     {
                       "type": "url_citation",
-                      "end_index": 183,
-                      "start_index": 107,
-                      "title": "Download Ruby | Ruby",
-                      "url": "https://www.ruby-lang.org/en/downloads/?utm_source=openai"
+                      "end_index": 139,
+                      "start_index": 73,
+                      "title": "Ruby Programming Language",
+                      "url": "https://www.ruby-lang.org/en/?utm_source=openai"
                     }
                   ],
                   "logprobs": [],
-                  "text": "Toronto weather: **15\u00b0C**.  \n\nLatest Ruby version: **4.0.9** (current stable), per the official Ruby site. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/?utm_source=openai))"
+                  "text": "Toronto is **15\u00b0C (59\u00b0F)**. The latest stable Ruby release is **4.0.9**. ([ruby-lang.org](https://www.ruby-lang.org/en/?utm_source=openai))"
                 }
               ],
               "phase": "final_answer",
@@ -453,10 +493,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -529,19 +569,19 @@ http_interactions:
           "top_p": 0.98,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 8759,
+            "input_tokens": 8695,
             "input_tokens_details": {
-              "cache_write_tokens": 0,
-              "cached_tokens": 4352
+              "cache_write_tokens": 38,
+              "cached_tokens": 4497
             },
-            "output_tokens": 98,
+            "output_tokens": 159,
             "output_tokens_details": {
-              "reasoning_tokens": 41
+              "reasoning_tokens": 106
             },
-            "total_tokens": 8857
+            "total_tokens": 8854
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:30:02 GMT
+  recorded_at: Wed, 04 Nov 2026 17:31:46 GMT
 recorded_with: VCR 6.4.0

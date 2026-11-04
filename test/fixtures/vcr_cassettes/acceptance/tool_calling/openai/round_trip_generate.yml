@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -36,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '360'
+      - '358'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:50 GMT
+      - Wed, 04 Nov 2026 17:28:30 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -51,7 +51,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0c9191378c9-SEA
+      - a55555e1ce2b69e8-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -67,7 +67,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '679'
+      - '771'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -85,27 +85,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_895b796ec5eb408999b96aad2e867984
+      - req_b8b7f50d1e7a4c6daad8a50c411e264f
       Set-Cookie:
-      - __cf_bm=urawTy8g1LX8sW.eczzvr2sjpMfGJp87mgeKy_FARts-1793755429.2962136-1.0.1.1-6Gr7KaUkrFRgaKYpZ9HyYbMASqY4BYOD9epf1iWxCv2Wp6H9rQnGCsIzfJ9jIL5SEiKV_caf064fD3DqqzmNaS._L1AhaUWJlc4Es2bLeK9wm90ZZCPrbqfevL.t3R8F;
+      - __cf_bm=p56j077Z7sPidq3XWfcmlZlwa.6i6KMxffu3eXwh6Ug-1793813309.7243278-1.0.1.1-Vau.RSwkfWL7GW.oRBX_s9TJrQv6yC0qTKA4PKsFtRDXwBUrv10bUSBDtiPLcHWhEPM2tAkZGHgFqsdsBtTp0plm.Oy6aIC.e2LDb6ZZ4HtHGH_w9UTs1n75ydt4jIl0;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:50 GMT
+        04 Nov 2026 17:58:30 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0fdbc041fb3ce4c2016aea89255ed487d0b2e26761141056a8",
+          "id": "resp_0646509d0a9a43a7016aeb6b3dcaa487d0a39436c53052ce64",
           "object": "response",
-          "created_at": 1793755429,
+          "created_at": 1793813309,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755429,
+          "completed_at": 1793813310,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -115,15 +115,15 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_0fdbc041fb3ce4c2016aea8925ed9887d098dee10f4924f0a1",
+              "id": "fc_0646509d0a9a43a7016aeb6b3e619c87d08c25d4a20f60ae68",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Toronto\"}",
-              "call_id": "call_eMrJ0642xslOVbfJ1DBCERGH",
+              "call_id": "call_egvdr8BFcnqP6g1PVzjixXZv",
               "name": "get_weather"
             }
           ],
@@ -131,10 +131,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -207,14 +207,14 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:50 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:30 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"function_call","call_id":"call_eMrJ0642xslOVbfJ1DBCERGH","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_eMrJ0642xslOVbfJ1DBCERGH","output":"It
-        is 15 degrees Celsius in Toronto."}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"function_call","call_id":"call_egvdr8BFcnqP6g1PVzjixXZv","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_egvdr8BFcnqP6g1PVzjixXZv","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -245,14 +245,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '607'
+      - '605'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:50 GMT
+      - Wed, 04 Nov 2026 17:28:31 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -260,7 +260,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0cdea5d78c9-SEA
+      - a55555e71e6669e8-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -276,7 +276,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '575'
+      - '645'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -294,27 +294,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_0e3c04954e8f4a7685006bbc0f39c8c3
+      - req_3798280088e6447183384b0b8d72050f
       Set-Cookie:
-      - __cf_bm=DG9ea0HaVntRPG4dhgOO7MRjCkpSb3MXvhTNCnTQv7w-1793755430.0639758-1.0.1.1-X_gyiBsxB0EpKTPh9xBbzPfm5DrafG2AaeUoZF3xBo3hbeidmROr_xjTxk84gK20xqz0enDex2VhOpRtabYxLWKAW2.AuianvHZNS1yF.5vNNuZUpclhN4enK6Tvjdt0;
+      - __cf_bm=zDMmP6C6BoQhFeHXYe5u2bNtXPLs1qsqUOsp2rbaHTQ-1793813310.58039-1.0.1.1-W6yzkjO9DQ3JgKG6FH3BT_PWcRFjK09kLxGNjjbxbak4RplInAz7Exz1.j0yyw19frg4CYbm2oziHJExCqZYBoDinGR6hDx95RU4GZM4gBrlucVooHR0S1IV1x4Uob2z;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:50 GMT
+        04 Nov 2026 17:58:31 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0c399b0963f503fc016aea89261d6087d0a44eed60524a8b99",
+          "id": "resp_0c570d08c243963b016aeb6b3ea67887d096d2636d8022604f",
           "object": "response",
-          "created_at": 1793755430,
+          "created_at": 1793813310,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755430,
+          "completed_at": 1793813311,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -324,11 +324,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0c399b0963f503fc016aea89268ad487d0b1afa86ad3fe4b1c",
+              "id": "msg_0c570d08c243963b016aeb6b3f251487d0a2ab5ec352cbcfe0",
               "type": "message",
               "status": "completed",
               "content": [
@@ -336,7 +336,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "The weather in Toronto is 15\u00b0C."
+                  "text": "It\u2019s 15\u00b0C in Toronto."
                 }
               ],
               "phase": "final_answer",
@@ -347,10 +347,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -414,14 +414,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 13,
+            "output_tokens": 12,
             "output_tokens_details": {
               "reasoning_tokens": 0
             },
-            "total_tokens": 107
+            "total_tokens": 106
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:50 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:31 GMT
 recorded_with: VCR 6.4.0

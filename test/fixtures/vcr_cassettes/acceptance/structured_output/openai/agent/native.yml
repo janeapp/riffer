@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Analyze the sentiment of the
-        given text."},{"role":"user","content":"I love this product, it is amazing!"}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"sentiment":{"type":"string","description":"The
+        given text."},{"role":"user","content":"I love this product, it is amazing!"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"sentiment":{"type":"string","description":"The
         sentiment","enum":["positive","neutral","negative"]}},"required":["sentiment"],"additionalProperties":false},"strict":true}}}'
     headers:
       Accept-Encoding:
@@ -36,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '481'
+      - '479'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:25:24 GMT
+      - Wed, 04 Nov 2026 17:29:33 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -51,7 +51,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd3144f680d0f-SEA
+      - a55557697e6deb39-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -67,7 +67,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '798'
+      - '831'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -85,27 +85,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_5df46ebabe644d348863320d80f6717b
+      - req_e1875defc04e46cf935a0161807d5258
       Set-Cookie:
-      - __cf_bm=YRnr9m4y470KtPDCQUSqZXLrEfyBfgM.GPshXwXRb_c-1793755523.245212-1.0.1.1-tcUyNf8UjSaXgwe26WPlAlvr3Iw1lm01VWHghYRse2jsgY0YcdE8SBIVXyZ2RGPC90.IalXYBWEkZi4r.WI3BKwnUuzfSGbqTu4Mw6.DHpDsR.Zxwor9KwoMfIqcx4NB;
+      - __cf_bm=Kq_7bZp9OVuzzcNdVfussg7inMo5KdgfeYsXj49kHEw-1793813372.396973-1.0.1.1-6kBaGHhJvJPnUrCM3zHqp5OtvGw7vqtHDhM2D.xUp2_y3iqfYUhJInHR6XVu7tA6Lk_WhyAbbmfuJU0N5aClQP1gx0oh4IwamBg_RKIxfMaJu8zqcppiHm7PepVmNvMe;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:55:24 GMT
+        04 Nov 2026 17:59:33 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_06a4f7276e98cdb4016aea898354b487d0a8638a27fb59edca",
+          "id": "resp_00211d95b91b1053016aeb6b7c78ac87d0937495e574e3025b",
           "object": "response",
-          "created_at": 1793755523,
+          "created_at": 1793813372,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755524,
+          "completed_at": 1793813373,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -115,11 +115,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_06a4f7276e98cdb4016aea8983f20c87d09a5ee93040341d16",
+              "id": "msg_00211d95b91b1053016aeb6b7cf27887d08e02b69d984ac422",
               "type": "message",
               "status": "completed",
               "content": [
@@ -138,10 +138,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -217,5 +217,5 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:25:24 GMT
+  recorded_at: Wed, 04 Nov 2026 17:29:33 GMT
 recorded_with: VCR 6.4.0

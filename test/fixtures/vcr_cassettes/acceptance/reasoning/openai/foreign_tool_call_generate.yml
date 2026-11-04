@@ -5,8 +5,9 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"function_call","call_id":"toolu_01A","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"toolu_01A","output":"It
-        is 15 degrees Celsius in Toronto."}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+      string: '{"input":[{"role":"user","content":"Which Canadian provincial capital
+        has the largest population? Get the weather there."},{"type":"function_call","call_id":"toolu_01A","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"toolu_01A","output":"It
+        is 15 degrees Celsius in Toronto."}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -37,14 +38,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '567'
+      - '618'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:25:45 GMT
+      - Wed, 04 Nov 2026 17:32:16 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -52,7 +53,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd39769ebfabd-SEA
+      - a5555b5f4f0ab1c7-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -68,7 +69,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '723'
+      - '1691'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -86,27 +87,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_aa77b2292dfb424387d071ac41d3b110
+      - req_c8e46b7953584b3085c8662b47be5cd7
       Set-Cookie:
-      - __cf_bm=mKDqRwf9nXanMiOLHcnXUZgqK0d5OivpLV_.nCDGEEg-1793755544.2279303-1.0.1.1-nzNp5dmJ3VX0Zxhl4WNwXL8ly.KhIrlwFO_kIcdfCfZDLD_fVO4rbyiciSRY_szn516DhIAqhmWKkUem9IzmoVj4LjhheskUmV_yKA918K.KVDAaB4idOB5pDjRbFMcd;
+      - __cf_bm=dFjdvuxQkmHme3rIg.RAvoAH1WqhmzsHb2pJvm7Lhts-1793813534.6041188-1.0.1.1-a87fptlSAo9sfL2L4FtTKCpmgTMkx1nkw7eZipxXRh57ctvYEqWFeXi0ZgJYLE.fgKfh4bFlU2qW7yy4DpICV15N0oBm4PUU2_aqdbyr9nReJdo21D9h9XdRQjT5s8Q3;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:55:45 GMT
+        04 Nov 2026 18:02:16 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0462a595f809e8e5016aea899849e487d0917841a87f121ab8",
+          "id": "resp_05e2a13f6c202a02016aeb6c1eb22c87d0920e177e36f91a38",
           "object": "response",
-          "created_at": 1793755544,
+          "created_at": 1793813534,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755544,
+          "completed_at": 1793813536,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -116,11 +117,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0462a595f809e8e5016aea8998e2e087d08c835438f163136e",
+              "id": "rs_05e2a13f6c202a02016aeb6c1f4af887d08d5021dd37f38a4b",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62wg8NYjo8wECAqS3JoNeZsXCmvvYtgunI1DbAEjI5pj7h86TylqYR66VVRHLLkLae20zV6XqLDozj3TVAPJIPxRvKil0-Zwk3uBuJ5OvH1i5pd4s8k5cfiVbFGSg7J4AyDZYL5x_74MMcWVTwfJgph1Vp8zKuEzJJADGL49to2OqhhAhhbtQuOkSWo7UZf3oCud-8Cp-5-5rv_dw38Si8tWseiZ_lJn7_1frTDVQe4wE-nT3C2syhOH4wmYqn4BH8xdQEKx6HKY7fmjlGNwUNqD_MM972sdCIJFJ5-xqUJCiqGCdc2hyO79qHT9yPRH24dzA5Ww8BjGf9PTa2nWfcB49avDNcGXRXxcDXD0FH1R7O7dGstv4BNctbrkZ0qi-78IJj96mRt2OjSrXcswaJjnfHVUHG5skxUv8atDKW-F9XY8BHwVwKX3SSyEidb-6m1Qrq8YERA2WHLCIyHuoPWzI4BGVwURpPBuMqU7MV2R-_yHHEiPkQJQANt8M-sG-fUlQsjfBpa539szT3S9kuNhM_PNfCq8HA9X1P0xqfkXwpoyaxoDpDuN-go-lH57PhbZUos8nn6Y2PLVPSDhexls2fblhZkQ18GEVd5qg8O5mLqAweBymry3Y4s2SqfTPTwwvotq-9_pKxCJkckmmwSLihNM2b8z9_S-OkdTUI2LyLCwQFM5G10kZJQ2f7YqQfEJ2sCpWdY1xOO3KPrJxUS_tmI8uvN-kO7nuSau2tDk5Eb0cv3MHDPmHq3oUP-nVf_QM8s6DK_zF8IBI5JCV3IrjXEcuVhdgKcH0JrKs-KQmJrnD-8EzJG0UN-lVEnbB59ID0HWwD_vnZuh0Hlkbgcn0HRmgGMXZh5THd4BK7WU8BvzEJ85np6P-akrKvP_e-Om2XxePiTvsA_RHz8VX66plSi6ki_dfpTOQDop92Mc9SEyzgnA6IhiB9ZgTzY-iN4R73Tz_KJmYfhOBuXsKUWk3b8edIjXHe4YHtQIjgmbN4URbz4mFmQhFbSXuIYB05u2KFrzK5slWvkXU4RAO9aGIq4USqaBLePKJNxC3pZ8tdxJP5ZCaym-vX8Iiqhli5ymG-FLr0bcLhRe0vPCCSpVjpcq4HqHRoxnHV7eybyTOO9e3yVjZJGi_Y3Tcd2bQeY5A0lPABdl013UKyYgG8KtSyldkZd9Hv6nFB6huY1_Xsw227pXs-9TtheATR4Vd5zRYEKR45uZUcp-qhMBk5mXUyCDNYW7ooDuZI0rKW8K-KicA_UewjGRgnNHK6HSVUDC4jxFuGW7Zm5r1Z4k4ybMyTD3TsK71FbesF9T4K0FbAscPCZGZmu5YL7GKJV9cFZtZYirctr1hjx7nGG18xGsxAV90c2CxXHDrETrj82mQhx-A8f1u_cbIBR1orp71VwGUr5v-4fBEbSQSY37JExPpCFTWSCPw4ePA6qdOFpcTPCxWDrzB6gnqbTqhajg3YLuW7ZsJvoWMrdPGwNcFjrihwbRPhxmYDk05XolJMzs3-wDgg4Spa0pZIvYfojmbKQaYs35xPdLhxZIXxRT7d9li5nsKhUCFDgrYSVjP_UnQijOmGtNzu0u2HCFD7HdWYT7sFl-EZ59v291hgmu51ZVrX34mAqt5kWpck7rSDf9JrE0aSQ0Z2T_KV2pLro2jhG7LWuAI5JhtAlNiUNpshoTLwhJ9R4VwnfNTaw65ie_PutRP-XMDaeboKOP-Kq1T2peCzmzuI1cDpt8mcoAUUUHVpAdFZLAJBFeeFIeBlIG9hnQCfJ2gMVYUivncAxJq-v8GciZM0zOG8oqbdPw5m-XTkUsqzg7gAWwMW8poRwQtqMvOBBE5hYk_4Mlhs-ZM7JSGLUSjiuILIaWrsxDpnZvZ5e9BvKENe_-Vqyl2lEsDdObah8nSogmyH1BoLPIwAIIEQzmuYGRturM19EwAJkHgZBrWmScTJV-33mM0KpbCHCo1nM9_0xGhhsrai4F7hfx0l0kbG-jJex4Q7aDdvzODDiHpa9OIsyhSS6xlAjagAjZwEk_Es-GIdkJXVpyXwePqnZEa9zpquQarz6i5hxZds1F8oFFqXslqAezytU5NX0=",
+              "summary": []
+            },
+            {
+              "id": "msg_05e2a13f6c202a02016aeb6c1fce2487d09fd738d0cfd4b125",
               "type": "message",
               "status": "completed",
               "content": [
@@ -128,7 +136,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "The weather in Toronto is 15\u00b0C."
+                  "text": "Toronto, Ontario, is Canada\u2019s most populous provincial capital. It\u2019s currently **15\u00b0C** there."
                 }
               ],
               "phase": "final_answer",
@@ -139,10 +147,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -201,19 +209,19 @@ http_interactions:
           "top_p": 0.98,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 94,
+            "input_tokens": 101,
             "input_tokens_details": {
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 13,
+            "output_tokens": 76,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 49
             },
-            "total_tokens": 107
+            "total_tokens": 177
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:25:45 GMT
+  recorded_at: Wed, 04 Nov 2026 17:32:16 GMT
 recorded_with: VCR 6.4.0

@@ -12,7 +12,7 @@ http_interactions:
         context (inside <skill_content> tags), follow them instead of activating the
         skill again.\n\n- **code-review**: Reviews code for quality, style, and potential
         issues.\n- **data-analysis**: Analyzes datasets and generates summary reports."},{"role":"user","content":"Review
-        this Ruby code: def add(a, b) a + b end"}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"skill_activate","description":"Activates
+        this Ruby code: def add(a, b) a + b end"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"skill_activate","description":"Activates
         a skill and returns its instructions. Call this when a task matches an available
         skill''s description.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
         skill name to activate"}},"required":["name"],"additionalProperties":false},"strict":true}]}'
@@ -44,14 +44,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1042'
+      - '1040'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:29 GMT
+      - Wed, 04 Nov 2026 17:29:50 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -59,7 +59,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd1bcb81a34d4-SEA
+      - a55557d18d237652-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -75,7 +75,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '959'
+      - '1046'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -93,27 +93,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_902dbba1cfe04c04a1eb4a1d33721de1
+      - req_8d1f8ceb36f24014ae508d03fc671213
       Set-Cookie:
-      - __cf_bm=sT3ksBmVUaiuD.2aZJc46goCMN3p3NpyPm9I.FA0igE-1793755468.279416-1.0.1.1-4AyoEMpx_CNw_NLsW3nSvsaH2e3IYKETT9VQD0YUxBYMXTnn1E39nKxnYbTpfe3raiuOFHZZufcfeiRFkVEYZO81Q7XRvffoZlO9Auhg6TtT_3NBtARkjLMW0UyuuScZ;
+      - __cf_bm=VY53ucVRkzuNjrFqh9nxsyzp3PQ1tl_UByg2A__BxPw-1793813389.0525553-1.0.1.1-4p7uqYdSG3ZvZTpjT6f.UD0VaESYBBrwEn_3mX2gVrVPCDcUsJIdhvh14_tQ9y3_IAwnVELGloJbAZwh59hCLQ620mmhGpOU_VwTcTMzFPHhjSDpWqJlhs9SJ3BhCAXB;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:29 GMT
+        04 Nov 2026 17:59:50 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_021d8264129d0734016aea894c577887d0bef5afce6d7f2acc",
+          "id": "resp_0c5134a3d19bbdbc016aeb6b8d211887d0a2bb61d3efcff642",
           "object": "response",
-          "created_at": 1793755468,
+          "created_at": 1793813389,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755469,
+          "completed_at": 1793813390,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -123,15 +123,22 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_021d8264129d0734016aea894ced2487d081687894bd1aaebb",
+              "id": "rs_0c5134a3d19bbdbc016aeb6b8dd05087d0a71ed80d391b050c",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uOhBi4KkP099FAVdN85TA61gpusQaQ_VNLqGkp1KErX1sy5Rz3bjpr9DY5p4tTBzCkzbyhbGfe3RiTsqJ2y34cBd0VJqlYN1oD3erlyyCBqDdcowcX56EZrj3GnoSZLlH0zgTnzOEBFdqR2HaauX-iRzmv11xK4JFypCFgWJQK0dBs_9RblTRqUFcnVzubOP8aC4xMLRrftRNy7PLHPFiXNmDI2s9xoXlYVGvAR0sYoqe0dt8q-Hag5iNzxUb-xUjqDUghKWphh8FXxY9bTbqzedJDyLponp8N32OF3YXn6iem9hTMObNAYfrSFy5CPFvKqId_ZT53lg8oeVrBSX_g4bl87KX0wzFXRlP-pgL6yzhaK4VugXYomVkFgcMmKhEBVeOSaKtJ5P-aWPbUuFUewfrhbbfXahMi47Qeevf5YdMFyMFUityAmQHMDkY1KTCGRvbh8yIMRk3_man_jHm9c8sL7MKkyfa7CjRK367YUhHwCh0rN58VMvbySX27_os75mudfL8TUcRl-B4vvEz0b1_c5Kf0UBtsgxT84xGVcQGUX0o4QOzPxpu2P1fkewMCKH402FQqnuCRRsHgqLDNRtpCudkfCFcQDg-8Ol0GLCGloVK4fQrlglbTZVg_CJ8lvGuBtoIC64fd95roEH9hNAFH5o_W9TDf7TsfrVEtCI2HsuTOeW2O2WUkaPurXG6osZGqCpH5MCAKcLpMP3FhZAf2iKKlDzTAvqYTY-yk3O4mvZGwkgIzkFOi4pkiwBKqJQyQHsvgggMy46I0DhPu2mgj_R_Fa7f8lbb-4Ao0lZn8M4AaATUqfHJjWe58MafirfHZrZdYQ26GiO0fdV6gcds7xegAXSmvawvQbWOqpm48LSO7i8AqWVcfThJo2ZN6xng7KKv8lZf52KRXACIay8sy15IW5C_9SrzE9DByYctmpKaZlyOT2X17QX8J8X1O4T1dBIU90ZoRJ6fs0oeGg698XwpEm4AFGukCn0O_wSdjKeNPO2Nuds54PLEMMh54l6g_MYUamBBP8n98DB0uWNlGbIlr1A-LUgkQ2rYFEtetJMw8wzUgoTSA9RJgYFJqDIM5AbRbKrbv30spwtwAUwlSLjFlz9KdMuL2cWUSgdPa_yvj7J_qToyK8ZkRr2neZeJorT1gM2iDPVP5gt7LlCwOe38I4a_wDzaiT-Ye4Vr7R69dI90oyTYiXQWjN6pkp2zrzU_dTYXrTsvfTYgjb_45-_debFT1qXXYzyB1CaxO3OwT_mrTeG3wvs66tRWcKd3DfhhzlhYj8lWhlfUzV3DGWouw0bWr_5xleXmhmBLl4EgmszD6_t7uezNipwVAT83MnjPdX6aB5H8FyIzBPKDKM4CTlCQpTNeQwlaUtYHE6UcmL-aEnvkRDj_dPj_MCcJ3yTyZCN4Y6_IAWCgXdabzSBTOsn1gcT2znmjoUP8jweuJTweKXbAOTLfsidF0of8xnFzqjWv72FhD2o9eqlL8y7Ma7-gJT47oXazyo6NnF09LZXnUDfIy_SPAExTX",
+              "summary": []
+            },
+            {
+              "id": "fc_0c5134a3d19bbdbc016aeb6b8dfd2887d0922627c43f6178ac",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"name\":\"code-review\"}",
-              "call_id": "call_lEs03wrQnBWLdk7lWZE2r6Nv",
+              "call_id": "call_pTw7LZRP4POKuUQfgHe2oMwP",
               "name": "skill_activate"
             }
           ],
@@ -139,10 +146,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -206,11 +213,11 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 19,
+            "output_tokens": 31,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 10
             },
-            "total_tokens": 202
+            "total_tokens": 214
           },
           "user": null,
           "metadata": {
@@ -218,7 +225,7 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:29 GMT
+  recorded_at: Wed, 04 Nov 2026 17:29:50 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
@@ -231,9 +238,9 @@ http_interactions:
         context (inside <skill_content> tags), follow them instead of activating the
         skill again.\n\n- **code-review**: Reviews code for quality, style, and potential
         issues.\n- **data-analysis**: Analyzes datasets and generates summary reports."},{"role":"user","content":"Review
-        this Ruby code: def add(a, b) a + b end"},{"type":"function_call","call_id":"call_lEs03wrQnBWLdk7lWZE2r6Nv","name":"skill_activate","arguments":"{\"name\":\"code-review\"}"},{"type":"function_call_output","call_id":"call_lEs03wrQnBWLdk7lWZE2r6Nv","output":"<skill_content
+        this Ruby code: def add(a, b) a + b end"},{"type":"reasoning","id":"rs_0c5134a3d19bbdbc016aeb6b8dd05087d0a71ed80d391b050c","summary":[],"encrypted_content":"gAAAAABq62uOhBi4KkP099FAVdN85TA61gpusQaQ_VNLqGkp1KErX1sy5Rz3bjpr9DY5p4tTBzCkzbyhbGfe3RiTsqJ2y34cBd0VJqlYN1oD3erlyyCBqDdcowcX56EZrj3GnoSZLlH0zgTnzOEBFdqR2HaauX-iRzmv11xK4JFypCFgWJQK0dBs_9RblTRqUFcnVzubOP8aC4xMLRrftRNy7PLHPFiXNmDI2s9xoXlYVGvAR0sYoqe0dt8q-Hag5iNzxUb-xUjqDUghKWphh8FXxY9bTbqzedJDyLponp8N32OF3YXn6iem9hTMObNAYfrSFy5CPFvKqId_ZT53lg8oeVrBSX_g4bl87KX0wzFXRlP-pgL6yzhaK4VugXYomVkFgcMmKhEBVeOSaKtJ5P-aWPbUuFUewfrhbbfXahMi47Qeevf5YdMFyMFUityAmQHMDkY1KTCGRvbh8yIMRk3_man_jHm9c8sL7MKkyfa7CjRK367YUhHwCh0rN58VMvbySX27_os75mudfL8TUcRl-B4vvEz0b1_c5Kf0UBtsgxT84xGVcQGUX0o4QOzPxpu2P1fkewMCKH402FQqnuCRRsHgqLDNRtpCudkfCFcQDg-8Ol0GLCGloVK4fQrlglbTZVg_CJ8lvGuBtoIC64fd95roEH9hNAFH5o_W9TDf7TsfrVEtCI2HsuTOeW2O2WUkaPurXG6osZGqCpH5MCAKcLpMP3FhZAf2iKKlDzTAvqYTY-yk3O4mvZGwkgIzkFOi4pkiwBKqJQyQHsvgggMy46I0DhPu2mgj_R_Fa7f8lbb-4Ao0lZn8M4AaATUqfHJjWe58MafirfHZrZdYQ26GiO0fdV6gcds7xegAXSmvawvQbWOqpm48LSO7i8AqWVcfThJo2ZN6xng7KKv8lZf52KRXACIay8sy15IW5C_9SrzE9DByYctmpKaZlyOT2X17QX8J8X1O4T1dBIU90ZoRJ6fs0oeGg698XwpEm4AFGukCn0O_wSdjKeNPO2Nuds54PLEMMh54l6g_MYUamBBP8n98DB0uWNlGbIlr1A-LUgkQ2rYFEtetJMw8wzUgoTSA9RJgYFJqDIM5AbRbKrbv30spwtwAUwlSLjFlz9KdMuL2cWUSgdPa_yvj7J_qToyK8ZkRr2neZeJorT1gM2iDPVP5gt7LlCwOe38I4a_wDzaiT-Ye4Vr7R69dI90oyTYiXQWjN6pkp2zrzU_dTYXrTsvfTYgjb_45-_debFT1qXXYzyB1CaxO3OwT_mrTeG3wvs66tRWcKd3DfhhzlhYj8lWhlfUzV3DGWouw0bWr_5xleXmhmBLl4EgmszD6_t7uezNipwVAT83MnjPdX6aB5H8FyIzBPKDKM4CTlCQpTNeQwlaUtYHE6UcmL-aEnvkRDj_dPj_MCcJ3yTyZCN4Y6_IAWCgXdabzSBTOsn1gcT2znmjoUP8jweuJTweKXbAOTLfsidF0of8xnFzqjWv72FhD2o9eqlL8y7Ma7-gJT47oXazyo6NnF09LZXnUDfIy_SPAExTX"},{"type":"function_call","call_id":"call_pTw7LZRP4POKuUQfgHe2oMwP","name":"skill_activate","arguments":"{\"name\":\"code-review\"}"},{"type":"function_call_output","call_id":"call_pTw7LZRP4POKuUQfgHe2oMwP","output":"<skill_content
         name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
-        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"skill_activate","description":"Activates
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"skill_activate","description":"Activates
         a skill and returns its instructions. Call this when a task matches an available
         skill''s description.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
         skill name to activate"}},"required":["name"],"additionalProperties":false},"strict":true}]}'
@@ -265,14 +272,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1434'
+      - '3098'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:31 GMT
+      - Wed, 04 Nov 2026 17:29:52 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -280,7 +287,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd1c38b4234d4-SEA
+      - a55557d8b8dd7652-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -296,7 +303,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '2243'
+      - '2147'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -314,27 +321,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_53c84308294a4e5cb33d6269c0574e65
+      - req_8b91cb10614e4f42ae2eca391b4f09b2
       Set-Cookie:
-      - __cf_bm=h_kQ2KueFHqK0xmAKeDSdyaQfNTrTaF1Jzs3B5OEbK0-1793755469.364811-1.0.1.1-AvzPI3t6Yvz_useW0Mk5LaYD.bQvjNEAKetRskRLyvDPj5a1Y1kbPdb0PCcuP1R9nsWc9dipjcx7O5L84HDhPbvneplShP68hZkOrpTAXHRcPt874_XHvtfXDkDJsJvo;
+      - __cf_bm=L_.aIqE5UUhdk6pZaSJe.A1PkvSWAFE1OrVH_hChmJ8-1793813390.197286-1.0.1.1-hYYc.Uvqm_8wpQLwfxfQbznVqGm_YdQWEXwNG3lkoiWJ58iuuXtho3GgCI1.Cj9KSjH3c6ympCD5lYsL5.XC0qH4hiKQ4lJ6tBvIfsEqATIf4rDKlCwE0eVWCll7Zzpu;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:31 GMT
+        04 Nov 2026 17:59:52 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0f564d4cccf87bd0016aea894d6c5487d0a43bf08e904dcd0d",
+          "id": "resp_0c5134a3d19bbdbc016aeb6b8e43e887d0b6d2e44fe19f0881",
           "object": "response",
-          "created_at": 1793755469,
+          "created_at": 1793813390,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755471,
+          "completed_at": 1793813392,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -344,11 +351,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0f564d4cccf87bd0016aea894dde3c87d09cee565db61ed945",
+              "id": "rs_0c5134a3d19bbdbc016aeb6b8ef8bc87d092c594082b0aa134",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uQmTaFkj88Lxn2yMWWQ18E8DgyjpXwHl31hulbFH-HZ_R5G29ilTIb5jT8Pd4ZRqOeE_zz5R-DeK7erUzmzUVlkP7LwSsStTtxW8zifj2B6XLwN0lWWmY1rZcucF9N4aUPiT2k-UFHqGDcaWxUTwgfWmVCSjpcKplaOzS59xqfzGcFnK4ybMHmL08GY69QEWg4vjVWwwp7rMl-RmFK-Ah8oROVAcOovIJ_x1M7mufDshMUTMU7L73QUP_I8kkiqf2H5m1nMxlPNT6Bx2XiJn8l7yYOIWDYPcG0YZV5cVAv04lIkV8hA5za4k1UKFgKsXVAsD-ADiymihye3IppjNFyD-k-dMX4QustfEa7yS88_TGs15kE-P4aOb2dJ3H7pNMKU2bcON0M1Rxndp-X0kZk8w09y7_-nr_o94XLdQfoRz3SBttw4gnS9SMrG7jPedf7TY21S7OZ4JTxdEii3yCht_xuPCLDleMgU8LDMsrneTq3vXl_6uVOXZYH9ub9vHszWeGKjIqRnHsHwaoP4JtfbrQVnlJkNCjVWJYpUvRoWgq8XBWpRGa44KbS7p4EKJt0__Wbs83rPUUQzNnWoyLKhwLAubCwbTfGks9Gy71-pprr5ALWET66eq3vRuc7ovdDfQbYAYOQfcfpDXQ48fb4OqUNPRmeSQQnxuyANtoRG2J4pxQRG18hI9aLEr8Uvim-FdvI5PKbnFpl5BXAi-KKwPG8_cVjUOKnjZE6K5_Eb8M4uXx_34-3Klw8y0ChzSy_lkWpxPQaom9wKism0frLPQt8BWrA8-fhmvPbB32r8ssrKIbldlggH4j_wugKdI0Q9xxRj6Dy9UnWdXa0bnhMCLEccI-ssr1XVpY6EdgxGDMYdP-KmRIWamgfpa_G6HlSwcNHj8phdoxbr6HVIrzn8X44Q6YzPCUhc46x4CZdOFCQUt5LHctVtyzWl9ND64I-8KIpnmRUGmcUcv5kvW1b63lFijw5tZZty_siUTyWcUF9RxXk2GQdNMg9GNqLCgc6RxaAOl537OOFOoGLhk1tG8xy3hd80m8La3K5I0qkId6W-ifXtiCjQMtjbT9UZgDvQKi4At9mqMN2X3LanRnFBrzUztkGTgydCaywKGPxBisJayEhHeqqPWrndi3uU6p85_e4TQtPtRj18GPvdAWtLMTBZ94y47o_o6Eir7pKoLaL4BEXONPBobgOYTue2EEvIcueSAWf4FQR3qrcV_UvdrildDKHivNMMfkmrMLAhhb2ZcrKHkA7zpp9YK1bWCTKeTZnDQCZOduM-O0N6dQ_4imGIIDfLuhnffAcWrpHhUmQ_BKeXozzCsJtfS_2NtdrRZlbvCNLqPCUBze2cA30Abq7vIw-vge3R_ygH0cLaDc-ue4FaUJVbAEBNSIpso6nSQpNHw8H94FFaYLXbPN4ZqPty4ebVlKw2kbzIrhJo48InIel3Wtis5EENf77TI-MD_HodhWwTnqbTCl4VHbYQ8eZZ_wTdKYuCxVDItTyrsCEgtb8jQkKve2RXRp2Mg3m96EssUzQ7EgVa_dLHah2MN4C9XQ-pwKkJznUPXcrtZcMnIwbLLB0qsO99n2F49dp4sDvQ6ZONt2wn0Ale1CBqlLq-_ylBCiSS4Vo1Lei3B_0nUXZQ5NihATrdg3KHH1DwhUWKYblj8tGhrNTmYCk7bNYepncyMLHThMm7WsgoLJ1seSXlH9uDzPhpLir20dCt5D9ze3ZHzRsPqKjR6rDIiupP0gbGp4T4-mJ-xnhSLM81lViT9JttA5ffSQ1gDQT-jXNY_5x7G37KeA1KgRYCW29MBzA1me-wyJpy4UG_LvLdrBnjYOxOiMFjUhowRiMJMYJINc1ZQoBPmvWmGwjA_r_mcBmY8bSij1QGFYwtk0_c3GeXWKuixnzZozpdgUHXAnBAxiM00O84G29VEl68EQGhOpMfO8wLYmxPD-za0g=",
+              "summary": []
+            },
+            {
+              "id": "msg_0c5134a3d19bbdbc016aeb6b8f7e2c87d0a63120ad6d29956b",
               "type": "message",
               "status": "completed",
               "content": [
@@ -356,7 +370,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "This Ruby method is valid and very concise:\n\n```ruby\ndef add(a, b) a + b end\n```\n\n### Review\n\n**Style**\n- It\u2019s idiomatic but very compressed. For readability, especially in shared codebases, a multi-line form is usually preferred:\n  ```ruby\n  def add(a, b)\n    a + b\n  end\n  ```\n- Consider naming that reflects behavior if this is more than a simple helper.\n\n**Potential bugs**\n- No input validation: if `a` and `b` are not compatible with `+`, it will raise an error.\n- Behavior depends on operand types:\n  - numbers: fine\n  - strings: concatenates\n  - arrays: concatenates\n  - mixed/incompatible types: may fail\n\n**Performance**\n- No performance concerns here; this is already minimal.\n\n### Overall\nFunctionally fine, but I\u2019d suggest formatting it over multiple lines for maintainability unless you intentionally want a one-liner."
+                  "text": "The method is valid Ruby and returns the result of `a + b`. No functional issues for numeric inputs.\n\nFor readability, consider using the conventional multiline style:\n\n```ruby\ndef add(a, b)\n  a + b\nend\n```"
                 }
               ],
               "phase": "final_answer",
@@ -367,10 +381,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -429,16 +443,16 @@ http_interactions:
           "top_p": 0.98,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 249,
+            "input_tokens": 261,
             "input_tokens_details": {
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 206,
+            "output_tokens": 97,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 42
             },
-            "total_tokens": 455
+            "total_tokens": 358
           },
           "user": null,
           "metadata": {
@@ -446,5 +460,5 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:31 GMT
+  recorded_at: Wed, 04 Nov 2026 17:29:52 GMT
 recorded_with: VCR 6.4.0

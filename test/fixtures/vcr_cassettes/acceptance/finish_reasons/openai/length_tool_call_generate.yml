@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Save a note with the full text
-        of a 300-word story about a lighthouse keeper."}],"model":"gpt-5.4-mini","max_output_tokens":20,"tools":[{"type":"function","name":"save_note","description":"Save
+        of a 300-word story about a lighthouse keeper."}],"model":"gpt-6-luna","max_output_tokens":20,"tools":[{"type":"function","name":"save_note","description":"Save
         a note","parameters":{"type":"object","properties":{"body":{"type":"string","description":"The
         full note text"}},"required":["body"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '409'
+      - '407'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:38 GMT
+      - Wed, 04 Nov 2026 17:30:30 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -52,7 +52,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd1f97864346b-SEA
+      - a55558ccaf4acc88-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -68,26 +68,26 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '583'
+      - '1285'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
       - '2020-10-01'
       X-Request-Id:
-      - req_39a5c3f6aca44374b7572f27c9b9119d
+      - req_8add213d4570446096c1ac57c737f7d8
       Set-Cookie:
-      - __cf_bm=K9syTHm5kc6vl13wLj02t4P2s18OsAF_UcLdIRlgC8Y-1793755477.9936097-1.0.1.1-1SKXs6xYeRz7CntlP6sCD4HmtKORjoWFTBgn5rYuQfWmm58rz5UTxboYozZ1WvpTAe8l3tYzp1vQABLcflCiXNMxQfD2psji6uAREEnaKS_3Wr3rU4lZvGcsYGoqVtZO;
+      - __cf_bm=w6328nj875dKXouY8gG1lv_ohVYTBBS7E2aY0gpm5f8-1793813429.224974-1.0.1.1-joVw.TsfCPLFhEMGmL6WXhy1_aDYdN1PWMyni0d.aNsD5ejBUnrfjM1OIYtG.dCa9V8rKhPD8kFUpkG5TmeBXoShc1hWuRHtIiJNVO5xxXKNhhAFzDxXNidJVTZWXu_b;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:38 GMT
+        04 Nov 2026 18:00:30 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0175e02cc5f1c7ee016aea89560ffc87d094a57cb9ec5ef18f",
+          "id": "resp_048ab4d950defe14016aeb6bb5498087d0976e50b6cc22e024",
           "object": "response",
-          "created_at": 1793755478,
+          "created_at": 1793813429,
           "status": "incomplete",
           "access_programs": null,
           "background": false,
@@ -106,26 +106,25 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": 20,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_0175e02cc5f1c7ee016aea89565ac087d085e1a300acbfc992",
-              "type": "function_call",
-              "status": "incomplete",
-              "arguments": "{\"body\":\"Every evening, when the",
-              "call_id": "call_LC3jj33tLNjzceyyOoc0ouHQ",
-              "name": "save_note"
+              "id": "rs_048ab4d950defe14016aeb6bb65cac87d0af08dcd3a9990d29",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62u2W-9CphSqv5aRBKKuGe1SPH3fnEMuGLTB7oT_lD8dtf4JcTLIRKsa6q0BIuemaI70NUbB1M2f05dZB-k7TLtLIk9sYeV0avYvsY-CqemUc5w851LLuwJVXthxl6rc2gCdykLeWug1JPingyEgxGI4OyrxoFYjQRrhiBcIlFV-qJv_BP3vqvk9oBv2mGq6APCECDW_5pQ2_vdevAgpF2AVeV3AWDhXLI0dViR55EyMLz7Sq92xi-r-_pYdx_mGpxZ52mlWma0qYGLbJM6M5jusLRuIVXCQH5U1FgULocSiAiczufB_KmK7U448UmKwKLQC5T-vu7j_-dQVpu0oG0OSzUq6RPAatw0qLHVEqUGva1NSXGp5Im_-dkADnRaTUcRqqFkSZ3Le8oQK0dD5FBUNT6RHRPs4IXEFLx6fkwZszQxI8NdQlvZMSuzN749ojs-5JSQUa7DVUMzdv_9HJ5gBv6NjgmjTQKuO65zPH8MKV1NZ6bnPPSLDPv_wWv_NfMwI73C7QekM_ftj6R9wNYDPn7Ek77qXC5HO764cP3p3TMLUXGty1L21xk4CzQ1Sv8GSaVHLr-1i4o7kMLx9DAtGyvnDaiv-ZCpUexNJs9vGGGfjHPQzo5v2VTlUOJVQIH0sjO818UwY6XVPfINPdjx0kBSUYzrScgCTvfkeksEGFGRCWaIRb8i_omhO1ELOQMElq2CjQJselVPhIu13CJfY2cuYArtX2XEH2TWrhLZCKToW_sVo2OSCGjSkNQPyDCSzqeD_SYx2jqgtbVWKyRsiNfhpR0FK0Eobb6RhOb_mSc_6xs1Id4s9bCcPL9rUOFpMHxibWIvJAPFwGMeTPp7elLOTtS6nbtjtsFSdWGevUMsUW-OB1tJmjmjXZXNYcIP4tF7ljojT-0J3H7axG0uTxWluclXUa96byKkHYxFXoDsCDVuUgJbXKV7vq9cHvb48irUljBStupEY-1RzTFvwBQ3apOp1JhbZLf4pWzWy59SACMl4iBqpq69FNMMYVkh1imkbcl6JlGIYASLYTL-0hu2YZLbc6utBJ96oNFhkDLTiu1F0rM4JcTtypmUPIma6gwdzCC7W0Sa9EC_ZbLy1f97FsHMdT2PYls064AWeUEDDQmTnqSHGqRvm4pJk73dhW8_5axcr9jf-c9bOt21o3cjMEU221BKc8tB3IpDdQMgCxvpOVeXEglkqAU4TtATxvpT7KoDVAvTr2j4Zj8AZlx0JxfDdL3La4Yyn5hCbKxUS6yDtvDJ3IpOshSlmFu7UZ2DNbHyyiwigMIJIB0Xs3OKZkXRHPHJsnCrswJlhKPALjUM1h_mdzyvvs-uqVjbT",
+              "summary": []
             }
           ],
           "parallel_tool_calls": true,
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -191,12 +190,12 @@ http_interactions:
             },
             "output_tokens": 20,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 20
             },
             "total_tokens": 84
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:38 GMT
+  recorded_at: Wed, 04 Nov 2026 17:30:30 GMT
 recorded_with: VCR 6.4.0

@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Book an online visit on 2026-11-03
         for Ada Lovelace (ada@example.com): a 30-minute checkup, then a 15-minute
-        vaccination. Any room is fine."}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"book_visit","description":"Book
+        vaccination. Any room is fine."}],"model":"gpt-6-luna","tools":[{"type":"function","name":"book_visit","description":"Book
         a clinic visit","parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The
         patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email
         address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
@@ -44,14 +44,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1335'
+      - '1333'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:02 GMT
+      - Wed, 04 Nov 2026 17:28:34 GMT
       Content-Type:
       - text/event-stream; charset=utf-8
       Transfer-Encoding:
@@ -59,7 +59,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd11afc8f629c-SEA
+      - a55555fb5bfb751e-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -75,7 +75,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '214'
+      - '248'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -87,214 +87,220 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999346'
+      - '179999274'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_dbe356bdace844a8a0f96605c6d6c2aa
+      - req_74ffe1a7669141caa5ba0a66e6da4265
       Set-Cookie:
-      - __cf_bm=juzWzlNvzJz4J1UTm.5BzLrCfrm1.ZgKVd3ebSXus28-1793755442.3947785-1.0.1.1-vn3qkOB3t3HY9iCgpv8e2dv4ZeE8tAiMoLSj2T8pV6xYOzvlLkc6IHqJEj6NH0WYp8YS5v6pqFMurOdSNtXmbMyGcW8PPStelr3aOgQG5QPLk6aUMeLt92pM92RG2M3G;
+      - __cf_bm=CJ5pfb_ANrJcqUevK0ziI61nV.LgqjtRn0k_lY61Im4-1793813313.8198795-1.0.1.1-Gu_3zM1TnLUreK8TrFnIdZjaab3xy7EpW40_E6XoHjPBQqPyOF4.IEZjr0GSB5LnFCERxxcji2OgMJ5I3qT295NWYG.TSfx3tXnSfhv1NGGq4nEtwSC3TikfHhKCVXk_;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:02 GMT
+        04 Nov 2026 17:58:34 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: UTF-8
       string: |+
         event: response.created
-        data: {"type":"response.created","response":{"id":"resp_0ead4e9efc295b76016aea893275b887d0b02a0b27344a658a","object":"response","created_at":1793755442,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+        data: {"type":"response.created","response":{"id":"resp_05ad1100fb205ae8016aeb6b41eddc87d0b3fa813fe35fcb56","object":"response","created_at":1793813313,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
 
         event: response.in_progress
-        data: {"type":"response.in_progress","response":{"id":"resp_0ead4e9efc295b76016aea893275b887d0b02a0b27344a658a","object":"response","created_at":1793755442,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+        data: {"type":"response.in_progress","response":{"id":"resp_05ad1100fb205ae8016aeb6b41eddc87d0b3fa813fe35fcb56","object":"response","created_at":1793813313,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
 
         event: response.output_item.added
-        data: {"type":"response.output_item.added","item":{"id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","type":"function_call","status":"in_progress","arguments":"","call_id":"call_US8Tyl8TUKiqSD719UP2odWU","name":"book_visit"},"output_index":0,"sequence_number":2}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"3cVbwzWJn585rb","output_index":0,"sequence_number":3}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"patient","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"tVEFBDsCQ","output_index":0,"sequence_number":4}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"22tYjP8hwms0","output_index":0,"sequence_number":5}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"QzVJc9HCph7J","output_index":0,"sequence_number":6}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"uXFwhqoy3Y048","output_index":0,"sequence_number":7}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"Ada","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"4A5ejG1kXj0x0","output_index":0,"sequence_number":8}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":" Lov","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"whVLkzEmTOAo","output_index":0,"sequence_number":9}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"el","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"VI2XkelMW8gDWo","output_index":0,"sequence_number":10}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"ace","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"jeZ9ccvZGVRIJ","output_index":0,"sequence_number":11}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"IhK5rQvyl94V0","output_index":0,"sequence_number":12}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"email","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"CLy5IeaaIP4","output_index":0,"sequence_number":13}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"uleQqeTVVCICC","output_index":0,"sequence_number":14}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"ada","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"JxfsrGC53JdDm","output_index":0,"sequence_number":15}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"@example","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"zp68YPIC","output_index":0,"sequence_number":16}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":".com","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"QX2gX4n5sZtQ","output_index":0,"sequence_number":17}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"bTBSIjdwP98694","output_index":0,"sequence_number":18}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"UnTHoPUQh3zxc0","output_index":0,"sequence_number":19}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"visit","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"zcOeOdF22W8","output_index":0,"sequence_number":20}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"_type","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"desKuqG5RkG","output_index":0,"sequence_number":21}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"qTP97eVa0BWcU","output_index":0,"sequence_number":22}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"online","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"l7vHfASlar","output_index":0,"sequence_number":23}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"phIMEjj6X90U2","output_index":0,"sequence_number":24}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"visit","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"AUJB7L3W5iT","output_index":0,"sequence_number":25}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"_on","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"ynL6Q3jzrWDv5","output_index":0,"sequence_number":26}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"tuONDpxyIU7s8","output_index":0,"sequence_number":27}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"bVXnlI3d9nyEn","output_index":0,"sequence_number":28}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"xQClUvn9wjt0vhP","output_index":0,"sequence_number":29}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"2LyVeHJkMfPGm09","output_index":0,"sequence_number":30}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"nYU3hqsvfMay65","output_index":0,"sequence_number":31}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"zC2xO1QXSvVdXL5","output_index":0,"sequence_number":32}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"03","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"tCrKguyUDKAotj","output_index":0,"sequence_number":33}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"WzMg6jICJEg6B","output_index":0,"sequence_number":34}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"services","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"T5knaWnR","output_index":0,"sequence_number":35}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":[","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"6IZoCVrrpubI7","output_index":0,"sequence_number":36}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"nDYgMd9JxZSxdl","output_index":0,"sequence_number":37}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"Fv96pWVS6DWS","output_index":0,"sequence_number":38}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"J0D45KswRT7aa","output_index":0,"sequence_number":39}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"check","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"jGJPHPPKIPw","output_index":0,"sequence_number":40}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"up","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"I8UmqlTqwIOMVT","output_index":0,"sequence_number":41}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"eOPPJDa0Mcdkr","output_index":0,"sequence_number":42}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"minutes","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"4bwu53ELv","output_index":0,"sequence_number":43}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"Tegtcex9QfaxBJ","output_index":0,"sequence_number":44}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"30","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"RURjTC4t8rD7WC","output_index":0,"sequence_number":45}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"},{\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"TZIhRtb71CW6","output_index":0,"sequence_number":46}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"ZIXQe1FeUm6I","output_index":0,"sequence_number":47}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"xRgiBD6jmVeni","output_index":0,"sequence_number":48}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"vacc","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"YMyse0ej3pAs","output_index":0,"sequence_number":49}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"ination","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"SyZsczRhu","output_index":0,"sequence_number":50}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"DUcepLtazxpmS","output_index":0,"sequence_number":51}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"minutes","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"DvXpTAEdb","output_index":0,"sequence_number":52}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"7jbJFQjKXHFLdg","output_index":0,"sequence_number":53}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"15","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"gWearUsnyqS51t","output_index":0,"sequence_number":54}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"OtALD3ApFTi3P8I","output_index":0,"sequence_number":55}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"],\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"rOFkWkck6H9wH","output_index":0,"sequence_number":56}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"room","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"9bnhldWQcT4S","output_index":0,"sequence_number":57}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"3Nd838YuxCVUV","output_index":0,"sequence_number":58}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"any","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"NVBlQaSkr70i7","output_index":0,"sequence_number":59}
-
-        event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","obfuscation":"edVa67xvmFL5XJ","output_index":0,"sequence_number":60}
-
-        event: response.function_call_arguments.done
-        data: {"type":"response.function_call_arguments.done","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","item_id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","output_index":0,"sequence_number":61}
+        data: {"type":"response.output_item.added","item":{"id":"rs_05ad1100fb205ae8016aeb6b42883c87d08fac96a0b6e35b96","type":"reasoning","content":[],"encrypted_content":"gAAAAABq62tCJNAGq7nfET93heiyjbEfKeF38-7Bz5VhtmiNMEs_VX8Tshc-RPoSoZlLO0xJFOBW-L_BKKY2iao3-03cYvqtPZGAZSCAUvi9s5gHoIRm7hJ40EmIZtUNRopKCU35TTnxSYhK51PStpp-AGwqn696BdybHfb0qUsnlfXI6ytuvEW9P2fKUcNghZeRUq_NgrwwsCNWK27k1egHQFmMgLH5tk4Z-DYKTVJn5cRYVpBLNsuqnrwjbZ_ZDfqFLD_J3cmSxOL-gzGgl4x1-jBpr8jZkDui5qxEXf6G8Vt9pggy3fVeOrLJrD565jhtQQcVHbtsQ3CTRCkpR0GWj-owUxw0q7G4eD5LLG_CYnWTnOVkCxnsa5-7P8wM0M304zNEmdc658XbB_jdwDJW1XUnAkn4oyRrrPuz8XZSg0R74V1CNtACEbvZ1Q87OigjUouGrJENocQBa0csIA5ukfuuAFk2l2SI8MtEdwxB6dGCr_GjsypUJ4HqggU71MxRRC-OVHNT75bZd7_DVNxVU3exD6x635vQe7dhIaJA_sB2zCCF6Ku8ev44iWZ8ifUUznkJqsJCYdRATcN4ABPCllq_RagfSVpTQVKxEtsYkbM1IJCT7rl06zMjeLylXCwMPtxmzgcR5iNLWGF84xqfWXUqDGp1YrUFj1pqsub1WgsJzept6GH8QIr-AR-d20s9VsdVk9RxC2dy-uaOGlYSMDV5uAMrJQs4ae22Mm7eJimk9piTJvn3PqMleviiuofx6AR400kwlu886zIkjsotLLE_RBPGz-IyYYI2z6BGIM-obckpK1Pmg7dXB2V_KBZcanjQIKKWKz8GBJuqh91mn554TI1_p-JKmHhXgNFZTmxeawFxUl0HYGgf724aEbXH-eqPtwAZ8QKmCqq9b4IY1MLAAmg3MiUSrwKdqHmePFdMGuNGNr620cS4TEXJJ2ImCLIZbI8ID-RVKXLnCZNzehlEyW07xLGQhizgLo27IgMHA8YWpkNuxFh9q1Ab7gTIefBAG-_TehfTbvBdGaAXsGfgzPTM0quBv0qoqXZWENKIscT9LZpV2xK3HE7WKlgQ_4W9XQ8IvhtjmuiwZRBvrgEf0FtVDvmEcqrPtSVxlsCINnzoLoJ5bxIQFTJW3xeWItRi3X36SA1Q9HuYvW5sW0ukJliJLmzYR5E_zjeXWqy9k3M1MqO-QyzZn3y5aLgxdM-YwCi6","summary":[]},"output_index":0,"sequence_number":2}
 
         event: response.output_item.done
-        data: {"type":"response.output_item.done","item":{"id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","type":"function_call","status":"completed","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","call_id":"call_US8Tyl8TUKiqSD719UP2odWU","name":"book_visit"},"output_index":0,"sequence_number":62}
+        data: {"type":"response.output_item.done","item":{"id":"rs_05ad1100fb205ae8016aeb6b42883c87d08fac96a0b6e35b96","type":"reasoning","content":[],"encrypted_content":"gAAAAABq62tCOJzhJKnskhm3WgL1yNbzJsj9Fc9jikd389I-5DHshjUoMHlVx3W1NDQx3XBWq67Gj_j6zhbjBNWhZxsOE-02GE1Mf1ndj-hfOk08HwqqRQs_43d7c74XNKPwfCrSbQkk7LVuw0hQe1bqCLn33CY9PD4CFBiIsBhZLwqNaqQ1IkwtUBdOqbeNpvEcGpxQdSNHMZY51u9eHkNZCMjuAcHl9O-YE05fc_LcDs1vmJpCyu1MYII4xoGsHv5x7rxw2BCgL-uLi1qNu9WT7xNmzQLq-Sk0khecwVY_u1js4j8lrMneIvST1_1TE7wMAb35tg99J-pqAIQpIwf4AnfRx-gyExtLx_JTISn_Hx6eHptXgP4ByHSD_z69pqQ-5-DTlDe9n4C-Mz0DR5JzDQJ-_9A3cok452eTKOB86aR2RnS2EE68LMh8OBeBGHnXNBavLp7xSoUmjuQeeiGmGmbldpwVeLslGgsTalSauCTGIolI_JKwh_w5GUhaS5HdU1uI8iOs_Pll68OlHsKAwe9AQEqdnLzW9HhVvhEm4QJTBnfExIwRYI2zXV0giEM72RSsSzdW8O_ruIfWlUiRrkPx_tlWs4ltYcY10-5x4mP0nAr8Gk1Xw-gTKLRdyovs82WXaAFj5KmRjFAwKZBJ5fgdZN7PE_EDkLPBIvfoa063QRFY85vpHcYIR1QQUvcFv1rvvFtPpE2Ap-RGD7SAVOnfYTFFO8Op8Pfq7ZNUrEds0aE5dJFWX503ccm5_9-tKAKf7GRFTePFy_82Ss-VmhHRErB0WPnD75rg-xEU6rUsRHPJqSvOoFHq01NAfgBbD_NOuFWn8hEHwwmjj1Y9ulScDU6v3aQO7D32yaCpoiUR-kq5iPe-fDAIzKSLD0bla8Ls2bmBTZFCgdj4uniRFt37lEFXNoQSS3NAzd3hkSRP1LWZX-OdlObDL-L02xBWrLvAB4Yn4trgHSH0TOiRx4LxfOiQ8mQrjlmoEv2c8PVsKoIv7jJjYZSsZ75vT-3lijSCf7C5EYHMN-vpnfk0qK6Tu4KR7ktGxU07vCBBrvg_KVyr0sL0uM5CCIk7TYFtT0tbbpeUljQAt2nsuF_uWkx3YeNcxaZIDnM6OtY2ewz22QkDOe3Gtou9fdAabHqefbC7gQBYwjxuI456KUZ0duUSNSB64dJUWMjN5zVExcdSgP9wKQRXM6CnbMzPxszaB2VWFfkr4DJfgGBbbhItKthNbxFpMa1NlORC-BozNrjBPbfe7uDFQZ8YlwJvInZ9cblnnhSGCBx9iPloHYUreSFlZhp-DaNEIas0uHmCIH0HTGC1IBEdYiL-totdeukrZHiFLu0rf8OBWKrFRNd7qyx0hciSB9-XfsIYNVAsIzX-WLvByeqTwZCihi0bH09KywIIu81M4KdWS7VvA9ux49FXClT-ETDP49Iv3m-n0ggMWHbgBg0sOS9z2VHCtSF-XKYRYo0dLhcSXeSfCprhaCqdxkhGONP3ga_sHz4rg29nWdQxbeBdk6fFBYAKncDytJ7opEBVKGRcSDHiXrtcY5P-l3majlEEVAZaqoBkt77Kf8bpSrNLS4OO-2fksvlLoGr-8qJ3EvuRdwwPoZHDhcCX4P53buXeaReh_-4AmiECSNenlIY=","summary":[]},"output_index":0,"sequence_number":3}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","type":"function_call","status":"in_progress","arguments":"","call_id":"call_ZlAhFpQLOM2O4wrWoQO5G9OK","name":"book_visit"},"output_index":1,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"Z51ZZhIDxtTYtT","output_index":1,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"patient","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"JxUleOK77","output_index":1,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":{\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"6UWH3xqjxGxI","output_index":1,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"P2gqilclFFBY","output_index":1,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"8YOHas8BbRQHj","output_index":1,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"Ada","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"7wO1aAxf1Slj5","output_index":1,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" Lov","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"EFAoH2IS1the","output_index":1,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"el","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"CLvoPFNExHwYE2","output_index":1,"sequence_number":12}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"ace","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"BwBbYaFz8Xjoi","output_index":1,"sequence_number":13}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"Y3iXict3AQQRU","output_index":1,"sequence_number":14}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"email","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"oWqTVJ6Stvw","output_index":1,"sequence_number":15}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"UqrnYm6mNqa4i","output_index":1,"sequence_number":16}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"ada","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"K2V7Rqj4ewVWR","output_index":1,"sequence_number":17}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"@example","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"t2wtND0h","output_index":1,"sequence_number":18}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":".com","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"imMERdULLdP6","output_index":1,"sequence_number":19}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"0TH3ekiPofAj6Z","output_index":1,"sequence_number":20}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":",\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"18P97M6xbBkG05","output_index":1,"sequence_number":21}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"visit","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"JRLBhw3yayg","output_index":1,"sequence_number":22}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"_type","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"ct9fL4mcffA","output_index":1,"sequence_number":23}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"difEkpWD5afwL","output_index":1,"sequence_number":24}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"online","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"X9JdBH9qaV","output_index":1,"sequence_number":25}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"aomNLx0x9xPst","output_index":1,"sequence_number":26}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"visit","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"WqJFSOg2VJN","output_index":1,"sequence_number":27}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"_on","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"1Ni22Oys3JFu3","output_index":1,"sequence_number":28}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"gS1juP02GQCTe","output_index":1,"sequence_number":29}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"tFiUmjIKHrpMU","output_index":1,"sequence_number":30}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"kKYeWOHoMx3K4BU","output_index":1,"sequence_number":31}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"MhFFMg1QeB3Qaxh","output_index":1,"sequence_number":32}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"piuy3aW5BxRQZ3","output_index":1,"sequence_number":33}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"FdDvSibe6sA2VmR","output_index":1,"sequence_number":34}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"03","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"nZdrWxE5rOb515","output_index":1,"sequence_number":35}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"l0ez39bKw5YGa","output_index":1,"sequence_number":36}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"services","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"jFRcuET8","output_index":1,"sequence_number":37}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":[","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"QUmXTgWteoJ49","output_index":1,"sequence_number":38}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"FAlGViWPJlOQfL","output_index":1,"sequence_number":39}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"QcCpFjPrWJSQ","output_index":1,"sequence_number":40}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"XApYL5MhKCBhT","output_index":1,"sequence_number":41}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"check","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"xG0rn980iCL","output_index":1,"sequence_number":42}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"up","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"JYm7YkAlsUQOwV","output_index":1,"sequence_number":43}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"WNMsSyWuxDrgK","output_index":1,"sequence_number":44}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"minutes","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"UqAX5dqLt","output_index":1,"sequence_number":45}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"1KSQqAsZz5fGCU","output_index":1,"sequence_number":46}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"30","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"mZhq9MONHfJ2rU","output_index":1,"sequence_number":47}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"},{\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"tKLyV8s2UWvL","output_index":1,"sequence_number":48}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"iTZSVnejyKqI","output_index":1,"sequence_number":49}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"gjHLuUycYfGvJ","output_index":1,"sequence_number":50}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"vacc","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"6Vg1LI8yQJ8H","output_index":1,"sequence_number":51}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"ination","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"7GvHPnRz6","output_index":1,"sequence_number":52}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"eYJkAt0zplpM7","output_index":1,"sequence_number":53}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"minutes","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"mxpDFvg68","output_index":1,"sequence_number":54}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"tpFFI0gYdGqorR","output_index":1,"sequence_number":55}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"15","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"hXDearVs9VDdWg","output_index":1,"sequence_number":56}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"}","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"2ZtV0UYfNrO3DZB","output_index":1,"sequence_number":57}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"],\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"rmVZ9S68vbh5x","output_index":1,"sequence_number":58}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"room","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"DkH2arUpbB6v","output_index":1,"sequence_number":59}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"lKX100hk8WXpw","output_index":1,"sequence_number":60}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"any","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"U72zLHftp6ycf","output_index":1,"sequence_number":61}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","obfuscation":"WkmpApfUOqFHzY","output_index":1,"sequence_number":62}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","item_id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","output_index":1,"sequence_number":63}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","type":"function_call","status":"completed","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","call_id":"call_ZlAhFpQLOM2O4wrWoQO5G9OK","name":"book_visit"},"output_index":1,"sequence_number":64}
 
         event: response.completed
-        data: {"type":"response.completed","response":{"id":"resp_0ead4e9efc295b76016aea893275b887d0b02a0b27344a658a","object":"response","created_at":1793755442,"status":"completed","access_programs":null,"background":false,"completed_at":1793755443,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"fc_0ead4e9efc295b76016aea89331e2c87d0909d5d04f3da24d9","type":"function_call","status":"completed","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","call_id":"call_US8Tyl8TUKiqSD719UP2odWU","name":"book_visit"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":200,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":71,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":271},"user":null,"metadata":{}},"sequence_number":63}
+        data: {"type":"response.completed","response":{"id":"resp_05ad1100fb205ae8016aeb6b41eddc87d0b3fa813fe35fcb56","object":"response","created_at":1793813313,"status":"completed","access_programs":null,"background":false,"completed_at":1793813315,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"rs_05ad1100fb205ae8016aeb6b42883c87d08fac96a0b6e35b96","type":"reasoning","content":[],"encrypted_content":"gAAAAABq62tDe_AnZx0c2Fg9DYj9VnZgB60zQgvipW6vvDbezqUDZZkFmpy4-nOwNjBzChzXtSDzu5QAhq79wxQcuWVmE13Kz66oga5p6w8JqEA8y1D3WAaf9dJfggbKFxMiF3kWrJ8Ksgq_0nuY_BPzASzOW-ZVzQbaTlfzcBYJQe8QQkzm9hNy3EtEk8Nt1AAaWFJy6xenIzRZFdFJjUp-SSUl3WakjDo2Up_mPGzcXAb0IN3C3syr4KqczQWwasB8TgeMe9T4W1adLrgaVhvq4S3Qq-3mEgJyhGXL0p62Cn0pPa5K3YoURQt3Nrl5PFlr6UCh8wj3x5HFrvUrRXxDjfa_mh2dRWiCXwxgtG_RNXUhoYC9HlWlxsevFvm3Vsi14iv-njGNQRwSZNok-FTD-SPlQPaatcvkc2HDJdsSQ7guR6YUuAullbPHa7tRmttND1TWMgcwovq3WB2Cm05qrmK17gJaKWnseNjd_eTYwExSBaRMaPLZCgV-wzcS2ZItRAVGX5IM4qhZGwhEWdpTxOcK-l2Z5x0c_zuqMix6tm_Cyjm_8JZw9Es0XtnVKddmQYg9sASUIfNQcyKutEJQAMH-IstYO1PQkJFIY_8T9FRvZTrbIVAxfDiT6UFt6ccEdtWaTQ_XXJYf5EVU1NPgDdtvMasP6Mg4oNvT0lPBLNGoiHJ1rOAO3I8Xf_scdq-qtHtpkta-z9-fVOkocEsMDIASb17p4CVNtRX2pqvJ_X9YDA13wZvlAMQHgxOnhjgYAW39MBGTgpQfbemZ5X1svC5MlKhHH8CCBwWbrN5K36_rPdAHRYx5_Tux25Z_s3QbVCO3QGyoXKx1ZlcO8Fm-fHYUNL1uvtJKXj-R5PNvebNBKm5i3OXkGU_idTsr5Jy9L-Y-xGUVmRIZy-HsJhCzCTzHYFcDUpSSvgxQap070jhTRro7r5Bg8rg2AVB7-YtbzAVjZ4XQW5g2FzxDhZG4QM5YRCrBlCCXyZAyvGFWktYqj6MkQqV1gxkok0QdW9pmsm-KT_SPQmVsNt7uu0h7minFdM9PBbZp8AvnvL2OJrK0qvyUUOEd5LNT095a2VsvjpFNyUjFE79obq1XqgrcqEUvGsIYbUfquY7-GPb8x__DgV4fxRLOzpaZ24s4gde8GzILqMShQJwpMzclFVq2_Udggh8POi5RUqDdGbFzDBs1sc2K8ki-IJ1dmnFk0BDQJcbxRSKKnKMd8yk_jo0J2nBNIJFgz-ywsLXNs4OSN68Buhg9qlaWZauCUF5s-EvsEz-EOBIOFoZ_iiZpp4vbPXwmmt1qN-ChCA8wilzFGYPjJg-8e-9i9SpiJyPn4kIHrxyU6L6KROGu76gpZCNzuZjbfN_pFV8fJ1ceMUZiAsAaCGydILCl-g17q79Xo8s3Ve0ol10FHRd976wwqAuVZUcQVuDNzN6eztZwzW_77PkNP4MGKtlePR9dXww1Mxb8TzzbIsApwK6WKZwiqOBiSgZfHdfimj5iDaPK3D0fq30Bg87kq2IUYuo8zxaJqO7y0916-sXIuMX4IlxKwCOXDv2bahEPRjRT83YS0GnIWuXNGysyofctTCKDwpb0PMkIBPVk_vDSm0GGHwwppDrkFuBW-cZrxVercG8RNfYblRbjrTTvj_s=","summary":[]},{"id":"fc_05ad1100fb205ae8016aeb6b42ea0087d0a93a2c7098e25a91","type":"function_call","status":"completed","arguments":"{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}","call_id":"call_ZlAhFpQLOM2O4wrWoQO5G9OK","name":"book_visit"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Book a clinic visit","name":"book_visit","output_schema":null,"parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit date","format":"date"},"services":{"type":"array","description":"Services to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":200,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":91,"output_tokens_details":{"reasoning_tokens":18},"total_tokens":291},"user":null,"metadata":{}},"sequence_number":65}
 
-  recorded_at: Wed, 04 Nov 2026 01:24:03 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:35 GMT
 recorded_with: VCR 6.4.0
 ...

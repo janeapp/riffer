@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Use the tools to answer. Be
         concise."},{"role":"user","content":"What is tomorrow''s forecast for Toronto?
-        If the tool fails, say so."}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"get_forecast","description":"Get
+        If the tool fails, say so."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"get_forecast","description":"Get
         tomorrow''s forecast for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -38,14 +38,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '506'
+      - '504'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:13 GMT
+      - Wed, 04 Nov 2026 17:28:32 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -53,7 +53,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd15a38835396-SEA
+      - a55555ec68f5a360-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -69,7 +69,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '595'
+      - '1064'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -87,27 +87,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_176d18dac03d427d91b40668d3803e4c
+      - req_fe140c76f6794c159f5893ff596d60b5
       Set-Cookie:
-      - __cf_bm=KSQOPgaznWmSQAEpaIcaB5RpMl0Cvw_FB38ygHCnUm4-1793755452.5210793-1.0.1.1-olZFxsM3enqFtah5LHOMbDtxnH0l20Ojsm5DL2LCZoI3Wn4UU1Sa2C2st_H9iWjyRu89zuLr_bv0Av8vNl7BjXz2SifeM9fiCKlEiwdTTTEuvKn1mQ.IAhNItD.cNBJE;
+      - __cf_bm=s9jNuqlJp1rCJScAx7ZOxuelZa5ERadrp8RfAQBiC_c-1793813311.431208-1.0.1.1-_1w9r.8oFpf.rP5EyLoliYXVj47yNa4K.u4Cy0.WqCW81dsoEKN601aRe3bgRHhQEvJSBx3w2lUCD8_IE8ay6mgjHEG72_19k4If3bv.JVEnSYJNAXSkh6bhwNwNWtgE;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:13 GMT
+        04 Nov 2026 17:58:32 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0a4429a0b8aa1e72016aea893c9c8c87d0bdfe3d43a73f40e1",
+          "id": "resp_0f228e13051845b8016aeb6b3f7f6c87d0af154c896e2e14e2",
           "object": "response",
-          "created_at": 1793755452,
+          "created_at": 1793813311,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755453,
+          "completed_at": 1793813312,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -117,15 +117,15 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_0a4429a0b8aa1e72016aea893d128c87d092eb341db4ca59f9",
+              "id": "fc_0f228e13051845b8016aeb6b405b6887d080712c7bf31eebaa",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Toronto\"}",
-              "call_id": "call_feCSgNApYUQexSlZMWA0diLt",
+              "call_id": "call_EzM6wyXQej5C6OrfJ2IF2PTt",
               "name": "get_forecast"
             }
           ],
@@ -133,10 +133,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -212,7 +212,7 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:13 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:32 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
@@ -220,8 +220,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Use the tools to answer. Be
         concise."},{"role":"user","content":"What is tomorrow''s forecast for Toronto?
-        If the tool fails, say so."},{"type":"function_call","call_id":"call_feCSgNApYUQexSlZMWA0diLt","name":"get_forecast","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_feCSgNApYUQexSlZMWA0diLt","output":"The
-        forecast service for Toronto is down"}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"get_forecast","description":"Get
+        If the tool fails, say so."},{"type":"function_call","call_id":"call_EzM6wyXQej5C6OrfJ2IF2PTt","name":"get_forecast","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_EzM6wyXQej5C6OrfJ2IF2PTt","output":"The
+        forecast service for Toronto is down"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"get_forecast","description":"Get
         tomorrow''s forecast for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -252,14 +252,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '758'
+      - '756'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:14 GMT
+      - Wed, 04 Nov 2026 17:28:33 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -267,7 +267,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd15e9f095396-SEA
+      - a55555f38d2fa360-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -283,7 +283,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '808'
+      - '1038'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -301,27 +301,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_154cc07c89044817ac9b04ce4efb9af1
+      - req_0a94698a91ba46cb9d0aa500abd56ff3
       Set-Cookie:
-      - __cf_bm=SJRdyCGPB85JSS8awpjk28oE13UeKkaemMCwfv4r_dA-1793755453.2197914-1.0.1.1-DzpXGausEi81ftFfBnZgloYmWx4PIupAE5WQwstAEnhhTCARnthI.o_HamaE1f3ClxoXOcCKSdRvFA30rggOi_0JKT7ZN0KWMuDYriIorN1XIbgDTCAuhFy42PSlPs8O;
+      - __cf_bm=O1uF5Y2Kt8udkAMWJR3GQ_ew8HNkhjmVmDSmgUW0Xxw-1793813312.5705018-1.0.1.1-gQnQfB5M61tCISZlAfJ5tQPATmHsc1R.6HeWVh4dN_Y3aJRuuUyi9xxwEOxPdv3NN2pZNAwqOzLQ3itiNWtjmelBBYpUx7xGub34von8bTylA2fwHevZ0Lw_qBE2.5cz;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:14 GMT
+        04 Nov 2026 17:58:33 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0eadb0e9af7e7346016aea893d4b7887d082d4488cc0eddfbb",
+          "id": "resp_026e7b82bd0cae2c016aeb6b40a25887d0a848985e95921fc5",
           "object": "response",
-          "created_at": 1793755453,
+          "created_at": 1793813312,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755454,
+          "completed_at": 1793813313,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -331,11 +331,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0eadb0e9af7e7346016aea893dc7cc87d08e2e962f9553f80f",
+              "id": "msg_026e7b82bd0cae2c016aeb6b4152d487d08ad7d5742677e7d0",
               "type": "message",
               "status": "completed",
               "content": [
@@ -354,10 +354,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -433,5 +433,5 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:14 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:33 GMT
 recorded_with: VCR 6.4.0

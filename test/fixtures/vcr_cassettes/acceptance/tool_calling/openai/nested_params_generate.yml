@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Book an online visit on 2026-11-03
         for Ada Lovelace (ada@example.com): a 30-minute checkup, then a 15-minute
-        vaccination. Any room is fine."}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"book_visit","description":"Book
+        vaccination. Any room is fine."}],"model":"gpt-6-luna","tools":[{"type":"function","name":"book_visit","description":"Book
         a clinic visit","parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The
         patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email
         address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
@@ -44,14 +44,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1321'
+      - '1319'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:48 GMT
+      - Wed, 04 Nov 2026 17:28:45 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -59,7 +59,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0bc8d14ba1b-SEA
+      - a5555638cb659a5a-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -75,7 +75,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '1039'
+      - '2078'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -93,27 +93,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_e7ca724a54da41aeb01dcb8a6c502a9e
+      - req_ddc3616c48384b029e50d2a8e783170c
       Set-Cookie:
-      - __cf_bm=yB7Byt5X2aJoppdhnNgM2gDyP5R3whKW8aY1Zqb1128-1793755427.292465-1.0.1.1-Slv2XGJfsrn0VSSK6wpO7Yf3LWx80okQErE69U3HWdYXkQmVtmZQ6.pcM8.hCaY7jlEwa6242IO9_IwK1oCQzfQyRG7NvIQnavYFism8eJ_ZVTWhNUJVUSJU3zHNWVPd;
+      - __cf_bm=K.OruX098AEyTxDD_IXMJe8QiDxYlOC.xusSBunnF14-1793813323.6505501-1.0.1.1-RJSEQQKrs8BmWMjd5LriEPfJlQ6DHPRKbXJwrXyrWNx_zKoxRb_hsz57w.7x10C5U.uu8aRkaS0y4ztyMFpp3V4NHOF7WopvdyE5pv_6sZvG._Kb2MuoxgCxRAguklRi;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:48 GMT
+        04 Nov 2026 17:58:45 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_09dca136f1458ca1016aea89235d3487d0b07c984c0c6fb163",
+          "id": "resp_052b07f9dc2bf9aa016aeb6b4bbc5087d0b979aebc0693bdf6",
           "object": "response",
-          "created_at": 1793755427,
+          "created_at": 1793813323,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755428,
+          "completed_at": 1793813325,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -123,15 +123,22 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_09dca136f1458ca1016aea8923d78087d0828926e9ee06507d",
+              "id": "rs_052b07f9dc2bf9aa016aeb6b4cc58c87d0a81932b7eed8c1ab",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62tNIpS1rdjZeZIljlApAT0i1p0yNwuig5b8MIYjDdQIr-8-stV-C5ASpJYbYNbbQWMO3xrYnkeA4zgGtNJysPD5oknLYK1SANq73S8DcaqF0w2zkY5ni_HWoDR1Gdg2gsp4QMVPUaRB6M57Z6z4oauhMYq85ESTEyKFpq8jusNOMyucDs0_gjVHF_zKlb11nvn9KlPmMlMo0FjW2SfZ8ZHgBx5PlqVFdR_kQzQ1pXnwQxEWE5VzWzflFbgfnS8DOd0JN2qwa0OwZnXw8j4hwR9kYe_Vsr7Z0Jfz6a6yJbC2Ftcc5AL7rwzNfVEK9PjD7vv1cuz4P7NFFGaQomKEnkli8PPpZdiCQyVt4TMVyL61vNxrD_DU20nBSWCxn5_ZbLQVB9vgk0UB28lH4yv1YoR5Yz4QOWuH10ls92MpbH9oTBVM6zuNNji62TayTXB06ISF_TKk9kDiiokPAorgBodKfuX1rP_dbW97wYxpqRm7YnifhG9ubruLndFqyluoQ-PH-iKC4o8pJGAFDi_BTqNUNVCojzbU9FWdyS8xSHtWzJhd0BJ5OdOgB0m1Ot6gxZEzkaJwAy_2GZPzSR6PIShH5JxbBa42vBybqaxK4fd0cBYr2PTzjy1z0oGEPw5kgb_BHP_s-u9tdMkv-mHyIkdgrHAhwF-rzN2vKM2NvRgdK7J0z_hvQL6xbcP2-yjG4uzYgeyG494CSWdHQZLDA79MCqA_LHq7McMPSwmnTCiKpjn5K2zCeafUDVUl9lvx9XTiPsZ28-gpQ3h4TETbTRiKeQnQvo2wNmOtcTMfK71yj3IwL0kCGevHyR9HouSxoczwx1s-Hoe45CH3ojlTnKXeF3m2yE8RQB4kiJdRA3echj5BLXKfp_Ir0Sml78b743M-NTIEQu_1PDpwoib0KtqFp-2RLSf3rYZe29JhI14_ySMNcHvXsuaftkSm8Z4DOTtZ8nq1dyabeZVBTrUIA5fnPhqrmfMOyYSSGa0jBWdWFPAQjzxO37JlAKXqxLzvkd1-rs4AqI3sSzcgfqhLeJmgKOcWF8QbsuluoON61Rzsjy6s7PreD5ARF5hPJXTAvtPS-dqTgTMF0ShamFqe6r0SHplWsSXab2rzEph8-JfLRsucHTOHZQzX0t7Dr4KAkiW783_YP71ngprIgAsBlkD3HBStdo00NTyzitR_Tr7lZ4rt_pSrb36kkfwhhFrRjd0MjzXRnxW11ynaUUL6N3jTdxYhv7vKJiuNkNOyrDNKHHKQMSSSWNC-i1SiamxP07F22CA84jHpjgK2HBbgdxyvTONp02T4RWve14R5B5rBeFI5WfagiXrR1Fb-VNOgqxSf1LugBGT83VN5anOA12Bf3WNJbTu_YsI32xm4X1wv47Us256x_MXC-7KV2gvXm13dw66-rEF6LnV_8eucjIesXM9ORKXBPMgCQ1Ry9O7D5BCxUigKoJHeh-d0few8BRmowb0Miexno4FrUNH5CTfqxhl2XX87ODubkM6NTD_P3gnZ5IiCfp5t15z1UaZwvWLsOXKkX0URdwkMdH0kpNGq8nUnwIZ_qM6SYpvujO1xpZ0zZNHTBJJ1_MXYeyVff_wNoqaOO6Z2HdiwLn5bMlWDogKbOUE6XTT4rzOh9-ETrW_bnBn36NhZ1mgR8shWUNRB",
+              "summary": []
+            },
+            {
+              "id": "fc_052b07f9dc2bf9aa016aeb6b4d309487d0a5d8953044be18bc",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"patient\":{\"name\":\"Ada Lovelace\",\"email\":\"ada@example.com\"},\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"services\":[{\"name\":\"checkup\",\"minutes\":30},{\"name\":\"vaccination\",\"minutes\":15}],\"room\":\"any\"}",
-              "call_id": "call_XrEYnzPFqVpBJx370SuzBrTV",
+              "call_id": "call_AUugys6JEIqTe4ld7uSaCeCn",
               "name": "book_visit"
             }
           ],
@@ -139,10 +146,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -280,14 +287,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 71,
+            "output_tokens": 94,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 21
             },
-            "total_tokens": 271
+            "total_tokens": 294
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:48 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:45 GMT
 recorded_with: VCR 6.4.0

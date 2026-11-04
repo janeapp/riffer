@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Extract info from: Jane works at
         42 King St in Vancouver. No other details are known. Return null for any unknown
-        fields."}],"model":"gpt-5.4-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        fields."}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
         address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
         or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}}}'
@@ -39,14 +39,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '809'
+      - '807'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:50 GMT
+      - Wed, 04 Nov 2026 17:29:59 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -54,7 +54,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd23feef86ce6-SEA
+      - a555580a3cf0681e-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -70,7 +70,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '707'
+      - '1646'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -88,27 +88,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_1e4fbe070fc34f4d892213a379a40f21
+      - req_3cbacf9994e5425d897c7940c66fad9c
       Set-Cookie:
-      - __cf_bm=dx7D.Fix1TKMspeW12RBJ9durdo9XL9SoNlUZ1YEvH0-1793755489.270938-1.0.1.1-NTAlV1ZU4NOvN0WRCfBajbV5Kelh8mwYINhgJhCZHc0nTDOlj6qJpNDTy5.bYyiXFP23LarK2FqtkGWrJtBEeO25TArFhESPwuE7ursv.O3H63TgNFlTcJ145iQUi4_Z;
+      - __cf_bm=J9mKtQuD1XSGUSALNceqMAjxxP.cP6FfH9qLxqTF6jA-1793813398.1161141-1.0.1.1-09IXgRlO_t2NqDdEde4nBNhDaZyUND2XpQm7_cutwsE4YZ2VE9euFJ7tAsCisfeXcCUtFw.uW9O8iXPLaAoNj2qJjX.hZwFqng6p2hjvzHDRyGJu8MjuwX.yV5QvPajJ;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:50 GMT
+        04 Nov 2026 17:59:59 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_07db6049904f8d9d016aea8961568487d0a41ca09a1a0602eb",
+          "id": "resp_038c9992a06ea44f016aeb6b9630f087d0b6c60980f3bbe65d",
           "object": "response",
-          "created_at": 1793755489,
+          "created_at": 1793813398,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755490,
+          "completed_at": 1793813399,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -118,11 +118,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_07db6049904f8d9d016aea8961d6ac87d09d2fb14c81c2a278",
+              "id": "rs_038c9992a06ea44f016aeb6b96e63087d0880ad78968d0b1c8",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uX9ud2EXw8cf4D6A3q52LJjegp00BXX6nsUCjNe7CtLwWS4P-VL57ggc-IQSuoafafpEaTs1KwiXR0fRUUbVxmC8YwWK5H6Fy2xv5wYsHYfMza2tTmacLYkL5lF69QVORi4ijbrpCKstXvB1BG4YFrO4Dx3wyOpUXEcvztj1NYI5piFtZ4gWh_S0T_kQSyziJdgLNY6Ike7_CPF0f7sl5mOF83__zOZMRjJZOeGItQY8IUEplVufhwc0PaxSyGV8Tcp2umOCMKDd8jcUXPkAXM5lCBEH8CEa07r2NDt4I4__BKKts7us63fj6RbwLEBTMDHlho8augKojonwwxTIC9yWZ7GVzjS2QR5SdncZTKvekxg1VVUC4sc2hwNcstNxxivJf84w3EPO5JVyAWrhYAbGoFecsmWMKPeDH9SqtIA4m8XA-46F2fn208wFFpyuceYYN-uIImdOLYj7kzVA_Gx3ASTj6scbX2dd6OBC6tl6Nt1aCCam8mOABcnw7adAIqCmWyNUsG_MUlS7gPMEZwXx_urpyQer2bi7xfOO3LBlbU-s7zyIoUh68ohZMZUVTayXDcBRtq4I3dCjfgOp2ckNnwqqziPWs5PoX2KY1p-L73l8QwVB20DZxjzfJvKIKBS3tG8m79KZaMNjzNAMoaZMKlcqeG6RveXQEiAUo9Jt8cKfMUwqw7Fe7uLmlDz054XFlPo_gpwlxr7Lcm-AEiN_o8KUjN6PPT_3JtgLhM_lxALbrFYCuIPM4FjsS-tSRcVTafQV4PTPhbldiA-Opo75vGWQ8x_o1XGitGgXnG-Iib3u_lmNvpl-SDmHvZd48DrT6SlQRFjn_wzqgWEjAPBFWhgcRFdJ94o2TawoLBnU2xki8ItyWfKN6Sah-5MHRbOmCOpfoSurRQzP3dhBmCO15hwYPvu9jLMzem6Ob4eWIxN74YgfxgbrajTCnNOEDaFLNu3nu56CtyVyu-pvZtcA3e4ltPd7-TuiMp5mv0IsaMy62_AeMUuieCYheGv-qRoftxF0AvWdUDzIEq3EkwpiHJo092DZ1RFke65O0PDEsUFpSpXjrVaN9hCXakSwDMOwTxl8wMO7tUdraPOvOJD7DQ7WZ3K8EnwQ6-p-32jYqgmObjNjy_gVGrHFZjVwZB3UxAs69vOiLQpd3auTJr3EqMqPDa21Z7ElM_N0dMoguVgXfysaaUin2aDCzgtipDu8EBeMNOzpTQ7qnd8LdNDzbS1Jjbvy121RsK6rbTF7dxc1hHqxb9m2wVdDxtZ7I0lNbrwcFdxj-NHsq0z08m1Nzxv1tFwk0ZxgSOYSCl2CPIzLnclNtPdISQGTbOCEcR2JfIosG1mWzYQfIj5hDGEYV62oZJmAX6gbCWnedJsOosO2NzcYgJ8x7RBNYStL_6JWmqcZzTfzweLI13F9_-UIB-RwSOkEvIv5I58R1ungnwi6tnt1FRCYB5ax8hcVO2nAUEJmp7wwIdBwAi1Y1w-1mmnrq2hQVYqXvycaUZL5cRceCHFQik8mGeXb21sJVior4AUspXY2NViqyhwLQA0j7DKrHGicwXBo8JQqL69JCO8-SEQx5uARw-_bg4yj8Islxbwe1_XyoQiBQdXOc_lkG8LdbHOZaBKXXSr1DvG_SCyL9mnwBPZSvSnaWpxcvj9uKppyjrLLrBfa2KNUbWiZHMpwEdXcmnL3eDnPqNi8ohMcHHsNacxVSjAEX4AW-pVOZ5WYcRj9glg9wOsGkkZ4xXI1IMvgJWCY80j2JNtf4MwhZz6ieVgtHaLOwgxHn4QPZST2-OGiibETYN1-Yv2RTkcV_EytsB1eWGyP6LnchESMDR8D8T7_K6ZUNtI4kQgtN-FepzVGbnws3bZ1Ejpw==",
+              "summary": []
+            },
+            {
+              "id": "msg_038c9992a06ea44f016aeb6b9750f087d0a34a16b5d4922aad",
               "type": "message",
               "status": "completed",
               "content": [
@@ -141,10 +148,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -239,14 +246,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 34,
+            "output_tokens": 74,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 38
             },
-            "total_tokens": 163
+            "total_tokens": 203
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:50 GMT
+  recorded_at: Wed, 04 Nov 2026 17:29:59 GMT
 recorded_with: VCR 6.4.0

@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"What is the weather in Toronto
-        and in Paris?"}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+        and in Paris?"}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '373'
+      - '371'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:08 GMT
+      - Wed, 04 Nov 2026 17:28:04 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -52,7 +52,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd13c9b05ec2b-SEA
+      - a555553a9cd0757b-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -68,7 +68,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '690'
+      - '954'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -86,27 +86,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_1e1544e23d4a4b478a0c1597c5c43050
+      - req_25e7a5f7f97c437fbf2db7296bbabdac
       Set-Cookie:
-      - __cf_bm=ri0D43WjYrlXU4_n4fhvaTk_OmeGG7jKW14TZ9N_y4s-1793755447.776626-1.0.1.1-8H3A0Ykc5DmxZbb8EYyWQXgdLRq9dJA6h41hZXg9V9uOMeFQN6MGiJfSBZD.9R4aFyNDlN11iFvzn82TGf45Cumay5o29l0SxfPHbEpYDYEDOufwS2b_MFCp4H2AZRTE;
+      - __cf_bm=dSis.nKeKSoHBOw5lcSlh._jnkTikosA0jrp02t5A6Q-1793813282.9771633-1.0.1.1-YvV79Xyma7UEOwwRUbJDbp5hkshSMQ5_jHXw2Hdy3idf4gBL2YOKdal2l9.8ZokAklI.ttL7ldfGNxqh_icUnwLH2FZJJZ3qApXPaiwegVd65cAmxoRaEBe5698WnXDY;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:08 GMT
+        04 Nov 2026 17:58:04 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0dabd0af98defa53016aea8937da4c87d0ab6585a77361bed2",
+          "id": "resp_0880a5d0ca38f8f5016aeb6b230ec487d0a0a6e46dc6bab334",
           "object": "response",
-          "created_at": 1793755447,
+          "created_at": 1793813283,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755448,
+          "completed_at": 1793813283,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -116,23 +116,23 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_0dabd0af98defa53016aea893878a887d0a2fb89785e3a5cb8",
+              "id": "fc_0880a5d0ca38f8f5016aeb6b23e4c487d0b2e0f9d32f9fc4e9",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Toronto\"}",
-              "call_id": "call_wYAaoLrtB9oXuzj68d1iRV4R",
+              "call_id": "call_2IYrLZMuABxbTZIm3kZPUlZc",
               "name": "get_weather"
             },
             {
-              "id": "fc_0dabd0af98defa53016aea893878b887d0820f0ee0c5be2396",
+              "id": "fc_0880a5d0ca38f8f5016aeb6b23e4d887d0925d0280545d052c",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Paris\"}",
-              "call_id": "call_23dhgsnWO9o9tXLqPRTf2DvQ",
+              "call_id": "call_ZJd8qSdlk5Y8MrrFWP5yWtdT",
               "name": "get_weather"
             }
           ],
@@ -140,10 +140,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -216,16 +216,16 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:08 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:04 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"What is the weather in Toronto
-        and in Paris?"},{"type":"function_call","call_id":"call_wYAaoLrtB9oXuzj68d1iRV4R","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call","call_id":"call_23dhgsnWO9o9tXLqPRTf2DvQ","name":"get_weather","arguments":"{\"city\":\"Paris\"}"},{"type":"function_call_output","call_id":"call_wYAaoLrtB9oXuzj68d1iRV4R","output":"It
-        is 15 degrees Celsius in Toronto."},{"type":"function_call_output","call_id":"call_23dhgsnWO9o9tXLqPRTf2DvQ","output":"It
-        is 22 degrees Celsius in Paris."}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+        and in Paris?"},{"type":"function_call","call_id":"call_2IYrLZMuABxbTZIm3kZPUlZc","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call","call_id":"call_ZJd8qSdlk5Y8MrrFWP5yWtdT","name":"get_weather","arguments":"{\"city\":\"Paris\"}"},{"type":"function_call_output","call_id":"call_2IYrLZMuABxbTZIm3kZPUlZc","output":"It
+        is 15 degrees Celsius in Toronto."},{"type":"function_call_output","call_id":"call_ZJd8qSdlk5Y8MrrFWP5yWtdT","output":"It
+        is 22 degrees Celsius in Paris."}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -256,14 +256,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '863'
+      - '861'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:09 GMT
+      - Wed, 04 Nov 2026 17:28:04 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -271,7 +271,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd141aff4ec2b-SEA
+      - a555554138d7757b-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -287,7 +287,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '688'
+      - '711'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -305,27 +305,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_de9d94c2836b47bea2f88f1810df996b
+      - req_81cf4f76289a4c43aa08ce4a92cc46e3
       Set-Cookie:
-      - __cf_bm=fATAaD.4Khs5YbMAn0d1vt5r6l4NshvcM_GQ.k..a6g-1793755448.5882425-1.0.1.1-gOos5a60DrK.DTF0o1bJ40rsDn9s3US_5whrM3IlQZdT.JcJfi5TnOTtCO8JAVlVLHNdIzNqGHmE4fNLw3XQOsRjsXLdxVEnA_xjhaTjTl_TwZ4Ypyrwvg7ga1birKUL;
+      - __cf_bm=oORNZBid00S2lotjUH.rld.Wz9RrjTCehrwHamlqVX8-1793813284.0364547-1.0.1.1-LrYxnddvaloYG1w57GQUkYT7Oqs36Yto.Xs5gzwSAJea5BjoosZPauA8mrEyad3lJtZUK9HBJYxOZOGGLi.9N_OFGUzQwtENyj05X8HYwUwPmbQaSMriAD0H1KYnWeIY;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:09 GMT
+        04 Nov 2026 17:58:04 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0a049c0be1d3ae44016aea8938a85887d0aa585d074020a979",
+          "id": "resp_0398aa98159591f2016aeb6b2418a087d0b262e7b9dfd97b8b",
           "object": "response",
-          "created_at": 1793755448,
+          "created_at": 1793813284,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755449,
+          "completed_at": 1793813284,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -335,11 +335,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0a049c0be1d3ae44016aea89390b4c87d0b06a44b77b042b65",
+              "id": "msg_0398aa98159591f2016aeb6b2496c887d099c150e23f039e0b",
               "type": "message",
               "status": "completed",
               "content": [
@@ -347,7 +347,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "Weather right now:\n- Toronto: 15\u00b0C\n- Paris: 22\u00b0C"
+                  "text": "Toronto: 15\u00b0C. Paris: 22\u00b0C."
                 }
               ],
               "phase": "final_answer",
@@ -358,10 +358,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -425,14 +425,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 21,
+            "output_tokens": 16,
             "output_tokens_details": {
               "reasoning_tokens": 0
             },
-            "total_tokens": 166
+            "total_tokens": 161
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:09 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:04 GMT
 recorded_with: VCR 6.4.0

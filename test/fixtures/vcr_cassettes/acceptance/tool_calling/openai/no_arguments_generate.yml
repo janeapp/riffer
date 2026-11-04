@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What time is it?"}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_time","description":"Get
+      string: '{"input":[{"role":"user","content":"What time is it?"}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_time","description":"Get
         the current time in UTC","parameters":{"type":"object","properties":{},"required":[],"additionalProperties":false},"strict":true}]}'
     headers:
       Accept-Encoding:
@@ -35,14 +35,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '275'
+      - '273'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:21 GMT
+      - Wed, 04 Nov 2026 17:28:43 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -50,7 +50,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd18f8a2ad84e-SEA
+      - a55556332dff4e79-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -66,7 +66,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '544'
+      - '770'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -84,27 +84,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_3cc787e6962b46d7948603717fb75cd6
+      - req_dd49bdb287f44e8aa463572ae10f21df
       Set-Cookie:
-      - __cf_bm=nM_Ddt6tj5_vM6zCpthqcd9wvASnu3YaUzv5TBrjZ3E-1793755461.0463114-1.0.1.1-AElWj6QG4i49Al8wy6wPwNiK9KIR39xXnlQynRFngcmRljDeycKZRCMproAZzovSY29LihvmFCe8I8Vr3Go.hNZbzWUbwUKhDCpjqc16XWWjNeC7l5KFA3z.bXbX3NbC;
+      - __cf_bm=OW7ttIfyh6vtrp_HatvWxTwJT09IJgUBTG54zaD.DbQ-1793813322.7500198-1.0.1.1-_33NBIqAifZ8MBd7Su99Z5jvOP9Gl2NyeJmM9POtrHM_a7Zf_TlckvLRsKHgsJFDG5b14g8ZdpMWAMy5sqzk7U12tDrBy5iHESj7xu6jSe15ddKJAurxVVED0kv18qiV;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:21 GMT
+        04 Nov 2026 17:58:43 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0719c6f505bd1876016aea89451e3487d096ba5ac4c0995dfb",
+          "id": "resp_07e0b6918e88e95c016aeb6b4ad02087d0997a13bb0cd1032c",
           "object": "response",
-          "created_at": 1793755461,
+          "created_at": 1793813322,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755461,
+          "completed_at": 1793813323,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -114,15 +114,15 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_0719c6f505bd1876016aea89458c1887d0a3a5685458ba3b14",
+              "id": "fc_07e0b6918e88e95c016aeb6b4b64b887d0a68d226f122b271b",
               "type": "function_call",
               "status": "completed",
               "arguments": "{}",
-              "call_id": "call_7spqPHCqTY9tB4SOHxXRjFIB",
+              "call_id": "call_oYsMLBGmDXWSkNTeJ4n2AWmB",
               "name": "get_time"
             }
           ],
@@ -130,10 +130,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -199,5 +199,5 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:21 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:43 GMT
 recorded_with: VCR 6.4.0

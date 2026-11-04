@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"My name is Ada."},{"role":"assistant","content":"Nice
         to meet you, Ada!"},{"role":"user","content":"What is my name? Reply with
-        just the name."}],"model":"gpt-5.4-mini"}'
+        just the name."}],"model":"gpt-6-luna"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -36,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '205'
+      - '203'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:25:45 GMT
+      - Wed, 04 Nov 2026 17:32:10 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -51,7 +51,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd39d9a87a0ed-SEA
+      - a5555b437b9073b3-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -67,7 +67,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '660'
+      - '712'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -85,27 +85,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_3e88bb01a213472a86888215e3df4d8b
+      - req_e003322a8925425780047d3916df58f6
       Set-Cookie:
-      - __cf_bm=Kn0cuIOtUKhUNFl7.xigcr07HJR3k20SM1lTYV9C4Mk-1793755545.2181764-1.0.1.1-HP8qlSqq7mdRdj0.ymnFkadsEaIFeGEf3Y6d27lKz6XZ0AnGlFlaIc_wLTw4Qa6RqTwCrUnvyapO63MQF_nBHIIDgma0HQEmDZ8fABYWUe9elHFd_ndMI5bTvG2EYG_m;
+      - __cf_bm=y14UvZKeGiqQDIizwhK07AEgSGEIRcoA9K6KOB5pIFY-1793813530.1542752-1.0.1.1-uFsIhDO0cgtzWNpJ1ghvrnPSoUAKSM5M3vhD4iOeQdfh7NHozuJ9F5G.7z5_yTzNdpXP._KnZ_4dyFBLgx05IBeFya7Xr2UtEE_5ncn.s9J9lN9Xl.oz6m_Dh4lfkYBZ;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:55:45 GMT
+        04 Nov 2026 18:02:10 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_06df94dae716d5dc016aea899943f887d0b9d97c2bf0ef0c82",
+          "id": "resp_0ed869d922245ab8016aeb6c1a393887d0bd7994ff01047e18",
           "object": "response",
-          "created_at": 1793755545,
+          "created_at": 1793813530,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755545,
+          "completed_at": 1793813530,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -115,11 +115,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_06df94dae716d5dc016aea8999d45487d0a868c6a3a439dbd6",
+              "id": "msg_0ed869d922245ab8016aeb6c1acc7c87d0a962e81b9f88bf24",
               "type": "message",
               "status": "completed",
               "content": [
@@ -138,10 +138,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -193,5 +193,5 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:25:45 GMT
+  recorded_at: Wed, 04 Nov 2026 17:32:10 GMT
 recorded_with: VCR 6.4.0

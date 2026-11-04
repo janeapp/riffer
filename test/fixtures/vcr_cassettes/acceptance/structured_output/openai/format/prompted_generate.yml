@@ -5,18 +5,17 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"Book a visit on 2026-10-26 at 9:30am
-        Toronto time (UTC-04:00) at clinic 550e8400-e29b-41d4-a716-446655440000. The
-        patient gave no email.\n\nWhen you give your final answer, respond with only
-        a JSON object that conforms to the following JSON Schema, with no other text
-        before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+      string: '{"input":[{"role":"user","content":"Book a visit starting 2026-10-26T09:30:00-04:00
+        at clinic 550e8400-e29b-41d4-a716-446655440000. The patient gave no email.\n\nWhen
+        you give your final answer, respond with only a JSON object that conforms
+        to the following JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
         date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
         start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
         email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
         IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
         of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
         call tools when the request needs them. If you can answer directly, reply
-        with the JSON object right away."}],"model":"gpt-5.4-mini"}'
+        with the JSON object right away."}],"model":"gpt-6-luna"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -45,14 +44,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1166'
+      - '1150'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:22:59 GMT
+      - Wed, 04 Nov 2026 17:31:06 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -60,7 +59,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fcf8ccd2b308d-SEA
+      - a55559aa695c0da3-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -76,7 +75,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '847'
+      - '2139'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -94,27 +93,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_0f0432130f1b4185afc7f924f8a27bea
+      - req_ad5933720c554d6d80381eadb4169173
       Set-Cookie:
-      - __cf_bm=KGmdK7peC8Nrc6hnVsYq285tgtDe5dd7A5UaGkXfSus-1793755378.6829157-1.0.1.1-1Fz2RGC006ehUw0RwZK.ma.ZGvvLI44aI6AbiVvM7C6B_2Wdv8Op4VpnFTtIs3Nhw8mgyeHFsSg3DHKkHkM6jDV29DybZafMpz4LXpXnGR70rSj_L3oRawVivFCw8wAs;
+      - __cf_bm=FSsPKwcHYRNcHBZDwpG7MNSBSuj0pP6w52Rp6NsJArU-1793813464.703862-1.0.1.1-NpphjLmMSu_TemlzKsmrNaMGul_ioSX518QOGVUNu_BUl0MBtZlRC4hk65LU6SQaKD60snVfJJLnj_v1e4jjtFC5GyUV.ak0KqaDxsoV_kf.8f_PZWlz0L3zQD42XSsO;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:52:59 GMT
+        04 Nov 2026 18:01:06 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_031ebdf59861e837016aea88f2bef087d0bf10aa43b9052a76",
+          "id": "resp_05b427d2561bd7ad016aeb6bd9960887d09529c98e8ee86e2d",
           "object": "response",
-          "created_at": 1793755378,
+          "created_at": 1793813465,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755379,
+          "completed_at": 1793813466,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -124,11 +123,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_031ebdf59861e837016aea88f30e9087d0bf062964abbc7357",
+              "id": "rs_05b427d2561bd7ad016aeb6bda296c87d0b6a9954a0ee10250",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62va8YJmZxW75tYnOJMMi7wQLA2kWKdjXL2Xa-ec4M-kbkn1sNcjveASs111X0NhOHi40xfbZ1UlNQ8mSKO6mqmvGR_qSezbzDgAJIKjbf41ivMVVIutRdzl5naeBh9dpD_pnUewSTvEUl9lBsvFgNwZy8__hEGCavDz3IPjDlk8_ZxWBaSM3EecJtisvrDcjqHHamEhXK_gY8TZnZUnNY3Kn7uiFAjZGL7GkJ7DQyCrxdIv2Me_JaAMGtVCdsKC9exC41jVq0dZeVEfdLn7fEG19NOkUUJ4jLHsNUJ3cJj191V8pwwUuI34q9UgwePEH8404C-ItR6leI1FZbuhgxH6paCKJnOOnFNEssGJFDeflcBjod7v0DVEHqkiT0uCbXpl0kiFErEELSe6WOKVMVFJ1r6cNkZptK4mF9Qi6iYMq0_uziteSTz5Yoc-SaLUSfxjFQKkkU8ASnVVNHXDzoeoUu7h5C4RFoeq19n8URqB4HAl5VKjBkb-ozZK-Fr6Qoyz5HujREAwu-hGZRQ1N0zQN140ULN_q4adneXdWkm4jwksqDjAwlv1Ah7aoTR4qz7PyALYopA8LG-EcXGtG7gI_XHw9MD1rFP7i9KAQFQKZX68BDXs5LhdjXS1ttAC-WegTNPdnet7CCtnFyorZtfSasxnVX5KdeSyPJPb1G4H9nRquPAkDZAa-ChCUMc0H9Y6iHEreWjYDT8IGFbtiVrWMNcU_NsdorRw8NktrjzUUjOwu8mohJXtI8bHi-zMy7_48SC5nOEKkleRGO7qsA2qc96kR7cR_3QhHQMxJa3LrzVK3JBWl9SXBuDbi2xs1USrYAf8pdU0FVeEHhd4t-oifvZy3isX_BHyIRGeR3qBaEqz7vWEZRIH5cWONTo86xITwk0OmCMqLFq3BBGy4vsj-IL1ltzdgkbzGfDkruwb30AJanv7v5jf2ENDWA4a2gTueinbnO57r5zpqdCNa18Qz46x2GWVD3EEmiIG9rYW69Fp72N06JwO-Pnn9ZSIjujHpleHTUhmKleTmqFAolKRcnVZsQAWS8fvJ1ugJE9KvrKt9mIIW_zZdY9i37GDhR7NpkHI94neLnc2NinjLtvFC9BLPScdAOpFQT1CKWqjvEJPIG3M6AR8sr4hXy8MeiEL-pP546oDfOqMIxGR1sahPz8f16GLeF46WvMldbmCQaUr-XIrWP4ae8K-W1qsZQ_3kBDQjw7FJ6ucIAbq9IFxcGGEdvMWeZxFDwqKGWuTuAUpszMJ5hY6eif9lNhL-F3ME5h7e-TZyPpDzveP4IODLH6vWzV_Fu0mwdyPkl_EEUGo87ItiDboUubnk15Klv1zMy-4nAAEencWPlQT1L0nI-EUgS1oshKufMI_HelmC9iH4T445Xx1c73RhpFULHJrPkUPfI7ydPQwyjUNPe2O6jswSEOUptaUWTQHHb0F24ixqjqzfF019G5KeEIwhzHPwbsSlHtttqkz-0Zr4cFg2K6bojHUx1qh_P1e7l7Ti6wpZ1Q-xuhpiHOiOFsdSGwfB-Mk_aVcX6lqldrjVP53IXMZJLkN4tymeGYrOyhYtjQs90tlIwgUgeh-kad9bLIbjdnes9tLSJNZUearYBLK-lY3aAIbdgxqKvVHAR_JC5Go441Vz4kfsjqy-6TG-zaRsU80bnxRctY-h3P8M_XhQ5p3gk2z3_d89TxvxHerm3t9M9HypglCvog3CLunnAZ1SKuLXHLhE9a08uF18-B5NUZkeF1DB3tHa1eV7dMcmo0=",
+              "summary": []
+            },
+            {
+              "id": "msg_05b427d2561bd7ad016aeb6bda7b7487d091cf86cefceaece1",
               "type": "message",
               "status": "completed",
               "content": [
@@ -147,10 +153,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -188,19 +194,19 @@ http_interactions:
           "top_p": 0.98,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 256,
+            "input_tokens": 251,
             "input_tokens_details": {
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 58,
+            "output_tokens": 88,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 28
             },
-            "total_tokens": 314
+            "total_tokens": 339
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:22:59 GMT
+  recorded_at: Wed, 04 Nov 2026 17:31:06 GMT
 recorded_with: VCR 6.4.0

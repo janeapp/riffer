@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Extract the address from: John
-        lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"model":"gpt-5.4-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
         address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
         or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}}}'
@@ -38,14 +38,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '768'
+      - '766'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:22:52 GMT
+      - Wed, 04 Nov 2026 17:29:17 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -53,7 +53,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fcf60df27a381-SEA
+      - a55557039eaf74dc-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -69,7 +69,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '987'
+      - '1419'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -87,27 +87,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_45631a351d0b4890a40a755d6e1a1c4c
+      - req_7d4738dd43cb449d82d6005664ee91ad
       Set-Cookie:
-      - __cf_bm=2lvSBmMNVTe0frz9JU6aJLZNk6D3_OZaBqFoE31N6j0-1793755371.6618571-1.0.1.1-.9T9OvfmGdpJtQu8nx88jc.1nc44XLCPwY2Ret_luOA2AS_F_TWjf6UIBIBqths5KFMn6Mao77LN_BNm1IbOMcX7_aU.Te3pT5idAEq0.0Ag38b6f3lmCIcS.HTjp5mC;
+      - __cf_bm=dstlvGGbDR7AVx0O4l3_aShzP1ZeZrNMI4XdiqONTNk-1793813356.0997937-1.0.1.1-HZOPdPX66LJN79N72uHe43A.7vanrb.yN9Wu1u.o8kt7WaWXGxob.I.Vzp7BazJokp4YMyWgyCUlEmuRY48e9W7HNbHnU8aixx4vKeSU0Cflv2XpQddZ0KZTsmNmcbkY;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:52:52 GMT
+        04 Nov 2026 17:59:17 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_00b2ef0427fdff4d016aea88ebbdc087d08e9b12e4b14ffb20",
+          "id": "resp_012f1c16849ada03016aeb6b6c2e5087d0a562dae0a2525ddc",
           "object": "response",
-          "created_at": 1793755371,
+          "created_at": 1793813356,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755372,
+          "completed_at": 1793813357,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -117,11 +117,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_00b2ef0427fdff4d016aea88ec55f087d0ab687dcb12859058",
+              "id": "rs_012f1c16849ada03016aeb6b6cdc6487d0aa6c7190ccbd7000",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62ttJyWid-tXggp4-EGO3LLtdTSD2rNSB6GONwyox1psHjM9ygNkS8RmkuukrQX0kV5pTUWNl_uN5hfylRLbql-fhbA43s_MCtvjInRxzGozuy1YRi5ZjiDd2RbL_YrxvRTLK3uYum5RXHMgHNx8XJmvwLB0QBy4ncGbKFsaCHeTwrXeGolZXbnz0tA2-5esvcxwIk2xnTSU6vhtcKgeK-U3EBlojWyl2636GFDyPnWvZ4szYM1AvWSaoSvhwLKCScVOsPXhB1qlYby302h1Y8kbJAHwPisg7ChOAhjx0UYDv5P3ljvpLMYKXadk478kTAAMyrG1Fn0xggJNbHixF_KS-hKwbhYrFXhr1Di0QezF9h05skv3Bzc60R9g23F3YcxkzH-EATRFNjRdk7sGhnHdhnArq9XARhd-x7LGNMdaud9cxM_8hEtl-83f6hW0JoFctkrkvTa2bVUY7mYbQn7nzBLqJznpv8THjWR4f9V6YhPtgEjyqy5l6F6XECii2dYKzFXf2TI5Q3JdrlDtOVmHqFvTJAy3B_BbIOj7PF3pnXWs1Ku4Ebj5gzD6LL6RNFQb1HlkG06egZ94jZWZhqHFWdprhwnU43v8gbZmXt2fiKkYOGgeKPf5p_zgyUkTKYweUYSPRueD0rbbx_AF36FdVke4xeN8uUDPmvf0W78DccxrAckoFwu4iGmUibDUvBoA2nGTgXwGTwbnhbQz10ViOM6GCv57yD2el9nEmO4Z-JoyTYYh_0Y22ji44bEsTuCEBM2gNHtK9tLLH3tDO4HCB0_LDWG4Keiux8sd2YuC8jumKT74P-qZBWZZYa5R_wGvY-rVhq3eF0rvxp7P1Tt6GpKelI0Tmt8JKXdxmXYz8jWlBmVvchbX2owMBx_aJm9h7Ql0KPhQOzNBoW-dZ_4cLbF3ZZT8zWor0B-5S32NDIjjAsuPmBVjAWiiyOTf2FLIlSEN4Kz9wuoOftFRMfN0ujfhOPI2eiHW_EEl1PGvT45cdNei-G6tUFPHN4HN36e_-mnQfdS7e4pvKvdtjiw68OMosAzrY12_WHwD25d-PZjmldDP0KNuWWxLTnexO1IXgwVP7v4-293GlKUu66AM_qhH2uA0BBn9c9w-nCm3bCoeHvKzOWnkI9D6KqcrF5Jh4SPbMUVzrcKNyysQ4klc7gKH3T5HLk0uNklpcaQiHmHXkXi7K7nkEYG_u8N91Vk1XfHmMQLP5T_kO8U9XlR2yvXtbpQE62_UK0FIIehwlQGD_q_icj8impZq-gvs30hvBLMpmY-GV6wgNiC6cDal0AKkd0C5f3nqDqPyofpCQBStpKY2SfVDeL0LbwsATZxi5j1oPWKXuYH_dHO2FKJhunmHNb-BlPCboVZ8MgRgooZiRDjNyiGpYcCBFYGGGyF44zkakPWM_7Up5Slr-J4azpjA0wHFZkXjQ6tUlVaSg90mpKBJa61w3_fGSv0O13M8nPGf_DSb557woY0RK3m4dp1h2dRiNnwYVd9m8B_lLSLaqiK_GsHZJH-srQSw2_sYrty-eGLWLeCJpnoPHNKtRDJi8FhC0zhCiKC1Ui43HgB90gXcvyzfOB6Wa_XNVO8LkXFuAd90b6u8dvEJ3Eo0X7ELkKW9m1IXiOqd3Jl9hXwi67uKpyjJoS_LKzPiQ36eFEiwrCYfdXO_O8h0nlyqB3f2os5F1ybtjvUQ56DQfQm8UQ3jeOsEnJEN4LWrBPgWDVtdlX5gpP4pNc20sd2i2aDjhw8uOfLiG-q2rV3Fub_YuwBSzBrIKJUxmpsuNij6Dr6T22ytraPd5iIxj-kBhg==",
+              "summary": []
+            },
+            {
+              "id": "msg_012f1c16849ada03016aeb6b6d4c2887d0b9655a6dd8b86146",
               "type": "message",
               "status": "completed",
               "content": [
@@ -140,10 +147,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -238,14 +245,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 39,
+            "output_tokens": 77,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 36
             },
-            "total_tokens": 166
+            "total_tokens": 204
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:22:52 GMT
+  recorded_at: Wed, 04 Nov 2026 17:29:17 GMT
 recorded_with: VCR 6.4.0

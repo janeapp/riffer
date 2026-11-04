@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"What is the latest stable Ruby
-        version? Answer in one sentence."}],"model":"gpt-5.4-mini","include":["web_search_call.action.sources"],"tools":[{"type":"web_search_preview"}]}'
+        version? Answer in one sentence."}],"model":"gpt-6-luna","include":["web_search_call.action.sources"],"tools":[{"type":"web_search_preview"}]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -35,14 +35,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '211'
+      - '209'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:25:10 GMT
+      - Wed, 04 Nov 2026 17:31:35 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -50,7 +50,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd2b35dc290db-SEA
+      - a5555a56ce82f972-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -66,7 +66,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '2830'
+      - '3379'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -78,33 +78,33 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179996604'
+      - '179995950'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
       - 1ms
       X-Request-Id:
-      - req_3034a58d0d5249429173c3bfab8f1bf9
+      - req_f8b61062e52d4656a4a25a7515a30689
       Set-Cookie:
-      - __cf_bm=.iwOY6VyVvye1j07D3xjUbdLMKTra6F50ROpi6IhRVU-1793755507.73514-1.0.1.1-8B8PiBRToaa3QUMSoCBnx5PdQN.byXDCiivgaYcuPsV8qLt8YoS46qcbuDy8LNL6CI7dztU13rgxtMFvTgqUHAN2md.ujT0UmKiRbgPQmP3uHZ2eBQNUaWcp7hBrYamJ;
+      - __cf_bm=jmrviwLb283teeqQrcz2lV8AU1zbPMX7r9aj8NkO1A4-1793813492.2900202-1.0.1.1-xKTCd3zJQVfSc24v84pIqKxxkeTdQlRWwzRDlaahVf40MUbPu4aNE1YIhgAoCn.00eYDwMC2mP9FTTVi83wLxk67dCxtWopbR1Xn3WuWldd6WBJQb4aVK.UobgkjN17K;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:55:10 GMT
+        04 Nov 2026 18:01:35 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_087c079ceb1c4485016aea8973cbac87d0b6169b24a34abacc",
+          "id": "resp_077602240b6d3200016aeb6bf4589c87d09e47075eeea93e7f",
           "object": "response",
-          "created_at": 1793755507,
+          "created_at": 1793813492,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755510,
+          "completed_at": 1793813495,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -114,19 +114,26 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "ws_087c079ceb1c4485016aea89744ca887d099395a2652f7a693",
+              "id": "rs_077602240b6d3200016aeb6bf4eaa887d08f9719ee080afcbf",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62v394AMmJKcL6AJ5DTwFLr33Fx5is7ZszHDoLGJKWtg7QEuy6L5rHUmA9sN0j_QHI_AXWDWqmH7ZnguX3EpmL0iRoqjhKYKVIf-lU3auJL4ul3fOssuqSOlqb_pnAnjlkeuhegjFuUGdvCdxIG2eAd5MQIuqQDyp8W1YLpOYCqDJzFTE2BrFSzDVap4m7YxXeWHozRQCMT46JLgnJ35loxNefeo-DMOLDFydS4--l9MVW6dUDMKOgUO0UD04DHiRUoWCsOxIc-MBhjYLxRXSXy0-vwljwK8XFrPZRUPUvo1LsWAgdKybD4ru2CWKEvi9qO5JFg-tpeISi8H_1BS3OvLReZz-j6TFRT-eJhRhA_FtC70_Xmg44xtN-3gOpXgtKq5likZpRpnzlp3I-LW0xdLfYkGwZTZsrN8GTkPUlyvkx8xtl1gIOICT5Lwv-OMDuo1gqZdiVS_Ir9MhcYM1hoiVqehm9VUL8ZcabOdhgki_lWAC0W2KeGNhj9eLIFyckce5vfXVfbvkvalgtfm3IuSzzWhSP2Dvqje4kJqFMqlMH2OBUxHHko-ggdILKVjiuc2mfZ2SsJwdUYKp5ikIBMkxYr2chfXLqIjvUhXdVw9O4HQm65OINxKR4JbDdzyLMXa54Ulu1_oGY_2r6t1kG-4YqeuFCsfS5DBpbFtQd4jvgNkXZ7I8PVxjwkMiyPYo0wEz53EnRyFz-r7gPm2o95FEXD3cyqMwGglI6BG5r5A3d99ymu6WZTSfuTSKpRK4CL6Cnx65_lJ-crJRnOKOyuvH85QddHuE4SZuqYBNPJgjZ73hkyfadPV8hbzJTRBo0Ba0zZzOQOuSAizHqCBSxsoBR0kJtdIIla9IMEygwiR7OC8nKN5mMo7-4R36F1nnsPK5T3zNaUO3CxKqsfkZvPub9FlrjLnSibSs6H97DgEwsBEb4LDfLLvnEOBykurccakW13dz9LH076iIKNb1Y8YhyDeAya6vEHtzwStcciNRIE8yQfPNqpkcWeBnpijJzEUDvijr_X4SDRyzTipgWrLzO0PZVZYZ6SySsXtyXd-iwHAMXgtHEqxtfenp-X2f7kMFy3h86GcUL9JiBo_nZpCPZM6T8_st3Hr52tU_ItwrevUkVy32F8lAN-eY3cthG7wOH8lE5iRwmFHV5bcA3YbB6moJGMWjSxwv45yTzGcf7qCEeCmBb2RuLSh_kMSjLfxxcqtbD3awb2gj-ZX_4UoJu8drycOxF830sg-zVHoxk9h76tIL-j4kqQUwXX-fu-OTqJ_bDcdU8ieeToMMI6PxlPcAchVpgGpYn0sSkrJn-Dy84Y0BQvaW5lkc1WHdOBn0sCGczjByOQBpygMJrpm3WzUA9eHFtdZf1EcAtTD2yAxX0OEU83eAF9TRaa7wR8e2VCH_N55C_0Jy0W71jQG7FTATQCHT6ByBoDilZtVZ2k2pPSK-Cq1kAoilCIovyeBgQWk3wYugkJEH60lLlDfA6_ULBEJWGUOAecYQ3Qy7mr1vKPf09WYBfoI7mxBEQL8hy9QerG4IsKAnjqCRPmnUbtgAIeswkH0DmLOI5VxFFhORR0YJoADtvu_GYXiIzYo4Y-x6lA8nJhDUIYdZEcYnQ==",
+              "summary": []
+            },
+            {
+              "id": "ws_077602240b6d3200016aeb6bf529dc87d0b41dea32e8f02d29",
               "type": "web_search_call",
               "status": "completed",
               "action": {
                 "type": "search",
                 "queries": [
-                  "Ruby latest stable version official Ruby lang news release current stable version"
+                  "latest stable Ruby version official ruby-lang.org"
                 ],
-                "query": "Ruby latest stable version official Ruby lang news release current stable version",
+                "query": "latest stable Ruby version official ruby-lang.org",
                 "sources": [
                   {
                     "type": "url",
@@ -134,47 +141,55 @@ http_interactions:
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/downloads/releases/"
-                  },
-                  {
-                    "type": "url",
                     "url": "https://www.ruby-lang.org/en/news/2026/09/15/ruby-4-0-7-released/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/"
+                    "url": "https://formulae.brew.sh/formula/ruby"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/"
+                    "url": "https://docs.ruby-lang.org/en/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/"
+                    "url": "https://www.ruby-lang.org/en/news/2026/03/16/ruby-4-0-2-released/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/07/14/ruby-4-0-6-released/"
+                    "url": "https://github.com/ruby/ruby/releases"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/05/11/ruby-4-0-4-released/"
+                    "url": "https://www.ruby-lang.org/en/news/2025/07/15/ruby-3-4-5-released/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/downloads/branches/"
+                    "url": "https://zairalabs.ai/guide/tools/ruby/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/10/23/ruby-4-0-9-released/"
+                    "url": "https://www.ruby-lang.org/en/documentation/installation/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/10/23/ruby-3-4-12-released/"
+                    "url": "https://versionlog.com/ruby/"
                   },
                   {
                     "type": "url",
-                    "url": "https://www.ruby-lang.org/en/news/2026/07/"
+                    "url": "https://community.chocolatey.org/packages/Ruby"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://rubyland.news/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/Ruby_%28programming_language%29"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1xdxfcf/regexp_compilation_fixes_related_to_gitlabs/"
                   },
                   {
                     "type": "url",
@@ -182,15 +197,75 @@ http_interactions:
                   },
                   {
                     "type": "url",
-                    "url": "https://bugs.ruby-lang.org/issues.pdf?per_page=200"
+                    "url": "https://ongarofrancesco.org/pdf/ruby-lang.org_20250815_151120.pdf"
                   },
                   {
                     "type": "url",
-                    "url": "https://bugs.ruby-lang.org/issues.pdf?f%5B%5D=created_on&op%5Bauthor_id%5D=%3D&op%5Bcreated_on%5D=%3E%3D&per_page=50&v%5Bauthor_id%5D%5B%5D=710&v%5Bcreated_on%5D%5B%5D=2020-12-01"
+                    "url": "https://en.wikipedia.org/wiki/YARV"
                   },
                   {
                     "type": "url",
-                    "url": "https://bugs.ruby-lang.org/issues.pdf?f%5B%5D=created_on&op%5Bauthor_id%5D=%3D&op%5Bcreated_on%5D=%3E%3D&v%5Bauthor_id%5D%5B%5D=710&v%5Bcreated_on%5D%5B%5D=2020-12-01"
+                    "url": "https://de.wikipedia.org/wiki/Ruby_%28Programmiersprache%29"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://fr.wikipedia.org/wiki/Ruby"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://rubystacknews.com/wp-content/uploads/2026/02/20240515-rubykaigi2024-240516075157-f05e2447-rsn.pdf"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://zh.wikipedia.org/wiki/Ruby"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://catalogimages.wiley.com/images/db/pdf/047121972X.content.pdf"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://extr-p-001.sitecorecontenthub.cloud/api/public/content/ce0f4fb3a0344adfa05bb48c3ef8c247?v=8ef06c01"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://elhacker.info/manuales/OReilly%204%20GB%20Collection/O%27Reilly%20-%20Ruby%20in%20a%20Nutshell.pdf"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://en.wikipedia.org/wiki/WEBrick"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1n2of8d"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://arxiv.org/abs/2609.01502"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1f8otpa"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1m6kdnu"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1qwp7kh/gems_that_are_incompatible_with_ruby_4/"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/14sw4px"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/17e0a77"
+                  },
+                  {
+                    "type": "url",
+                    "url": "https://www.reddit.com/r/ruby/comments/1hb0tdl"
                   },
                   {
                     "type": "url",
@@ -200,7 +275,14 @@ http_interactions:
               }
             },
             {
-              "id": "msg_087c079ceb1c4485016aea89762be887d082d1924bd26ee37a",
+              "id": "rs_077602240b6d3200016aeb6bf744d087d0995d4641c979fc51",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62v3gxzDlrLoJA2IIMrpZ3F8aCm3PqhTy8HCiHygCvYqgxWo-6I4ViZWqryl775QMNcShldmaogxu0gCTwj8Vmj2iZ8LCSdm8CxwkGUQenlnaaem1tm26X-zAIBIKG11j6AQhzytQqQKPAGLL9TRRjjI10Bi8CVYgmirdxJO_2s940FtWtGsaE8dm1qqHDA-wAFq9TFJzFcrvCMCziPsoY-SFCDZqS7ns7curD_rPyZWaX32ZHBHvC3fGr6ts5vrWZaFrZxTZjABhZKFIlguoMqceHorqOgNyQayGEV3sfWay6Ih9SgrWu2UgwjqnYpyKUECANAr2dF-S5ez0siPhXQA3brOL3gcvMHWzInWW1DoM9P8dg4JqcGOSTuLOzGJdPaDCYv-L2jccUpAWeGS2ABaQMLmiLPrtnNvYWjlt3LVUaOX6JAyod78iytcA-Y7tSu-4Bxx6S6OK51nAwq8NFeYLs5jMLUIVdx-0PRe_eakMJGVSzHtesXUr7ZcjLZhQnbURQm6NIYFyn8kMCXuQ9_jgCAscz_Hcl52E7lX8lP1LHdjpKJ8DLH4XQrjVTX895qfpVTJeAgutSKrKbawl3OVYSkmppFZf913bnU8PvD3l7PQGTqEc_dukqg4iBP87Hu2CvmHD5IDNeDuQqXpDJiVlfOAegHPG0AdHOiHAb_K-yVt6cLxlsY_cu-Mv8dWLmtU_v3fTfW-DodBJ2wa9GuBu1FQatBclprSTqeKoTiwx6qtORo81nJ27v04Qe-bsO1_kO_8uC0v0LWlXht-KpUutYeEHM0_5JW6iPM3VfKZ4GjKGotR3zqSI4FvkQhnrmE0ro0BYFPF7M0JUMWH_Tasgn6CK63ZdAxtDSNpqj7pQD-eVz62KbA8kCJaD1gXI4tS0s3eTgtevmhmWqjepxqp50iu2WOTVKlyCq7dzQPcg10eEgmZSiK-cNK_s3gnQUUhKeKQ3vKbvC43sDMvRd9Ttaw3FdH-ujfcQSf-0dmkCB2i-ebhc1-VLl-BxcD_yKNP3v4hWE3_coA9YZy2zvN4hAPY39iVWUvUeOxxqjRGhnsxLtLT6QC6lJUy6xHuyIMPjtS84q8c9tPWnDbC07QYcaJsUx-6AGuY9gcQAi64tu_-JW9WvutXkIOPyeriGhsd3PKSVkg4-g7mTPYh1IUdlkoNiKhp3LS8gcFchkG83jnAyABSfsNK76bpS02OBzGdobjcgsv9PlCySWxjKCtJ6kMngjy2K4aSrW5LnonRgImKCo3MTtNQMCPTw8HO6nMriYFhflBoT6g8nIEzPKuR-1GJfSdLkdrtk7FPFYpi1U0Sf21bc6GpMpLgXSqE5Br72YyYCX05HJNd7aQnzE6w2ABuk-l8t85S2GRw6fW09R4cTrZY2SJ4tX_C4OUkiKf1U5nPJhYY-i8DToht1QltilvPUPXqiB7wvnrFsBqqMGC8GH3XQSK4r0qHKVi8ANC-HAe4EicIJmob74YDJOQY6_utqQ2KwKeuBO99DjnWF-lm9adTFTpwq7NDhtQfmSj7Sy7P4wQSsrDVltoiod2WnX5SGnhXj3zCf1Ro0JDxCfhZ-gspAHbN5AuvLoFsQSBfvZjMa2oBx11KSr6EdlVgZA==",
+              "summary": []
+            },
+            {
+              "id": "msg_077602240b6d3200016aeb6bf7628087d0a0b28ee4c225d585",
               "type": "message",
               "status": "completed",
               "content": [
@@ -227,10 +309,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -283,19 +365,19 @@ http_interactions:
           "top_p": 0.98,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 8123,
+            "input_tokens": 8859,
             "input_tokens_details": {
               "cache_write_tokens": 0,
-              "cached_tokens": 4352
+              "cached_tokens": 4452
             },
-            "output_tokens": 84,
+            "output_tokens": 103,
             "output_tokens_details": {
-              "reasoning_tokens": 43
+              "reasoning_tokens": 68
             },
-            "total_tokens": 8207
+            "total_tokens": 8962
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:25:10 GMT
+  recorded_at: Wed, 04 Nov 2026 17:31:35 GMT
 recorded_with: VCR 6.4.0

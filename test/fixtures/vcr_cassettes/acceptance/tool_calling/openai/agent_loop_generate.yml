@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Use the tools to answer. Be
         concise."},{"role":"user","content":"First find the city the Eiffel Tower
-        is in, then get the weather there."}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"locate_landmark","description":"Find
+        is in, then get the weather there."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"locate_landmark","description":"Find
         the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
         landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true},{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
@@ -40,14 +40,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '777'
+      - '775'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:51 GMT
+      - Wed, 04 Nov 2026 17:28:23 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -55,7 +55,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0d23ef3d90f-SEA
+      - a55555a39b37e09f-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -71,7 +71,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '865'
+      - '3199'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -89,27 +89,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_bd3932772dd64693a0f538b7656100e4
+      - req_3561e61ad960417eb89f7b26bb26b56f
       Set-Cookie:
-      - __cf_bm=laPDKnliuXtL34c2xq1Veg.Iu_.WxnqImlwW_gm3vdE-1793755430.7565877-1.0.1.1-3MCs0pdYepnxrXNHRaGxXFGFIJTllYe_nEgdbq5uDGvYbws6Pd_ZSCYvx9WHfztcYlHawIrFM7.GmCi5yThi5YhNrSzz1XrO_KWwX1B9AiRoXxj_pSdHbKrQBdFNmyww;
+      - __cf_bm=KcjABzuWNuN6XXvIqm7GQWGCngQ0HamgY1LRBz3eP7Y-1793813299.7749708-1.0.1.1-zHbsj29l9jEv5t0A35lrJVxJHfoKZbJOHpiV91CF_t4r03qi.wS.3iYyVm8xK_u.x8bsscBgPBBhVFdaZ3VGVU0ySahyOt8k5BoHNvGHhW5997sHb8lt6TtN9oc06uGp;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:51 GMT
+        04 Nov 2026 17:58:23 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_09f037eb484b9c66016aea8926d20887d0959f8af4a65afea2",
+          "id": "resp_0d49548ca4a765e5016aeb6b33db6887d0a786406729757415",
           "object": "response",
-          "created_at": 1793755430,
+          "created_at": 1793813299,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755431,
+          "completed_at": 1793813302,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -119,15 +119,15 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_09f037eb484b9c66016aea8927662487d08f60d780be214444",
+              "id": "fc_0d49548ca4a765e5016aeb6b36a98c87d098edc9887b48e777",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"landmark\":\"Eiffel Tower\"}",
-              "call_id": "call_ggtJJV7YMFiMsKGxhj43pEEf",
+              "call_id": "call_EVcbVPeGyNhnr55ZIuZGSFoJ",
               "name": "locate_landmark"
             }
           ],
@@ -135,10 +135,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -234,7 +234,7 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:51 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:23 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
@@ -242,9 +242,9 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Use the tools to answer. Be
         concise."},{"role":"user","content":"First find the city the Eiffel Tower
-        is in, then get the weather there."},{"type":"function_call","call_id":"call_ggtJJV7YMFiMsKGxhj43pEEf","name":"locate_landmark","arguments":"{\"landmark\":\"Eiffel
-        Tower\"}"},{"type":"function_call_output","call_id":"call_ggtJJV7YMFiMsKGxhj43pEEf","output":"The
-        Eiffel Tower is in Paris."}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"locate_landmark","description":"Find
+        is in, then get the weather there."},{"type":"function_call","call_id":"call_EVcbVPeGyNhnr55ZIuZGSFoJ","name":"locate_landmark","arguments":"{\"landmark\":\"Eiffel
+        Tower\"}"},{"type":"function_call_output","call_id":"call_EVcbVPeGyNhnr55ZIuZGSFoJ","output":"The
+        Eiffel Tower is in Paris."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"locate_landmark","description":"Find
         the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
         landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true},{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
@@ -277,14 +277,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1030'
+      - '1028'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:52 GMT
+      - Wed, 04 Nov 2026 17:28:26 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -292,7 +292,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0d84b63d90f-SEA
+      - a55555b82a61e09f-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -308,7 +308,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '800'
+      - '2939'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -326,27 +326,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_f1148435e3ff427f809725affe75a1b8
+      - req_3b2c5d183cff4c2ca1537b0ccd51bedb
       Set-Cookie:
-      - __cf_bm=4kRKTe_YpkRCK.ngQHHI4JTXRDsLS6HzRe8ez7piY2E-1793755431.7235765-1.0.1.1-ob8Oe3iOIrHURuX1C_vwtVF4LQO9tAVsEUuo4G84bGNzF3TkzBcUQ3eDnYIKsfqdjVwIMbpBn7QmevWMiKU5KmU29gtENndFMf6E6hhyzCr2gItRjGxso36Uidec8pBs;
+      - __cf_bm=AP1zXtixFG7D4ltX7dhj1dOVcdp0lu9nWJJJhg1kjBs-1793813303.0702565-1.0.1.1-fG0KLICxyXP_dwCQPZUl.gxAJJsCpWCpcoX0abcDYcpTqUIVpf4l4rC7B8b50GVHTOStxMlJRL6dlbgftjVr74TkDSp_q7EvRw7QR.rFZ2xfTp6Gf3fHJURL38r6yW7U;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:52 GMT
+        04 Nov 2026 17:58:26 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_01606dc168ca3ce9016aea8927ca6487d0835cc5e30e80f98b",
+          "id": "resp_096abcb466df2bea016aeb6b37236887d0a3b4a3026ca3697d",
           "object": "response",
-          "created_at": 1793755431,
+          "created_at": 1793813303,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755432,
+          "completed_at": 1793813306,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -356,15 +356,15 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "fc_01606dc168ca3ce9016aea8928448c87d08c4b3c1a8a7a1be7",
+              "id": "fc_096abcb466df2bea016aeb6b39ef8487d097fd111488ff215c",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Paris\"}",
-              "call_id": "call_O5ncpCFI7g0orA0gNgs5aALe",
+              "call_id": "call_s5rt4fg5b7pgVnkXCcw2uGUE",
               "name": "get_weather"
             }
           ],
@@ -372,10 +372,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -471,7 +471,7 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:52 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:26 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
@@ -479,10 +479,10 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Use the tools to answer. Be
         concise."},{"role":"user","content":"First find the city the Eiffel Tower
-        is in, then get the weather there."},{"type":"function_call","call_id":"call_ggtJJV7YMFiMsKGxhj43pEEf","name":"locate_landmark","arguments":"{\"landmark\":\"Eiffel
-        Tower\"}"},{"type":"function_call_output","call_id":"call_ggtJJV7YMFiMsKGxhj43pEEf","output":"The
-        Eiffel Tower is in Paris."},{"type":"function_call","call_id":"call_O5ncpCFI7g0orA0gNgs5aALe","name":"get_weather","arguments":"{\"city\":\"Paris\"}"},{"type":"function_call_output","call_id":"call_O5ncpCFI7g0orA0gNgs5aALe","output":"It
-        is 22 degrees Celsius in Paris."}],"model":"gpt-5.4-mini","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"locate_landmark","description":"Find
+        is in, then get the weather there."},{"type":"function_call","call_id":"call_EVcbVPeGyNhnr55ZIuZGSFoJ","name":"locate_landmark","arguments":"{\"landmark\":\"Eiffel
+        Tower\"}"},{"type":"function_call_output","call_id":"call_EVcbVPeGyNhnr55ZIuZGSFoJ","output":"The
+        Eiffel Tower is in Paris."},{"type":"function_call","call_id":"call_s5rt4fg5b7pgVnkXCcw2uGUE","name":"get_weather","arguments":"{\"city\":\"Paris\"}"},{"type":"function_call_output","call_id":"call_s5rt4fg5b7pgVnkXCcw2uGUE","output":"It
+        is 22 degrees Celsius in Paris."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"locate_landmark","description":"Find
         the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
         landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true},{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
@@ -515,14 +515,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1273'
+      - '1271'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:53 GMT
+      - Wed, 04 Nov 2026 17:28:29 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -530,7 +530,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0dddadad90f-SEA
+      - a55555cb1995e09f-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -546,7 +546,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '699'
+      - '3368'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -564,27 +564,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_a0c93a42b74141239e441b9c26f4327c
+      - req_8e19ad485cc3449a91b4940c606037d1
       Set-Cookie:
-      - __cf_bm=kIz6B3onL1H7BXkGjmyf8xcF3N4_.NeCfa8pVdcOqr8-1793755432.6127903-1.0.1.1-bWOvsiAfFxG1.IalrqO6bNRkjRTAgzMC.FUOOjjvD8jtxVWwwDzLDYUCEakRnJrYwr77rKCAdzvrc6xlGaeFGF2YOVI6eNQ4VvAYxojsyqm2wA9AAopGx6IhaNajg1fh;
+      - __cf_bm=y5pQQiGm3EDlDzYeR4i7qiklEzmunKJcnsfAB6IFp60-1793813306.0927165-1.0.1.1-dDwJHjl6fEqgJ5ctoGCO__UsoAu6.pXCpMvKYaCEMqlNG6Kf0wzyCao774aEWWgbRoynR2_TotuhDZl5dlF78VVr4g0nfyUGtkWncXqxF7fGPXGI.uOpff.payKYdgee;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:53 GMT
+        04 Nov 2026 17:58:29 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_098c4cb1a4419023016aea8928ad7487d0ac932a7e7e3218da",
+          "id": "resp_008785071c6c2eba016aeb6b3a27f487d09f90aa6e4aa5b8d9",
           "object": "response",
-          "created_at": 1793755432,
+          "created_at": 1793813306,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755433,
+          "completed_at": 1793813309,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -594,11 +594,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_098c4cb1a4419023016aea892911a087d0aa4f89b22bb1ba75",
+              "id": "msg_008785071c6c2eba016aeb6b3d3a0487d0a3544b12800eaba4",
               "type": "message",
               "status": "completed",
               "content": [
@@ -606,7 +606,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "The Eiffel Tower is in Paris, and the weather there is 22\u00b0C."
+                  "text": "The Eiffel Tower is in Paris. It\u2019s currently 22\u00b0C there."
                 }
               ],
               "phase": "final_answer",
@@ -617,10 +617,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -704,11 +704,11 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 20,
+            "output_tokens": 19,
             "output_tokens_details": {
               "reasoning_tokens": 0
             },
-            "total_tokens": 208
+            "total_tokens": 207
           },
           "user": null,
           "metadata": {
@@ -716,5 +716,5 @@ http_interactions:
             "agent": ""
           }
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:53 GMT
+  recorded_at: Wed, 04 Nov 2026 17:28:29 GMT
 recorded_with: VCR 6.4.0

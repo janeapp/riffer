@@ -287,7 +287,7 @@ http_interactions:
         opens the clinic on day 4.\nRule 397: staff member 397 opens the clinic on
         day 5.\nRule 398: staff member 398 opens the clinic on day 6.\nRule 399: staff
         member 399 opens the clinic on day 0.\nRule 400: staff member 400 opens the
-        clinic on day 1."},{"role":"user","content":"Who opens on day 3? Name one."}],"model":"gpt-5.4-mini"}'
+        clinic on day 1."},{"role":"user","content":"Who opens on day 3? Name one."}],"model":"gpt-6-luna"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -316,14 +316,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '21953'
+      - '21951'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:30 GMT
+      - Wed, 04 Nov 2026 17:30:22 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -331,7 +331,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd04d888a50cd-SEA
+      - a55558966b5676ec-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -347,7 +347,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '1009'
+      - '1526'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -365,27 +365,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_d10b12f2b7e140b8a0632e322b120962
+      - req_c120ad00e55045c9bddf8de5a4e97e27
       Set-Cookie:
-      - __cf_bm=v_3IceVa3Et2nPCm8zrOqUCRNWo80CfZtKVJGCqrjaA-1793755409.526843-1.0.1.1-T1T1dhmoxvQKHEyMk6ENnqe4R5NohUPpNfIgmWVn5jFQn5_ecZ_avSk4std9P8NnmQTFgIrVI4NyMwdO79y14i1AHIbE7JP_6QGoEWeU2UqWi.4Ai2VpeOt2Q099bjCJ;
+      - __cf_bm=_bfMylJZemK07AHeaCJpGLlazvow84iFpBQPA5DtQzU-1793813420.5514739-1.0.1.1-FVjMBTEMqi.gOYK7qSBqrboWF1s1YTev5OXqi7pllWX6rhoZ5HI3uPja9UM5unEkk0BNcemnjFC0oK9q6JwMJmOGnQBtQYOE4RqjYdmDW8YL9KTuY07Xu9kbABhJf7.x;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:30 GMT
+        04 Nov 2026 18:00:22 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_02b4651254859382016aea8911996487d0bd8105a6ebf38d64",
+          "id": "resp_070292a006134708016aeb6baca58c87d0b2feb29ffa404bb0",
           "object": "response",
-          "created_at": 1793755409,
+          "created_at": 1793813420,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755410,
+          "completed_at": 1793813422,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -395,11 +395,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_02b4651254859382016aea891217a087d0baf6c6cb7ef9d5aa",
+              "id": "rs_070292a006134708016aeb6bad893c87d08649cbc59aa53a0f",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uuUXzMZ5u2FZ3h8lbb6FxdcsE2BRdU1Ri7_pAgQOewlx3CCC73PDDOuvW-14VNxJVvgGKBgdSeQadk1YGT4SmWMhBffQldm3TukdNdVDhDWzOzOl2xJxcpj93mAR2bd2EapFq8mZ1NADkDKZM9n2q91f3WRE3nZ0Kar99EJcxIgaNvXID_kecGKzMRCVUouuihDjK8jcw6xnKT1E7RpY0SPVBfu9FLn6qtUGzwvWZrdAHjnXY6TAfoVo8f1ZoBaTNjM6XvjXWngAk8UUFhDg-4vji6Cl4Aaj-kjlnM8knlOqQ8CIyo6Pz6i0ponzYSQkXQxnNpXlxTv3K5LmO1Z78s0FgNnjuXrorCrKkGsORnpdpTYFpDXdpPe5iByUSKynl3im7iSHDq-RAXF8ggYt-VdXnCC5ZvjBLG8bHoHzrE7_1uq0H8LSKjU3hazPzH_CM0tQzCttIjYd8v22LUyMAlHllZ38IpO_GhEFbs2GYtcNTuVk1XNw-x-9Q0aiq4xWn2RuASfkGKunSdrMeA1azuJ-pmuJl6SLrdS4_Rl-fkqKf2QdV9UZpcJhpT_8lhA6LB9U3kr5C_z3qMA91YTACS8HD4L8LS1hUbqKsDtihX0Dll1AXsRxwGh-tnUN9_nK2m-mGUayesASmo6PKPqO4DLmtthsq0IeMZE7uoK7XcPchk-Lw9BycDJ9XwAsuFtVvladT9yVyeoy1phM0_XjelbMW2kKBNuWln262S2VLyoQsk4fMziSFjVqe9IxMuh1k2JVQinJrWfg3QdUWauLqMRsWj7Un4hJdvq317vv-wj2uTr9QmeQMadUR3g8QHEZMVmZONxiDc-JdfbxrgKjSSiiEzxXrlRZPjtueZnDWrJ213DPEHcCLHwYdoCSpehIMmL-ifs14uyRmbHFcbXmIdrltsMoE26VaQfzrNm6hh5F4DNgZEiiNFKFe4sGZgKgdRyK3n99-qgZ4Ae36fpdIg3tidYVdtIie2QOmy96kHKCpUr9LVBjo9huMe8bBAfEfQsh9-RE-W4PScrTK5v6YW54P8V8wDtvoIqzhcH7rdkgGoT58lY9DEmfGcIcV1g46fZ05RyoSsh19jFA6c71eSKT8QOhANzo7EF6-sbxeN3YUwAylRd-21svLFmQgqn1n-u1NHDJOyRVYoZ2jZnyxJGEZbU61Ztin_awa3m3MRzJrZFkPAzy8nxXysLiY7GWRvA_DCZPDIsvwHkBIw246sMs1mRtzAjDJmAt9NCqS5jTCZtw8puLuiBu-k6hFtRvXxWWLUeMEmRLEVPfO3mFXdn9M1AqYn3GEpV2X-2J5GUrnkljog1E3IkQRr1n-hpxP0mDtwhu05uL2HdtJ1LnIWq8kmUlg03LbqV4DT3_i0QP4ttZwvVLoO5zGQI1iftZqPO_5KSDPo0IJreaTnORlYIfbR5cGUBbR0hEQK7HXF5Y8Pz8XCrt1KeGcfe0ktB21iew3tniNOwp6hYrHoWiA1p725UUYcY4hXi8nSrpLDWU48rNVRWAFn_713_UCx83UPh4Rmm6g8yvW8j31aEf45_83pEWxOPf26XiTzno-7HGjVssslzFGZGMaqt8frHdQNS_mb2OR70YEcFAXe-H-mWwtMwLvWAW97SU2UmdCz8FvryCUU_KR6-drH1RlKZa2KnYD5dZ67XTL_-7HkEuJAct4mOLzWphgyTgZKnLS2U8ZlIOMkHEce3XD_wP8eyG8Y",
+              "summary": []
+            },
+            {
+              "id": "msg_070292a006134708016aeb6badfbc487d0a087b6e883feca10",
               "type": "message",
               "status": "completed",
               "content": [
@@ -407,7 +414,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "One staff member who opens on day 3 is **staff member 3**."
+                  "text": "Staff member 3."
                 }
               ],
               "phase": "final_answer",
@@ -418,10 +425,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -462,18 +469,18 @@ http_interactions:
             "input_tokens": 6427,
             "input_tokens_details": {
               "cache_write_tokens": 0,
-              "cached_tokens": 6272
+              "cached_tokens": 6424
             },
-            "output_tokens": 21,
+            "output_tokens": 41,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 30
             },
-            "total_tokens": 6448
+            "total_tokens": 6468
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:30 GMT
+  recorded_at: Wed, 04 Nov 2026 17:30:22 GMT
 - request:
     method: post
     uri: https://api.openai.com/v1/responses
@@ -761,7 +768,7 @@ http_interactions:
         opens the clinic on day 4.\nRule 397: staff member 397 opens the clinic on
         day 5.\nRule 398: staff member 398 opens the clinic on day 6.\nRule 399: staff
         member 399 opens the clinic on day 0.\nRule 400: staff member 400 opens the
-        clinic on day 1."},{"role":"user","content":"Who opens on day 3? Name one."}],"model":"gpt-5.4-mini"}'
+        clinic on day 1."},{"role":"user","content":"Who opens on day 3? Name one."}],"model":"gpt-6-luna"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -790,14 +797,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '21953'
+      - '21951'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:31 GMT
+      - Wed, 04 Nov 2026 17:30:23 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -805,7 +812,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0547b0b50cd-SEA
+      - a55558a21a1976ec-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -821,7 +828,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '904'
+      - '1137'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -839,27 +846,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_ac317fa9fbaf4d19a4132f431ae68583
+      - req_9aefeb31e16a492b9ff517a224537909
       Set-Cookie:
-      - __cf_bm=Mw5wtTUkf8tS0YPZ9XUfK9YWPDHk444K7Kf9_Wb5iAY-1793755410.6360664-1.0.1.1-CQnhr8WB9ZdfIdXm2Ynwr1aj97_Or91SkdiOeEkyeCTqGOD_65Wag_wp5UY6uDWZAvYDRhompOx6bfHqI12ZwqpnCFih.Zq5UCdvQXqvlMGfVzldMJ3pYMwWKDgaoVSp;
+      - __cf_bm=2nVXI35vkn2cgSt4FIdfwYILkzndFshnm7AdFx1jfGY-1793813422.4138424-1.0.1.1-u69jj_obwBUG8nTPAa32tOWb4UYnpSEXMQqRJwBVSdXeMCncGYkFwp1.tjdUFHrXypGXerQ7Lm8iucFFeq0PaVkYVyNBoE7ZIUaLwGjQu3lRcnVkpe6yZRLbrtGszr3_;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:31 GMT
+        04 Nov 2026 18:00:23 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_057f904b23291b12016aea8912b75887d0b1dd923eb5b108f1",
+          "id": "resp_0eae507470d32b9b016aeb6bae937887d0a9861bb9617e90bf",
           "object": "response",
-          "created_at": 1793755410,
+          "created_at": 1793813422,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755411,
+          "completed_at": 1793813423,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -869,11 +876,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_057f904b23291b12016aea89135f4487d0aa77f2e4a6bc5ef8",
+              "id": "rs_0eae507470d32b9b016aeb6baf1f6487d0830a9d5d9ea65788",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uv-QRmPCsUxnt6JZpAabsR4frINKlDRHbWjzhVQuNjwMMYkHdO6TW_8OMuQwgJ4_1LKAIylrSxdHC9ZOsobbM3tAeCTOwpUc_gAZ3EuNJvF2bSB1TuFnwPjKCrXeGyiHDrWGqQGLvukpJZQdRnQhx-YzO2FxFMcF1fruqvvcnlEaPU5laZzWEMRIqnCI9Kl2mCG5vsiYayqYpXBZA9dJw_wYy7LZRM5BCI-4uriXC081_Nx3jMgJM7ytP6H4zt0NzDbEdrhEWBfdFnM4cFWU--jXbjiFDuHdzPo1aw9zCva7j1-YmDlTkM6B-OCrYvyXbtJCfujiSmllg0oH2OlH7L9uQcheAbxVGK6hQ9ZX_3AFu-DOt-PVZSotkl6koW1KlY0-k4BYSZc047HqpO--67chnfk0HrkYo9YffORQ9IJCvm_I4Xb5ScdgyPS_tGk9CSNXdoPDYI61PXPTeU_pO65-8ABf1IwYUVSIh7oycAO1BMfYBimsgfOTxv1vimcHc11xILfGPpJQsVV3mgjvepJwgY0o6YTnSTc558XFq3H0PLiT7q2zey1yrzTxH5KcXUjpiPqvk099CSSwodFssJC-bwIzeXVRW0qfr_-iSmUs32iIKZXyWVELfE1sdPL6fOT3CHJ4wRcDbVNJCLnGxLeQ5fTyk-I9q-7ngsuS8SShJw85mSR_ImBsXKd4kMPUItEL8pkDHJePxTO9bOh4vM8utom-vpaN4YDvV7pfXTmdvUn8HXhc3FPJLTYnhYJWU6SdCt3yJFGTzc5fChmfdwZjzBb5JC0xNwF9rCG3V1cPQIlECnyasOdrJncsOz4goPuBqme6hrqf247OfithNurILOkLUZgMyBgRoncrVuVRZM8g7j5E_pDB37gwg4-VRg8rjGMGd1v05w9VmWqARcVt7SnDTiJIGjGkpFaf3iDAnk5Osp_CJRbIQeBoPzTVQqBhHc2OakQOWDE3WGpF0xqmi77eHozXj02eVLPYew5-gICpQ1h-uM7NV0sxSviU_9OOFGn-XNloawyF41O8QdSc5Tlmuw5sFBUPf_nbsQoluqszuVWx2uE1GGtN9R_juXL4prNPYOFiCHDJh5hdGtwSuMU0SCch37xcTaM_OW6b0v_tgcqLAHShJXjheC6Vafp54KABRVt5q3yCi8XYbVH_HXPLbbBd_ZqwCEOVFfcTPhoEyVgakuqBraxd72PvDT60B6xCKls8aDkYiinXKZm5BXfgDF_KO2gD9_wWh8QYASoyUMRfIU-xTq5pYuQl-CNEEFpdYB-Wmd3Mx64aGZ6-lcJYs7HggntpkDQwsI7BitN3zf5mL_mBkW_V0Cob-UIMWOjsdh568Edp7P8D1sNcmwSzu6Hn5XrwZkMaDpMiSTWjiV5xzI0Ku54DNcM-M81Z4ahthCZqjSeZFel26cTB3WKEZTxRTBZEFMEEPCeyYgwuAdb06fL9V0t7c420_7-K2D6glNs71bk1YTuFMCIRQBCT8BVchXiYhh_cMhb7rWqsbQabzC4JWRm7FPhaRJz2z9fbRG-L0go58HP3oGRoiF3z-Ml8KDzU6xx31UAFvax7FuloSQBAbYWTalMMB9kC1rGoYtylXHDNyHT1139JdB2LTCYxbtIOU4BahjVRB3qmofS2KvHzVahAyj-B4IckxIFaSLE3h3d5offFJCr2tXnS5DINHz4g-Kd1-HqMQ=",
+              "summary": []
+            },
+            {
+              "id": "msg_0eae507470d32b9b016aeb6baf65d887d0bb1f9d5f8a71454a",
               "type": "message",
               "status": "completed",
               "content": [
@@ -881,7 +895,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "One staff member who opens on day 3 is **staff member 3**."
+                  "text": "Staff member 3 opens on day 3."
                 }
               ],
               "phase": "final_answer",
@@ -892,10 +906,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -936,16 +950,16 @@ http_interactions:
             "input_tokens": 6427,
             "input_tokens_details": {
               "cache_write_tokens": 0,
-              "cached_tokens": 6272
+              "cached_tokens": 6424
             },
-            "output_tokens": 21,
+            "output_tokens": 47,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 31
             },
-            "total_tokens": 6448
+            "total_tokens": 6474
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:31 GMT
+  recorded_at: Wed, 04 Nov 2026 17:30:23 GMT
 recorded_with: VCR 6.4.0

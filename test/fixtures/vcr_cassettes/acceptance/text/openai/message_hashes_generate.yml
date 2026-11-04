@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Be concise."},{"role":"user","content":"My
         name is Ada."},{"role":"assistant","content":"Nice to meet you, Ada!"},{"role":"user","content":"What
-        is my name? Reply with just the name."}],"model":"gpt-5.4-mini"}'
+        is my name? Reply with just the name."}],"model":"gpt-6-luna"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -36,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '250'
+      - '248'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:08 GMT
+      - Wed, 04 Nov 2026 17:30:40 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -51,7 +51,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fcfc61cad95e0-SEA
+      - a555590b29338392-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -67,7 +67,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '711'
+      - '760'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -85,27 +85,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_7202b6dfdcbb49128b3c8f7fb0f41d0f
+      - req_e071d8b1639e4e26af55f067326ce68f
       Set-Cookie:
-      - __cf_bm=QMWxJZ5Zwwu5KDIq8P1izBXE_MUWhPZyzztp_eIT6S0-1793755387.8527465-1.0.1.1-YfZEzIAH_mVUfxrWpTrAqLfjNs_JnmhZfodCT_kXZiLlcFLoTR7etDcIqgknrK5xS1pcYY5mhXHGYoc1UJ4bscl7525Lk6DbEXETAarnYMSSzdiiDw_JvmrrEH6BPNkR;
+      - __cf_bm=xoe7rQ5P1vqF6jMYCuiLlh.bo_3J93aiEY6Ys_pYONY-1793813439.2219508-1.0.1.1-fwtNtz_UMAjI7MtLURc5HaZv2dWrtn7S4W1fHWni5qUBfNURE41NO_LA4S0pvFRBT9OlIhsYpKPlZKpxqn6JpMtR3FKhDT7FMV61w9Z58OmfOqqT45Yz_YOl1x2Q5pEU;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:08 GMT
+        04 Nov 2026 18:00:40 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0d8d223b2242f7d0016aea88fbe72487d0b367493fa53f0a40",
+          "id": "resp_0b7ffa11b0ed5c32016aeb6bbf48f087d0959b46a42e2cfef7",
           "object": "response",
-          "created_at": 1793755387,
+          "created_at": 1793813439,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755388,
+          "completed_at": 1793813439,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -115,11 +115,11 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0d8d223b2242f7d0016aea88fc4be887d0abd7e76208c2ae4e",
+              "id": "msg_0b7ffa11b0ed5c32016aeb6bbfe78487d0b7efc15511cdade2",
               "type": "message",
               "status": "completed",
               "content": [
@@ -138,10 +138,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -193,5 +193,5 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:23:08 GMT
+  recorded_at: Wed, 04 Nov 2026 17:30:40 GMT
 recorded_with: VCR 6.4.0

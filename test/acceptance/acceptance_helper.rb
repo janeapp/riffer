@@ -119,11 +119,12 @@ ACCEPTANCE_PROVIDERS = {
     reset: -> { Riffer.config.anthropic.api_key = nil },
   },
   openai: {
-    model: "gpt-5.4-mini",
-    reasoning_levels: %i[low medium high],
+    model: "gpt-6-luna",
+    reasoning_levels: %i[low medium high xhigh max],
     token_limit_options: { max_output_tokens: 20 },
     invalid_options: { temperature: 5 },
-    thinking_options: { reasoning: "high" },
+    # Below max effort, gpt-6-luna sometimes skips reasoning before a simple tool call.
+    thinking_options: { reasoning: "max" },
     # Prompt caching is automatic and needs no request field.
     cache_options: {},
     web_search_options: { search_context_size: "low" },

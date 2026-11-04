@@ -15,7 +15,7 @@ http_interactions:
         or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
         of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
         call tools when the request needs them. If you can answer directly, reply
-        with the JSON object right away."}],"model":"gpt-5.4-mini"}'
+        with the JSON object right away."}],"model":"gpt-6-luna"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -44,14 +44,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1223'
+      - '1221'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:24:49 GMT
+      - Wed, 04 Nov 2026 17:29:56 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -59,7 +59,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd23a7ce093ab-SEA
+      - a55557f51be7f16e-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -75,7 +75,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '746'
+      - '1809'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -93,27 +93,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_36c29d5912064e6f8a2e7bdbbbea68bc
+      - req_14fe6d5b6c914d1087410dbd9e87f441
       Set-Cookie:
-      - __cf_bm=NS8Od1fqDSWk9cNOslwH1xLdki_LB3QmiNbuxkLBybc-1793755488.39241-1.0.1.1-CkP2xMnW4LIEnEb_zJD6n1esqF2CcySlOtkUy9UzlT7tbecmmu1K59tgoGgD3hR4AemnhRrx_o2xC.ZWIfbKxrAdcn0Zm7xgGO62hAXjQntE9kOXjn736A7OXpmQuHzA;
+      - __cf_bm=uKaykHHD3wwO9vB5zzgwdGisOmGj4lQFzRVaAtC0Klc-1793813394.7366173-1.0.1.1-K6zZlQSeWqxxUlFey0jyLaf5.Zkjtxs1a5wfjNBaESb0ELXdWnC6MQkcnAtANSAg7BIN2Sk2dFB3EkOkhBwkIgGj3Uv2qGbGpXdq1KTzL38OhBuiYp._ret3wF8JPaaH;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:54:49 GMT
+        04 Nov 2026 17:59:56 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0450a3f64d5d02c7016aea8960732887d0ad5ee7191f8449e3",
+          "id": "resp_007022470b283b11016aeb6b92d1b087d08f584fff01914c59",
           "object": "response",
-          "created_at": 1793755488,
+          "created_at": 1793813394,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755489,
+          "completed_at": 1793813396,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -123,11 +123,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_0450a3f64d5d02c7016aea8960d8f087d096978210c36119cb",
+              "id": "rs_007022470b283b11016aeb6b9357c887d09c096d0fd88736ec",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uUe1H98sc3JH9ct8YTa14D8zepBOq8XU5nTb7T9I6m6uZHdRqgAg9Y5tsk4mBUp9NstNFTfHaAsrinb22U6CNDS9X2leId19iSH4sgOe-4wr-mlffJgHd6oxwcJKSpiI2ZJCQRd5YLIhNyjrMRZdxbiE9LLZ_SjwaoPOOIwcLrARGjL9NF_u5DkYWt--YWsQU3duLA_U-CExvPNNS6tznm2lcB_70vK-5AG39vqqZZSS9rdxc1fjSP7HqI6Lb2y0GX1XT-kpY0nZMsi16dKuqcAionHkHWlyPenuMmpSfLKOF2z_ciSqIBIYY2pFDNuU7w5emz8xCbEHegGVdwmVKantx2noKo3OSOAEKLXuGbhHWsBqnYv9_YgAqieKea1bFMrbU6yHH4iq9KgFbXAY4ihSEGT0yLq6iRDum_VeLFmaScggXbvosZIQZ3FOb6sFZ-_gWCek_SAqYczeqislZOwizQ4PynS21f9GLNBCxbk6EFUb47e71-MviX_fKTpyJBPPGstmHFZZyFrvUVlv-jJ3Xicl3AIQ2xbAjBJSE9VLusnlCwOwO_WxBAsRCvxYXqnTh3IQw-ovfo5rhvV9fFacPZ6rPbbU0ueRoPK0ZDLr0zHl2CoIcDYYDP2cQyuaSPcpSvq62OtEQ1LQuyWnLTYydVMU_GigjZIL7_qMCKWzUJQGltdHKYS775o6q_pRrOCXlBuTtZ0nIyTLxyOrg4XxYn1uhhQifDDWVzErQeaVWsCo0AOu-MNNYoN_WFHwm7SePpSKrk4t0WDDudfoirnfO2jFwYCXj9hO0T7PcCtiQRNg5GBupwFqhx8fwVVtFRtWIG4mRH2NyKZTz436UcXmROGE9I4n64acKWY2DxRqJrTesGBTP0dCtF9RqTS_p5aOxcb-3w28st-pHuL2Xllz7G1ov69BWNTCJBqGRKzHTovQyXAhXGABgJS2C3J1nGoL4s9BEQpca5ZHrv2PJjQM8gY_Yr9ePN8exGoTePXpvuHXOQgx-MAZn2rDx12PUnKKCr3PUaRNK24lvj8aAg_-HOKczT-Q77o-iDemMaeIQDFWhXBCVwjMDGhzoQsU2au1FwCKHNOn4T6iuu-K2YT2JEDUP8TESXhEkRKJj9C5xcutEig0jSjf4ZCAHAOTIseMG2OYi9sXJ7kw0ghPm1Zj6g6Ffi5-eRygQhQAWh5b57I2NTBrMwtjuFhy9B1-CCI7u7KgtxRmVAZ4SsH6JF2pRxhFb1n5aac_GbawjJYvLpBASk2shYo6uYwNWP6A3793udF6h-oy2au6DAyoREi-Zt6nMpowcbyqHaxxKggiDWBjBePEdqnCpbjsZSkQNN7kG-lMcSgyWe7Yg8gMYT15VIFgnAklakMxPoMzUkaSlLK9UZG9TjyYjdF7OcKViTU2SDDIYm4P_1PLJhMHlYD2Zj0SZ0v4KREFZoDpCE47iDE2KNutiFXh018UqBd-hBZ1xYtvdBGkX4PhnIWhiqvPR4lmLQxtRerBxd5tl1zXOWQUFDx_IZL9cNOOzaI9x-zhD7g2oAeXnbbxeP1lWylCmKsF7I_vtbTlTBUTM4abZhvGQHZOL6gA7J16SP1r_451x4V9MTt-h9PVo-kpWcA8MrTdc36aCyzNTHPK5G9iEJszC2zmpC872PODf9gLk0rr1kuvb6aQoAg5gpmgIUUAwQwFcw5QIBErOnyIU6fgFOiLfBB4ZwkffEWV9TVtIL0YIxqhj_akTFgDBWTXNeI3Wrku6EYD88x6hCsbaLvYWG9nxmJbOEuNJ52AFiHXjfo439-ZP_TQHtz13r7H-lwZzVC_mYLr36STk_6YdzIkgfW4C3RLdzzc5NQVPggmNQxClxH9zL_66kgCuE-oentDxSCrFU1WDH-KRjs8Ctef4UYsNLo2UHyDPS0F8kZb0OUIaHGEpQyMpXoX7cUj8TTl1MQJ4lNMf2CnTE63xAvyg6kfPG1ZIrAkZvHZaNPbvw-WZZ-uS2InRIfGXVgYPnC-nSY1xeSDVcl6I3u_c2S-uvevPiTgKMIZTKJ305NS_P58v1pB5EOMo8ZXYALagjVk4p179b1oyrq0vIhRpzJTfH8g-bY5PylneQQ4OgPMyn_V80zkuHoJ9pd0nZ4MhqK-nPfmJSCWwkhVwiUwj92fEvU_lGZ5Tu8wQF3q8QO48O6Gi2jlhrkaqeV2TPuFff0IJqZ5hYLINtvWnOCDrfPpl5KHct9--VvKZ614Lyks2sWCXHONxug7pfzZNqAuI_Sn5yuio686XV2Tx0Lk9q6ivI2-8KiIUHywjwKUPRQzoZDr4i9b5eW7ppvyLhCxOCoVBGh52nt9Ad-HKFXH7vRlCzPwgUsBuA7btabTdS3xG8MFfJfmLln-C_DcUlkYuiAQaAx5iNGGDmWnSQbzUFHrD-4eXd5rq3DoEfhChY7DLLvUzv32PbK3MGGGTwOgxj3LL3sFakaYiYvncyB6Q4aM2PXtUX-FSK0_Y33xgYilMvnP8yOT6skCduXXzkrbazrISujwpFWIBU-nSJhDB8NI4v_6ClJEjqzyusIDFuAmmCR5pfISS1LICoodufR0umZxuhGOM60_zy7z26vBIId1s=",
+              "summary": []
+            },
+            {
+              "id": "msg_007022470b283b11016aeb6b94689087d0a6c7b8effef73ea2",
               "type": "message",
               "status": "completed",
               "content": [
@@ -135,7 +142,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"
+                  "text": "{\"name\":\"Jane\",\"address\":{\"street\":\"42 King St\",\"city\":\"Vancouver\"}}"
                 }
               ],
               "phase": "final_answer",
@@ -146,10 +153,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -192,14 +199,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 31,
+            "output_tokens": 113,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 89
             },
-            "total_tokens": 267
+            "total_tokens": 349
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:24:49 GMT
+  recorded_at: Wed, 04 Nov 2026 17:29:56 GMT
 recorded_with: VCR 6.4.0

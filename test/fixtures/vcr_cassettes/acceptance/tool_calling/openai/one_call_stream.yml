@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5.4-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-6-luna","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"stream":true}'
     headers:
@@ -36,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '374'
+      - '372'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:23:46 GMT
+      - Wed, 04 Nov 2026 17:27:56 GMT
       Content-Type:
       - text/event-stream; charset=utf-8
       Transfer-Encoding:
@@ -51,7 +51,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fd0b8ad77b91c-SEA
+      - a5555511aa23a333-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -67,7 +67,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '179'
+      - '259'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -79,55 +79,55 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999487'
+      - '179999421'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_82519c19bd674dec83082432786484dc
+      - req_9dfbe0be58ea482c9fd33a3ec259ece5
       Set-Cookie:
-      - __cf_bm=IAfWGJ8a34F4qXemav5MzxAgqnBsKNFj701u.C.9AY4-1793755426.6658044-1.0.1.1-7cTjb.HKMUdOJDMhG10HmJxFX4i2UO74WmRgc4E8PACCfA0Go1VKfkk6o5WvLTcxs5nfieZRpFmjEtlcH6W_LIw4xpCccxVJ7L3_PmRXfeGjNGYJSuaRMbwgUPp8uE2R;
+      - __cf_bm=pJd_4HfVJ9SmKpmoVC.7pLdu3l7k8HwW.qzCn1ybG1Q-1793813276.42342-1.0.1.1-Eo.AFKcAfaScLnsT3k_rJRve6ssc8M3KhK.vFfqoebt5A_tm3K5qCODE1mWMbXq9N9UWJCV5M5GCj75REf7_JGzwZrPROD8ZuFpWXutTowPcmNflBZrtMZP4Bl1OTD2F;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:53:46 GMT
+        04 Nov 2026 17:57:56 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: UTF-8
       string: |+
         event: response.created
-        data: {"type":"response.created","response":{"id":"resp_0f018d0d47ba58db016aea8922bab487d0ba17ad3870dbe8f0","object":"response","created_at":1793755426,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+        data: {"type":"response.created","response":{"id":"resp_072a28e55bae26af016aeb6b1c7d8487d0850a20f0a59e1529","object":"response","created_at":1793813276,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
 
         event: response.in_progress
-        data: {"type":"response.in_progress","response":{"id":"resp_0f018d0d47ba58db016aea8922bab487d0ba17ad3870dbe8f0","object":"response","created_at":1793755426,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+        data: {"type":"response.in_progress","response":{"id":"resp_072a28e55bae26af016aeb6b1c7d8487d0850a20f0a59e1529","object":"response","created_at":1793813276,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
 
         event: response.output_item.added
-        data: {"type":"response.output_item.added","item":{"id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","type":"function_call","status":"in_progress","arguments":"","call_id":"call_MdIIy1iXoJxO0ojIVnNUvcmy","name":"get_weather"},"output_index":0,"sequence_number":2}
+        data: {"type":"response.output_item.added","item":{"id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","type":"function_call","status":"in_progress","arguments":"","call_id":"call_kxngOuBfq0eXCloTmWq93nFT","name":"get_weather"},"output_index":0,"sequence_number":2}
 
         event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","obfuscation":"WpvjCfM2gY3CbW","output_index":0,"sequence_number":3}
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","obfuscation":"NLsPITDAZGoWRF","output_index":0,"sequence_number":3}
 
         event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"city","item_id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","obfuscation":"ZF3UooI5K8kE","output_index":0,"sequence_number":4}
+        data: {"type":"response.function_call_arguments.delta","delta":"city","item_id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","obfuscation":"ycgY0V3NQJo6","output_index":0,"sequence_number":4}
 
         event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","obfuscation":"SUl220PFaPBdc","output_index":0,"sequence_number":5}
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","obfuscation":"5xfoZ6gs43w4Q","output_index":0,"sequence_number":5}
 
         event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"Toronto","item_id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","obfuscation":"mpEV1WgZN","output_index":0,"sequence_number":6}
+        data: {"type":"response.function_call_arguments.delta","delta":"Toronto","item_id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","obfuscation":"VFEe5eBFW","output_index":0,"sequence_number":6}
 
         event: response.function_call_arguments.delta
-        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","obfuscation":"Ettd83PZSq9XTn","output_index":0,"sequence_number":7}
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","obfuscation":"5aTIQKfr1zavsD","output_index":0,"sequence_number":7}
 
         event: response.function_call_arguments.done
-        data: {"type":"response.function_call_arguments.done","arguments":"{\"city\":\"Toronto\"}","item_id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","output_index":0,"sequence_number":8}
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"city\":\"Toronto\"}","item_id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","output_index":0,"sequence_number":8}
 
         event: response.output_item.done
-        data: {"type":"response.output_item.done","item":{"id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_MdIIy1iXoJxO0ojIVnNUvcmy","name":"get_weather"},"output_index":0,"sequence_number":9}
+        data: {"type":"response.output_item.done","item":{"id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_kxngOuBfq0eXCloTmWq93nFT","name":"get_weather"},"output_index":0,"sequence_number":9}
 
         event: response.completed
-        data: {"type":"response.completed","response":{"id":"resp_0f018d0d47ba58db016aea8922bab487d0ba17ad3870dbe8f0","object":"response","created_at":1793755426,"status":"completed","access_programs":null,"background":false,"completed_at":1793755427,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.4-mini-2026-03-17","moderation":null,"output":[{"id":"fc_0f018d0d47ba58db016aea8923209887d0b0c9abebcbc55e21","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_MdIIy1iXoJxO0ojIVnNUvcmy","name":"get_weather"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"none","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":56,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":18,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":74},"user":null,"metadata":{}},"sequence_number":10}
+        data: {"type":"response.completed","response":{"id":"resp_072a28e55bae26af016aeb6b1c7d8487d0850a20f0a59e1529","object":"response","created_at":1793813276,"status":"completed","access_programs":null,"background":false,"completed_at":1793813277,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_072a28e55bae26af016aeb6b1d50ac87d0b6f97d8adce122e7","type":"function_call","status":"completed","arguments":"{\"city\":\"Toronto\"}","call_id":"call_kxngOuBfq0eXCloTmWq93nFT","name":"get_weather"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","output_schema":null,"parameters":{"type":"object","properties":{"city":{"type":"string","description":"The city name"}},"required":["city"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":56,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":18,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":74},"user":null,"metadata":{}},"sequence_number":10}
 
-  recorded_at: Wed, 04 Nov 2026 01:23:47 GMT
+  recorded_at: Wed, 04 Nov 2026 17:27:57 GMT
 recorded_with: VCR 6.4.0
 ...

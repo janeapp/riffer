@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Order A-17 has 2 items: a book
-        costing $12.99 and a pen costing $1.50"}],"model":"gpt-5.4-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
+        costing $12.99 and a pen costing $1.50"}],"model":"gpt-6-luna","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
         identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
         name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":["integer","null"],"description":"Quantity
         ordered"}},"required":["name","price","quantity"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false},"strict":true}}}'
@@ -38,14 +38,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '716'
+      - '714'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 04 Nov 2026 01:22:56 GMT
+      - Wed, 04 Nov 2026 17:30:06 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -53,7 +53,7 @@ http_interactions:
       Connection:
       - keep-alive
       Cf-Ray:
-      - a54fcf7a59350a5e-SEA
+      - a55558380a0ea0ed-SEA
       Cf-Cache-Status:
       - DYNAMIC
       Server:
@@ -69,7 +69,7 @@ http_interactions:
       Openai-Organization:
       - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Processing-Ms:
-      - '1123'
+      - '1302'
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       Openai-Version:
@@ -87,27 +87,27 @@ http_interactions:
       X-Ratelimit-Reset-Tokens:
       - 0s
       X-Request-Id:
-      - req_44f54e2dc7b34e739ba7f3b503efb916
+      - req_900c62fb691f463680167f7fe0338357
       Set-Cookie:
-      - __cf_bm=hgWPZBoPMVArmcJFBv2SAqRWd_TwQm0M1W0LWD7aXfk-1793755375.7327816-1.0.1.1-59gzMjcGG3357oWoSGvZIVC0DWtey4jtLM7LzdFaPVMnaDBlRiYeC1CQ4Kn0hwvZxX2rFdmuDkPi4449RakL7e1THv4CA_jJ53LmhpzxMduu.qWh7XQ23hYAEntr1yuP;
+      - __cf_bm=Ln3WtFWvfkVPzXPb.JZleRD4g1Bq4CEU_fhyPfGAUHw-1793813405.4484336-1.0.1.1-433yRXZeVjv2gYtZ3gnCsStxjaMx2e893t_qneoTsbWWn_m2hQkl76aL7GeKvFmjiZr5n3IYoXDB9ECwBP2eu9v0cxqzvmle.J4QbLdo6Tp21rBGCbRC4YKR5ydtpkRO;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Wed,
-        04 Nov 2026 01:52:56 GMT
+        04 Nov 2026 18:00:06 GMT
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_057758c87ccb27db016aea88efce5087d0a272808fabaf5dfe",
+          "id": "resp_0f865054f662e5d3016aeb6b9d833487d0a24f7dc21c741ee9",
           "object": "response",
-          "created_at": 1793755376,
+          "created_at": 1793813405,
           "status": "completed",
           "access_programs": null,
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1793755376,
+          "completed_at": 1793813406,
           "error": null,
           "frequency_penalty": 0.0,
           "image": {
@@ -117,11 +117,18 @@ http_interactions:
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5.4-mini-2026-03-17",
+          "model": "gpt-6-luna",
           "moderation": null,
           "output": [
             {
-              "id": "msg_057758c87ccb27db016aea88f0862487d0806085cdb4c35006",
+              "id": "rs_0f865054f662e5d3016aeb6b9e0f8487d09aa190a37cb3628e",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq62uevP5vPPb9xesW6oyC4pYDygWtMyysuxW4-V9fJdHFXNpXYv7mev5a8JM1641LfHWUkASEkV9MWxKubL8ydQFSLnt9jpe_As1sZbOTzWAwke0p4l-aDOhsvKzT6bxo2uuw4tpNy3DOKoMONERoQY0_7pHrUOFo3Bf-O08zsAXHqfcvfGN_vRyDxW0wPBAEL0boaBkO0KTql35z_ATziw_exGIU50g5qFKObqls6ROuDS1RiIETI-dCXJ96oihCRVZckfOPh6BZUqHDrp2qq5vdtM6gthRMohvorwHJ77vsAJewkIOvLkFxtK-7vU4rprH3x7Ld5yUSTtjLQ_SBMqY6gU-HlOkVqz4P_tCcVbGeBgMN9yReOGPpAc53wq9GdQbnt7IMjSpf-4m3ifAFqeEixOVxGtvbElH6OHDUF5COFXVSogkLj92ph-b66ZxbM-bjbPDmjVpvKE7nLpHmRcHImeFSw92v7WStZx-kxvw2hk21cvBMMgJ4Jtm1tc5LYGfZ1_VKsC7wJxlySZWRYNLsueFXusgJIdfsjWH9YwCySYTPJ69nONJ4nzxYaJVBmExWR2DFquoppTcM6Z7mDOH48rs6o7fbdUnFtDSN8DbsEs-0pGYGNNA7v7x8IbcmaoWD-hBdSC6QCjdYMCAjDwfmCqcw6DWs6L1IiHjSYIXelx-HJPLY2UVYcKf8fGzYTQUPww2qs8RL802qEzvHc2pmvwn_kXGgRuCbte0BHLs4o93RRqAC_cW35yiUg31l1MeV-DZPpXK-j7T9TKTOug8hAlP4sj2w_WmNzQjyZudvwM6QCV78qqxqRNq44vz2kGd4el7duoJKHyXXJQ4L-s_pqRTkfsyoGbn0A2UCrAIqlqYp_NHVe_Ndm_oAQ3yFc1yjTNkgRs_mV2zuCliGr7HjIUEkpWLL89eS9nQ_v5xlNdnrYhz2NYKmd73D9pS6gWJ5Wf_t_y-RXuMB3fPvSCc9qM73HrTuI7rXfor0pXNyvNSXvhidZ1oQzYlROsNXkWWtUuh9oyCyujqP1jj7Kv-IMdqTaD8Okf2GBJ-Kx-5ObOOCeGip3kZBB_BYgQfAbiqVH96-ZDUVknQbW73oOJNhi2rHUTX-CpNvUV809LDUqudOsSov9XdSPLcjNREV5QCbotYbf8fMxxrzY6aVXVcPSHnJ77MHLbq7hEUH9yW7v_AgS_8KQ6GjRPH-N9-9dbgrEXCKeimHUJa0UsBgouqObVBcZzMslX4x8mzTZwY1Dek5OU8VGWM_yH-jB1NDhjQ2ZKP6i09wWKVGLr8wzLekH3o6lRpajbMreGIpvKX9u6_GalBN5PONmmTsZ3lrDjqQXGnuvWjeFf4D3Fqysy-IIjfJD9IFa6kDL7nCmE8MwBm8OdKOE28uYje3SvoT5WSPWXjVkSbqENHyT8TTyaQqNHcgLwBJJKNUKSvRJRUT4tozpY3apTIyUcoJuOcgehhEFJa3uORaqKfk0U8oHxSrB37Vq0fXcq_qtIgfBH-dCpvgECTdKJyxFugs_c8EvJ3v551k8XwkUQpHAx9k8BPiVEk1bV1PfoRX4EY_307WKOF4RqUamdN_YjpvGxJjMd6pAAtf1ZNqXZT39JfOQpqvmwmx7NKs21S__MEtmIzOda90mk-NhMd4dRqkm-NniQKGDHcgA31xNR9rLiyUraPZUg==",
+              "summary": []
+            },
+            {
+              "id": "msg_0f865054f662e5d3016aeb6b9e6da087d0912ebb2f5009797e",
               "type": "message",
               "status": "completed",
               "content": [
@@ -129,7 +136,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "{\"order_id\":\"A-17\",\"items\":[{\"name\":\"book\",\"price\":12.99,\"quantity\":1},{\"name\":\"pen\",\"price\":1.5,\"quantity\":1}]}"
+                  "text": "{\"order_id\":\"A-17\",\"items\":[{\"name\":\"book\",\"price\":12.99,\"quantity\":null},{\"name\":\"pen\",\"price\":1.5,\"quantity\":null}]}"
                 }
               ],
               "phase": "final_answer",
@@ -140,10 +147,10 @@ http_interactions:
           "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
-          "prompt_cache_retention": "in_memory",
+          "prompt_cache_retention": "24h",
           "reasoning": {
-            "context": "current_turn",
-            "effort": "none",
+            "context": "all_turns",
+            "effort": "medium",
             "mode": "standard",
             "summary": null
           },
@@ -233,14 +240,14 @@ http_interactions:
               "cache_write_tokens": 0,
               "cached_tokens": 0
             },
-            "output_tokens": 47,
+            "output_tokens": 71,
             "output_tokens_details": {
-              "reasoning_tokens": 0
+              "reasoning_tokens": 22
             },
-            "total_tokens": 164
+            "total_tokens": 188
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 04 Nov 2026 01:22:56 GMT
+  recorded_at: Wed, 04 Nov 2026 17:30:06 GMT
 recorded_with: VCR 6.4.0
