@@ -1564,6 +1564,17 @@ describe Riffer::Providers::OpenAI do
       expect(params[:include]).must_equal [sources_include]
     end
 
+    it "does not repeat a sources include the caller passed as a Symbol" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5-mini",
+        { web_search: true, include: [sources_include.to_sym] },
+      )
+
+      expect(params[:include]).must_equal [sources_include.to_sym]
+    end
+
     it "sends no include without web search" do
       params = provider.send(:build_request_params, messages, "gpt-5-mini", {})
 

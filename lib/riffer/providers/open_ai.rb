@@ -4,7 +4,7 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
-  # Without it, a web_search_call's search action carries no sources.
+  # Without this include, a web_search_call's search action carries no sources.
   WEB_SEARCH_SOURCES_INCLUDE = "web_search_call.action.sources" #: String
 
   # The Responses API has no finish_reason field, and an +incomplete+ status is only meaningful
@@ -97,7 +97,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       web_search_tool = { type: WEB_SEARCH_TOOL_TYPE }
       web_search_tool.merge!(web_search) if web_search.is_a?(Hash)
       openai_tools << web_search_tool
-      params[:include] = [*params[:include], WEB_SEARCH_SOURCES_INCLUDE].uniq
+      params[:include] = [*params[:include], WEB_SEARCH_SOURCES_INCLUDE].uniq(&:to_s)
     end
 
     if structured_output

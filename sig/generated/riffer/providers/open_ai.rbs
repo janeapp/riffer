@@ -3,7 +3,7 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
-  # Without it, a web_search_call's search action carries no sources.
+  # Without this include, a web_search_call's search action carries no sources.
   WEB_SEARCH_SOURCES_INCLUDE: String
 
   # The Responses API has no finish_reason field, and an +incomplete+ status is only meaningful
