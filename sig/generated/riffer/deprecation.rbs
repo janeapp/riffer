@@ -1,48 +1,27 @@
 # Generated from lib/riffer/deprecation.rb with RBS::Inline
 
 module Riffer::Deprecation
+  @mutex: Thread::Mutex
+
+  @reported: Set[[ Symbol, String? ]]
+
   MODES: Array[Symbol]
-
-  class Event < Data
-    attr_reader id(): Symbol
-
-    attr_reader message(): String
-
-    attr_reader removed_in(): String
-
-    attr_reader location(): String?
-
-    def self.new: (Symbol id, String message, String removed_in, String? location) -> instance
-                | (id: Symbol, message: String, removed_in: String, location: String?) -> instance
-
-    def self.members: () -> [ :id, :message, :removed_in, :location ]
-
-    def members: () -> [ :id, :message, :removed_in, :location ]
-  end
-
-  class Event
-    # --
-    # : () -> String
-    def to_s: () -> String
-  end
 
   LIB_DIR: String
 
   ALLOWED_KEY: Symbol
 
-  self.@mutex: Thread::Mutex
-
-  self.@reported: Set[[ Symbol, String? ]]
-
   # --
   # : (id: Symbol, message: String, removed_in: String) -> void
-  def self.warn: (id: Symbol, message: String, removed_in: String) -> void
+  def warn: (id: Symbol, message: String, removed_in: String) -> void
 
   # --
   # : [T] () { () -> T } -> T
-  def self.allow: [T] () { () -> T } -> T
+  def allow: [T] () { () -> T } -> T
+
+  private
 
   # --
   # : (Event) -> bool
-  def self.first_report?: (Event) -> bool
+  def first_report?: (Event) -> bool
 end

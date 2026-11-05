@@ -2,37 +2,23 @@
 # rbs_inline: enabled
 
 module Riffer::Deprecation
+  extend self
+
+  # @rbs @mutex: Thread::Mutex
+  # @rbs @reported: Set[[Symbol, String?]]
+
   MODES = %i[warn raise silence].freeze #: Array[Symbol]
-
-  Event = Data.define(
-    :id, #: Symbol
-    :message, #: String
-    :removed_in, #: String
-    :location, #: String?
-  )
-
-  class Event
-    #--
-    #: () -> String
-    def to_s
-      text = "riffer: #{message} It will be removed in riffer #{removed_in}."
-      location ? "#{text} Called from #{location}." : text
-    end
-  end
 
   LIB_DIR = "#{File.dirname(__FILE__, 2)}/".freeze #: String
   ALLOWED_KEY = :riffer_deprecations_allowed #: Symbol
   private_constant :LIB_DIR, :ALLOWED_KEY
-
-  # @rbs self.@mutex: Thread::Mutex
-  # @rbs self.@reported: Set[[Symbol, String?]]
 
   @mutex = Mutex.new
   @reported = Set.new
 
   #--
   #: (id: Symbol, message: String, removed_in: String) -> void
-  def self.warn(id:, message:, removed_in:)
+  def warn(id:, message:, removed_in:)
     return if Fiber[ALLOWED_KEY]
 
     frame = caller_locations&.find { |location| !location.path.to_s.start_with?(LIB_DIR) }
@@ -52,7 +38,7 @@ module Riffer::Deprecation
 
   #--
   #: [T] () { () -> T } -> T
-  def self.allow
+  def allow
     previous = Fiber[ALLOWED_KEY] #: bool?
     # Fiber storage is inherited by threads and fibers spawned inside the block,
     # so work the block fans out stays silenced while other threads are not.
@@ -64,10 +50,11 @@ module Riffer::Deprecation
     end
   end
 
+  private
+
   #--
   #: (Event) -> bool
-  def self.first_report?(event)
+  def first_report?(event)
     !@mutex.synchronize { @reported.add?([event.id, event.location]) }.nil?
   end
-  private_class_method :first_report?
 end

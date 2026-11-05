@@ -61,7 +61,9 @@ describe Riffer::Deprecation do
       line = __LINE__ + 1
       2.times { Riffer::Deprecation.warn(**details) }
 
-      expect(events).must_equal [Riffer::Deprecation::Event.new(**details, location: "#{__FILE__}:#{line}")]
+      fields = events.map { |event| [event.id, event.message, event.removed_in, event.location] }
+
+      expect(fields).must_equal [[*details.values, "#{__FILE__}:#{line}"]]
     end
   end
 
