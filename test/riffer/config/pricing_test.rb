@@ -3,20 +3,28 @@
 require "test_helper"
 
 describe Riffer::Config::Pricing do
-  before do
-    @warned = Riffer::Config::Pricing.instance_variable_get(:@warned)
-    Riffer::Config::Pricing.instance_variable_set(:@warned, true)
+  def set_rates(pricing, models, **rates)
+    allow_deprecations { pricing.set(models, **rates) }
   end
 
-  after { Riffer::Config::Pricing.instance_variable_set(:@warned, @warned) }
-
   describe "deprecation" do
-    it "warns once per process on the first set" do
-      Riffer::Config::Pricing.instance_variable_set(:@warned, false)
-      pricing = Riffer::Config::Pricing.new
+    after { reset_riffer_config! }
 
-      expect { pricing.set("openai/gpt-4", input: 30.0, output: 60.0) }.must_output(nil, /config.pricing is deprecated/)
-      expect { pricing.set("openai/gpt-5", input: 30.0, output: 60.0) }.must_output(nil, "")
+    it "raises the config_pricing deprecation in :raise mode" do
+      pricing = Riffer::Config::Pricing.new
+      error = expect { pricing.set("openai/gpt-4", input: 30.0, output: 60.0) }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_match(/config.pricing is deprecated.*removed in riffer 0\.57\.0/)
+    end
+
+    it "reports the caller of set as the location" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      pricing = Riffer::Config::Pricing.new
+      line = __LINE__ + 1
+      pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
+
+      expect(events.map { |event| [event.id, event.location] }).must_equal [[:config_pricing, "#{__FILE__}:#{line}"]]
     end
   end
 
@@ -27,7 +35,7 @@ describe Riffer::Config::Pricing do
 
     it "is false after a model is registered" do
       pricing = Riffer::Config::Pricing.new
-      pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
+      set_rates(pricing, "openai/gpt-4", input: 30.0, output: 60.0)
 
       expect(pricing.empty?).must_equal false
     end
@@ -36,36 +44,36 @@ describe Riffer::Config::Pricing do
   describe "#set" do
     it "registers rates retrievable by model id" do
       pricing = Riffer::Config::Pricing.new
-      pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
+      set_rates(pricing, "openai/gpt-4", input: 30.0, output: 60.0)
 
       expect(pricing.rates_for("openai/gpt-4").input).must_equal 30.0
     end
 
     it "defaults cache rates to nil when omitted" do
       pricing = Riffer::Config::Pricing.new
-      pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
+      set_rates(pricing, "openai/gpt-4", input: 30.0, output: 60.0)
 
       expect(pricing.rates_for("openai/gpt-4").cache_read).must_be_nil
     end
 
     it "coerces integer rates to floats" do
       pricing = Riffer::Config::Pricing.new
-      pricing.set("openai/gpt-4", input: 30, output: 60)
+      set_rates(pricing, "openai/gpt-4", input: 30, output: 60)
 
       expect(pricing.rates_for("openai/gpt-4").input).must_equal 30.0
     end
 
     it "overwrites an earlier registration for the same model" do
       pricing = Riffer::Config::Pricing.new
-      pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
-      pricing.set("openai/gpt-4", input: 10.0, output: 20.0)
+      set_rates(pricing, "openai/gpt-4", input: 30.0, output: 60.0)
+      set_rates(pricing, "openai/gpt-4", input: 10.0, output: 20.0)
 
       expect(pricing.rates_for("openai/gpt-4").input).must_equal 10.0
     end
 
     it "registers the same rates for every id when given an array" do
       pricing = Riffer::Config::Pricing.new
-      pricing.set(["openai/gpt-4", "openai/gpt-4-0613"], input: 30.0, output: 60.0)
+      set_rates(pricing, ["openai/gpt-4", "openai/gpt-4-0613"], input: 30.0, output: 60.0)
 
       expect(pricing.rates_for("openai/gpt-4-0613").input).must_equal 30.0
     end
@@ -73,38 +81,38 @@ describe Riffer::Config::Pricing do
     it "raises when given an empty array of ids" do
       pricing = Riffer::Config::Pricing.new
 
-      expect { pricing.set([], input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
+      expect { set_rates(pricing, [], input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
     end
 
     it "registers nothing when any id in the array is malformed" do
       pricing = Riffer::Config::Pricing.new
 
-      expect { pricing.set(["openai/gpt-4", "bad"], input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
+      expect { set_rates(pricing, ["openai/gpt-4", "bad"], input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
       expect(pricing.rates_for("openai/gpt-4")).must_be_nil
     end
 
     it "raises when the model id has no provider segment" do
       pricing = Riffer::Config::Pricing.new
 
-      expect { pricing.set("gpt-4", input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
+      expect { set_rates(pricing, "gpt-4", input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
     end
 
     it "raises when a model id segment is empty" do
       pricing = Riffer::Config::Pricing.new
 
-      expect { pricing.set("openai/", input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
+      expect { set_rates(pricing, "openai/", input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
     end
 
     it "raises on a negative rate" do
       pricing = Riffer::Config::Pricing.new
 
-      expect { pricing.set("openai/gpt-4", input: -1.0, output: 60.0) }.must_raise Riffer::ArgumentError
+      expect { set_rates(pricing, "openai/gpt-4", input: -1.0, output: 60.0) }.must_raise Riffer::ArgumentError
     end
 
     it "raises on a non-numeric rate" do
       pricing = Riffer::Config::Pricing.new
 
-      expect { pricing.set("openai/gpt-4", input: "30.0", output: 60.0) }.must_raise Riffer::ArgumentError
+      expect { set_rates(pricing, "openai/gpt-4", input: "30.0", output: 60.0) }.must_raise Riffer::ArgumentError
     end
   end
 

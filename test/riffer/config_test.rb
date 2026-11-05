@@ -104,6 +104,35 @@ describe Riffer::Config do
     end
   end
 
+  describe "deprecations" do
+    it "defaults to :warn" do
+      expect(Riffer::Config.new.deprecations).must_equal :warn
+    end
+
+    it "accepts each mode" do
+      config = Riffer::Config.new
+
+      Riffer::Deprecation::MODES.each do |mode|
+        config.deprecations = mode
+
+        expect(config.deprecations).must_equal mode
+      end
+    end
+
+    it "accepts a callable" do
+      config = Riffer::Config.new
+      handler = ->(_event) {}
+      config.deprecations = handler
+
+      expect(config.deprecations).must_equal handler
+    end
+
+    it "raises on an unknown mode" do
+      expect { Riffer::Config.new.deprecations = :log }.must_raise Riffer::ArgumentError
+      expect { Riffer::Config.new.deprecations = "warn" }.must_raise Riffer::ArgumentError
+    end
+  end
+
   describe "catalog_files" do
     it "defaults to an empty list and an empty catalog" do
       config = Riffer::Config.new

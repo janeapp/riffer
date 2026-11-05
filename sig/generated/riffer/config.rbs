@@ -60,6 +60,12 @@ class Riffer::Config
   # : (Symbol) -> void
   def message_id_strategy=: (Symbol) -> void
 
+  attr_reader deprecations: Symbol | ^(Riffer::Deprecation::Event) -> void
+
+  # --
+  # : ((Symbol | ^(Riffer::Deprecation::Event) -> void)) -> void
+  def deprecations=: (Symbol | ^(Riffer::Deprecation::Event) -> void) -> void
+
   # --
   # : () -> void
   def initialize: () -> void

@@ -82,6 +82,16 @@ end
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
 REASONING_CATALOG_PATH = File.expand_path("fixtures/catalogs/reasoning.json", __dir__)
 
+# A test that swaps in a fresh config goes through here so the suite keeps
+# failing on deprecated calls; wrap an intentional one in allow_deprecations.
+def reset_riffer_config!
+  config = Riffer::Config.new
+  config.deprecations = :raise
+  Riffer.instance_variable_set(:@config, config)
+end
+
+reset_riffer_config!
+
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
