@@ -69,6 +69,9 @@ groups:
       - source: TRACING.md
         slug: tracing
         description: OpenTelemetry spans
+      - source: STABILITY.md
+        slug: stability
+        description: What's safe to depend on and how upgrades work
 
   - label: Providers
     tone: jane
