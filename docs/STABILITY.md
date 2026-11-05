@@ -26,7 +26,7 @@ After 1.0, breaking changes ship only in major versions.
 
 Saved formats are the data Riffer produces for you to store and load later, such as [serialized agents](SERIALIZATION.md) and [messages persisted with `to_h`](MESSAGES.md#parts).
 
-- Riffer can read a new format at least one release before it starts writing it, so a deploy that runs old and new versions side by side keeps working.
+- Riffer can read a new format at least one release before it starts writing it, so a deploy that runs a release alongside the one before it keeps working.
 - Anything saved by a 1.x release loads in every later 1.x release.
 
 See [Serialization → Versioning](SERIALIZATION.md#versioning) for how agent data records its format version.
