@@ -18,7 +18,7 @@ A breaking change to the public API lands first as a new API or an opt-in flag, 
 
 ## Breaking releases
 
-Before 1.0, breaking changes ship only in four planned releases, listed in the [roadmap](https://github.com/janeapp/riffer/issues/528). Each one is published as a release candidate first, so you can try it before the final release, and comes with an upgrade guide in [UPGRADING.md](https://github.com/janeapp/riffer/blob/main/UPGRADING.md). The CHANGELOG lists its changes under **⚠ BREAKING CHANGES**.
+Before 1.0, any minor release can include breaking changes, but never without notice: an earlier release deprecates what's changing first, so you'll see the warnings before anything breaks. Each breaking release comes with an upgrade guide in [UPGRADING.md](https://github.com/janeapp/riffer/blob/main/UPGRADING.md), and the CHANGELOG lists its changes under **⚠ BREAKING CHANGES**.
 
 After 1.0, breaking changes ship only in major versions.
 
