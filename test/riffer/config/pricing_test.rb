@@ -14,7 +14,7 @@ describe Riffer::Config::Pricing do
       pricing = Riffer::Config::Pricing.new
       error = expect { pricing.set("openai/gpt-4", input: 30.0, output: 60.0) }.must_raise Riffer::DeprecationError
 
-      expect(error.message).must_match(/config.pricing is deprecated.*removed in riffer 0\.57\.0/)
+      expect(error.message).must_match(/config.pricing is deprecated/)
     end
 
     it "reports the caller of set as the location" do

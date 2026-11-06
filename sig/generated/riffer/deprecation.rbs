@@ -12,8 +12,8 @@ module Riffer::Deprecation
   ALLOWED_KEY: Symbol
 
   # --
-  # : (id: Symbol, message: String, removed_in: String) -> void
-  def warn: (id: Symbol, message: String, removed_in: String) -> void
+  # : (id: Symbol, message: String) -> void
+  def warn: (id: Symbol, message: String) -> void
 
   # --
   # : [T] () { () -> T } -> T

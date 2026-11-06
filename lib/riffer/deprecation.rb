@@ -17,13 +17,13 @@ module Riffer::Deprecation
   @reported = Set.new
 
   #--
-  #: (id: Symbol, message: String, removed_in: String) -> void
-  def warn(id:, message:, removed_in:)
+  #: (id: Symbol, message: String) -> void
+  def warn(id:, message:)
     return if Fiber[ALLOWED_KEY]
 
     frame = caller_locations&.find { |location| !location.path.to_s.start_with?(LIB_DIR) }
     location = frame && "#{frame.path}:#{frame.lineno}"
-    event = Event.new(id: id, message: message, removed_in: removed_in, location: location)
+    event = Event.new(id: id, message: message, location: location)
 
     case (handler = Riffer.config.deprecations)
     when :silence then nil

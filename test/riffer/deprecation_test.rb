@@ -3,15 +3,15 @@
 require "test_helper"
 
 describe Riffer::Deprecation do
-  let(:details) { { id: :test_api, message: "test_api is deprecated.", removed_in: "9.9.0" } }
+  let(:details) { { id: :test_api, message: "test_api is deprecated." } }
 
   after { reset_riffer_config! }
 
   describe ":warn" do
     before { Riffer.config.deprecations = :warn }
 
-    it "names the calling line and the removal version" do
-      expected = "riffer: test_api is deprecated. It will be removed in riffer 9.9.0. Called from #{__FILE__}:"
+    it "names the calling line" do
+      expected = "riffer: test_api is deprecated. Called from #{__FILE__}:"
 
       expect { Riffer::Deprecation.warn(**details) }.must_output(nil, "#{expected}#{__LINE__}.\n")
     end
@@ -61,7 +61,7 @@ describe Riffer::Deprecation do
       line = __LINE__ + 1
       2.times { Riffer::Deprecation.warn(**details) }
 
-      fields = events.map { |event| [event.id, event.message, event.removed_in, event.location] }
+      fields = events.map { |event| [event.id, event.message, event.location] }
 
       expect(fields).must_equal [[*details.values, "#{__FILE__}:#{line}"]]
     end

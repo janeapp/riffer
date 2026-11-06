@@ -19,7 +19,6 @@ class Riffer::Config::Pricing
       id: :config_pricing,
       message: "config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files " \
                "(see docs/CATALOG.md).",
-      removed_in: "0.57.0",
     )
 
     ids = models.is_a?(Array) ? models : [models]

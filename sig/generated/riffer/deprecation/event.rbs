@@ -5,13 +5,11 @@ class Riffer::Deprecation::Event
 
   attr_reader message: String
 
-  attr_reader removed_in: String
-
   attr_reader location: String?
 
   # --
-  # : (id: Symbol, message: String, removed_in: String, location: String?) -> void
-  def initialize: (id: Symbol, message: String, removed_in: String, location: String?) -> void
+  # : (id: Symbol, message: String, location: String?) -> void
+  def initialize: (id: Symbol, message: String, location: String?) -> void
 
   # --
   # : () -> String

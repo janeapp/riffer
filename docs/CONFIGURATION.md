@@ -276,7 +276,7 @@ See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and valid
 
 ### Pricing (deprecated)
 
-`config.pricing` is deprecated and will be removed in riffer 0.57.0. Move rates into a [catalog file](CATALOG.md#pricing); each line that calls `set` reports a [deprecation](#deprecations). Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.
+`config.pricing` is deprecated and will be removed in a future release. Move rates into a [catalog file](CATALOG.md#pricing); each line that calls `set` reports a [deprecation](#deprecations). Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.
 
 ```ruby
 # before
@@ -293,10 +293,10 @@ end
 
 ### Deprecations
 
-A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call and the version that removes it:
+A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:
 
 ```
-riffer: config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). It will be removed in riffer 0.57.0. Called from config/initializers/riffer.rb:4.
+riffer: config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
 ```
 
 `config.deprecations` decides what happens:
@@ -307,12 +307,12 @@ Riffer.configure do |config|
 end
 ```
 
-| Value             | Description                                                                                                                                                                         |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `:warn` (default) | Prints the report to stderr with `Kernel.warn`, once per deprecation per calling line.                                                                                              |
-| `:raise`          | Raises `Riffer::DeprecationError` on every call, so a test suite fails on each test that makes one. See [Testing — Deprecations](TESTING.md#deprecations).                          |
-| `:silence`        | Reports nothing.                                                                                                                                                                    |
-| A callable        | Called with a `Riffer::Deprecation::Event` once per deprecation per calling line. The event has `id`, `message`, `removed_in` and `location` (`"path:line"`); `to_s` is the report. |
+| Value             | Description                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:warn` (default) | Prints the report to stderr with `Kernel.warn`, once per deprecation per calling line.                                                                                |
+| `:raise`          | Raises `Riffer::DeprecationError` on every call, so a test suite fails on each test that makes one. See [Testing — Deprecations](TESTING.md#deprecations).            |
+| `:silence`        | Reports nothing.                                                                                                                                                      |
+| A callable        | Called with a `Riffer::Deprecation::Event` once per deprecation per calling line. The event has `id`, `message` and `location` (`"path:line"`); `to_s` is the report. |
 
 Any other value raises `Riffer::ArgumentError`.
 
