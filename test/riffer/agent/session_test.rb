@@ -351,6 +351,19 @@ describe Riffer::Agent::Session do
       expect(result.error?).must_equal true
     end
 
+    it "keeps loaded_tools when another attribute changes" do
+      loading = Riffer::Messages::Tool.new("", id: "t_1", tool_call_id: "c_1", name: "find", loaded_tools: ["weather"])
+      session = Riffer::Agent::Session.new(messages: [user, tool_assistant, loading])
+
+      expect(session.update(tool_call_id: "c_1", content: "").loaded_tools).must_equal ["weather"]
+    end
+
+    it "replaces loaded_tools when given" do
+      result = session.update(tool_call_id: "c_1", loaded_tools: ["weather"])
+
+      expect(result.loaded_tools).must_equal ["weather"]
+    end
+
     it "raises Riffer::ArgumentError on unknown tool_call_id" do
       expect { session.update(tool_call_id: "missing", content: "x") }.must_raise Riffer::ArgumentError
     end

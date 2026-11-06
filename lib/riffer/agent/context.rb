@@ -4,7 +4,7 @@
 class Riffer::Agent::Context
   # @rbs @data: Hash[Symbol, untyped]
 
-  RESERVED_KEYS = %i[skills token_usage mcp_progressive_tools discovered_tools].freeze #: Array[Symbol]
+  RESERVED_KEYS = %i[skills token_usage mcp_progressive_tools discovered_tools deferred_tools].freeze #: Array[Symbol]
 
   # Raises Riffer::ArgumentError if +data+ contains a reserved key.
   #--
@@ -21,6 +21,7 @@ class Riffer::Agent::Context
     @data[:token_usage] = nil
     @data[:mcp_progressive_tools] = nil
     @data[:discovered_tools] = nil
+    @data[:deferred_tools] = nil
   end
 
   #--
@@ -71,15 +72,7 @@ class Riffer::Agent::Context
   #--
   #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def mcp_progressive_tools=(value)
-    valid = value.nil? || (
-      value.is_a?(Array) &&
-      value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool }
-    )
-    unless valid
-      raise Riffer::ArgumentError,
-            "mcp_progressive_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
-    end
-    @data[:mcp_progressive_tools] = value
+    assign_tool_classes(:mcp_progressive_tools, value)
   end
 
   #--
@@ -91,15 +84,19 @@ class Riffer::Agent::Context
   #--
   #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def discovered_tools=(value)
-    valid = value.nil? || (
-      value.is_a?(Array) &&
-      value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool }
-    )
-    unless valid
-      raise Riffer::ArgumentError,
-            "discovered_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
-    end
-    @data[:discovered_tools] = value
+    assign_tool_classes(:discovered_tools, value)
+  end
+
+  #--
+  #: () -> Array[singleton(Riffer::Tool)]?
+  def deferred_tools
+    @data[:deferred_tools]
+  end
+
+  #--
+  #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def deferred_tools=(value)
+    assign_tool_classes(:deferred_tools, value)
   end
 
   #--
@@ -119,5 +116,19 @@ class Riffer::Agent::Context
   #: () -> Hash[Symbol, untyped]
   def to_h
     @data.dup
+  end
+
+  private
+
+  #--
+  #: (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def assign_tool_classes(key, value)
+    valid = value.nil? || (value.is_a?(Array) && value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool })
+    unless valid
+      raise Riffer::ArgumentError,
+            "#{key} must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
+    end
+
+    @data[key] = value
   end
 end

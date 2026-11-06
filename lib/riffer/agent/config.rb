@@ -18,6 +18,7 @@ class Riffer::Agent::Config
   attr_accessor :max_steps #: Numeric? # @dynamic max_steps, max_steps=
   attr_reader :reasoning #: Symbol? # @dynamic reasoning
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
+  attr_accessor :deferred_tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic deferred_tools_config, deferred_tools_config=
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
   attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
   attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]] # @dynamic guardrails
@@ -33,6 +34,7 @@ class Riffer::Agent::Config
   #    ?max_steps: Numeric?,
   #    ?reasoning: (Symbol | String)?,
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
+  #    ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?mcp_configs: Array[Hash[Symbol, untyped]],
   #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #    ?skills_config: Riffer::Skills::Config?,
@@ -48,6 +50,7 @@ class Riffer::Agent::Config
     max_steps: DEFAULT_MAX_STEPS,
     reasoning: nil,
     tools_config: nil,
+    deferred_tools_config: nil,
     mcp_configs: [],
     tool_runtime: nil,
     skills_config: nil,
@@ -56,6 +59,7 @@ class Riffer::Agent::Config
     @model_options = model_options
     @max_steps = max_steps
     @tools_config = tools_config
+    @deferred_tools_config = deferred_tools_config
     @mcp_configs = mcp_configs
     @skills_config = skills_config
     @guardrails = guardrails
@@ -189,6 +193,7 @@ class Riffer::Agent::Config
     @mcp_configs = Riffer::Helpers::DeepDup.call(source.mcp_configs)
     @guardrails = Riffer::Helpers::DeepDup.call(source.guardrails)
     @tools_config = Riffer::Helpers::DeepDup.call(source.tools_config)
+    @deferred_tools_config = Riffer::Helpers::DeepDup.call(source.deferred_tools_config)
     @skills_config = source.skills_config&.dup
     @structured_output = source.structured_output&.dup
   end

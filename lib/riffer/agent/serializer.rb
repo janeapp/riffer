@@ -18,7 +18,7 @@ module Riffer::Agent::Serializer
   def to_h(agent:)
     # Already resolved against the agent's context, so the hash carries plain data, never Procs.
     config = agent.config
-    {
+    hash = {
       schema_version: SCHEMA_VERSION,
       riffer_version: Riffer::VERSION,
       identifier: config.identifier,
@@ -30,7 +30,11 @@ module Riffer::Agent::Serializer
       structured_output_strategy: config.structured_output_strategy,
       reasoning: config.reasoning,
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
-    }
+    } #: Hash[Symbol, untyped]
+    deferred_tools = agent.deferred_tools
+    # Optional, so a reader that doesn't know the key decodes any agent that doesn't need it.
+    hash[:deferred_tools] = deferred_tools.map { |tool_class| tool_descriptor(tool_class) } unless deferred_tools.empty?
+    hash
   end
 
   # Raises Riffer::Agent::Serializer::VersionError on an unsupported +schema_version+.
@@ -71,6 +75,7 @@ module Riffer::Agent::Serializer
   #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, session: Riffer::Agent::Session?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def decode_v1(hash, context:, session:, tool_resolver:, tool_runtime:)
     tools = Array(hash[:tools]).map { |descriptor| tool_resolver.call(descriptor) }
+    deferred_tools = Array(hash[:deferred_tools]).map { |descriptor| tool_resolver.call(descriptor) }
 
     config_args = {
       identifier: hash[:identifier],
@@ -82,6 +87,7 @@ module Riffer::Agent::Serializer
       max_steps: decode_max_steps(hash),
       reasoning: hash[:reasoning],
       tools_config: tools,
+      deferred_tools_config: deferred_tools,
     } #: Hash[Symbol, untyped]
     # Config#tool_runtime= rejects nil.
     config_args[:tool_runtime] = tool_runtime if tool_runtime

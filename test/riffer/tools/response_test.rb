@@ -151,6 +151,28 @@ describe Riffer::Tools::Response do
 
       expect(response.exception).must_be_same_as boom
     end
+
+    it "loads no tools" do
+      expect(Riffer::Tools::Response.error("failed").loaded_tools).must_equal []
+    end
+  end
+
+  describe ".load_tools" do
+    let(:tool_class) { stub_tool("LoadableTool") { description "Loadable" } }
+
+    it "is a success carrying the loaded tools and no text" do
+      response = Riffer::Tools::Response.load_tools([tool_class])
+
+      expect([response.success?, response.content, response.loaded_tools]).must_equal [true, "", [tool_class]]
+    end
+
+    it "accepts an empty list" do
+      expect(Riffer::Tools::Response.load_tools([]).loaded_tools).must_equal []
+    end
+
+    it "is empty on a text response" do
+      expect(Riffer::Tools::Response.text("hi").loaded_tools).must_equal []
+    end
   end
 
   describe "#to_h" do

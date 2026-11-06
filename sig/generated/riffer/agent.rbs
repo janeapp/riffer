@@ -47,6 +47,10 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
+  # --
+  # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+  def self.deferred_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+
   # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
   # --
   # : (String | Symbol, ?progressive: bool) -> void
@@ -107,6 +111,8 @@ class Riffer::Agent
   attr_reader structured_output: Riffer::Agent::StructuredOutput?
 
   attr_reader tools: Array[singleton(Riffer::Tool)]
+
+  attr_reader deferred_tools: Array[singleton(Riffer::Tool)]
 
   attr_reader tool_runtime: Riffer::Tools::Runtime
 
@@ -169,6 +175,10 @@ class Riffer::Agent
   # --
   # : () -> Array[singleton(Riffer::Tool)]
   def resolve_tools: () -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def resolve_deferred_tools: () -> Array[singleton(Riffer::Tool)]
 
   # --
   # : () -> Riffer::Tools::Runtime

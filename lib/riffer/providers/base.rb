@@ -18,6 +18,12 @@ class Riffer::Providers::Base
   end
 
   #--
+  #: () -> bool
+  def self.supports_deferred_tools?
+    false
+  end
+
+  #--
   #: () -> String
   def self.semconv_provider_name
     # Anonymous classes stay uncached: a class assigned to a constant
@@ -446,6 +452,8 @@ class Riffer::Providers::Base
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def request_options(options)
     options = options.except(:riffer_reasoning_level)
+    # Providers splat unknown options into their SDK request.
+    options = options.except(:deferred_tools) unless self.class.supports_deferred_tools?
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 
