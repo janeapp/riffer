@@ -316,6 +316,28 @@ end
 
 Any other value raises `Riffer::ArgumentError`.
 
+### Future flags
+
+`config.future` lets you turn on new behaviour before it becomes the default, so you can try it and adapt ahead of the breaking release that switches it on for everyone:
+
+```ruby
+Riffer.configure do |config|
+  config.future.some_flag = true
+end
+```
+
+A flag accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`; any other value, or a flag name Riffer doesn't know, raises `Riffer::ArgumentError`.
+
+A flag goes through three stages:
+
+1. **Opt-in.** The flag is off by default, and setting it to `true` turns the new behaviour on.
+2. **Default.** A [breaking release](STABILITY.md#breaking-releases) makes the new behaviour the default. The flag always reads as on, and setting it reports a [deprecation](#deprecations) saying it's no longer needed and can be removed.
+3. **Removed.** A release later the flag is gone, and setting it raises `Riffer::ArgumentError`.
+
+| Flag     | Stage | Description                     |
+| -------- | ----- | ------------------------------- |
+| _(none)_ |       | Riffer has no future flags yet. |
+
 ### Message ID Strategy
 
 Opt in to stable identifiers on every message for logging, persistence, or replay:
