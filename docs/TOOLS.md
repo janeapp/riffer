@@ -222,10 +222,11 @@ end
 MyAgent.new(context: {user_id: 123}).generate("Show my orders")
 ```
 
-Two keys are framework-managed and exposed as typed accessors:
+Three keys are framework-managed and exposed as typed accessors:
 
 - `context.skills` — the resolved `Riffer::Skills::Context` when the agent has skills configured, otherwise `nil`.
 - `context.token_usage` — the cumulative `Riffer::Providers::TokenUsage` across every run on the agent, or `nil` before the first response.
+- `context.deferred_tools` — the agent's [deferred tools](#loading-deferred-tools-experimental), loaded or not (`[]` when it has none).
 
 ## Response Objects
 
@@ -295,7 +296,7 @@ error("Service unavailable", type: :service_error)
 error("Rate limit exceeded", type: :rate_limit)
 ```
 
-If no type is specified, it defaults to `:execution_error`. Riffer reserves `:unhandled_error` for unrescued exceptions — don't set it yourself.
+If no type is specified, it defaults to `:execution_error`. Riffer reserves `:unhandled_error` for unrescued exceptions, and `:invalid_tool_load` and `:tool_not_loaded` for [deferred tools](#loading-deferred-tools-experimental) — don't set them yourself.
 
 ### Using Riffer::Tools::Response Directly
 
@@ -305,6 +306,7 @@ The shorthand methods delegate to `Riffer::Tools::Response`. You can also use th
 Riffer::Tools::Response.text("Hello")
 Riffer::Tools::Response.json({data: [1, 2, 3]})
 Riffer::Tools::Response.error("Failed", type: :custom_error)
+Riffer::Tools::Response.load_tools([ListEvents])
 ```
 
 ### Response Methods
@@ -327,3 +329,41 @@ error_response.exception      # => nil
 ```
 
 `exception` holds the rescued exception on the `:unhandled_error` responses Riffer builds. It never appears in serialized output, so it is not visible to the LLM.
+
+## Loading deferred tools (experimental)
+
+An agent can hold tools back with [`deferred_tools`](AGENTS.md#deferred_tools-experimental). Any of its own tools loads them by returning `load_tools(tools)`, and `context.deferred_tools` lists the tools it can choose from. A search tool, a browse tool or a "connect your calendar" tool is an ordinary tool:
+
+```ruby
+class FindTools < Riffer::Tool
+  description "Find more tools for a task. Describe what you need to do in a few words."
+  params { required :query, String }
+
+  def call(context:, query:)
+    words = query.downcase.split
+    matches = context.deferred_tools.select { |tool| words.any? { |w| tool.description.downcase.include?(w) } }
+    load_tools(matches.first(5))
+  end
+end
+
+class ConnectCalendar < Riffer::Tool
+  description "Connect the user's calendar. Calendar tools become available afterwards."
+
+  def call(context:)
+    Calendars.connect!(context[:user])
+    load_tools([ListEvents, CreateEvent])
+  end
+end
+```
+
+A load takes effect from the model's next turn. The model made every call in a turn before it saw any of that turn's results, so a call to a tool loaded in the same turn is refused like any other unloaded call; the model calls it again once it has seen the load.
+
+- A load can't carry text as well, because Anthropic rejects a tool result that mixes loaded tools with text. `load_tools` takes no text, and the response's `content` is `""`.
+- `load_tools([])` is a successful load of nothing.
+- Loading a tool that isn't one of the agent's deferred tools, including one in `uses_tools`, returns an `:invalid_tool_load` error to the model instead, and nothing in that load is loaded.
+- Loading a tool that's already loaded succeeds and changes nothing: the tool is loaded once, and stays loaded for the rest of the conversation. Tools can't be unloaded.
+- A call to a deferred tool that hasn't been loaded isn't run. The model gets an error result of type `:tool_not_loaded` (`Tool 'list_events' has not been loaded`). Riffer checks this itself, before the [tool runtime](TOOL_ADVANCED.md#tool-runtime) sees the call, so a custom runtime can't run an unloaded tool by mistake. That includes a call forced by a provider's own `tool_choice` passed through `model_options`, and an unloaded call already in a restored history.
+
+`response.loaded_tools` returns the tools a response loads, and is `[]` on every other response. Riffer records the loaded tools' names on the [tool message](MESSAGES.md#tool) as `loaded_tools`.
+
+Loading puts the loaded tools' full schemas into the conversation, and every load is an extra round trip to the model, so load a handful of tools at a time rather than dozens.

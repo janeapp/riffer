@@ -47,19 +47,26 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
   structured_output: { type: "object", … },   # JSON Schema, or null
   structured_output_strategy: :native,        # :native or :prompted ("native"/"prompted" over JSON)
   reasoning:         :low,                     # reasoning level, or null
-  tools: [ { name:, description:, parameters_schema:, timeout: }, … ]
+  tools: [ { name:, description:, parameters_schema:, timeout: }, … ],
+  deferred_tools: [ { name:, description:, parameters_schema:, timeout: }, … ] # only when the agent has some
 }
 ```
 
 ### Resolved snapshot
 
-`to_h` reads the agent's **resolved** state, not its raw configuration. By the time you call it, `Agent.new` has already evaluated any `Proc`-based `model`, `instructions`, or `uses_tools` against the agent's own context — so the hash carries plain strings and data, never Procs. The receiver's `context:` drives runtime behavior (tool dispatch); it does **not** re-evaluate baked-in fields.
+`to_h` reads the agent's **resolved** state, not its raw configuration. By the time you call it, `Agent.new` has already evaluated any `Proc`-based `model`, `instructions`, `uses_tools`, or `deferred_tools` against the agent's own context — so the hash carries plain strings and data, never Procs. The receiver's `context:` drives runtime behavior (tool dispatch); it does **not** re-evaluate baked-in fields.
 
 ### Structured output
 
 Structured output crosses as **provider-neutral JSON Schema** (`Riffer::Params#to_json_schema`), never a provider-rendered schema. `from_h` rebuilds a validating `Riffer::Params` via `Riffer::Params.from_json_schema`, so the rebuilt agent both constrains the model and can `parse_and_validate` responses — rendering provider-correct bytes at call time, the same way an in-code agent does.
 
 `structured_output_strategy` carries the [strategy](AGENTS.md#structured-output-strategy-experimental) the agent was configured with, so a `:prompted` agent rebuilds as `:prompted`. A hash without the key decodes as `:native`.
+
+### Deferred tools
+
+`deferred_tools` carries the agent's [deferred tools](AGENTS.md#deferred_tools-experimental) as the same descriptors as `tools`, and `from_h` resolves them through the same `tool_resolver:`. The key appears only when the agent has deferred tools, so readers that don't know it can still decode every agent without them, and a hash without the key decodes as deferring nothing.
+
+Which deferred tools are loaded isn't part of the hash: riffer works it out from the `loaded_tools` on the conversation's [tool messages](MESSAGES.md#tool). Pass the restored history as `session:` and the loaded tools stay loaded. Riffer matches loads by tool name, so this works with body-less shells too.
 
 ## Reconstructing tools
 

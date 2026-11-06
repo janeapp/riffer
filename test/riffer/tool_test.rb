@@ -326,6 +326,15 @@ describe Riffer::Tool do
     end
   end
 
+  describe "#load_tools" do
+    it "creates a response that loads the given tools" do
+      loadable = stub_tool("LoadableTool") { description "Loadable" }
+      response = simple_tool_class.new.load_tools([loadable])
+
+      expect([response.success?, response.loaded_tools]).must_equal [true, [loadable]]
+    end
+  end
+
   describe "#error" do
     it "creates an error response" do
       tool = simple_tool_class.new

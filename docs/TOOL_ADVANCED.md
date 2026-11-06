@@ -104,6 +104,13 @@ A tool never raises into the agent loop — every `StandardError` raised during 
 | `Riffer::ToolExecutionError` | `:execution_error`  | the exception message                                |
 | Any other `StandardError`    | `:unhandled_error`  | `Error executing tool: <ExceptionClass>: <message>` |
 
+Riffer also returns two errors of its own for [deferred tools](TOOLS.md#loading-deferred-tools-experimental). The first replaces the loading tool's result; the second is returned without running the call:
+
+| Failure                                     | Error type           | Response content                                                         |
+| ------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
+| A tool loads a tool that isn't deferred     | `:invalid_tool_load` | `Cannot load <names>: only this agent's deferred tools can be loaded`    |
+| A call to a deferred tool not yet loaded    | `:tool_not_loaded`   | `Tool '<name>' has not been loaded`                                      |
+
 An `:unhandled_error` response also carries the rescued exception on `response.exception` — never serialized, so it stays out of the message history — and its `execute_tool` span records the exception with an `ERROR` status (see [Tracing](TRACING.md)).
 
 `NotImplementedError` is not rescued: an unimplemented `#call` raises out of the run.

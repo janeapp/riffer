@@ -98,6 +98,8 @@ expect(provider.calls.last[:messages].last[:content]).to eq("Hi")
 
 Each message is recorded as its `to_h`, so an assistant message has `parts` rather than `content` (see [Messages — Parts](../MESSAGES.md#parts)).
 
+The Mock provider supports [deferred tools](../AGENTS.md#deferred_tools-experimental), so you can test them before a real provider does. For an agent with deferred tools, each recorded call also has `deferred_tools:`, every deferred tool whether loaded or not.
+
 ## Clearing State
 
 Reset stubbed responses:

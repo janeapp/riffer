@@ -28,6 +28,12 @@ class Riffer::Tool
   end
 
   #--
+  #: (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
+  def load_tools(tools)
+    Riffer::Tools::Response.load_tools(tools)
+  end
+
+  #--
   #: (String, ?type: Symbol) -> Riffer::Tools::Response
   def error(message, type: :execution_error)
     Riffer::Tools::Response.error(message, type: type)

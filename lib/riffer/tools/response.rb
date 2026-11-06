@@ -12,6 +12,7 @@ class Riffer::Tools::Response
   attr_reader :content #: String # @dynamic content
   attr_reader :error_message #: String? # @dynamic error_message
   attr_reader :error_type #: Symbol? # @dynamic error_type
+  attr_reader :loaded_tools #: Array[singleton(Riffer::Tool)] # @dynamic loaded_tools
 
   # Kept out of every serialized form so it never reaches an LLM or a message
   # payload.
@@ -40,6 +41,13 @@ class Riffer::Tools::Response
     success(result, format: :json)
   end
 
+  # No text alongside: Anthropic rejects a tool result that mixes +tool_reference+ blocks with text.
+  #--
+  #: (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
+  def self.load_tools(tools)
+    new(content: "", success: true, loaded_tools: tools)
+  end
+
   #--
   #: (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
   def self.error(message, type: :execution_error, exception: nil)
@@ -63,12 +71,13 @@ class Riffer::Tools::Response
   private
 
   #--
-  #: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -> void
-  def initialize(content:, success:, error_message: nil, error_type: nil, exception: nil)
+  #: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?, ?loaded_tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize(content:, success:, error_message: nil, error_type: nil, exception: nil, loaded_tools: [])
     @content = content
     @success = success
     @error_message = error_message
     @error_type = error_type
     @exception = exception
+    @loaded_tools = loaded_tools
   end
 end

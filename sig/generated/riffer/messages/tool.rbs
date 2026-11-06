@@ -13,9 +13,11 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
 
   attr_reader error_type: Symbol?
 
+  attr_reader loaded_tools: Array[String]
+
   # --
-  # : (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void
-  def initialize: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void
+  # : (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?, ?loaded_tools: Array[String]) -> void
+  def initialize: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?, ?loaded_tools: Array[String]) -> void
 
   # --
   # : () -> bool

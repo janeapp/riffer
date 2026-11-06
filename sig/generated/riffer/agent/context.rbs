@@ -48,6 +48,14 @@ class Riffer::Agent::Context
   def discovered_tools=: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
 
   # --
+  # : () -> Array[singleton(Riffer::Tool)]?
+  def deferred_tools: () -> Array[singleton(Riffer::Tool)]?
+
+  # --
+  # : (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def deferred_tools=: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+
+  # --
   # : (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def discover_tools: (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
 
@@ -58,4 +66,10 @@ class Riffer::Agent::Context
   # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
+
+  private
+
+  # --
+  # : (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def assign_tool_classes: (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
 end

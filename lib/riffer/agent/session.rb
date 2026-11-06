@@ -200,6 +200,7 @@ class Riffer::Agent::Session
         id: attrs.fetch(:id, old.id),
         error: attrs.fetch(:error, old.error),
         error_type: attrs.fetch(:error_type, old.error_type),
+        loaded_tools: attrs.fetch(:loaded_tools, old.loaded_tools),
       )
     when Riffer::Messages::User
       Riffer::Messages::User.new(
