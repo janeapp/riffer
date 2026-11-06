@@ -3,6 +3,7 @@
 
 class Riffer::Config::Future
   no_flags = {} #: Hash[Symbol, { default: bool }]
+
   FLAGS = no_flags.freeze #: Hash[Symbol, { default: bool }]
 
   # @rbs @flags: Hash[Symbol, { default: bool }]

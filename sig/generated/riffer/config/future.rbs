@@ -1,7 +1,6 @@
 # Generated from lib/riffer/config/future.rb with RBS::Inline
 
 class Riffer::Config::Future
-  # : Hash[Symbol, { default: bool }]
   FLAGS: Hash[Symbol, { default: bool }]
 
   @flags: Hash[Symbol, { default: bool }]
