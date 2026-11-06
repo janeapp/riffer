@@ -44,10 +44,10 @@ describe Riffer do
     end
 
     describe "catalog" do
-      before { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
+      before { reset_riffer_config! }
 
       after do
-        Riffer.instance_variable_set(:@config, Riffer::Config.new)
+        reset_riffer_config!
         FileUtils.remove_entry(@dir) if @dir
       end
 

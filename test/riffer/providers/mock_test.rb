@@ -492,12 +492,12 @@ describe Riffer::Providers::Mock do
 
   describe "pricing" do
     before do
-      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      reset_riffer_config!
       @dir = Dir.mktmpdir
     end
 
     after do
-      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      reset_riffer_config!
       FileUtils.remove_entry(@dir)
     end
 
@@ -516,11 +516,7 @@ describe Riffer::Providers::Mock do
     end
 
     def set_legacy_pricing(**rates)
-      warned = Riffer::Config::Pricing.instance_variable_get(:@warned)
-      Riffer::Config::Pricing.instance_variable_set(:@warned, true)
-      Riffer.config.pricing.set("mock/riffer-1", **rates)
-    ensure
-      Riffer::Config::Pricing.instance_variable_set(:@warned, warned)
+      allow_deprecations { Riffer.config.pricing.set("mock/riffer-1", **rates) }
     end
 
     it "attaches cost to token usage when the catalog prices the model" do

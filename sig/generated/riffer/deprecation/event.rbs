@@ -1,0 +1,17 @@
+# Generated from lib/riffer/deprecation/event.rb with RBS::Inline
+
+class Riffer::Deprecation::Event
+  attr_reader id: Symbol
+
+  attr_reader message: String
+
+  attr_reader location: String?
+
+  # --
+  # : (id: Symbol, message: String, location: String?) -> void
+  def initialize: (id: Symbol, message: String, location: String?) -> void
+
+  # --
+  # : () -> String
+  def to_s: () -> String
+end

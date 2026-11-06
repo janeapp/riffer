@@ -4,11 +4,7 @@
 # @deprecated Set pricing in a catalog file instead (see docs/CATALOG.md).
 # A catalog entry's pricing wins over rates registered here.
 class Riffer::Config::Pricing
-  DEPRECATION_MESSAGE = "riffer: config.pricing is deprecated; move rates into a catalog file " \
-                        "listed in config.catalog_files (see docs/CATALOG.md)" #: String
-
   # @rbs @rates: Hash[String, Riffer::Catalog::Rates]
-  # @rbs self.@warned: bool
 
   #--
   #: () -> void
@@ -19,7 +15,11 @@ class Riffer::Config::Pricing
   #--
   #: ((String | Array[String]), input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
   def set(models, input:, output:, cache_read: nil, cache_write: nil)
-    self.class.warn_deprecated
+    Riffer::Deprecation.warn(
+      id: :config_pricing,
+      message: "config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files " \
+               "(see docs/CATALOG.md).",
+    )
 
     ids = models.is_a?(Array) ? models : [models]
     raise Riffer::ArgumentError, "at least one model id is required" if ids.empty?
@@ -40,15 +40,5 @@ class Riffer::Config::Pricing
   #: () -> bool
   def empty?
     @rates.empty?
-  end
-
-  # Once per process, so a boot that sets many models logs one line.
-  #--
-  #: () -> void
-  def self.warn_deprecated
-    return if @warned
-
-    @warned = true
-    Kernel.warn(DEPRECATION_MESSAGE)
   end
 end

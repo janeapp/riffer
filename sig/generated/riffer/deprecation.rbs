@@ -1,0 +1,27 @@
+# Generated from lib/riffer/deprecation.rb with RBS::Inline
+
+module Riffer::Deprecation
+  @mutex: Thread::Mutex
+
+  @reported: Set[[ Symbol, String? ]]
+
+  MODES: Array[Symbol]
+
+  LIB_DIR: String
+
+  ALLOWED_KEY: Symbol
+
+  # --
+  # : (id: Symbol, message: String) -> void
+  def warn: (id: Symbol, message: String) -> void
+
+  # --
+  # : [T] () { () -> T } -> T
+  def allow: [T] () { () -> T } -> T
+
+  private
+
+  # --
+  # : (Event) -> bool
+  def first_report?: (Event) -> bool
+end

@@ -86,6 +86,18 @@ class Riffer::Config
     @message_id_strategy = value
   end
 
+  attr_reader :deprecations #: (Symbol | ^(Riffer::Deprecation::Event) -> void) # @dynamic deprecations
+
+  #--
+  #: ((Symbol | ^(Riffer::Deprecation::Event) -> void)) -> void
+  def deprecations=(value)
+    unless Riffer::Deprecation::MODES.include?(value) || value.respond_to?(:call)
+      raise Riffer::ArgumentError,
+            "deprecations must be one of #{Riffer::Deprecation::MODES.inspect} or a callable, got #{value.inspect}"
+    end
+    @deprecations = value
+  end
+
   #--
   #: () -> void
   def initialize
@@ -106,5 +118,6 @@ class Riffer::Config
     no_files = [] #: Array[String]
     @catalog_files = no_files.freeze
     @message_id_strategy = :none
+    @deprecations = :warn
   end
 end

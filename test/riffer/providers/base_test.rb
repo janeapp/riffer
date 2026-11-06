@@ -725,14 +725,14 @@ describe Riffer::Providers::Base do
 
   describe "reasoning" do
     before do
-      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      reset_riffer_config!
       @dir = Dir.mktmpdir
       Riffer::Providers::Repository.register(:no_default_reasoning) { NoDefaultReasoningProvider }
       Riffer::Providers::Repository.register(:default_reasoning) { DefaultReasoningProvider }
     end
 
     after do
-      Riffer.instance_variable_set(:@config, Riffer::Config.new)
+      reset_riffer_config!
       FileUtils.remove_entry(@dir)
       Riffer::Providers::Repository.unregister(:no_default_reasoning)
       Riffer::Providers::Repository.unregister(:default_reasoning)

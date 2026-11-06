@@ -16,7 +16,7 @@ require 'riffer/testing/rspec'
 require 'riffer/testing/minitest'
 ```
 
-Either one adds `stub_agent` and `stub_tool` to every example and cleans up after each one. Neither RSpec nor minitest is a riffer dependency; the adapter files are only loaded when you require them yourself.
+Either one adds `stub_agent`, `stub_tool` and `allow_deprecations` to every example and cleans up after each one. Neither RSpec nor minitest is a riffer dependency; the adapter files are only loaded when you require them yourself.
 
 ## Stubbing a tool
 
@@ -109,6 +109,27 @@ end
 ```
 
 Tracking lives on `Riffer::Testing` itself, so `Riffer::Testing.stub_tool(...)` outside an example and `stub_tool(...)` inside one share one list. Tracking is not synchronized — stub from a single-threaded test, before concurrent lookups begin.
+
+## Deprecations
+
+Make your suite fail when it hits a deprecated riffer call, so you find each one before an upgrade removes it:
+
+```ruby
+# test/test_helper.rb
+Riffer.config.deprecations = :raise
+```
+
+Every deprecated call then raises `Riffer::DeprecationError`, naming the line that made it. A test that uses a deprecated call on purpose wraps it in `allow_deprecations`:
+
+```ruby
+it 'still reads legacy pricing' do
+  allow_deprecations { Riffer.config.pricing.set('openai/gpt-5', input: 1.0, output: 2.0) }
+
+  # ...
+end
+```
+
+`allow_deprecations` silences deprecations until the block returns or raises, and returns the block's value. It applies to the current thread or fiber and to threads and fibers started inside the block; other threads keep reporting. It is also available as `Riffer::Testing.allow_deprecations` outside an example. See [Configuration — Deprecations](CONFIGURATION.md#deprecations) for the other modes.
 
 ## When a stub leaks
 

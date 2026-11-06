@@ -74,6 +74,8 @@ module Riffer
 
   class DuplicateIdentifierError < Error; end
 
+  class DeprecationError < Error; end
+
   #--
   #: () -> Riffer::Config
   def config

@@ -22,6 +22,12 @@ module Riffer::Testing
   end
 
   #--
+  #: [T] () { () -> T } -> T
+  def allow_deprecations(&)
+    Riffer::Deprecation.allow(&)
+  end
+
+  #--
   #: () -> void
   def reset!
     tracked = Riffer::Testing.registrations

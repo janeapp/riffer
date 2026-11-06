@@ -14,6 +14,10 @@ module Riffer::Testing
   def stub_tool: (?(String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
 
   # --
+  # : [T] () { () -> T } -> T
+  def allow_deprecations: [T] () { () -> T } -> T
+
+  # --
   # : () -> void
   def reset!: () -> void
 
