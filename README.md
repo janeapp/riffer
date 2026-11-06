@@ -63,6 +63,7 @@ Comprehensive guides live at [riffer.ai](https://riffer.ai):
 - [MCP](https://riffer.ai/guides/mcp/) - Integrating third-party MCP servers
 - [Serialization](https://riffer.ai/guides/serialization/) - Persisting and transferring agent definitions
 - [Tracing](https://riffer.ai/guides/tracing/) - OpenTelemetry span contract and host wiring
+- [Stability](https://riffer.ai/guides/stability/) - What's safe to depend on and how upgrades work
 - [Providers](https://riffer.ai/guides/providers/overview/) - LLM provider adapters
 
 The guide sources are in the [docs](docs/) directory.
@@ -159,7 +160,7 @@ Please follow the [Code of Conduct](https://github.com/janeapp/riffer/blob/main/
 
 ## Changelog
 
-All notable changes to this project are documented in `CHANGELOG.md`.
+All notable changes to this project are documented in `CHANGELOG.md`. Breaking releases come with an upgrade guide in [UPGRADING.md](UPGRADING.md).
 
 ## License
 
