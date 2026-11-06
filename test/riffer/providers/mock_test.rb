@@ -12,6 +12,12 @@ describe Riffer::Providers::Mock do
     end
   end
 
+  describe ".supports_deferred_tools?" do
+    it "is true so deferred tools can be tested" do
+      expect(Riffer::Providers::Mock.supports_deferred_tools?).must_equal true
+    end
+  end
+
   describe ".skills_adapter" do
     it "returns XmlAdapter for a claude-* model name" do
       expect(Riffer::Providers::Mock.skills_adapter("claude-sonnet-4-6")).must_equal Riffer::Skills::XmlAdapter

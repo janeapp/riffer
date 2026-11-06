@@ -393,6 +393,7 @@ describe Riffer::Agent::Config do
         structured_output_strategy: :prompted,
         max_steps: 4,
         tools_config: [Riffer::Tool],
+        deferred_tools_config: [Riffer::Tool],
         tool_runtime: Riffer::Tools::Runtime::Inline,
       )
       config.add_mcp(:a_tag)

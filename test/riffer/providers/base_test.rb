@@ -42,6 +42,10 @@ class DefaultReasoningProvider < Riffer::Providers::Mock
   end
 end
 
+class NoDeferredToolsProvider < Riffer::Providers::Mock
+  def self.supports_deferred_tools? = false
+end
+
 class RawFinishReasonProvider < Riffer::Providers::Mock
   private
 
@@ -132,6 +136,37 @@ describe Riffer::Providers::Base do
     it "raises NotImplementedError when hook methods not implemented" do
       error = expect { provider.stream_text(prompt: "Hello") }.must_raise(NotImplementedError)
       expect(error.message).must_equal "Subclasses must implement #build_request_params"
+    end
+  end
+
+  describe ".supports_deferred_tools?" do
+    it "is false by default" do
+      expect(Riffer::Providers::Base.supports_deferred_tools?).must_equal false
+    end
+  end
+
+  describe "deferred_tools option" do
+    let(:tool) { stub_tool("DeferredOptionTool") { description "Deferred" } }
+
+    it "reaches a provider that supports deferred tools" do
+      provider = Riffer::Providers::Mock.new
+      provider.generate_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool])
+
+      expect(provider.calls.last[:deferred_tools]).must_equal [tool]
+    end
+
+    it "is kept out of the request params of a provider without support" do
+      provider = NoDeferredToolsProvider.new
+      provider.generate_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool])
+
+      refute_includes provider.calls.last.keys, :deferred_tools
+    end
+
+    it "is kept out of the streamed request params of a provider without support" do
+      provider = NoDeferredToolsProvider.new
+      provider.stream_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool]).each { |_| }
+
+      refute_includes provider.calls.last.keys, :deferred_tools
     end
   end
 

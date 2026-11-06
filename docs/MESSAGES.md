@@ -316,6 +316,19 @@ msg.error       # => "API rate limit exceeded"
 msg.error_type  # => :execution_error
 ```
 
+A tool result that [loaded deferred tools](TOOLS.md#loading-deferred-tools-experimental) records their names in `loaded_tools` (`[]` otherwise). `to_h` includes the key only when it isn't empty, and `from_hash` reads it back, so the loaded set travels with the history:
+
+```ruby
+msg = Riffer::Messages::Tool.new(
+  "",
+  tool_call_id: "call_456",
+  name: "connect_calendar",
+  loaded_tools: ["list_events", "create_event"]
+)
+msg.loaded_tools  # => ["list_events", "create_event"]
+msg.to_h          # => {role: :tool, content: "", tool_call_id: "call_456", name: "connect_calendar", loaded_tools: ["list_events", "create_event"]}
+```
+
 ## File Parts
 
 `Riffer::Messages::User::FilePart` represents a file attachment (image or document) that can be included with user messages.

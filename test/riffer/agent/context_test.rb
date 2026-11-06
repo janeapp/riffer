@@ -52,6 +52,15 @@ describe Riffer::Agent::Context do
       expect { Riffer::Agent::Context.new(discovered_tools: []) }.
         must_raise Riffer::ArgumentError
     end
+
+    it "raises when :deferred_tools is passed by the caller" do
+      expect { Riffer::Agent::Context.new(deferred_tools: []) }.
+        must_raise Riffer::ArgumentError
+    end
+
+    it "defaults deferred_tools to nil" do
+      expect(Riffer::Agent::Context.new.deferred_tools).must_be_nil
+    end
   end
 
   describe "#skills=" do
@@ -194,6 +203,31 @@ describe Riffer::Agent::Context do
     end
   end
 
+  describe "#deferred_tools=" do
+    let(:context) { Riffer::Agent::Context.new }
+
+    it "accepts nil" do
+      context.deferred_tools = nil
+
+      expect(context.deferred_tools).must_be_nil
+    end
+
+    it "accepts an Array of Riffer::Tool subclasses" do
+      tool = stub_tool("Tool")
+      context.deferred_tools = [tool]
+
+      expect(context.deferred_tools).must_equal [tool]
+    end
+
+    it "raises on a non-Array, non-nil value" do
+      expect { context.deferred_tools = :nope }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises when Array contains non-Tool entries" do
+      expect { context.deferred_tools = [String] }.must_raise Riffer::ArgumentError
+    end
+  end
+
   describe "#discover_tools" do
     let(:context) { Riffer::Agent::Context.new }
 
@@ -234,7 +268,7 @@ describe Riffer::Agent::Context do
     it "returns the underlying hash" do
       expect(Riffer::Agent::Context.new(tenant: "alpha").to_h).
         must_equal({ tenant: "alpha", skills: nil, token_usage: nil, mcp_progressive_tools: nil,
-                     discovered_tools: nil, })
+                     discovered_tools: nil, deferred_tools: nil, })
     end
 
     it "returns a copy (caller mutations do not leak back)" do

@@ -277,17 +277,27 @@ module Riffer::Agent::Run
   def execute_tool_calls(agent, assistant_message, tool_calls: assistant_message.tool_calls, tags: {})
     return if tool_calls.empty?
 
-    results = agent.tool_runtime.execute(
-      tool_calls,
-      tools: effective_tools(agent),
+    # Computed once per batch: the model made every call in it before seeing any of its loads.
+    loaded = loaded_tools(agent.session.messages, agent.deferred_tools)
+    unloaded_names = (agent.deferred_tools - loaded).map(&:name)
+    # Refused here rather than by the runtime, since a custom runtime may ignore +tools:+.
+    refused, callable = tool_calls.partition { |tool_call| unloaded_names.include?(tool_call.name) }
+
+    dispatched = agent.tool_runtime.execute(
+      callable,
+      tools: effective_tools(agent) + loaded,
       context: agent.context,
       assistant_message: assistant_message,
       tags: tags,
-    )
+    ).to_h { |tool_call, result| [tool_call, reject_invalid_load(agent, result)] }
 
-    inject_discovered_tools(agent, results)
+    inject_discovered_tools(agent, dispatched)
 
-    results.each do |tool_call, result|
+    results = dispatched.merge(refused.to_h { |tool_call| [tool_call, tool_not_loaded(tool_call)] })
+    tool_calls.each do |tool_call|
+      result = results.fetch(tool_call, nil)
+      next unless result
+
       agent.session.add(
         Riffer::Messages::Tool.new(
           result.content,
@@ -295,15 +305,43 @@ module Riffer::Agent::Run
           name: tool_call.name,
           error: result.error_message,
           error_type: result.error_type,
+          loaded_tools: result.loaded_tools.map(&:name),
         ),
       )
     end
   end
 
   #--
-  #: (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
+  #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+  def loaded_tools(messages, deferred_tools)
+    tool_messages = messages.grep(Riffer::Messages::Tool) #: Array[Riffer::Messages::Tool]
+    names = tool_messages.reject(&:error?).flat_map(&:loaded_tools)
+    # By name, since an agent rebuilt with +from_h+ holds body-less shells rather than the original classes.
+    deferred_tools.select { |tool| names.include?(tool.name) }
+  end
+
+  #--
+  #: (Riffer::Agent, Riffer::Tools::Response) -> Riffer::Tools::Response
+  def reject_invalid_load(agent, result)
+    invalid = result.loaded_tools.map(&:name) - agent.deferred_tools.map(&:name)
+    return result if invalid.empty?
+
+    Riffer::Tools::Response.error(
+      "Cannot load #{invalid.join(', ')}: only this agent's deferred tools can be loaded",
+      type: :invalid_tool_load,
+    )
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
+  def tool_not_loaded(tool_call)
+    Riffer::Tools::Response.error("Tool '#{tool_call.name}' has not been loaded", type: :tool_not_loaded)
+  end
+
+  #--
+  #: (Riffer::Agent, Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
   def inject_discovered_tools(agent, results)
-    to_inject = results.flat_map do |_, result|
+    to_inject = results.values.flat_map do |result|
       result.is_a?(Riffer::Mcp::SearchTool::Result) ? result.discovered_tools : [] #: Array[singleton(Riffer::Tool)]
     end
     return if to_inject.empty?
@@ -371,6 +409,7 @@ module Riffer::Agent::Run
     opts[:structured_output] = agent.structured_output if agent.structured_output
     reasoning = agent.config.reasoning
     opts[:riffer_reasoning_level] = reasoning if reasoning
+    opts[:deferred_tools] = agent.deferred_tools unless agent.deferred_tools.empty?
     # Providers extract :tags for native request metadata; it never reaches an
     # SDK call verbatim.
     opts[:tags] = tags unless tags.empty?

@@ -9,7 +9,7 @@ Agent.new(session: nil, context: nil)
 ```
 
 - **`session:`** — an existing `Riffer::Agent::Session`. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. A provided session is repaired at construction time so the `tool_use` ↔ `tool_result` invariant holds before the next inference call: orphaned `tool_use` exchanges (an assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages are dropped. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved so `generate`/`stream` can execute them.
-- **`context:`** — a `Hash` carried for the lifetime of the agent. Used to evaluate Proc-based `instructions`, `model`, `uses_tools`, and skill activation at construction time, and threaded through tool execution and guardrails on every `generate`/`stream` call.
+- **`context:`** — a `Hash` carried for the lifetime of the agent. Used to evaluate Proc-based `instructions`, `model`, `uses_tools`, `deferred_tools`, and skill activation at construction time, and threaded through tool execution and guardrails on every `generate`/`stream` call.
 
 When `session:` is omitted, the agent constructs a fresh session and seeds it with `[instruction_message, skills_message].compact` eagerly. To swap context, construct a new agent — context is fixed for the lifetime of an agent instance.
 

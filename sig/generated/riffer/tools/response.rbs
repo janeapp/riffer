@@ -12,6 +12,8 @@ class Riffer::Tools::Response
 
   attr_reader error_type: Symbol?
 
+  attr_reader loaded_tools: Array[singleton(Riffer::Tool)]
+
   # Kept out of every serialized form so it never reaches an LLM or a message
   # payload.
   attr_reader exception: Exception?
@@ -27,6 +29,11 @@ class Riffer::Tools::Response
   # --
   # : (untyped) -> Riffer::Tools::Response
   def self.json: (untyped) -> Riffer::Tools::Response
+
+  # No text alongside: Anthropic rejects a tool result that mixes +tool_reference+ blocks with text.
+  # --
+  # : (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
+  def self.load_tools: (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
 
   # --
   # : (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
@@ -47,6 +54,6 @@ class Riffer::Tools::Response
   private
 
   # --
-  # : (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -> void
-  def initialize: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -> void
+  # : (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?, ?loaded_tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?, ?loaded_tools: Array[singleton(Riffer::Tool)]) -> void
 end

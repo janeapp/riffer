@@ -60,6 +60,10 @@ class Riffer::Tool
   def json: (untyped) -> Riffer::Tools::Response
 
   # --
+  # : (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
+  def load_tools: (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
+
+  # --
   # : (String, ?type: Symbol) -> Riffer::Tools::Response
   def error: (String, ?type: Symbol) -> Riffer::Tools::Response
 
