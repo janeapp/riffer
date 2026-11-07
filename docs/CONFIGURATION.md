@@ -326,7 +326,7 @@ Riffer.configure do |config|
 end
 ```
 
-A flag accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`; any other value raises `Riffer::ArgumentError`. A flag name Riffer doesn't know raises `NoMethodError`.
+A flag accepts booleans, `'true'`/`'false'`/`'1'`/`'0'`, `1`/`0`, or `nil` (which turns it off); any other value raises `Riffer::ArgumentError`. A flag name Riffer doesn't know raises `NoMethodError`.
 
 A flag goes through three stages:
 
