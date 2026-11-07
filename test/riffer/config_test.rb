@@ -9,7 +9,7 @@ describe Riffer::Config do
       config = Riffer::Config.new
       sections = %i[
         amazon_bedrock anthropic azure_openai gemini google_cloud openai openrouter evals mcp skills tracing files
-        pricing
+        future pricing
       ]
 
       expect(sections.map { |section| config.public_send(section).class }).must_equal [
@@ -25,6 +25,7 @@ describe Riffer::Config do
         Riffer::Config::Skills,
         Riffer::Config::Tracing,
         Riffer::Config::Files,
+        Riffer::Config::Future,
         Riffer::Config::Pricing,
       ]
     end
