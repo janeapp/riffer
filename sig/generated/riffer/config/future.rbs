@@ -1,6 +1,8 @@
 # Generated from lib/riffer/config/future.rb with RBS::Inline
 
 class Riffer::Config::Future
+  # Steep can't type an empty literal; drop the ignore once FLAGS has an entry.
+  # steep:ignore:start
   FLAGS: Hash[Symbol, { default: bool }]
 
   @flags: Hash[Symbol, { default: bool }]
@@ -14,14 +16,6 @@ class Riffer::Config::Future
   # --
   # : (Symbol) -> bool
   def enabled?: (Symbol) -> bool
-
-  # --
-  # : (Symbol, *untyped) -> untyped
-  def method_missing: (Symbol, *untyped) -> untyped
-
-  # --
-  # : (Symbol, ?bool) -> bool
-  def respond_to_missing?: (Symbol, ?bool) -> bool
 
   private
 

@@ -326,13 +326,13 @@ Riffer.configure do |config|
 end
 ```
 
-A flag accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`; any other value, or a flag name Riffer doesn't know, raises `Riffer::ArgumentError`.
+A flag accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`; any other value raises `Riffer::ArgumentError`. A flag name Riffer doesn't know raises `NoMethodError`.
 
 A flag goes through three stages:
 
 1. **Opt-in.** The flag is off by default, and setting it to `true` turns the new behaviour on.
 2. **Default.** A [breaking release](STABILITY.md#breaking-releases) makes the new behaviour the default. The flag always reads as on, and setting it reports a [deprecation](#deprecations) saying it's no longer needed and can be removed.
-3. **Removed.** A release later the flag is gone, and setting it raises `Riffer::ArgumentError`.
+3. **Removed.** A release later the flag is gone, and setting it raises `NoMethodError`.
 
 | Flag     | Stage | Description                     |
 | -------- | ----- | ------------------------------- |

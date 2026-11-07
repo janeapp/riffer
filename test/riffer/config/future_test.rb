@@ -46,10 +46,8 @@ describe Riffer::Config::Future do
       expect(future.respond_to?(:nope=)).must_equal false
     end
 
-    it "raises for an unknown flag, naming it" do
-      error = expect { future.nope = true }.must_raise Riffer::ArgumentError
-
-      expect(error.message).must_include ":nope"
+    it "has no setter for an unknown flag" do
+      expect { future.nope = true }.must_raise NoMethodError
     end
 
     it "raises for a non-boolean value" do

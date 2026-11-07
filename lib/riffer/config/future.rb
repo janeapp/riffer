@@ -4,7 +4,6 @@
 class Riffer::Config::Future
   # Steep can't type an empty literal; drop the ignore once FLAGS has an entry.
   # steep:ignore:start
-
   FLAGS = {}.freeze #: Hash[Symbol, { default: bool }]
   # steep:ignore:end
 
@@ -16,26 +15,13 @@ class Riffer::Config::Future
   def initialize(flags: FLAGS)
     @flags = flags
     @enabled = {}
+    flags.each_key { |name| define_singleton_method(:"#{name}=") { |value| set(name, value) } }
   end
 
   #--
   #: (Symbol) -> bool
   def enabled?(name)
     flag(name)[:default] || @enabled.fetch(name, false)
-  end
-
-  #--
-  #: (Symbol, *untyped) -> untyped
-  def method_missing(method_name, *args)
-    return super unless method_name.end_with?("=") && args.size == 1
-
-    set(method_name.to_s.delete_suffix("=").to_sym, args.first)
-  end
-
-  #--
-  #: (Symbol, ?bool) -> bool
-  def respond_to_missing?(method_name, include_private = false)
-    (method_name.end_with?("=") && @flags.key?(method_name.to_s.delete_suffix("=").to_sym)) || super
   end
 
   private
