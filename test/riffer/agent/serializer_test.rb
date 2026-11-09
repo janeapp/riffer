@@ -101,8 +101,8 @@ describe Riffer::Agent::Serializer do
       expect(klass.new.to_h[:deferred_tools].map { |d| d[:name] }).must_equal ["serializer_forecast_tool"]
     end
 
-    it "omits deferred_tools when the agent has none" do
-      refute_includes build_agent_class.new.to_h.keys, :deferred_tools
+    it "emits an empty deferred_tools list when the agent has none" do
+      expect(build_agent_class.new.to_h[:deferred_tools]).must_equal []
     end
 
     it "carries the reasoning level on the wire" do
@@ -161,7 +161,7 @@ describe Riffer::Agent::Serializer do
     end
 
     it "decodes a hash without deferred_tools as deferring nothing" do
-      dict = build_agent_class.new.to_h
+      dict = build_agent_class.new.to_h.except(:deferred_tools)
 
       expect(Riffer::Agent.from_h(dict).deferred_tools).must_equal []
     end

@@ -18,7 +18,7 @@ module Riffer::Agent::Serializer
   def to_h(agent:)
     # Already resolved against the agent's context, so the hash carries plain data, never Procs.
     config = agent.config
-    hash = {
+    {
       schema_version: SCHEMA_VERSION,
       riffer_version: Riffer::VERSION,
       identifier: config.identifier,
@@ -30,11 +30,8 @@ module Riffer::Agent::Serializer
       structured_output_strategy: config.structured_output_strategy,
       reasoning: config.reasoning,
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
-    } #: Hash[Symbol, untyped]
-    deferred_tools = agent.deferred_tools
-    # Optional, so a reader that doesn't know the key decodes any agent that doesn't need it.
-    hash[:deferred_tools] = deferred_tools.map { |tool_class| tool_descriptor(tool_class) } unless deferred_tools.empty?
-    hash
+      deferred_tools: agent.deferred_tools.map { |tool_class| tool_descriptor(tool_class) },
+    }
   end
 
   # Raises Riffer::Agent::Serializer::VersionError on an unsupported +schema_version+.
