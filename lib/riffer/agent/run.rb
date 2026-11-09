@@ -314,6 +314,8 @@ module Riffer::Agent::Run
   #--
   #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def loaded_tools(messages, deferred_tools)
+    return [] if deferred_tools.empty?
+
     tool_messages = messages.grep(Riffer::Messages::Tool) #: Array[Riffer::Messages::Tool]
     names = tool_messages.reject(&:error?).flat_map(&:loaded_tools)
     # By name, since an agent rebuilt with +from_h+ holds body-less shells rather than the original classes.
