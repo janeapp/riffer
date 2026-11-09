@@ -45,6 +45,8 @@ class Riffer::Config
 
   attr_reader :files #: Riffer::Config::Files # @dynamic files
 
+  attr_reader :future #: Riffer::Config::Future # @dynamic future
+
   # @deprecated Use +catalog_files+.
   attr_reader :pricing #: Riffer::Config::Pricing # @dynamic pricing
 
@@ -114,6 +116,7 @@ class Riffer::Config
     @skills = Skills.new
     @tracing = Tracing.new
     @files = Files.new
+    @future = Future.new
     @pricing = Pricing.new
     no_files = [] #: Array[String]
     @catalog_files = no_files.freeze
