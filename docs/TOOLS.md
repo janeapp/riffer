@@ -228,6 +228,8 @@ Three keys are framework-managed and exposed as typed accessors:
 - `context.token_usage` — the cumulative `Riffer::Providers::TokenUsage` across every run on the agent, or `nil` before the first response.
 - `context.deferred_tools` — the agent's [deferred tools](#loading-deferred-tools-experimental), loaded or not (`[]` when it has none).
 
+Passing your own `:deferred_tools` key in `context:` is deprecated: it still works, and `context[:deferred_tools]` returns your value, but it prints a [deprecation warning](STABILITY.md#deprecations), and a future breaking release reserves the key. Rename it.
+
 ## Response Objects
 
 All tools must return a `Riffer::Tools::Response` object from their `call` method. Riffer::Tool provides shorthand methods for creating responses.

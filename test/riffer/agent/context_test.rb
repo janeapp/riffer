@@ -53,9 +53,16 @@ describe Riffer::Agent::Context do
         must_raise Riffer::ArgumentError
     end
 
-    it "raises when :deferred_tools is passed by the caller" do
-      expect { Riffer::Agent::Context.new(deferred_tools: []) }.
-        must_raise Riffer::ArgumentError
+    it "deprecates passing :deferred_tools, which a future release reserves" do
+      error = expect { Riffer::Agent::Context.new(deferred_tools: []) }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_match(/Passing :deferred_tools in context: is deprecated/)
+    end
+
+    it "keeps a caller's :deferred_tools value apart from context.deferred_tools" do
+      context = allow_deprecations { Riffer::Agent::Context.new(deferred_tools: "mine") }
+
+      expect([context[:deferred_tools], context.deferred_tools]).must_equal ["mine", nil]
     end
 
     it "defaults deferred_tools to nil" do
@@ -268,7 +275,7 @@ describe Riffer::Agent::Context do
     it "returns the underlying hash" do
       expect(Riffer::Agent::Context.new(tenant: "alpha").to_h).
         must_equal({ tenant: "alpha", skills: nil, token_usage: nil, mcp_progressive_tools: nil,
-                     discovered_tools: nil, deferred_tools: nil, })
+                     discovered_tools: nil, })
     end
 
     it "returns a copy (caller mutations do not leak back)" do
