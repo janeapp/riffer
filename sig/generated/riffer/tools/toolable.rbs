@@ -1,8 +1,0 @@
-# Generated from lib/riffer/tools/toolable.rb with RBS::Inline
-
-# @deprecated Subclass Riffer::Tool instead.
-module Riffer::Tools::Toolable
-  # --
-  # : (Module) -> void
-  def self.extended: (Module) -> void
-end
