@@ -296,7 +296,7 @@ end
 A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:
 
 ```
-riffer: config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
+riffer: config.pricing is deprecated and will be removed in a future version; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
 ```
 
 `config.deprecations` decides what happens:
