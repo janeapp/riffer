@@ -1,5 +1,6 @@
 # Generated from lib/riffer/config/mcp.rb with RBS::Inline
 
+# @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
 class Riffer::Config::Mcp
   attr_reader credentials: untyped
 
@@ -16,4 +17,10 @@ class Riffer::Config::Mcp
   # --
   # : (untyped) -> void
   def discovery_runner=: (untyped) -> void
+
+  private
+
+  # --
+  # : () -> void
+  def warn_deprecated: () -> void
 end

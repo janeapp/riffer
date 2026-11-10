@@ -124,9 +124,9 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-### use_mcp
+### use_mcp (deprecated)
 
-Loads tools from registered [MCP](MCP.md) servers by tag.
+Loads tools from registered [MCP](MCP.md) servers by tag. MCP client support is deprecated and will be removed in a future release; each `use_mcp` line reports a [deprecation](CONFIGURATION.md#deprecations). See [MCP → Moving off MCP](MCP.md#moving-off-mcp).
 
 ### model_options
 

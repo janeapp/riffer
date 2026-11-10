@@ -133,7 +133,9 @@ Streaming is tested with the default `net_http` adapter.
 - A non-success status raises `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream) and `body` the raw response text.
 - Transport failures are raised as Faraday's own errors, such as `Faraday::TimeoutError` and `Faraday::ConnectionFailed` (both `Faraday::Error`s).
 
-### MCP (Model Context Protocol)
+### MCP (deprecated)
+
+`config.mcp` is deprecated and will be removed with MCP client support in a future release; each line that sets `credentials` or `discovery_runner` reports a [deprecation](#deprecations). See [MCP → Moving off MCP](MCP.md#moving-off-mcp).
 
 Optional settings for [MCP server integrations](MCP.md):
 

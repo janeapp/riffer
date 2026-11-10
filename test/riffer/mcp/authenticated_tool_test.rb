@@ -33,22 +33,21 @@ describe Riffer::Mcp::AuthenticatedTool do
 
   it "delegates to inner when credentials proc is nil" do
     prev = Riffer.config.mcp.credentials
-    Riffer.config.mcp.credentials = nil
+    configure_mcp_credentials(nil)
     wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
     resp = wrapped.new.call(context: {}, x: 1)
 
     assert_equal "inner-1", resp.content
   ensure
-    Riffer.config.mcp.credentials = prev
+    configure_mcp_credentials(prev)
   end
 
   it "raises CredentialsDeniedError when credentials returns nil during call" do
     prev = Riffer.config.mcp.credentials
-    Riffer.config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
-    end
+    configure_mcp_credentials(->(manifest:, matched_tags:, context:) {})
     wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
     assert_raises(Riffer::Mcp::CredentialsDeniedError) { wrapped.new.call(context: {}, x: 1) }
   ensure
-    Riffer.config.mcp.credentials = prev
+    configure_mcp_credentials(prev)
   end
 end

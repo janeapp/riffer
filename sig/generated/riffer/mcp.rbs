@@ -1,5 +1,6 @@
 # Generated from lib/riffer/mcp.rb with RBS::Inline
 
+# @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
 module Riffer::Mcp
   class Error < Riffer::Error
   end

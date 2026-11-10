@@ -112,7 +112,7 @@ describe Riffer::Mcp::Registration do
         end
       end.new
 
-      Riffer.config.mcp.discovery_runner = custom_runner
+      allow_deprecations { Riffer.config.mcp.discovery_runner = custom_runner }
 
       fake_client = Object.new
       fake_client.define_singleton_method(:tools_list) { [] }
@@ -135,7 +135,7 @@ describe Riffer::Mcp::Registration do
 
       assert runner_called, "expected discovery_runner to be called"
     ensure
-      Riffer.config.mcp.discovery_runner = original_runner
+      allow_deprecations { Riffer.config.mcp.discovery_runner = original_runner }
     end
   end
 

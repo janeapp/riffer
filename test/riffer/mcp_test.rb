@@ -20,6 +20,24 @@ describe Riffer::Mcp do
   end
 
   describe ".register" do
+    after { reset_riffer_config! }
+
+    it "raises the mcp_register deprecation in :raise mode" do
+      error = expect { Riffer::Mcp.register(name: "srv", endpoint: "https://x.com") }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_match(/Riffer::Mcp.register is deprecated/)
+    end
+
+    it "reports the caller of register as the location" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      line = __LINE__ + 2
+      # The blank name fails validation, so register stops before discovery reaches the network.
+      expect { Riffer::Mcp.register(name: "", endpoint: "https://x.com") }.must_raise Riffer::ArgumentError
+
+      expect(events.map { |event| [event.id, event.location] }).must_equal [[:mcp_register, "#{__FILE__}:#{line}"]]
+    end
+
     it "delegates to Registry and returns a Registration" do
       inject_stub_registration(name: "srv", tags: [:t])
       reg = Riffer::Mcp.registrations["srv"]
