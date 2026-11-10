@@ -338,7 +338,7 @@ An agent can hold tools back with [`deferred_tools`](AGENTS.md#deferred_tools-ex
 ```ruby
 class FindTools < Riffer::Tool
   description "Find more tools for a task. Describe what you need to do in a few words."
-  params { required :query, String }
+  params { required :query, :string }
 
   def call(context:, query:)
     words = query.downcase.split

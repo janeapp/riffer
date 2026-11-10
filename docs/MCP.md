@@ -18,8 +18,8 @@ class CreateIssueTool < Riffer::Tool
   description "Creates a GitHub issue"
 
   params do
-    required :title, String, description: "The issue title"
-    optional :body, String, description: "The issue body"
+    required :title, :string, description: "The issue title"
+    optional :body, :string, description: "The issue body"
   end
 
   def call(context:, title:, body: nil)
