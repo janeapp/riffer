@@ -738,6 +738,13 @@ describe Riffer::Agent do
   describe ".deferred_tools" do
     let(:list_events) { stub_tool("ListEvents") { description "Lists calendar events" } }
     let(:send_invoice) { stub_tool("SendInvoice") { description "Sends an invoice" } }
+    # Anonymous, since the tool registry already holds the gateway under this identifier.
+    let(:gateway_named_tool) do
+      Class.new(Riffer::Tool) do
+        identifier "call_loaded_tool"
+        description "Shares the gateway's name"
+      end
+    end
 
     it "returns nil when not set" do
       expect(agent_class.deferred_tools).must_be_nil
@@ -823,6 +830,16 @@ describe Riffer::Agent do
       expect(err.message).must_match(/must define a description/)
     end
 
+    it "allows a deferred tool with the gateway's name on a provider with native loading" do
+      tool = gateway_named_tool
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [tool]
+      end
+
+      expect(klass.new.deferred_tools).must_equal [tool]
+    end
+
     describe "on a provider without deferred tool support" do
       before do
         unsupported = Class.new(Riffer::Providers::Mock) do
@@ -833,15 +850,37 @@ describe Riffer::Agent do
 
       after { Riffer::Providers::Repository.unregister(:no_deferred) }
 
-      it "raises naming the provider" do
+      it "builds an agent with its deferred tools, which go through the gateway" do
         tool = list_events
         klass = stub_agent("Agent") do
           model "no_deferred/riffer-1"
           deferred_tools [tool]
         end
 
+        expect(klass.new.deferred_tools).must_equal [tool]
+      end
+
+      it "raises for a tool that shares the gateway's name" do
+        deferred = list_events
+        clash = gateway_named_tool
+        klass = stub_agent("Agent") do
+          model "no_deferred/riffer-1"
+          uses_tools [clash]
+          deferred_tools [deferred]
+        end
+
         err = expect { klass.new }.must_raise Riffer::ArgumentError
-        expect(err.message).must_equal "Provider no_deferred does not support deferred tools"
+        expect(err.message).must_equal "Duplicate tool names: call_loaded_tool"
+      end
+
+      it "allows a tool with the gateway's name when the agent defers nothing" do
+        tool = gateway_named_tool
+        klass = stub_agent("Agent") do
+          model "no_deferred/riffer-1"
+          uses_tools [tool]
+        end
+
+        expect(klass.new.tools).must_equal [tool]
       end
 
       it "builds an agent that defers nothing" do

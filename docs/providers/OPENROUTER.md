@@ -173,6 +173,12 @@ class MathAgent < Riffer::Agent
 end
 ```
 
+## Deferred Tools (experimental)
+
+OpenRouter has no native deferred loading, so [deferred tools](../AGENTS.md#deferred_tools-experimental) go through riffer's [gateway fallback](../TOOLS.md#the-gateway-fallback). Every request of an agent with deferred tools has one extra function in `tools`, `call_loaded_tool`, and the model calls a loaded tool through it, so `tools` stays the same and a load keeps the prompt cache. Calls come back under the real tool's name.
+
+The gateway is sent with `strict: true`, like every other tool. Its parameters are two required strings, `name` and `arguments` (the loaded tool's arguments, JSON-encoded), with no additional properties, so the schema is valid in strict mode; riffer checks the arguments against the real tool's `params` when it runs.
+
 ## Reasoning Models
 
 Reasoning models surface their thought process via OpenRouter's normalised `reasoning_details` field. Enable it with the `reasoning` option:

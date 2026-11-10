@@ -1194,4 +1194,101 @@ describe Riffer::Providers::OpenRouter do
       expect(captured[:stream_options][:include_obfuscation]).must_equal false
     end
   end
+
+  describe "deferred tools" do
+    let(:provider) { Riffer::Providers::OpenRouter.new }
+    let(:gateway_tool) { Riffer::Providers::DeferredToolGateway::Tool }
+    let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
+    let(:list_events) do
+      stub_tool("ListEvents") do
+        identifier "calendar/list_events"
+        description "Lists calendar events"
+        params { required :date, :string }
+      end
+    end
+
+    let(:gateway_arguments) { '{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}' }
+    let(:list_events_call) do
+      Riffer::Messages::Assistant::ToolCall.new(
+        call_id: "call_2",
+        name: "calendar/list_events",
+        arguments: '{"date":"2026-11-06"}',
+      )
+    end
+
+    def install_completion(provider, requests)
+      message = OpenAI::Models::Chat::ChatCompletionMessage.new(
+        role: :assistant,
+        content: nil,
+        tool_calls: [
+          OpenAI::Models::Chat::ChatCompletionMessageFunctionToolCall.new(
+            id: "call_2",
+            type: :function,
+            function: OpenAI::Models::Chat::ChatCompletionMessageFunctionToolCall::Function.new(
+              name: "call_loaded_tool",
+              arguments: gateway_arguments,
+            ),
+          ),
+        ],
+      )
+      completion = OpenAI::Models::Chat::ChatCompletion.new(
+        choices: [OpenAI::Models::Chat::ChatCompletion::Choice.new(message: message, finish_reason: :tool_calls)],
+      )
+      completions_double = Object.new
+      completions_double.define_singleton_method(:create) do |**params|
+        requests << params
+        completion
+      end
+      provider.instance_variable_set(:@client, Struct.new(:chat).new(Struct.new(:completions).new(completions_double)))
+    end
+
+    def generate(provider, **options)
+      provider.generate_text(model: "openai/gpt-5-mini", tools: [loader], deferred_tools: [list_events], **options)
+    end
+
+    it "has no native loading" do
+      expect(Riffer::Providers::OpenRouter.supports_deferred_tools?).must_equal false
+    end
+
+    it "sends the gateway as a strict tool and returns its call as a call to the real tool" do
+      requests = []
+      install_completion(provider, requests)
+
+      message = generate(provider, prompt: "What's on?")
+
+      expect(requests.first[:tools].last).must_equal(
+        type: "function",
+        function: {
+          name: "call_loaded_tool",
+          description: gateway_tool.description,
+          parameters: gateway_tool.parameters_schema(strict: true),
+          strict: true,
+        },
+      )
+      expect(requests.first.key?(:deferred_tools)).must_equal false
+      expect(message.tool_calls).must_equal [list_events_call]
+    end
+
+    it "sends a call to a loaded tool back through the gateway" do
+      requests = []
+      install_completion(provider, requests)
+      messages = [
+        Riffer::Messages::User.new("What's on?"),
+        Riffer::Messages::Assistant.new("", tool_calls: [list_events_call]),
+        Riffer::Messages::Tool.new("3 events", tool_call_id: "call_2", name: "calendar/list_events"),
+      ]
+
+      generate(provider, messages: messages)
+
+      expect(requests.first[:messages].drop(1)).must_equal [
+        {
+          role: "assistant",
+          tool_calls: [
+            { id: "call_2", type: "function", function: { name: "call_loaded_tool", arguments: gateway_arguments } },
+          ],
+        },
+        { role: "tool", tool_call_id: "call_2", content: "3 events" },
+      ]
+    end
+  end
 end

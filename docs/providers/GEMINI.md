@@ -170,6 +170,12 @@ response = provider.generate_text(
 
 Gemini's own call ids are short, so riffer gives each tool call its own `call_id` (`gemini_call_<hex>`) and appends Gemini's id when there is one. On later turns riffer sends that id back on the function call and its result, so Gemini can match results to parallel calls of the same tool.
 
+### Deferred Tools (experimental)
+
+Gemini has no native deferred loading, so [deferred tools](../AGENTS.md#deferred_tools-experimental) go through riffer's [gateway fallback](../TOOLS.md#the-gateway-fallback). Every request of an agent with deferred tools has one extra function in `functionDeclarations`, `call_loaded_tool`, and the model calls a loaded tool through it, so the declarations stay the same and a load keeps the prompt cache. Calls come back under the real tool's name.
+
+Gemini sends a function's name with its result, so a deferred tool's call and its `functionResponse` both go back under `call_loaded_tool`. The call keeps its `call_id`, so its thought signature goes back on it as usual.
+
 ### Thought Signatures
 
 Gemini 3 models attach an opaque `thoughtSignature` to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.

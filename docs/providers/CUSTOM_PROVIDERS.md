@@ -235,7 +235,14 @@ end
 
 ### Deferred tools (experimental)
 
-An agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) can only use a provider whose `supports_deferred_tools?` class method returns true; the default is false, and riffer raises `Riffer::ArgumentError` when such an agent is built on your provider. A provider that supports them receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`. A provider that doesn't support them never sees the option.
+The `supports_deferred_tools?` class method says whether your provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively. A provider that returns true receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`.
+
+The default is false, and riffer then handles deferred tools for you through the [gateway fallback](../TOOLS.md#the-gateway-fallback), with no code in your provider. It never sees `options[:deferred_tools]`. Instead, `build_request_params` receives:
+
+- `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` (`call_loaded_tool`) on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool`, so your tool conversion handles it, strict mode included.
+- Messages where each call to a deferred tool is a `call_loaded_tool` call, its result is named `call_loaded_tool`, and a result that loaded tools has their descriptions appended to its content.
+
+The model's calls to `call_loaded_tool` that you return from `extract_tool_calls`, or stream as `ToolCallDone` events, are turned back into calls to the real tools before they leave the provider, and the `ToolCallDelta` events you stream for them are dropped.
 
 This hook is experimental too: `supports_deferred_tools?` and the `options[:deferred_tools]` it gates can change or be replaced in any minor release, for example by a capability in the [model catalog](../CATALOG.md) (see [Stability](../STABILITY.md#experimental-features)).
 

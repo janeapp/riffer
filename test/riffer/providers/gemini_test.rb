@@ -681,4 +681,76 @@ describe Riffer::Providers::Gemini do
       end
     end
   end
+
+  describe "deferred tools" do
+    let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
+    let(:list_events) { stub_tool("ListEvents") { description "Lists calendar events" } }
+    let(:gateway_args) { { name: "list_events", arguments: '{"date":"2026-11-06"}' } }
+    let(:requests) { [] }
+    let(:function_call_part) { { functionCall: { id: "g1", name: "call_loaded_tool", args: gateway_args } } }
+
+    before do
+      sent = requests
+      part = function_call_part
+      client = Object.new
+      client.define_singleton_method(:post) do |_path, body|
+        sent << body
+        { candidates: [{ content: { parts: [part] }, finishReason: "STOP" }] }
+      end
+      client.define_singleton_method(:post_stream) do |_path, body, &block|
+        sent << body
+        block.call("data: #{{ candidates: [{ content: { parts: [part] }, finishReason: 'STOP' }] }.to_json}\n\n")
+      end
+      Riffer.config.gemini.client = client
+    end
+
+    def request_options
+      { model: "gemini-3.5-flash-lite", tools: [loader], deferred_tools: [list_events] }
+    end
+
+    it "has no native loading, here or on Google Cloud" do
+      supported = [Riffer::Providers::Gemini, Riffer::Providers::GoogleCloud].map(&:supports_deferred_tools?)
+
+      expect(supported).must_equal [false, false]
+    end
+
+    it "declares the gateway after the agent's tools and returns its call as a call to the real tool" do
+      message = Riffer::Providers::Gemini.new.generate_text(prompt: "What's on?", **request_options)
+
+      expect(requests.first.dig(:tools, 0, :functionDeclarations).map { |d| d[:name] }).
+        must_equal %w[connect_calendar call_loaded_tool]
+      expect(message.tool_calls.map { |tc| [tc.name, tc.arguments] }).
+        must_equal [["list_events", '{"date":"2026-11-06"}']]
+    end
+
+    it "streams a call through the gateway as a call to the real tool" do
+      events = Riffer::Providers::Gemini.new.stream_text(prompt: "What's on?", **request_options).to_a
+
+      expect(events.grep(Riffer::StreamEvents::ToolCallDone).map(&:name)).must_equal ["list_events"]
+    end
+
+    it "sends a call to a loaded tool and its result under the gateway's name" do
+      call = Riffer::Messages::Assistant::ToolCall.new(
+        call_id: "gemini_call_#{'a' * 24}_g1",
+        name: "list_events",
+        arguments: '{"date":"2026-11-06"}',
+      )
+      messages = [
+        Riffer::Messages::User.new("What's on?"),
+        Riffer::Messages::Assistant.new("", tool_calls: [call]),
+        Riffer::Messages::Tool.new("3 events", tool_call_id: call.call_id, name: "list_events"),
+      ]
+      Riffer::Providers::Gemini.new.generate_text(messages: messages, **request_options)
+      contents = requests.first[:contents]
+      gateway_call = {
+        id: "g1",
+        name: "call_loaded_tool",
+        args: { "name" => "list_events", "arguments" => '{"date":"2026-11-06"}' },
+      }
+
+      expect(contents[1][:parts].first[:functionCall]).must_equal gateway_call
+      expect(contents[2][:parts].first[:functionResponse].slice(:id, :name)).
+        must_equal({ id: "g1", name: "call_loaded_tool" })
+    end
+  end
 end

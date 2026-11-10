@@ -166,6 +166,10 @@ class AWSAgent < Riffer::Agent
 end
 ```
 
+## Deferred Tools (experimental)
+
+Converse has no native deferred loading, so [deferred tools](../AGENTS.md#deferred_tools-experimental) go through riffer's [gateway fallback](../TOOLS.md#the-gateway-fallback). Every request of an agent with deferred tools has one extra tool in `tool_config.tools`, `call_loaded_tool`, and the model calls a loaded tool through it, so the tool list stays the same and a load keeps the [`cache_control`](#cache_control) prompt cache. Calls come back under the real tool's name.
+
 ## Reasoning Models
 
 Claude models on Bedrock can think before they answer. Enable extended thinking through `additional_model_request_fields`:

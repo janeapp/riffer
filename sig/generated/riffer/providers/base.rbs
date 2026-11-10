@@ -58,6 +58,10 @@ class Riffer::Providers::Base
   def decodable_tools: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
 
   # --
+  # : (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  def gateway_deferred_tools: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+
+  # --
   # : (String) -> String
   def encode_tool_name: (String) -> String
 

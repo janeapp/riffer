@@ -260,6 +260,10 @@ response = provider.generate_text(
 
 Riffer gives each tool call its own `call_id` (`gemini_call_<hex>`) and appends the model's id when there is one. On later turns riffer sends that id back on the function call and its result, so the model can match results to parallel calls of the same tool.
 
+### Deferred Tools (experimental)
+
+Gemini models have no native deferred loading, so on `google_cloud` [deferred tools](../AGENTS.md#deferred_tools-experimental) go through riffer's [gateway fallback](../TOOLS.md#the-gateway-fallback), the same way as on [Gemini → Deferred Tools](GEMINI.md#deferred-tools-experimental). Claude models on `anthropic_vertex` load them natively.
+
 ### Thought Signatures
 
 Gemini 3 models attach an opaque `thoughtSignature` to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.

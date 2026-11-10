@@ -3,7 +3,7 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: deferred tools" do
-  no_native_loading = "Has no native deferred loading; the :gateway strategy (#554) covers it"
+  no_native_loading = "Loads deferred tools through the gateway fallback (#554); no cassettes recorded yet"
 
   acceptance_providers(
     except: {

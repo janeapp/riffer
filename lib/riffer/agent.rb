@@ -388,11 +388,10 @@ class Riffer::Agent
     deferred = Riffer::Helpers::CallOrValue.resolve(@config.deferred_tools_config, context: @context, default: [])
     return deferred if deferred.empty?
 
-    unless @provider.class.supports_deferred_tools?
-      raise Riffer::ArgumentError, "Provider #{@provider_name} does not support deferred tools"
-    end
-
-    assert_distinct_tool_names!(@tools + (@context.mcp_progressive_tools || []) + deferred)
+    tools = @tools + (@context.mcp_progressive_tools || []) + deferred
+    # The gateway goes on every request alongside the agent's tools, so no tool can share its name.
+    tools += [Riffer::Providers::DeferredToolGateway::Tool] unless @provider.class.supports_deferred_tools?
+    assert_distinct_tool_names!(tools)
     deferred.each(&:validate_as_tool!)
     deferred
   end
