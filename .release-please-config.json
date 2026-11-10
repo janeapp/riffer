@@ -6,7 +6,15 @@
       "release-type": "ruby",
       "package-name": "riffer",
       "version-file": "lib/riffer/version.rb",
-      "bump-minor-pre-major": true
+      "bump-minor-pre-major": true,
+      "exclude-paths": ["riffer-evals"]
+    },
+    "riffer-evals": {
+      "release-type": "ruby",
+      "package-name": "riffer-evals",
+      "version-file": "lib/riffer/evals/version.rb",
+      "bump-minor-pre-major": true,
+      "initial-version": "0.1.0"
     }
   }
 }

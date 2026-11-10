@@ -3,8 +3,12 @@
 require "test_helper"
 
 describe Riffer::Evals::EvaluatorRunner do
+  def run_evals(**)
+    allow_deprecations { Riffer::Evals::EvaluatorRunner.run(**) }
+  end
+
   let(:evaluator_class) do
-    Class.new(Riffer::Evals::Evaluator) do
+    evaluator_subclass do
       higher_is_better true
 
       def evaluate(input:, output:, ground_truth: nil, messages: [])
@@ -15,7 +19,7 @@ describe Riffer::Evals::EvaluatorRunner do
   end
 
   let(:ground_truth_evaluator_class) do
-    Class.new(Riffer::Evals::Evaluator) do
+    evaluator_subclass do
       higher_is_better true
 
       def evaluate(input:, output:, ground_truth: nil, messages: [])
@@ -38,9 +42,30 @@ describe Riffer::Evals::EvaluatorRunner do
     end
   end
 
+  describe "deprecation" do
+    after { reset_riffer_config! }
+
+    it "raises the evals deprecation in :raise mode" do
+      error = expect do
+        Riffer::Evals::EvaluatorRunner.run(agent: agent_class, scenarios: [], evaluators: [])
+      end.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "add the riffer-evals gem"
+    end
+
+    it "reports the caller of run as the location" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      line = __LINE__ + 1
+      Riffer::Evals::EvaluatorRunner.run(agent: agent_class, scenarios: [], evaluators: [])
+
+      expect(events.map { |event| [event.id, event.location] }).must_equal [[:evals, "#{__FILE__}:#{line}"]]
+    end
+  end
+
   describe ".run" do
     it "returns a RunResult" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [{ input: "What is Ruby?" }],
         evaluators: [evaluator_class],
@@ -50,7 +75,7 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "runs all scenarios" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [
           { input: "What is Ruby?" },
@@ -63,7 +88,7 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "runs all evaluators per scenario" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [{ input: "What is Ruby?" }],
         evaluators: [evaluator_class, ground_truth_evaluator_class],
@@ -73,7 +98,7 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "passes ground_truth to evaluators" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [{ input: "test", ground_truth: "Mock response" }],
         evaluators: [ground_truth_evaluator_class],
@@ -83,7 +108,7 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "captures agent output in scenario results" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [{ input: "Hello" }],
         evaluators: [evaluator_class],
@@ -93,7 +118,7 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "includes message history in scenario results" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [{ input: "Hello" }],
         evaluators: [evaluator_class],
@@ -109,7 +134,7 @@ describe Riffer::Evals::EvaluatorRunner do
 
     it "passes messages to evaluators" do
       received_messages = nil
-      messages_evaluator = Class.new(Riffer::Evals::Evaluator) do
+      messages_evaluator = evaluator_subclass do
         higher_is_better true
 
         define_method(:evaluate) do |input:, output:, ground_truth: nil, messages: []|
@@ -118,7 +143,7 @@ describe Riffer::Evals::EvaluatorRunner do
         end
       end
 
-      Riffer::Evals::EvaluatorRunner.run(
+      run_evals(
         agent: agent_class,
         scenarios: [{ input: "Hello" }],
         evaluators: [messages_evaluator],
@@ -143,7 +168,7 @@ describe Riffer::Evals::EvaluatorRunner do
         instructions "You are a helpful assistant."
       end
 
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: usage_agent,
         scenarios: [{ input: "Hello" }],
         evaluators: [evaluator_class],
@@ -155,7 +180,7 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "returns aggregate scores" do
-      result = Riffer::Evals::EvaluatorRunner.run(
+      result = run_evals(
         agent: agent_class,
         scenarios: [
           { input: "What is Ruby?" },
@@ -179,7 +204,7 @@ describe Riffer::Evals::EvaluatorRunner do
         instructions "You are a helpful assistant."
       end
 
-      Riffer::Evals::EvaluatorRunner.run(
+      run_evals(
         agent: context_agent,
         scenarios: [{ input: "Hello" }],
         evaluators: [evaluator_class],
@@ -199,7 +224,7 @@ describe Riffer::Evals::EvaluatorRunner do
         instructions "You are a helpful assistant."
       end
 
-      Riffer::Evals::EvaluatorRunner.run(
+      run_evals(
         agent: context_agent,
         scenarios: [
           { input: "Hello", context: { user_id: 99 } },
@@ -217,7 +242,7 @@ describe Riffer::Evals::EvaluatorRunner do
   describe "validation" do
     it "raises error when agent is not an Agent subclass" do
       expect do
-        Riffer::Evals::EvaluatorRunner.run(
+        run_evals(
           agent: String,
           scenarios: [{ input: "test" }],
           evaluators: [evaluator_class],
@@ -227,7 +252,7 @@ describe Riffer::Evals::EvaluatorRunner do
 
     it "raises error when eval is not an Evaluator subclass" do
       expect do
-        Riffer::Evals::EvaluatorRunner.run(
+        run_evals(
           agent: agent_class,
           scenarios: [{ input: "test" }],
           evaluators: [String],

@@ -4,13 +4,13 @@ require "test_helper"
 
 describe Riffer::Evals::ScenarioResult do
   let(:evaluator_class) do
-    Class.new(Riffer::Evals::Evaluator) do
+    evaluator_subclass do
       higher_is_better true
     end
   end
 
   let(:other_evaluator_class) do
-    Class.new(Riffer::Evals::Evaluator) do
+    evaluator_subclass do
       higher_is_better true
     end
   end

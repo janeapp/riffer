@@ -34,6 +34,32 @@ jobs:
           bundler-cache: true
       - run: bin/test
 
+  test-evals:
+    runs-on: ubuntu-latest
+    name: test-evals ${{ matrix.ruby }}
+
+    strategy:
+      matrix:
+        ruby:
+          - "3.3"
+          - "3.4"
+          - "4.0"
+
+    defaults:
+      run:
+        working-directory: riffer-evals
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      # Not bundler-cache: it installs in deployment mode, which fails once a
+      # riffer release bumps the version this lockfile records for riffer's path.
+      - run: bundle install
+      - run: bin/test
+
   test-no-otel:
     runs-on: ubuntu-latest
 

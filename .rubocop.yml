@@ -110,6 +110,14 @@ Performance/Sum:
     - lib/riffer/providers/base.rb
     - lib/riffer/evals/run_result.rb
     - lib/riffer/evals/scenario_result.rb
+    - riffer-evals/lib/riffer/evals/run_result.rb
+    - riffer-evals/lib/riffer/evals/scenario_result.rb
+
+# Bundler.require requires a gem by its name; a riffer/evals.rb entry point
+# would collide with riffer's own file of that path on the load path.
+Naming/FileName:
+  Exclude:
+    - riffer-evals/lib/riffer-evals.rb
 
 # Each accessor carries its own trailing rbs-inline `#:` type; grouping them
 # onto one line drops every type but the first.

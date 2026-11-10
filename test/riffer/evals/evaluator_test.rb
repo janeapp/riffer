@@ -2,20 +2,44 @@
 
 require "test_helper"
 
-class IdentifierTestEvaluator < Riffer::Evals::Evaluator
-  judge_model "mock/eval-model"
-end
+IdentifierTestEvaluator = evaluator_subclass { judge_model "mock/eval-model" }
 
 describe Riffer::Evals::Evaluator do
+  describe "deprecation" do
+    after { reset_riffer_config! }
+
+    it "raises the evals deprecation when subclassed in :raise mode" do
+      error = expect { Class.new(Riffer::Evals::Evaluator) }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "add the riffer-evals gem"
+    end
+
+    it "reports the subclassing line as the location" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      line = __LINE__ + 1
+      Class.new(Riffer::Evals::Evaluator)
+
+      expect(events.map { |event| [event.id, event.location] }).must_equal [[:evals, "#{__FILE__}:#{line}"]]
+    end
+
+    it "falls back to Riffer.config.evals.judge_model without reporting config_evals" do
+      allow_deprecations { Riffer.config.evals.judge_model = "mock/eval-model" }
+      klass = evaluator_subclass { instructions "Evaluate quality." }
+
+      expect(klass.new.send(:judge).model).must_equal "mock/eval-model"
+    end
+  end
+
   let(:evaluator_class) do
-    Class.new(Riffer::Evals::Evaluator) do
+    evaluator_subclass do
       instructions "Test evaluation instructions"
       higher_is_better true
     end
   end
 
   let(:lower_is_better_class) do
-    Class.new(Riffer::Evals::Evaluator) do
+    evaluator_subclass do
       instructions "Detects toxicity"
       higher_is_better false
     end
@@ -27,7 +51,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "returns nil when not set" do
-      anon_class = Class.new(Riffer::Evals::Evaluator)
+      anon_class = evaluator_subclass
 
       expect(anon_class.instructions).must_be_nil
     end
@@ -43,7 +67,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "defaults to true when not set" do
-      anon_class = Class.new(Riffer::Evals::Evaluator)
+      anon_class = evaluator_subclass
 
       expect(anon_class.higher_is_better).must_equal true
     end
@@ -51,7 +75,7 @@ describe Riffer::Evals::Evaluator do
 
   describe ".judge_model" do
     it "returns the set judge model" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         judge_model "anthropic/claude-sonnet-4-20250514"
       end
 
@@ -69,7 +93,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "returns the set identifier" do
-      klass = Class.new(Riffer::Evals::Evaluator) { identifier "accuracy" }
+      klass = evaluator_subclass { identifier "accuracy" }
 
       expect(klass.identifier).must_equal "accuracy"
     end
@@ -81,7 +105,7 @@ describe Riffer::Evals::Evaluator do
 
   describe "#evaluate" do
     it "raises NotImplementedError when instructions not set and evaluate not overridden" do
-      anon_class = Class.new(Riffer::Evals::Evaluator) do
+      anon_class = evaluator_subclass do
         higher_is_better true
       end
 
@@ -91,7 +115,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "calls judge with instructions when instructions are set" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         instructions "Evaluate quality."
         judge_model "mock/eval-model"
       end
@@ -108,7 +132,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "formats array input as labeled messages" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         instructions "Evaluate quality."
         judge_model "mock/eval-model"
       end
@@ -130,7 +154,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "passes ground_truth to judge" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         instructions "Compare to ground truth."
         judge_model "mock/eval-model"
       end
@@ -146,7 +170,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "captures the judge's token usage on the result" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         instructions "Evaluate quality."
         judge_model "mock/eval-model"
       end
@@ -176,7 +200,7 @@ describe Riffer::Evals::Evaluator do
 
   describe "#result (protected)" do
     it "creates a Result with correct attributes" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         higher_is_better true
 
         def evaluate(input:, output:, ground_truth: nil, messages: [])
@@ -195,7 +219,7 @@ describe Riffer::Evals::Evaluator do
     end
 
     it "creates a Result with higher_is_better from evaluator" do
-      klass = Class.new(Riffer::Evals::Evaluator) do
+      klass = evaluator_subclass do
         higher_is_better false
 
         def evaluate(input:, output:, ground_truth: nil, messages: [])

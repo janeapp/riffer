@@ -1,6 +1,19 @@
 # Evals
 
+> **Deprecated in riffer:** evals have moved to the `riffer-evals` gem, which provides the same `Riffer::Evals` API. Add `gem "riffer-evals"` and set `Riffer::Evals.config.judge_model`, which replaces `Riffer.config.evals.judge_model`. Until riffer's built-in copy is removed, using it reports a [deprecation](STABILITY.md#deprecations) warning, and riffer skips loading it once `riffer-evals` is in your bundle.
+
 Evals let you measure the quality of agent outputs using LLM-as-judge evaluations.
+
+## Installation
+
+Add the gem alongside riffer:
+
+```ruby
+gem "riffer"
+gem "riffer-evals"
+```
+
+Bundler requires it for you. Without Bundler, `require "riffer-evals"` before anything requires riffer — otherwise riffer registers its own copy first and `riffer-evals` refuses to load.
 
 ## When to Use Evals
 
@@ -23,7 +36,7 @@ Key concepts:
 
 ```ruby
 # 1. Configure the judge model
-Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
+Riffer::Evals.config.judge_model = "anthropic/claude-opus-4-5-20251101"
 
 # 2. Define your agent
 class MyAgent < Riffer::Agent
@@ -49,10 +62,12 @@ result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
 Before using evals, configure the judge model:
 
 ```ruby
-Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
+Riffer::Evals.configure do |config|
+  config.judge_model = "anthropic/claude-opus-4-5-20251101"
+end
 ```
 
-The judge model is the LLM that evaluates agent outputs. You can use any configured provider.
+The judge model is the LLM that evaluates agent outputs. You can use any configured provider. It must be a `provider/model` string or `nil` (the default); anything else raises `Riffer::ArgumentError`.
 
 ## Example Evaluators
 
@@ -260,7 +275,10 @@ end
 # config/initializers/riffer.rb
 Riffer.configure do |config|
   config.anthropic.api_key = ENV["ANTHROPIC_API_KEY"]
-  config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
+end
+
+Riffer::Evals.configure do |config|
+  config.judge_model = "anthropic/claude-opus-4-5-20251101"
 end
 
 # app/agents/support_agent.rb

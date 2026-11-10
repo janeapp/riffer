@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+gemspec
+
+# Tested against riffer from this repo rather than its latest release, so a
+# change spanning both gems lands in one commit.
+gem "riffer", path: ".."
+
+gem "minitest", "~> 6.0"
+gem "rake", "~> 13.0"

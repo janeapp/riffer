@@ -19,6 +19,10 @@ loader.ignore(
   "#{__dir__}/riffer/testing/rspec.rb",
   "#{__dir__}/riffer/testing/minitest.rb",
 )
+# The riffer-evals gem defines Riffer::Evals itself. Bundler activates it before
+# riffer is required, and requiring it without Bundler activates it before it
+# requires riffer.
+loader.ignore("#{__dir__}/riffer/evals.rb", "#{__dir__}/riffer/evals") if Gem.loaded_specs.key?("riffer-evals")
 loader.setup
 
 module Riffer

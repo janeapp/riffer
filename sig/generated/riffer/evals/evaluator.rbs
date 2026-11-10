@@ -30,6 +30,10 @@ class Riffer::Evals::Evaluator
   def self.identifier: (?String?) -> String
 
   # --
+  # : (Class) -> void
+  private def self.inherited: (Class) -> void
+
+  # --
   # : () -> String
   private def self.derived_identifier: () -> String
 

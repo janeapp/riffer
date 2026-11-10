@@ -154,15 +154,23 @@ end
 
 See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
 
-### Evals
+### Evals (deprecated)
+
+`config.evals` is deprecated and will be removed in a future release. Evals have moved to the `riffer-evals` gem: set its `Riffer::Evals.config.judge_model` instead (see [Evals](EVALS.md)). Each line that reads `config.evals` reports a [deprecation](#deprecations).
 
 ```ruby
+# before
 Riffer.configure do |config|
   config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 end
+
+# after, with riffer-evals
+Riffer::Evals.configure do |config|
+  config.judge_model = "anthropic/claude-opus-4-5-20251101"
+end
 ```
 
-`judge_model` is the default model evaluators use as the judge when they don't set their own. It must be a `provider/model` string or `nil` (the default); anything else raises `Riffer::ArgumentError`. See [Evals](EVALS.md).
+`judge_model` is the default model riffer's built-in evaluators use as the judge when they don't set their own. It must be a `provider/model` string or `nil` (the default); anything else raises `Riffer::ArgumentError`.
 
 ### Tool Runtime
 
