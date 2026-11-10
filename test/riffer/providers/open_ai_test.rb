@@ -754,7 +754,7 @@ describe Riffer::Providers::OpenAI do
       stub_tool("ListEvents") do
         identifier "calendar/list_events"
         description "Lists calendar events"
-        params { required :date, String }
+        params { required :date, :string }
       end
     end
 
