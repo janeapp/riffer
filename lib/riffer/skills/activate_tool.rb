@@ -8,7 +8,7 @@ class Riffer::Skills::ActivateTool < Riffer::Tool
   timeout 1
 
   params do
-    required :name, String, description: "The skill name to activate"
+    required :name, :string, description: "The skill name to activate"
   end
 
   #--

@@ -8,7 +8,7 @@ describe Riffer::Tools::Runtime do
       description "Gets the weather"
 
       params do
-        required :city, String
+        required :city, :string
       end
 
       def call(context:, city:)
@@ -551,7 +551,7 @@ describe Riffer::Tools::Runtime::Inline do
       description "Gets the weather"
 
       params do
-        required :city, String
+        required :city, :string
       end
 
       def call(context:, city:)

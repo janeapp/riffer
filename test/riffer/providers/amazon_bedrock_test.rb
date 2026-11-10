@@ -903,8 +903,8 @@ describe Riffer::Providers::AmazonBedrock do
     it "includes output_config.text_format in request params" do
       provider = Riffer::Providers::AmazonBedrock.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
-      params.required(:score, Float)
+      params.required(:sentiment, :string)
+      params.required(:score, :number)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -921,7 +921,7 @@ describe Riffer::Providers::AmazonBedrock do
     it "includes json_schema structure with name" do
       provider = Riffer::Providers::AmazonBedrock.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -938,7 +938,7 @@ describe Riffer::Providers::AmazonBedrock do
     it "serializes schema as JSON string" do
       provider = Riffer::Providers::AmazonBedrock.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -969,7 +969,7 @@ describe Riffer::Providers::AmazonBedrock do
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::AmazonBedrock.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -992,7 +992,7 @@ describe Riffer::Providers::AmazonBedrock do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end
@@ -1238,8 +1238,8 @@ describe Riffer::Providers::AmazonBedrock do
       tool = stub_tool("TestTool") do
         description "A test tool"
         params do
-          required :name, String
-          optional :age, Integer
+          required :name, :string
+          optional :age, :integer
         end
       end
 

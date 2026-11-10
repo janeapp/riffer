@@ -28,19 +28,19 @@ describe "Acceptance: tool calling" do
         stub_tool("BookVisit") do
           description "Book a clinic visit"
           params do
-            required :patient, Hash, description: "The patient" do
-              required :name, String, description: "Full name"
-              optional :email, String, format: "email", description: "Email address, if given"
+            required :patient, :object, description: "The patient" do
+              required :name, :string, description: "Full name"
+              optional :email, :string, format: "email", description: "Email address, if given"
             end
-            required :visit_type, String, enum: %w[in_person online], description: "How the visit happens"
-            required :visit_on, String, format: "date", description: "Visit date"
-            required :services, Array, description: "Services to book, in the order given" do
-              required :name, String, description: "Service name"
-              required :minutes, Integer, description: "Length in minutes"
+            required :visit_type, :string, enum: %w[in_person online], description: "How the visit happens"
+            required :visit_on, :string, format: "date", description: "Visit date"
+            required :services, :array, description: "Services to book, in the order given" do
+              required :name, :string, description: "Service name"
+              required :minutes, :integer, description: "Length in minutes"
             end
-            required :room, Riffer::Params::AnyOf, description: "Room number, or a kind of room" do
-              variant Integer
-              variant String, enum: %w[any accessible quiet]
+            required :room, :any_of, description: "Room number, or a kind of room" do
+              variant :integer
+              variant :string, enum: %w[any accessible quiet]
             end
           end
         end
@@ -151,7 +151,7 @@ describe "Acceptance: tool calling" do
         it "runs a multi-step tool loop through an Agent (#{mode})" do
           landmark_tool = stub_tool("LocateLandmark") do
             description "Find the city a landmark is in"
-            params { required :landmark, String, description: "The landmark name" }
+            params { required :landmark, :string, description: "The landmark name" }
 
             def call(context:, landmark:)
               text("The #{landmark} is in Paris.")
@@ -238,7 +238,7 @@ describe "Acceptance: tool calling" do
       it "sends a raising tool's error back and still answers" do
         broken_tool = stub_tool("GetForecast") do
           description "Get tomorrow's forecast for a city"
-          params { required :city, String, description: "The city name" }
+          params { required :city, :string, description: "The city name" }
 
           def call(context:, city:)
             raise Riffer::ToolExecutionError, "The forecast service for #{city} is down"

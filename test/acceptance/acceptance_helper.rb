@@ -171,7 +171,7 @@ end
 def acceptance_weather_tool
   stub_tool("GetWeather") do
     description "Get the current weather for a city"
-    params { required :city, String, description: "The city name" }
+    params { required :city, :string, description: "The city name" }
 
     define_method(:call) do |context:, city:|
       celsius = ACCEPTANCE_TEMPERATURES.fetch(city, 10)

@@ -240,7 +240,7 @@ class SkillSearchTool < Riffer::Tool
   description "Searches available skills."
 
   params do
-    required :query, String
+    required :query, :string
   end
 
   def call(context:, query:)

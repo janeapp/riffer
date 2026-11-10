@@ -3,45 +3,113 @@
 require "test_helper"
 
 describe Riffer::Params do
+  describe "Ruby class types" do
+    after { reset_riffer_config! }
+
+    it "raises the param_class_types deprecation in :raise mode" do
+      error = expect { Riffer::Params.new.required(:city, String) }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include(
+        "String as a param type is deprecated and will be removed in a future version, " \
+        "not before 1 December 2026; use :string.",
+      )
+    end
+
+    it "reports the line that declares the param" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      line = __LINE__ + 1
+      Riffer::Params.new.optional(:city, String)
+
+      expect(events.map { |event| [event.id, event.location] }).must_equal [[:param_class_types, "#{__FILE__}:#{line}"]]
+    end
+
+    it "resolves each class to its type symbol" do
+      params = Riffer::Params.new
+      classes = [String, Integer, Float, Riffer::Params::Boolean, TrueClass, FalseClass, Array, Hash]
+      allow_deprecations { classes.each.with_index { |type, i| params.required(:"param_#{i}", type) } }
+
+      expect(params.parameters.map(&:type)).must_equal %i[string integer number boolean boolean boolean array object]
+    end
+
+    it "resolves classes passed to of: and variant" do
+      params = Riffer::Params.new
+      allow_deprecations do
+        params.required(:tags, Array, of: [String])
+        params.required(:quantity, Riffer::Params::AnyOf) do
+          variant Integer
+          variant String
+        end
+      end
+      tags, quantity = params.parameters
+
+      expect([tags.type, tags.item_type, tags.dimensions]).must_equal [:array, :string, 2]
+      expect([quantity.type, *quantity.variants.map(&:type)]).must_equal %i[any_of integer string]
+    end
+
+    it "reports nothing for symbol types or params read from JSON Schema" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      params = Riffer::Params.new
+      params.required(:tags, :array, of: [:string])
+      params.optional(:quantity, :any_of) do
+        variant :integer
+        variant :string
+      end
+      Riffer::Params.from_json_schema(params.to_json_schema)
+
+      expect(events).must_be_empty
+    end
+
+    it "raises ArgumentError for an unsupported type" do
+      [Symbol, :date, "string"].each do |type|
+        error = expect { Riffer::Params.new.required(:on, type) }.must_raise Riffer::ArgumentError
+        expect(error.message).must_equal(
+          "type must be one of :string, :integer, :number, :boolean, :array, :object, :any_of, got #{type.inspect}",
+        )
+      end
+    end
+  end
+
   describe "#required" do
     it "adds a parameter" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
 
       expect(params.parameters.length).must_equal 1
     end
 
     it "marks the parameter as required" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
 
       expect(params.parameters.first.required).must_equal true
     end
 
     it "sets the parameter name" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
 
       expect(params.parameters.first.name).must_equal :city
     end
 
     it "sets the parameter type" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
 
-      expect(params.parameters.first.type).must_equal String
+      expect(params.parameters.first.type).must_equal :string
     end
 
     it "sets the description" do
       params = Riffer::Params.new
-      params.required(:city, String, description: "The city name")
+      params.required(:city, :string, description: "The city name")
 
       expect(params.parameters.first.description).must_equal "The city name"
     end
 
     it "sets the enum" do
       params = Riffer::Params.new
-      params.required(:unit, String, enum: %w[celsius fahrenheit])
+      params.required(:unit, :string, enum: %w[celsius fahrenheit])
 
       expect(params.parameters.first.enum).must_equal %w[celsius fahrenheit]
     end
@@ -50,21 +118,21 @@ describe Riffer::Params do
   describe "#optional" do
     it "adds a parameter" do
       params = Riffer::Params.new
-      params.optional(:units, String)
+      params.optional(:units, :string)
 
       expect(params.parameters.length).must_equal 1
     end
 
     it "marks the parameter as not required" do
       params = Riffer::Params.new
-      params.optional(:units, String)
+      params.optional(:units, :string)
 
       expect(params.parameters.first.required).must_equal false
     end
 
     it "sets the default value" do
       params = Riffer::Params.new
-      params.optional(:units, String, default: "celsius")
+      params.optional(:units, :string, default: "celsius")
 
       expect(params.parameters.first.default).must_equal "celsius"
     end
@@ -73,7 +141,7 @@ describe Riffer::Params do
   describe "#validate" do
     it "returns validated arguments for valid input" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
       result = params.validate({ city: "Toronto" })
 
       expect(result).must_equal({ city: "Toronto" })
@@ -81,49 +149,49 @@ describe Riffer::Params do
 
     it "raises ValidationError for missing required param" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
 
       expect { params.validate({}) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes param name in missing required error" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
       error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city is required/)
     end
 
     it "raises ValidationError for wrong type" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
 
       expect { params.validate({ city: 123 }) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes param name in wrong type error" do
       params = Riffer::Params.new
-      params.required(:city, String)
+      params.required(:city, :string)
       error = expect { params.validate({ city: 123 }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city must be a string/)
     end
 
     it "raises ValidationError for enum violation" do
       params = Riffer::Params.new
-      params.required(:unit, String, enum: %w[celsius fahrenheit])
+      params.required(:unit, :string, enum: %w[celsius fahrenheit])
 
       expect { params.validate({ unit: "kelvin" }) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes allowed values in enum violation error" do
       params = Riffer::Params.new
-      params.required(:unit, String, enum: %w[celsius fahrenheit])
+      params.required(:unit, :string, enum: %w[celsius fahrenheit])
       error = expect { params.validate({ unit: "kelvin" }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/must be one of/)
     end
 
     it "applies default for missing optional param" do
       params = Riffer::Params.new
-      params.optional(:units, String, default: "celsius")
+      params.optional(:units, :string, default: "celsius")
       result = params.validate({})
 
       expect(result[:units]).must_equal "celsius"
@@ -131,7 +199,7 @@ describe Riffer::Params do
 
     it "uses provided value over default" do
       params = Riffer::Params.new
-      params.optional(:units, String, default: "celsius")
+      params.optional(:units, :string, default: "celsius")
       result = params.validate({ units: "fahrenheit" })
 
       expect(result[:units]).must_equal "fahrenheit"
@@ -139,16 +207,16 @@ describe Riffer::Params do
 
     it "includes first missing param in multiple errors" do
       params = Riffer::Params.new
-      params.required(:city, String)
-      params.required(:country, String)
+      params.required(:city, :string)
+      params.required(:country, :string)
       error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city is required/)
     end
 
     it "includes second missing param in multiple errors" do
       params = Riffer::Params.new
-      params.required(:city, String)
-      params.required(:country, String)
+      params.required(:city, :string)
+      params.required(:country, :string)
       error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/country is required/)
     end
@@ -157,7 +225,7 @@ describe Riffer::Params do
   describe "nested DSL" do
     it "supports of: keyword for typed arrays" do
       params = Riffer::Params.new
-      params.required(:tags, Array, of: String)
+      params.required(:tags, :array, of: :string)
       schema = params.to_json_schema
 
       expect(schema[:properties]["tags"][:items]).must_equal({ type: "string" })
@@ -165,10 +233,10 @@ describe Riffer::Params do
 
     it "supports block on Hash for nested objects" do
       params = Riffer::Params.new
-      params.required(:address, Hash) do
-        required :street, String
-        required :city, String
-        optional :zip, String
+      params.required(:address, :object) do
+        required :street, :string
+        required :city, :string
+        optional :zip, :string
       end
       schema = params.to_json_schema
       address = schema[:properties]["address"]
@@ -181,10 +249,10 @@ describe Riffer::Params do
 
     it "supports block on Array for array of objects" do
       params = Riffer::Params.new
-      params.required(:line_items, Array) do
-        required :product, String
-        required :quantity, Integer
-        optional :note, String
+      params.required(:line_items, :array) do
+        required :product, :string
+        required :quantity, :integer
+        optional :note, :string
       end
       schema = params.to_json_schema
       items = schema[:properties]["line_items"][:items]
@@ -198,8 +266,8 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:tags, Array, of: String) do
-          required :name, String
+        params.required(:tags, :array, of: :string) do
+          required :name, :string
         end
       end.must_raise(Riffer::ArgumentError)
     end
@@ -208,7 +276,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:items, Array, of: Hash)
+        params.required(:items, :array, of: :object)
       end.must_raise(Riffer::ArgumentError)
     end
 
@@ -216,7 +284,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:items, Array, of: Array)
+        params.required(:items, :array, of: :array)
       end.must_raise(Riffer::ArgumentError)
     end
 
@@ -224,7 +292,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:items, Array, of: Regexp)
+        params.required(:items, :array, of: Regexp)
       end.must_raise(Riffer::ArgumentError)
     end
 
@@ -232,7 +300,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:data, Hash, of: String)
+        params.required(:data, :object, of: :string)
       end.must_raise(Riffer::ArgumentError)
     end
 
@@ -240,7 +308,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:name, String, of: String)
+        params.required(:name, :string, of: :string)
       end.must_raise(Riffer::ArgumentError)
     end
 
@@ -248,7 +316,7 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.required(:name, String) { required :foo, String }
+        params.required(:name, :string) { required :foo, :string }
       end.must_raise(Riffer::ArgumentError)
     end
 
@@ -256,16 +324,16 @@ describe Riffer::Params do
       params = Riffer::Params.new
 
       expect do
-        params.optional(:count, Integer) { required :foo, String }
+        params.optional(:count, :integer) { required :foo, :string }
       end.must_raise(Riffer::ArgumentError)
     end
 
     it "supports deep nesting with blocks within blocks" do
       params = Riffer::Params.new
-      params.required(:orders, Array) do
-        required :shipping, Hash do
-          required :address, Hash do
-            required :street, String
+      params.required(:orders, :array) do
+        required :shipping, :object do
+          required :address, :object do
+            required :street, :string
           end
         end
       end
@@ -289,7 +357,7 @@ describe Riffer::Params do
   describe "#validate with nested params" do
     it "validates typed array accepts valid items" do
       params = Riffer::Params.new
-      params.required(:tags, Array, of: String)
+      params.required(:tags, :array, of: :string)
       result = params.validate({ tags: %w[a b] })
 
       expect(result[:tags]).must_equal %w[a b]
@@ -297,16 +365,16 @@ describe Riffer::Params do
 
     it "validates typed array rejects invalid items" do
       params = Riffer::Params.new
-      params.required(:tags, Array, of: String)
+      params.required(:tags, :array, of: :string)
       error = expect { params.validate({ tags: ["a", 123] }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/tags\[1\] must be a string/)
     end
 
     it "validates nested Hash recursively with dot-path errors" do
       params = Riffer::Params.new
-      params.required(:address, Hash) do
-        required :street, String
-        required :city, String
+      params.required(:address, :object) do
+        required :street, :string
+        required :city, :string
       end
       error = expect do
         params.validate({ address: { street: "123 Main" } })
@@ -316,9 +384,9 @@ describe Riffer::Params do
 
     it "validates array of objects with indexed errors" do
       params = Riffer::Params.new
-      params.required(:items, Array) do
-        required :name, String
-        required :qty, Integer
+      params.required(:items, :array) do
+        required :name, :string
+        required :qty, :integer
       end
       error = expect do
         params.validate({ items: [{ name: "A", qty: 1 }, { name: "B" }] })
@@ -328,10 +396,10 @@ describe Riffer::Params do
 
     it "validates deep nesting with correct dot-path errors" do
       params = Riffer::Params.new
-      params.required(:orders, Array) do
-        required :shipping, Hash do
-          required :address, Hash do
-            required :street, String
+      params.required(:orders, :array) do
+        required :shipping, :object do
+          required :address, :object do
+            required :street, :string
           end
         end
       end
@@ -343,8 +411,8 @@ describe Riffer::Params do
 
     it "accepts valid nested Hash" do
       params = Riffer::Params.new
-      params.required(:address, Hash) do
-        required :city, String
+      params.required(:address, :object) do
+        required :city, :string
       end
       result = params.validate({ address: { city: "Toronto" } })
 
@@ -353,8 +421,8 @@ describe Riffer::Params do
 
     it "accepts valid array of objects" do
       params = Riffer::Params.new
-      params.required(:items, Array) do
-        required :name, String
+      params.required(:items, :array) do
+        required :name, :string
       end
       result = params.validate({ items: [{ name: "A" }, { name: "B" }] })
 
@@ -363,14 +431,14 @@ describe Riffer::Params do
 
     it "accepts a float for a Float param" do
       params = Riffer::Params.new
-      params.required(:price, Float)
+      params.required(:price, :number)
 
       expect(params.validate({ price: 120.5 })[:price]).must_equal 120.5
     end
 
     it "accepts an integer for a Float param and coerces it to a float" do
       params = Riffer::Params.new
-      params.required(:price, Float)
+      params.required(:price, :number)
       result = params.validate({ price: 120 })
 
       expect(result[:price]).must_equal 120.0
@@ -379,7 +447,7 @@ describe Riffer::Params do
 
     it "rejects a string for a Float param" do
       params = Riffer::Params.new
-      params.required(:price, Float)
+      params.required(:price, :number)
       error = expect { params.validate({ price: "120" }) }.must_raise(Riffer::ValidationError)
 
       expect(error.message).must_match(/price must be a number/)
@@ -387,7 +455,7 @@ describe Riffer::Params do
 
     it "rejects a boolean for a Float param" do
       params = Riffer::Params.new
-      params.required(:price, Float)
+      params.required(:price, :number)
       error = expect { params.validate({ price: true }) }.must_raise(Riffer::ValidationError)
 
       expect(error.message).must_match(/price must be a number/)
@@ -395,7 +463,7 @@ describe Riffer::Params do
 
     it "rejects a float for an Integer param" do
       params = Riffer::Params.new
-      params.required(:quantity, Integer)
+      params.required(:quantity, :integer)
       error = expect { params.validate({ quantity: 1.5 }) }.must_raise(Riffer::ValidationError)
 
       expect(error.message).must_match(/quantity must be an? integer/)
@@ -403,8 +471,8 @@ describe Riffer::Params do
 
     it "accepts an integer for a Float param nested in an array of objects" do
       params = Riffer::Params.new
-      params.required(:treatments, Array) do
-        required :price, Float
+      params.required(:treatments, :array) do
+        required :price, :number
       end
       result = params.validate({ treatments: [{ price: 120 }] })
 
@@ -414,34 +482,34 @@ describe Riffer::Params do
 
     it "accepts an integer for a Float param nested in a Hash" do
       params = Riffer::Params.new
-      params.required(:invoice, Hash) do
-        required :total, Float
+      params.required(:invoice, :object) do
+        required :total, :number
       end
       result = params.validate({ invoice: { total: 120 } })
 
       expect(result[:invoice][:total]).must_be_instance_of Float
     end
 
-    it "accepts mixed numerics in an of: Float array and coerces them to floats" do
+    it "accepts mixed numerics in an of: :number array and coerces them to floats" do
       params = Riffer::Params.new
-      params.required(:scores, Array, of: Float)
+      params.required(:scores, :array, of: :number)
       result = params.validate({ scores: [1, 2.5] })
 
       expect(result[:scores]).must_equal [1.0, 2.5]
       expect(result[:scores].map(&:class)).must_equal [Float, Float]
     end
 
-    it "rejects a non-numeric item in an of: Float array" do
+    it "rejects a non-numeric item in an of: :number array" do
       params = Riffer::Params.new
-      params.required(:scores, Array, of: Float)
+      params.required(:scores, :array, of: :number)
       error = expect { params.validate({ scores: [1, "2"] }) }.must_raise(Riffer::ValidationError)
 
       expect(error.message).must_match(/scores\[1\] must be a number/)
     end
 
-    it "rejects a float item in an of: Integer array" do
+    it "rejects a float item in an of: :integer array" do
       params = Riffer::Params.new
-      params.required(:counts, Array, of: Integer)
+      params.required(:counts, :array, of: :integer)
       error = expect { params.validate({ counts: [1, 2.5] }) }.must_raise(Riffer::ValidationError)
 
       expect(error.message).must_match(/counts\[1\] must be an? integer/)
@@ -457,8 +525,8 @@ describe Riffer::Params do
 
     it "includes properties for each parameter" do
       params = Riffer::Params.new
-      params.required(:city, String)
-      params.optional(:units, String)
+      params.required(:city, :string)
+      params.optional(:units, :string)
       schema = params.to_json_schema
 
       expect(schema[:properties].keys).must_equal %w[city units]
@@ -466,8 +534,8 @@ describe Riffer::Params do
 
     it "includes required array" do
       params = Riffer::Params.new
-      params.required(:city, String)
-      params.optional(:units, String)
+      params.required(:city, :string)
+      params.optional(:units, :string)
       schema = params.to_json_schema
 
       expect(schema[:required]).must_equal ["city"]
@@ -497,8 +565,8 @@ describe Riffer::Params do
   describe "#to_json_schema(strict: true)" do
     it "makes optional properties nullable and required" do
       params = Riffer::Params.new
-      params.required(:name, String)
-      params.optional(:age, Integer)
+      params.required(:name, :string)
+      params.optional(:age, :integer)
       schema = params.to_json_schema(strict: true)
 
       expect(schema[:required]).must_include "name"
@@ -509,9 +577,9 @@ describe Riffer::Params do
 
     it "recurses into nested objects" do
       params = Riffer::Params.new
-      params.required(:address, Hash) do
-        required :city, String
-        optional :zip, String
+      params.required(:address, :object) do
+        required :city, :string
+        optional :zip, :string
       end
       schema = params.to_json_schema(strict: true)
       address = schema[:properties]["address"]
@@ -524,9 +592,9 @@ describe Riffer::Params do
 
     it "recurses into array items" do
       params = Riffer::Params.new
-      params.required(:items, Array) do
-        required :name, String
-        optional :note, String
+      params.required(:items, :array) do
+        required :name, :string
+        optional :note, :string
       end
       schema = params.to_json_schema(strict: true)
       items_schema = schema[:properties]["items"][:items]
@@ -539,8 +607,8 @@ describe Riffer::Params do
 
     it "makes an optional object with nested params nullable" do
       params = Riffer::Params.new
-      params.optional(:definition, Hash) do
-        required :name, String
+      params.optional(:definition, :object) do
+        required :name, :string
       end
       schema = params.to_json_schema(strict: true)
       definition = schema[:properties]["definition"]
@@ -552,8 +620,8 @@ describe Riffer::Params do
 
     it "makes an optional array with nested params nullable" do
       params = Riffer::Params.new
-      params.optional(:items, Array) do
-        required :name, String
+      params.optional(:items, :array) do
+        required :name, :string
       end
       schema = params.to_json_schema(strict: true)
       items = schema[:properties]["items"]
@@ -565,7 +633,7 @@ describe Riffer::Params do
 
     it "makes an optional typed array nullable" do
       params = Riffer::Params.new
-      params.optional(:tags, Array, of: String)
+      params.optional(:tags, :array, of: :string)
       schema = params.to_json_schema(strict: true)
       tags = schema[:properties]["tags"]
 
@@ -575,7 +643,7 @@ describe Riffer::Params do
 
     it "keeps required properties non-nullable" do
       params = Riffer::Params.new
-      params.required(:name, String)
+      params.required(:name, :string)
       schema = params.to_json_schema(strict: true)
 
       expect(schema[:properties]["name"][:type]).must_equal "string"
@@ -583,7 +651,7 @@ describe Riffer::Params do
 
     it "emits default in non-strict mode" do
       params = Riffer::Params.new
-      params.optional(:units, String, default: "celsius")
+      params.optional(:units, :string, default: "celsius")
       schema = params.to_json_schema(strict: false)
 
       expect(schema[:properties]["units"][:default]).must_equal "celsius"
@@ -591,7 +659,7 @@ describe Riffer::Params do
 
     it "omits default in strict mode" do
       params = Riffer::Params.new
-      params.optional(:units, String, default: "celsius")
+      params.optional(:units, :string, default: "celsius")
       schema = params.to_json_schema(strict: true)
 
       expect(schema[:properties]["units"].key?(:default)).must_equal false
@@ -599,7 +667,7 @@ describe Riffer::Params do
 
     it "omits default when none is set" do
       params = Riffer::Params.new
-      params.optional(:units, String)
+      params.optional(:units, :string)
       schema = params.to_json_schema(strict: false)
 
       expect(schema[:properties]["units"].key?(:default)).must_equal false
@@ -607,17 +675,17 @@ describe Riffer::Params do
 
     it "raises ArgumentError for a Hash param without a block" do
       params = Riffer::Params.new
-      params.required(:applies_when, Hash)
+      params.required(:applies_when, :object)
 
       error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal(
-        "applies_when: a Hash param requires a block defining its properties under strict schemas",
+        "applies_when: an :object param requires a block defining its properties under strict schemas",
       )
     end
 
     it "renders a Hash param without a block in non-strict mode" do
       params = Riffer::Params.new
-      params.required(:applies_when, Hash, description: "Conditions")
+      params.required(:applies_when, :object, description: "Conditions")
 
       expect(params.to_json_schema[:properties]["applies_when"]).must_equal(
         type: "object", description: "Conditions",
@@ -626,8 +694,8 @@ describe Riffer::Params do
 
     it "renders a Hash param with a block as a closed object" do
       params = Riffer::Params.new
-      params.required(:address, Hash) do
-        required :city, String
+      params.required(:address, :object) do
+        required :city, :string
       end
       address = params.to_json_schema(strict: true)[:properties]["address"]
 
@@ -641,29 +709,29 @@ describe Riffer::Params do
 
     it "raises ArgumentError for an Array param without a block or of:" do
       params = Riffer::Params.new
-      params.required(:tags, Array)
+      params.required(:tags, :array)
 
       error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal(
-        "tags: an Array param requires a block or of: defining its items under strict schemas",
+        "tags: an :array param requires a block or of: defining its items under strict schemas",
       )
     end
 
     it "renders an Array param without a block or of: in non-strict mode" do
       params = Riffer::Params.new
-      params.required(:tags, Array)
+      params.required(:tags, :array)
 
       expect(params.to_json_schema[:properties]["tags"]).must_equal(type: "array")
     end
 
     it "raises ArgumentError for a Hash param without a block nested inside a block" do
       params = Riffer::Params.new
-      params.required(:shipping, Hash) do
-        required :address, Hash
+      params.required(:shipping, :object) do
+        required :address, :object
       end
 
       error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_include "address: a Hash param requires a block"
+      expect(error.message).must_include "address: an :object param requires a block"
     end
   end
 
@@ -680,7 +748,7 @@ describe Riffer::Params do
       param = params.parameters.first
 
       expect(param.name).must_equal :city
-      expect(param.type).must_equal String
+      expect(param.type).must_equal :string
       expect(param.required).must_equal true
       expect(param.description).must_equal "city name"
     end
@@ -713,7 +781,7 @@ describe Riffer::Params do
       expect(param.default).must_equal "celsius"
     end
 
-    it "reconstructs each JSON Schema type to its Ruby type" do
+    it "reconstructs each JSON Schema type to its type symbol" do
       params = Riffer::Params.from_json_schema(
         {
           type: "object",
@@ -727,7 +795,7 @@ describe Riffer::Params do
       )
       types = params.parameters.to_h { |p| [p.name, p.type] }
 
-      expect(types).must_equal({ s: String, i: Integer, n: Float, b: Riffer::Params::Boolean })
+      expect(types).must_equal({ s: :string, i: :integer, n: :number, b: :boolean })
     end
 
     it "reconstructs typed arrays" do
@@ -740,7 +808,7 @@ describe Riffer::Params do
         },
       )
 
-      expect(params.parameters.first.item_type).must_equal Integer
+      expect(params.parameters.first.item_type).must_equal :integer
     end
 
     it "reconstructs nested object params" do
@@ -780,15 +848,15 @@ describe Riffer::Params do
 
     it "round-trips losslessly with to_json_schema(strict: false)" do
       params = Riffer::Params.new
-      params.required(:city, String, description: "city name")
-      params.optional(:units, String, default: "celsius", enum: %w[celsius fahrenheit])
-      params.required(:tags, Array, of: Integer)
-      params.required(:address, Hash) do
-        required :street, String
-        optional :zip, String
+      params.required(:city, :string, description: "city name")
+      params.optional(:units, :string, default: "celsius", enum: %w[celsius fahrenheit])
+      params.required(:tags, :array, of: :integer)
+      params.required(:address, :object) do
+        required :street, :string
+        optional :zip, :string
       end
-      params.required(:contacts, Array) do
-        required :name, String
+      params.required(:contacts, :array) do
+        required :name, :string
       end
       schema = params.to_json_schema(strict: false)
 
@@ -799,7 +867,7 @@ describe Riffer::Params do
 
     it "round-trips through JSON with symbolized keys" do
       params = Riffer::Params.new
-      params.optional(:units, String, default: "celsius")
+      params.optional(:units, :string, default: "celsius")
       schema = params.to_json_schema(strict: false)
       wire = JSON.parse(JSON.generate(schema), symbolize_names: true)
 
@@ -841,7 +909,7 @@ describe Riffer::Params do
       )
       param = params.parameters.first
 
-      expect(param.type).must_equal Riffer::Params::AnyOf
+      expect(param.type).must_equal :any_of
       expect(param.variants.map { |variant| variant.parameters.map(&:name) }).must_equal [%i[name], %i[error_code]]
     end
 
@@ -885,7 +953,7 @@ describe Riffer::Params do
       variants = params.parameters.first.variants
 
       expect(variants.map { |variant| [variant.type, variant.format, variant.enum, variant.description] }).must_equal [
-        [String, "date", nil, "The due date"], [String, nil, ["none"], nil], [Integer, nil, nil, nil],
+        [:string, "date", nil, "The due date"], [:string, nil, ["none"], nil], [:integer, nil, nil, nil],
       ]
       expect(variants.map(&:required)).must_equal [true, true, true]
     end
@@ -956,16 +1024,16 @@ describe Riffer::Params do
     it "round-trips an AnyOf param losslessly with to_json_schema(strict: false)" do
       params = Riffer::Params.new
       params.optional(
-        :result, Riffer::Params::AnyOf, description: "A rule or an error", default: { name: "Fallback" },
+        :result, :any_of, description: "A rule or an error", default: { name: "Fallback" },
       ) do
         variant do
-          required :name, String
-          optional :tags, Array, of: String
+          required :name, :string
+          optional :tags, :array, of: :string
         end
         variant do
-          required :error_code, String, enum: %w[non_english unsupported]
-          required :details, Hash do
-            required :message, String
+          required :error_code, :string, enum: %w[non_english unsupported]
+          required :details, :object do
+            required :message, :string
           end
         end
       end
@@ -981,11 +1049,11 @@ describe Riffer::Params do
 
     it "round-trips an AnyOf param with primitive and object variants" do
       params = Riffer::Params.new
-      params.optional(:due, Riffer::Params::AnyOf, description: "When it's due") do
-        variant String, format: "date", description: "The due date"
-        variant String, enum: ["none"]
-        variant Integer
-        variant { required :days, Integer }
+      params.optional(:due, :any_of, description: "When it's due") do
+        variant :string, format: "date", description: "The due date"
+        variant :string, enum: ["none"]
+        variant :integer
+        variant { required :days, :integer }
       end
       schema = params.to_json_schema(strict: false)
       wire = JSON.parse(JSON.generate(schema), symbolize_names: true)
@@ -999,11 +1067,11 @@ describe Riffer::Params do
   describe "#dup" do
     it "holds no collection in common with the original, at any depth" do
       original = Riffer::Params.new
-      original.required(:claim, Hash) { required :id, String }
+      original.required(:claim, :object) { required :id, :string }
 
       copy = original.dup
-      copy.required(:verdict, String)
-      copy.parameters.first.nested_params.required(:amount, Float)
+      copy.required(:verdict, :string)
+      copy.parameters.first.nested_params.required(:amount, :number)
 
       expect(original.parameters.map(&:name)).must_equal %i[claim]
       expect(original.parameters.first.nested_params.parameters.map(&:name)).must_equal %i[id]
@@ -1012,7 +1080,7 @@ describe Riffer::Params do
 
     it "does not share a mutable enum or default with the original" do
       original = Riffer::Params.new
-      original.optional(:status, String, enum: %w[open closed], default: { note: ["seen"] })
+      original.optional(:status, :string, enum: %w[open closed], default: { note: ["seen"] })
 
       copy = original.dup
       copy.parameters.first.enum << "archived"
@@ -1024,8 +1092,8 @@ describe Riffer::Params do
 
     it "produces an equivalent schema" do
       original = Riffer::Params.new
-      original.required(:answer, String, description: "the answer")
-      original.optional(:score, Float, default: 0.0)
+      original.required(:answer, :string, description: "the answer")
+      original.optional(:score, :number, default: 0.0)
 
       expect(original.dup.to_json_schema(strict: false)).
         must_equal original.to_json_schema(strict: false)
@@ -1035,13 +1103,13 @@ describe Riffer::Params do
   describe "AnyOf" do
     let(:params) do
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf, description: "A rule or an error") do
+      params.required(:result, :any_of, description: "A rule or an error") do
         variant do
-          required :name, String
-          optional :note, String
+          required :name, :string
+          optional :note, :string
         end
         variant do
-          required :error_code, String, enum: %w[non_english unsupported]
+          required :error_code, :string, enum: %w[non_english unsupported]
         end
       end
       params
@@ -1055,39 +1123,39 @@ describe Riffer::Params do
 
     it "raises ArgumentError without a block" do
       error = expect do
-        Riffer::Params.new.required(:result, Riffer::Params::AnyOf)
+        Riffer::Params.new.required(:result, :any_of)
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "AnyOf requires a block defining its variants"
+      expect(error.message).must_equal ":any_of requires a block defining its variants"
     end
 
     it "raises ArgumentError with fewer than two variants" do
       error = expect do
-        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) do
-          variant { required :name, String }
+        Riffer::Params.new.required(:result, :any_of) do
+          variant { required :name, :string }
         end
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "AnyOf requires at least two variants"
+      expect(error.message).must_equal ":any_of requires at least two variants"
     end
 
     it "raises ArgumentError for a variant without a type or a block" do
       error = expect do
-        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) { variant }
+        Riffer::Params.new.required(:result, :any_of) { variant }
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "variant requires a type or a block defining its properties"
     end
 
     it "raises ArgumentError with of:" do
       error = expect do
-        Riffer::Params.new.required(:result, Riffer::Params::AnyOf, of: String)
+        Riffer::Params.new.required(:result, :any_of, of: :string)
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "of: cannot be used with AnyOf"
+      expect(error.message).must_equal "of: cannot be used with :any_of"
     end
 
     it "raises ArgumentError with enum:" do
       error = expect do
-        Riffer::Params.new.optional(:result, Riffer::Params::AnyOf, enum: %w[a b])
+        Riffer::Params.new.optional(:result, :any_of, enum: %w[a b])
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "enum: cannot be used with AnyOf"
+      expect(error.message).must_equal "enum: cannot be used with :any_of"
     end
 
     it "renders one object schema per variant" do
@@ -1120,9 +1188,9 @@ describe Riffer::Params do
 
     it "adds a null branch when optional in strict mode" do
       params = Riffer::Params.new
-      params.optional(:result, Riffer::Params::AnyOf) do
-        variant { required :name, String }
-        variant { required :error_code, String }
+      params.optional(:result, :any_of) do
+        variant { required :name, :string }
+        variant { required :error_code, :string }
       end
       result = params.to_json_schema(strict: true)[:properties]["result"]
 
@@ -1132,9 +1200,9 @@ describe Riffer::Params do
 
     it "adds no null branch when optional in non-strict mode" do
       params = Riffer::Params.new
-      params.optional(:result, Riffer::Params::AnyOf) do
-        variant { required :name, String }
-        variant { required :error_code, String }
+      params.optional(:result, :any_of) do
+        variant { required :name, :string }
+        variant { required :error_code, :string }
       end
 
       expect(params.to_json_schema[:properties]["result"][:anyOf].length).must_equal 2
@@ -1142,13 +1210,13 @@ describe Riffer::Params do
 
     it "raises ArgumentError for a bare Hash inside a variant under strict schemas" do
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf) do
-        variant { required :definition, Hash }
-        variant { required :error_code, String }
+      params.required(:result, :any_of) do
+        variant { required :definition, :object }
+        variant { required :error_code, :string }
       end
 
       error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_include "definition: a Hash param requires a block"
+      expect(error.message).must_include "definition: an :object param requires a block"
     end
 
     it "accepts a value matching the first variant" do
@@ -1165,12 +1233,12 @@ describe Riffer::Params do
 
     it "returns the matched variant's coerced values and defaults" do
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf) do
+      params.required(:result, :any_of) do
         variant do
-          required :score, Float
-          optional :weight, Float, default: 1.5
+          required :score, :number
+          optional :weight, :number, default: 1.5
         end
-        variant { required :error_code, String }
+        variant { required :error_code, :string }
       end
 
       expect(params.validate({ result: { score: 2 } })).must_equal({ result: { score: 2.0, weight: 1.5 } })
@@ -1196,10 +1264,10 @@ describe Riffer::Params do
 
     it "validates an AnyOf inside an array of objects with dot-path errors" do
       params = Riffer::Params.new
-      params.required(:items, Array) do
-        required :result, Riffer::Params::AnyOf do
-          variant { required :name, String }
-          variant { required :error_code, String }
+      params.required(:items, :array) do
+        required :result, :any_of do
+          variant { required :name, :string }
+          variant { required :error_code, :string }
         end
       end
 
@@ -1212,9 +1280,9 @@ describe Riffer::Params do
 
     it "does not let an earlier variant swallow a later one's keys" do
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf) do
-        variant { optional :note, String }
-        variant { required :error_code, String }
+      params.required(:result, :any_of) do
+        variant { optional :note, :string }
+        variant { required :error_code, :string }
       end
 
       expect(params.validate({ result: { error_code: "unsupported" } })).
@@ -1223,12 +1291,12 @@ describe Riffer::Params do
 
     it "does not let an earlier variant swallow a later one's nested keys" do
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf) do
-        variant { required(:payload, Hash) { required :kind, String } }
+      params.required(:result, :any_of) do
+        variant { required(:payload, :object) { required :kind, :string } }
         variant do
-          required(:payload, Hash) do
-            required :kind, String
-            required :detail, String
+          required(:payload, :object) do
+            required :kind, :string
+            required :detail, :string
           end
         end
       end
@@ -1239,9 +1307,9 @@ describe Riffer::Params do
 
     it "rejects undeclared keys inside arrays of objects with their path" do
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf) do
-        variant { required(:rows, Array) { required :id, Integer } }
-        variant { required :error_code, String }
+      params.required(:result, :any_of) do
+        variant { required(:rows, :array) { required :id, :integer } }
+        variant { required :error_code, :string }
       end
 
       error = expect do
@@ -1285,9 +1353,9 @@ describe Riffer::Params do
 
     it "accepts a missing value when optional" do
       params = Riffer::Params.new
-      params.optional(:result, Riffer::Params::AnyOf) do
-        variant { required :name, String }
-        variant { required :error_code, String }
+      params.optional(:result, :any_of) do
+        variant { required :name, :string }
+        variant { required :error_code, :string }
       end
 
       expect(params.validate({})).must_equal({ result: nil })
@@ -1295,10 +1363,10 @@ describe Riffer::Params do
 
     it "prefixes errors with the path of an enclosing object" do
       outer = Riffer::Params.new
-      outer.required(:review, Hash) do
-        required :result, Riffer::Params::AnyOf do
-          variant { required :name, String }
-          variant { required :error_code, String }
+      outer.required(:review, :object) do
+        required :result, :any_of do
+          variant { required :name, :string }
+          variant { required :error_code, :string }
         end
       end
 
@@ -1311,7 +1379,7 @@ describe Riffer::Params do
 
     it "does not share variants with a copy" do
       copy = params.dup
-      copy.parameters.first.variants.first.required(:extra, String)
+      copy.parameters.first.variants.first.required(:extra, :string)
 
       expect(params.parameters.first.variants.first.parameters.map(&:name)).must_equal %i[name note]
     end
@@ -1320,22 +1388,22 @@ describe Riffer::Params do
   describe "AnyOf with primitive variants" do
     let(:params) do
       params = Riffer::Params.new
-      params.required(:quantity, Riffer::Params::AnyOf, description: "A count or a word") do
-        variant Integer
-        variant String
+      params.required(:quantity, :any_of, description: "A count or a word") do
+        variant :integer
+        variant :string
       end
-      params.optional(:due, Riffer::Params::AnyOf) do
-        variant String, format: "date", description: "The due date"
-        variant String, enum: ["none"]
+      params.optional(:due, :any_of) do
+        variant :string, format: "date", description: "The due date"
+        variant :string, enum: ["none"]
       end
       params
     end
 
     it "raises ArgumentError for a variant with both a type and a block" do
       error = expect do
-        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) do
-          variant(String) { required :name, String }
-          variant Integer
+        Riffer::Params.new.required(:result, :any_of) do
+          variant(:string) { required :name, :string }
+          variant :integer
         end
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "variant takes a type or a block, not both"
@@ -1343,32 +1411,33 @@ describe Riffer::Params do
 
     it "raises ArgumentError for a variant type that is not primitive" do
       error = expect do
-        Riffer::Params.new.required(:result, Riffer::Params::AnyOf) do
-          variant Hash
-          variant String
+        Riffer::Params.new.required(:result, :any_of) do
+          variant :object
+          variant :string
         end
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal(
-        "variant type must be a primitive type " \
-        "(String, Integer, Float, Riffer::Params::Boolean, TrueClass, FalseClass), got Hash",
+        "variant type must be one of :string, :integer, :number, :boolean, got :object",
       )
     end
 
     it "raises ArgumentError for an Integer variant after a Float variant" do
       error = expect do
-        Riffer::Params.new.required(:amount, Riffer::Params::AnyOf) do
-          variant Float
-          variant Integer
+        Riffer::Params.new.required(:amount, :any_of) do
+          variant :number
+          variant :integer
         end
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "amount: an Integer variant after a Float variant without enum: can never match"
+      expect(error.message).must_equal(
+        "amount: an :integer variant after a :number variant without enum: can never match",
+      )
     end
 
     it "allows an Integer variant after a Float variant with an enum" do
       params = Riffer::Params.new
-      params.required(:amount, Riffer::Params::AnyOf) do
-        variant Float, enum: [1.5]
-        variant Integer
+      params.required(:amount, :any_of) do
+        variant :number, enum: [1.5]
+        variant :integer
       end
 
       expect(params.validate({ amount: 3 })).must_equal({ amount: 3 })
@@ -1377,9 +1446,9 @@ describe Riffer::Params do
     it "raises ArgumentError for a block variant with description:, enum: or format:" do
       [{ description: "An email" }, { enum: ["x"] }, { format: "email" }].each do |options|
         error = expect do
-          Riffer::Params.new.required(:contact, Riffer::Params::AnyOf) do
-            variant(**options) { required :email, String }
-            variant String
+          Riffer::Params.new.required(:contact, :any_of) do
+            variant(**options) { required :email, :string }
+            variant :string
           end
         end.must_raise(Riffer::ArgumentError)
         expect(error.message).must_equal "description:, enum: and format: only apply to a primitive variant"
@@ -1388,9 +1457,9 @@ describe Riffer::Params do
 
     it "raises ArgumentError for a variant with both enum: and format:" do
       error = expect do
-        Riffer::Params.new.required(:due, Riffer::Params::AnyOf) do
-          variant String, format: "date", enum: ["2026-01-01"]
-          variant Integer
+        Riffer::Params.new.required(:due, :any_of) do
+          variant :string, format: "date", enum: ["2026-01-01"]
+          variant :integer
         end
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "due: format: cannot be used with enum:"
@@ -1438,13 +1507,13 @@ describe Riffer::Params do
 
     it "keeps integers from an Integer variant and coerces a Float variant's values" do
       params = Riffer::Params.new
-      params.required(:amount, Riffer::Params::AnyOf) do
-        variant Integer
-        variant Float
+      params.required(:amount, :any_of) do
+        variant :integer
+        variant :number
       end
-      params.required(:ratio, Riffer::Params::AnyOf) do
-        variant String
-        variant Float
+      params.required(:ratio, :any_of) do
+        variant :string
+        variant :number
       end
 
       expect(params.validate({ amount: 3, ratio: 1 })).must_equal({ amount: 3, ratio: 1.0 })
@@ -1453,9 +1522,9 @@ describe Riffer::Params do
 
     it "accepts a primitive or an object when a field has both kinds of variant" do
       params = Riffer::Params.new
-      params.required(:contact, Riffer::Params::AnyOf) do
-        variant String
-        variant { required :email, String }
+      params.required(:contact, :any_of) do
+        variant :string
+        variant { required :email, :string }
       end
 
       expect(params.validate({ contact: "front desk" })).must_equal({ contact: "front desk" })
@@ -1469,10 +1538,10 @@ describe Riffer::Params do
 
     it "prefixes errors with the path of an enclosing object" do
       outer = Riffer::Params.new
-      outer.required(:item, Hash) do
-        required :quantity, Riffer::Params::AnyOf do
-          variant Integer
-          variant String
+      outer.required(:item, :object) do
+        required :quantity, :any_of do
+          variant :integer
+          variant :string
         end
       end
 
@@ -1484,29 +1553,29 @@ describe Riffer::Params do
   describe "Array of enum values" do
     let(:params) do
       params = Riffer::Params.new
-      params.required(:tags, Array, of: String, enum: %w[urgent billing follow_up])
+      params.required(:tags, :array, of: :string, enum: %w[urgent billing follow_up])
       params
     end
 
     it "raises ArgumentError with enum: on an Array without of:" do
       error = expect do
-        Riffer::Params.new.required(:tags, Array, enum: [%w[urgent]])
+        Riffer::Params.new.required(:tags, :array, enum: [%w[urgent]])
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "enum: with Array requires of:"
+      expect(error.message).must_equal "enum: with :array requires of:"
     end
 
     it "raises ArgumentError with enum: on an Array with a block" do
       error = expect do
-        Riffer::Params.new.required(:items, Array, enum: %w[urgent]) { required :name, String }
+        Riffer::Params.new.required(:items, :array, enum: %w[urgent]) { required :name, :string }
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "enum: with Array requires of:"
+      expect(error.message).must_equal "enum: with :array requires of:"
     end
 
     it "raises ArgumentError with enum: on a Hash" do
       error = expect do
-        Riffer::Params.new.optional(:address, Hash, enum: [{ city: "Toronto" }]) { required :city, String }
+        Riffer::Params.new.optional(:address, :object, enum: [{ city: "Toronto" }]) { required :city, :string }
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "enum: cannot be used with Hash"
+      expect(error.message).must_equal "enum: cannot be used with :object"
     end
 
     it "renders the enum on the items" do
@@ -1517,7 +1586,7 @@ describe Riffer::Params do
 
     it "keeps the items when optional in strict mode" do
       params = Riffer::Params.new
-      params.optional(:days, Array, of: Integer, enum: [1, 2, 3])
+      params.optional(:days, :array, of: :integer, enum: [1, 2, 3])
 
       expect(params.to_json_schema(strict: true)[:properties]["days"]).must_equal(
         type: %w[array null], items: { type: "integer", enum: [1, 2, 3] },
@@ -1542,16 +1611,16 @@ describe Riffer::Params do
       expect(error.message).must_equal "tags[1] must be a string"
     end
 
-    it "coerces integer items of an of: Float enum to floats" do
+    it "coerces integer items of an of: :number enum to floats" do
       params = Riffer::Params.new
-      params.required(:weights, Array, of: Float, enum: [0.5, 1.0])
+      params.required(:weights, :array, of: :number, enum: [0.5, 1.0])
 
       expect(params.validate({ weights: [1, 0.5] })).must_equal({ weights: [1.0, 0.5] })
     end
 
     it "prefixes errors with the path of an enclosing object" do
       outer = Riffer::Params.new
-      outer.required(:ticket, Hash) { required :tags, Array, of: String, enum: %w[urgent billing] }
+      outer.required(:ticket, :object) { required :tags, :array, of: :string, enum: %w[urgent billing] }
 
       error = expect { outer.validate({ ticket: { tags: %w[spam] } }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_equal "ticket.tags[0] must be one of: urgent, billing"
@@ -1559,9 +1628,9 @@ describe Riffer::Params do
 
     it "accepts items from the enum inside an AnyOf variant" do
       outer = Riffer::Params.new
-      outer.required(:result, Riffer::Params::AnyOf) do
-        variant { required :tags, Array, of: String, enum: %w[urgent billing] }
-        variant { required :error_code, String }
+      outer.required(:result, :any_of) do
+        variant { required :tags, :array, of: :string, enum: %w[urgent billing] }
+        variant { required :error_code, :string }
       end
 
       expect(outer.validate({ result: { tags: %w[billing] } })).must_equal({ result: { tags: %w[billing] } })
@@ -1606,16 +1675,16 @@ describe Riffer::Params do
   describe "format" do
     let(:params) do
       params = Riffer::Params.new
-      params.required(:born_on, String, format: "date")
-      params.optional(:email, String, format: "email")
-      params.required(:visit_ids, Array, of: String, format: "uuid")
+      params.required(:born_on, :string, format: "date")
+      params.optional(:email, :string, format: "email")
+      params.required(:visit_ids, :array, of: :string, format: "uuid")
       params
     end
 
     let(:visit_id) { "550e8400-e29b-41d4-a716-446655440000" }
 
     it "raises ArgumentError with a format outside the supported list" do
-      error = expect { Riffer::Params.new.required(:site, String, format: "uri") }.must_raise(Riffer::ArgumentError)
+      error = expect { Riffer::Params.new.required(:site, :string, format: "uri") }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal(
         "site: format: must be a supported format " \
         '(date-time, time, date, duration, email, hostname, ipv4, ipv6, uuid), got "uri"',
@@ -1623,48 +1692,48 @@ describe Riffer::Params do
     end
 
     it "raises ArgumentError with a format that isn't a string" do
-      error = expect { Riffer::Params.new.required(:on, String, format: :date) }.must_raise(Riffer::ArgumentError)
+      error = expect { Riffer::Params.new.required(:on, :string, format: :date) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/\Aon: format: must be a supported format \(.*\), got :date\z/)
     end
 
     it "raises ArgumentError with format: on a non-String type" do
-      error = expect { Riffer::Params.new.required(:age, Integer, format: "date") }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "age: format: requires a String or an Array whose innermost type is String"
+      error = expect { Riffer::Params.new.required(:age, :integer, format: "date") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "age: format: requires :string or an :array whose innermost type is :string"
     end
 
     it "raises ArgumentError with format: on an Array of a non-String type" do
       error = expect do
-        Riffer::Params.new.required(:ages, Array, of: Integer, format: "date")
+        Riffer::Params.new.required(:ages, :array, of: :integer, format: "date")
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "ages: format: requires a String or an Array whose innermost type is String"
+      expect(error.message).must_equal "ages: format: requires :string or an :array whose innermost type is :string"
     end
 
     it "raises ArgumentError with format: on a Hash, an Array of objects or an AnyOf" do
       [
-        -> { required(:address, Hash, format: "date") { required :city, String } },
-        -> { required(:visits, Array, format: "date") { required :on, String } },
+        -> { required(:address, :object, format: "date") { required :city, :string } },
+        -> { required(:visits, :array, format: "date") { required :on, :string } },
         lambda do
-          required :result, Riffer::Params::AnyOf, format: "date" do
-            variant { required :on, String }
-            variant { required :error, String }
+          required :result, :any_of, format: "date" do
+            variant { required :on, :string }
+            variant { required :error, :string }
           end
         end,
       ].each do |definition|
         error = expect { Riffer::Params.new.instance_exec(&definition) }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/format: requires a String or an Array whose innermost type is String\z/)
+        expect(error.message).must_match(/format: requires :string or an :array whose innermost type is :string\z/)
       end
     end
 
     it "raises ArgumentError with format: and enum:" do
       error = expect do
-        Riffer::Params.new.required(:born_on, String, format: "date", enum: ["2026-10-19"])
+        Riffer::Params.new.required(:born_on, :string, format: "date", enum: ["2026-10-19"])
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "born_on: format: cannot be used with enum:"
     end
 
     it "keeps its own frozen copy of the format" do
       format = +"date"
-      param = Riffer::Params::Param.new(name: :on, type: String, required: true, format: format)
+      param = Riffer::Params::Param.new(name: :on, type: :string, required: true, format: format)
       format << "-time"
 
       expect(param.format).must_equal "date"
@@ -1713,7 +1782,7 @@ describe Riffer::Params do
 
     it "prefixes errors with the path of an enclosing object" do
       outer = Riffer::Params.new
-      outer.required(:patient, Hash) { required :born_on, String, format: "date" }
+      outer.required(:patient, :object) { required :born_on, :string, format: "date" }
 
       error = expect { outer.validate({ patient: { born_on: "soon" } }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_equal "patient.born_on must be a valid date"
@@ -1721,9 +1790,9 @@ describe Riffer::Params do
 
     it "checks the format inside an AnyOf variant" do
       outer = Riffer::Params.new
-      outer.required(:contact, Riffer::Params::AnyOf) do
-        variant { required :email, String, format: "email" }
-        variant { required :phone, String }
+      outer.required(:contact, :any_of) do
+        variant { required :email, :string, format: "email" }
+        variant { required :phone, :string }
       end
 
       expect(outer.validate({ contact: { email: "ada@example.com" } })).must_equal(
@@ -1751,7 +1820,7 @@ describe Riffer::Params do
           },
         )
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "counts: format: requires a String or an Array whose innermost type is String"
+      expect(error.message).must_equal "counts: format: requires :string or an :array whose innermost type is :string"
     end
 
     it "round-trips losslessly with to_json_schema(strict: false)" do
@@ -1773,26 +1842,26 @@ describe Riffer::Params do
   describe "Array of arrays" do
     let(:params) do
       params = Riffer::Params.new
-      params.required(:grid, Array, of: [Integer], description: "Rows of cells")
-      params.optional(:moves, Array, of: [[String]], enum: %w[x o])
+      params.required(:grid, :array, of: [:integer], description: "Rows of cells")
+      params.optional(:moves, :array, of: [[:string]], enum: %w[x o])
       params
     end
 
     it "raises ArgumentError with of: nesting no type or more than one" do
-      [[], [Integer, String], [[]], [nil]].each do |of|
-        error = expect { Riffer::Params.new.required(:grid, Array, of: of) }.must_raise(Riffer::ArgumentError)
+      [[], %i[integer string], [[]], [nil]].each do |of|
+        error = expect { Riffer::Params.new.required(:grid, :array, of: of) }.must_raise(Riffer::ArgumentError)
         expect(error.message).must_match(/\Aof: must nest exactly one type, got /)
       end
     end
 
     it "raises ArgumentError with of: nesting a non-primitive type" do
-      error = expect { Riffer::Params.new.required(:grid, Array, of: [Hash]) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/\Aof: must be a primitive type \(.*\), got Hash\z/)
+      error = expect { Riffer::Params.new.required(:grid, :array, of: [:object]) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "of: must be one of :string, :integer, :number, :boolean, got :object"
     end
 
     it "raises ArgumentError with a nested of: on a non-Array type" do
-      error = expect { Riffer::Params.new.required(:grid, String, of: [Integer]) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "of: can only be used with Array type, got String"
+      error = expect { Riffer::Params.new.required(:grid, :string, of: [:integer]) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "of: can only be used with :array, got :string"
     end
 
     it "renders one items level per array, with the enum on the innermost items" do
@@ -1816,7 +1885,7 @@ describe Riffer::Params do
 
     it "renders the format on the innermost items" do
       params = Riffer::Params.new
-      params.required(:visit_ids, Array, of: [String], format: "uuid")
+      params.required(:visit_ids, :array, of: [:string], format: "uuid")
 
       expect(params.to_json_schema[:properties]["visit_ids"]).must_equal(
         type: "array", items: { type: "array", items: { type: "string", format: "uuid" } },
@@ -1843,7 +1912,7 @@ describe Riffer::Params do
 
     it "checks Boolean innermost items" do
       params = Riffer::Params.new
-      params.required(:checks, Array, of: [Riffer::Params::Boolean])
+      params.required(:checks, :array, of: [:boolean])
 
       expect(params.to_json_schema[:properties]["checks"][:items]).must_equal(type: "array", items: { type: "boolean" })
       expect(params.validate({ checks: [[true, false]] })).must_equal({ checks: [[true, false]] })
@@ -1853,22 +1922,22 @@ describe Riffer::Params do
 
     it "rejects innermost items outside the format with their path" do
       params = Riffer::Params.new
-      params.required(:visit_ids, Array, of: [String], format: "uuid")
+      params.required(:visit_ids, :array, of: [:string], format: "uuid")
 
       error = expect { params.validate({ visit_ids: [["visit-1"]] }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_equal "visit_ids[0][0] must be a valid uuid"
     end
 
-    it "coerces integer items of a nested of: Float to floats" do
+    it "coerces integer items of a nested of: :number to floats" do
       params = Riffer::Params.new
-      params.required(:points, Array, of: [Float])
+      params.required(:points, :array, of: [:number])
 
       expect(params.validate({ points: [[1, 2.5]] })).must_equal({ points: [[1.0, 2.5]] })
     end
 
     it "prefixes errors with the path of an enclosing object" do
       outer = Riffer::Params.new
-      outer.required(:board, Hash) { required :grid, Array, of: [Integer] }
+      outer.required(:board, :object) { required :grid, :array, of: [:integer] }
 
       error = expect { outer.validate({ board: { grid: [["x"]] } }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_equal "board.grid[0][0] must be a integer"
@@ -1876,9 +1945,9 @@ describe Riffer::Params do
 
     it "checks nested arrays inside an AnyOf variant" do
       outer = Riffer::Params.new
-      outer.required(:result, Riffer::Params::AnyOf) do
-        variant { required :grid, Array, of: [Integer] }
-        variant { required :error_code, String }
+      outer.required(:result, :any_of) do
+        variant { required :grid, :array, of: [:integer] }
+        variant { required :error_code, :string }
       end
 
       expect(outer.validate({ result: { grid: [[1]] } })).must_equal({ result: { grid: [[1]] } })
@@ -1890,7 +1959,7 @@ describe Riffer::Params do
       rebuilt = Riffer::Params.from_json_schema(params.to_json_schema)
 
       expect(rebuilt.parameters.map { |param| [param.item_type, param.dimensions, param.enum] }).must_equal(
-        [[Integer, 2, nil], [String, 3, %w[x o]]],
+        [[:integer, 2, nil], [:string, 3, %w[x o]]],
       )
       error = expect { rebuilt.validate({ grid: [["1"]] }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_equal "grid[0][0] must be a integer"
@@ -1898,7 +1967,7 @@ describe Riffer::Params do
 
     it "reads the innermost format back" do
       params = Riffer::Params.new
-      params.required(:visit_ids, Array, of: [String], format: "uuid")
+      params.required(:visit_ids, :array, of: [:string], format: "uuid")
       rebuilt = Riffer::Params.from_json_schema(params.to_json_schema)
 
       expect(rebuilt.parameters.first.format).must_equal "uuid"

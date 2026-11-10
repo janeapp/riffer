@@ -14,16 +14,16 @@ class Riffer::Params
   def self.from_json_schema: (Hash[Symbol, untyped]) -> Riffer::Params
 
   # --
-  # : (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def required: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (Symbol, :any_of | singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
+  # : (Symbol, Symbol | Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Symbol | Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def required: (Symbol, :any_of | singleton(Riffer::Params::AnyOf), ?description: String?) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
+              | (Symbol, Symbol | Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?of: (Symbol | Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # --
-  # : (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-  # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def optional: (Symbol, singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
-              | (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (Symbol, :any_of | singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
+  # : (Symbol, Symbol | Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Symbol | Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def optional: (Symbol, :any_of | singleton(Riffer::Params::AnyOf), ?description: String?, ?default: untyped) { (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> void
+              | (Symbol, Symbol | Module, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?of: (Symbol | Module | Array[untyped])?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -42,16 +42,20 @@ class Riffer::Params
   def initialize_copy: (Riffer::Params) -> void
 
   # --
-  # : ((Module | Array[untyped])?, ?Integer) -> [Module?, Integer]
-  def unwrap_of: ((Module | Array[untyped])?, ?Integer) -> [ Module?, Integer ]
+  # : (Symbol, untyped, required: bool, description: String?, enum: Array[untyped]?, format: String?, ?default: untyped, of: (Symbol | Module | Array[untyped])?) ?{ (untyped) [self: untyped] -> void } -> void
+  def add_param: (Symbol, untyped, required: bool, description: String?, enum: Array[untyped]?, format: String?, of: (Symbol | Module | Array[untyped])?, ?default: untyped) ?{ (untyped) [self: untyped] -> void } -> void
 
   # --
-  # : (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
-  def build_nested: (Module, Module?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  # : ((Symbol | Module | Array[untyped])?, ?Integer) -> [(Symbol | Module)?, Integer]
+  def unwrap_of: ((Symbol | Module | Array[untyped])?, ?Integer) -> [ (Symbol | Module)?, Integer ]
 
   # --
-  # : (Symbol, (Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
-  def build_variants: (Symbol, (Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
+  # : (Symbol, Symbol?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def build_nested: (Symbol, Symbol?, Array[untyped]?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+
+  # --
+  # : (Symbol, (Symbol | Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
+  def build_variants: (Symbol, (Symbol | Module | Array[untyped])?, Array[untyped]?) ?{ (Riffer::Params::AnyOf) [self: Riffer::Params::AnyOf] -> void } -> Array[Riffer::Params | Riffer::Params::Param]
 
   # --
   # : (Riffer::Params::Param, untyped) -> String?
@@ -84,10 +88,6 @@ class Riffer::Params
   def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String], ?String, ?Integer) -> Array[untyped]
 
   # --
-  # : (Module, untyped) -> bool
-  def valid_item?: (Module, untyped) -> bool
-
-  # --
-  # : (Module, untyped) -> untyped
-  def coerce_value: (Module, untyped) -> untyped
+  # : (Symbol, untyped) -> untyped
+  def coerce_value: (Symbol, untyped) -> untyped
 end

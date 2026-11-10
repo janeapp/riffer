@@ -5,37 +5,37 @@ require "test_helper"
 describe Riffer::Params::Param do
   describe "#initialize" do
     it "sets the name as a symbol" do
-      param = Riffer::Params::Param.new(name: "city", type: String, required: true)
+      param = Riffer::Params::Param.new(name: "city", type: :string, required: true)
 
       expect(param.name).must_equal :city
     end
 
     it "sets the type" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
-      expect(param.type).must_equal String
+      expect(param.type).must_equal :string
     end
 
     it "sets required flag" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.required).must_equal true
     end
 
     it "sets description" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true, description: "The city name")
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true, description: "The city name")
 
       expect(param.description).must_equal "The city name"
     end
 
     it "sets enum" do
-      param = Riffer::Params::Param.new(name: :unit, type: String, required: true, enum: %w[celsius fahrenheit])
+      param = Riffer::Params::Param.new(name: :unit, type: :string, required: true, enum: %w[celsius fahrenheit])
 
       expect(param.enum).must_equal %w[celsius fahrenheit]
     end
 
     it "sets default" do
-      param = Riffer::Params::Param.new(name: :unit, type: String, required: false, default: "celsius")
+      param = Riffer::Params::Param.new(name: :unit, type: :string, required: false, default: "celsius")
 
       expect(param.default).must_equal "celsius"
     end
@@ -43,104 +43,92 @@ describe Riffer::Params::Param do
 
   describe "#valid_type?" do
     it "returns true for valid string type" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.valid_type?("Toronto")).must_equal true
     end
 
     it "returns false for invalid string type" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.valid_type?(123)).must_equal false
     end
 
     it "returns true for valid integer type" do
-      param = Riffer::Params::Param.new(name: :count, type: Integer, required: true)
+      param = Riffer::Params::Param.new(name: :count, type: :integer, required: true)
 
       expect(param.valid_type?(42)).must_equal true
     end
 
     it "returns false for a float on an integer param" do
-      param = Riffer::Params::Param.new(name: :count, type: Integer, required: true)
+      param = Riffer::Params::Param.new(name: :count, type: :integer, required: true)
 
       expect(param.valid_type?(1.5)).must_equal false
     end
 
     it "returns true for valid float type" do
-      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+      param = Riffer::Params::Param.new(name: :amount, type: :number, required: true)
 
       expect(param.valid_type?(3.14)).must_equal true
     end
 
     it "returns true for an integer on a float param" do
-      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+      param = Riffer::Params::Param.new(name: :amount, type: :number, required: true)
 
       expect(param.valid_type?(120)).must_equal true
     end
 
     it "returns false for a numeric string on a float param" do
-      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+      param = Riffer::Params::Param.new(name: :amount, type: :number, required: true)
 
       expect(param.valid_type?("120")).must_equal false
     end
 
     it "returns false for a boolean on a float param" do
-      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+      param = Riffer::Params::Param.new(name: :amount, type: :number, required: true)
 
       expect(param.valid_type?(true)).must_equal false
     end
 
     it "returns true for true boolean value" do
-      param = Riffer::Params::Param.new(name: :enabled, type: TrueClass, required: true)
+      param = Riffer::Params::Param.new(name: :enabled, type: :boolean, required: true)
 
       expect(param.valid_type?(true)).must_equal true
     end
 
     it "returns true for false boolean value" do
-      param = Riffer::Params::Param.new(name: :enabled, type: TrueClass, required: true)
+      param = Riffer::Params::Param.new(name: :enabled, type: :boolean, required: true)
 
       expect(param.valid_type?(false)).must_equal true
     end
 
-    it "returns true for true with Riffer::Params::Boolean type" do
-      param = Riffer::Params::Param.new(name: :enabled, type: Riffer::Params::Boolean, required: true)
-
-      expect(param.valid_type?(true)).must_equal true
-    end
-
-    it "returns true for false with Riffer::Params::Boolean type" do
-      param = Riffer::Params::Param.new(name: :enabled, type: Riffer::Params::Boolean, required: true)
-
-      expect(param.valid_type?(false)).must_equal true
-    end
-
-    it "returns false for non-boolean with Riffer::Params::Boolean type" do
-      param = Riffer::Params::Param.new(name: :enabled, type: Riffer::Params::Boolean, required: true)
+    it "returns false for a non-boolean on a boolean param" do
+      param = Riffer::Params::Param.new(name: :enabled, type: :boolean, required: true)
 
       expect(param.valid_type?("true")).must_equal false
     end
 
     it "returns true for nil on optional params" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: false)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: false)
 
       expect(param.valid_type?(nil)).must_equal true
     end
 
     it "returns true for valid array type" do
-      param = Riffer::Params::Param.new(name: :items, type: Array, required: true)
+      param = Riffer::Params::Param.new(name: :items, type: :array, required: true)
 
       expect(param.valid_type?([1, 2, 3])).must_equal true
     end
 
     it "returns true for valid hash type" do
-      param = Riffer::Params::Param.new(name: :data, type: Hash, required: true)
+      param = Riffer::Params::Param.new(name: :data, type: :object, required: true)
 
       expect(param.valid_type?({ key: "value" })).must_equal true
     end
 
     it "returns true for a hash when the type is AnyOf" do
       param = Riffer::Params::Param.new(
-        name: :result, type: Riffer::Params::AnyOf, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
+        name: :result, type: :any_of, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
       )
 
       expect(param.valid_type?({ name: "Rule" })).must_equal true
@@ -148,7 +136,7 @@ describe Riffer::Params::Param do
 
     it "returns false for a non-hash when the type is AnyOf" do
       param = Riffer::Params::Param.new(
-        name: :result, type: Riffer::Params::AnyOf, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
+        name: :result, type: :any_of, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
       )
 
       expect(param.valid_type?("Rule")).must_equal false
@@ -156,8 +144,8 @@ describe Riffer::Params::Param do
 
     it "returns true for a value matching any primitive or object variant of an AnyOf" do
       param = Riffer::Params::Param.new(
-        name: :quantity, type: Riffer::Params::AnyOf, required: true,
-        variants: [Riffer::Params::Param.new(name: :quantity, type: Integer, required: true), Riffer::Params.new],
+        name: :quantity, type: :any_of, required: true,
+        variants: [Riffer::Params::Param.new(name: :quantity, type: :integer, required: true), Riffer::Params.new],
       )
 
       expect([3, { count: 3 }, "three"].map { |value| param.valid_type?(value) }).must_equal [true, true, false]
@@ -165,60 +153,54 @@ describe Riffer::Params::Param do
   end
 
   describe "#type_name" do
-    it "returns 'string' for String" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+    it "returns 'string' for :string" do
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.type_name).must_equal "string"
     end
 
-    it "returns 'integer' for Integer" do
-      param = Riffer::Params::Param.new(name: :count, type: Integer, required: true)
+    it "returns 'integer' for :integer" do
+      param = Riffer::Params::Param.new(name: :count, type: :integer, required: true)
 
       expect(param.type_name).must_equal "integer"
     end
 
-    it "returns 'number' for Float" do
-      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+    it "returns 'number' for :number" do
+      param = Riffer::Params::Param.new(name: :amount, type: :number, required: true)
 
       expect(param.type_name).must_equal "number"
     end
 
-    it "returns 'boolean' for TrueClass" do
-      param = Riffer::Params::Param.new(name: :enabled, type: TrueClass, required: true)
+    it "returns 'boolean' for :boolean" do
+      param = Riffer::Params::Param.new(name: :enabled, type: :boolean, required: true)
 
       expect(param.type_name).must_equal "boolean"
     end
 
-    it "returns 'boolean' for Riffer::Params::Boolean" do
-      param = Riffer::Params::Param.new(name: :enabled, type: Riffer::Params::Boolean, required: true)
-
-      expect(param.type_name).must_equal "boolean"
-    end
-
-    it "returns 'array' for Array" do
-      param = Riffer::Params::Param.new(name: :items, type: Array, required: true)
+    it "returns 'array' for :array" do
+      param = Riffer::Params::Param.new(name: :items, type: :array, required: true)
 
       expect(param.type_name).must_equal "array"
     end
 
-    it "returns 'object' for Hash" do
-      param = Riffer::Params::Param.new(name: :data, type: Hash, required: true)
+    it "returns 'object' for :object" do
+      param = Riffer::Params::Param.new(name: :data, type: :object, required: true)
 
       expect(param.type_name).must_equal "object"
     end
 
-    it "returns 'object' for AnyOf" do
+    it "returns 'object' for :any_of" do
       param = Riffer::Params::Param.new(
-        name: :result, type: Riffer::Params::AnyOf, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
+        name: :result, type: :any_of, required: true, variants: [Riffer::Params.new, Riffer::Params.new],
       )
 
       expect(param.type_name).must_equal "object"
     end
 
     it "joins the distinct variant types for an AnyOf with primitive variants" do
-      variants = [Integer, String, String].map { |type| Riffer::Params::Param.new(name: :quantity, type: type, required: true) }
+      variants = %i[integer string string].map { |type| Riffer::Params::Param.new(name: :quantity, type: type, required: true) }
       param = Riffer::Params::Param.new(
-        name: :quantity, type: Riffer::Params::AnyOf, required: true, variants: variants + [Riffer::Params.new],
+        name: :quantity, type: :any_of, required: true, variants: variants + [Riffer::Params.new],
       )
 
       expect(param.type_name).must_equal "integer or string or object"
@@ -227,37 +209,37 @@ describe Riffer::Params::Param do
 
   describe "#to_json_schema" do
     it "returns hash with type" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.to_json_schema[:type]).must_equal "string"
     end
 
     it "includes description when set" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true, description: "The city name")
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true, description: "The city name")
 
       expect(param.to_json_schema[:description]).must_equal "The city name"
     end
 
     it "includes enum when set" do
-      param = Riffer::Params::Param.new(name: :unit, type: String, required: true, enum: %w[celsius fahrenheit])
+      param = Riffer::Params::Param.new(name: :unit, type: :string, required: true, enum: %w[celsius fahrenheit])
 
       expect(param.to_json_schema[:enum]).must_equal %w[celsius fahrenheit]
     end
 
     it "excludes description when not set" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.to_json_schema.key?(:description)).must_equal false
     end
 
     it "excludes enum when not set" do
-      param = Riffer::Params::Param.new(name: :city, type: String, required: true)
+      param = Riffer::Params::Param.new(name: :city, type: :string, required: true)
 
       expect(param.to_json_schema.key?(:enum)).must_equal false
     end
 
     it "includes items with type for Array with item_type" do
-      param = Riffer::Params::Param.new(name: :tags, type: Array, required: true, item_type: String)
+      param = Riffer::Params::Param.new(name: :tags, type: :array, required: true, item_type: :string)
       schema = param.to_json_schema
 
       expect(schema[:type]).must_equal "array"
@@ -266,9 +248,9 @@ describe Riffer::Params::Param do
 
     it "includes nested object schema for Hash with nested_params" do
       nested = Riffer::Params.new
-      nested.required(:street, String)
-      nested.optional(:zip, String)
-      param = Riffer::Params::Param.new(name: :address, type: Hash, required: true, nested_params: nested)
+      nested.required(:street, :string)
+      nested.optional(:zip, :string)
+      param = Riffer::Params::Param.new(name: :address, type: :object, required: true, nested_params: nested)
       schema = param.to_json_schema
 
       expect(schema[:type]).must_equal "object"
@@ -282,9 +264,9 @@ describe Riffer::Params::Param do
 
     it "includes items with object schema for Array with nested_params" do
       nested = Riffer::Params.new
-      nested.required(:product, String)
-      nested.required(:quantity, Integer)
-      param = Riffer::Params::Param.new(name: :line_items, type: Array, required: true, nested_params: nested)
+      nested.required(:product, :string)
+      nested.required(:quantity, :integer)
+      param = Riffer::Params::Param.new(name: :line_items, type: :array, required: true, nested_params: nested)
       schema = param.to_json_schema
 
       expect(schema[:type]).must_equal "array"
@@ -297,9 +279,9 @@ describe Riffer::Params::Param do
   describe "AnyOf" do
     it "raises without variants" do
       error = expect do
-        Riffer::Params::Param.new(name: :result, type: Riffer::Params::AnyOf, required: true)
+        Riffer::Params::Param.new(name: :result, type: :any_of, required: true)
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "result: an AnyOf param requires variants"
+      expect(error.message).must_equal "result: an :any_of param requires variants"
     end
   end
 end

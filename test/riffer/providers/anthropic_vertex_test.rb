@@ -255,8 +255,8 @@ describe Riffer::Providers::AnthropicVertex do
   describe "structured output" do
     let(:params) do
       params = Riffer::Params.new
-      params.required(:sentiment, String, enum: %w[positive neutral negative])
-      params.required(:score, Float)
+      params.required(:sentiment, :string, enum: %w[positive neutral negative])
+      params.required(:score, :number)
       params
     end
     let(:prompt) { "Analyze the sentiment of the following text: 'I love this product, it is amazing!'" }
@@ -320,7 +320,7 @@ describe Riffer::Providers::AnthropicVertex do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end

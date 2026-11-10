@@ -163,7 +163,7 @@ describe Riffer::Providers::GoogleCloud do
   describe "structured output" do
     it "sends the JSON schema as a responseFormat list" do
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 

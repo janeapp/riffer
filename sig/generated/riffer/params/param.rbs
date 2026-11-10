@@ -1,15 +1,17 @@
 # Generated from lib/riffer/params/param.rb with RBS::Inline
 
 class Riffer::Params::Param
-  TYPE_MAPPINGS: Hash[Module, String]
+  PRIMITIVE_TYPES: Array[Symbol]
 
-  PRIMITIVE_TYPES: Array[Module]
+  TYPES: Array[Symbol]
 
-  JSON_TYPE_MAPPINGS: Hash[String, Module]
+  CLASS_TYPES: Hash[Module, Symbol]
+
+  JSON_TYPE_MAPPINGS: Hash[String, Symbol]
 
   attr_reader name: Symbol
 
-  attr_reader type: Module
+  attr_reader type: Symbol
 
   attr_reader required: bool
 
@@ -21,13 +23,25 @@ class Riffer::Params::Param
 
   attr_reader default: untyped
 
-  attr_reader item_type: Module?
+  attr_reader item_type: Symbol?
 
   attr_reader dimensions: Integer
 
   attr_reader nested_params: Riffer::Params?
 
   attr_reader variants: Array[Riffer::Params | Riffer::Params::Param]?
+
+  # --
+  # : (untyped) -> Symbol?
+  def self.resolve_type: (untyped) -> Symbol?
+
+  # --
+  # : (untyped, String, Array[Symbol]) -> Symbol
+  def self.resolve_type!: (untyped, String, Array[Symbol]) -> Symbol
+
+  # --
+  # : (Symbol, untyped) -> bool
+  def self.value_of_type?: (Symbol, untyped) -> bool
 
   # --
   # : (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
@@ -38,20 +52,20 @@ class Riffer::Params::Param
   def self.resolve_variants: (Symbol, Array[Hash[Symbol, untyped]]) -> Array[Riffer::Params | Riffer::Params::Param]
 
   # --
-  # : (Module, Hash[Symbol, untyped]) -> Riffer::Params?
-  def self.resolve_nested_params: (Module, Hash[Symbol, untyped]) -> Riffer::Params?
+  # : (Symbol, Hash[Symbol, untyped]) -> Riffer::Params?
+  def self.resolve_nested_params: (Symbol, Hash[Symbol, untyped]) -> Riffer::Params?
 
   # --
-  # : (Hash[Symbol, untyped]) -> [Module, Integer, Hash[Symbol, untyped]]?
-  def self.resolve_typed_items: (Hash[Symbol, untyped]) -> [ Module, Integer, Hash[Symbol, untyped] ]?
+  # : (Hash[Symbol, untyped]) -> [Symbol, Integer, Hash[Symbol, untyped]]?
+  def self.resolve_typed_items: (Hash[Symbol, untyped]) -> [ Symbol, Integer, Hash[Symbol, untyped] ]?
 
   # --
-  # : (untyped) -> Module
-  def self.json_type_to_ruby: (untyped) -> Module
+  # : (untyped) -> Symbol
+  def self.json_type: (untyped) -> Symbol
 
   # --
-  # : (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
-  def initialize: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
+  # : (name: Symbol, type: Symbol, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Symbol?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
+  def initialize: (name: Symbol, type: Symbol, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Symbol?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
 
   # --
   # : (untyped) -> bool
@@ -74,7 +88,7 @@ class Riffer::Params::Param
   # : (Riffer::Params::Param) -> void
   def initialize_copy: (Riffer::Params::Param) -> void
 
-  # The first matching variant wins, and a Float variant without an enum accepts any number.
+  # The first matching variant wins, and a :number variant without an enum accepts any number.
   # --
   # : () -> void
   def validate_variant_order!: () -> void

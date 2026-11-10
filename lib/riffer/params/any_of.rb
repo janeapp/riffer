@@ -14,7 +14,7 @@ class Riffer::Params::AnyOf
   end
 
   #--
-  #: (?Module?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  #: (?(Symbol | Module)?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def variant(type = nil, description: nil, enum: nil, format: nil, &block)
     if type
       raise Riffer::ArgumentError, "variant takes a type or a block, not both" if block
@@ -36,15 +36,12 @@ class Riffer::Params::AnyOf
   private
 
   #--
-  #: (Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
+  #: (Symbol | Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
   def primitive(type, description, enum, format)
-    unless Riffer::Params::Param::PRIMITIVE_TYPES.include?(type)
-      primitives = Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(", ")
-      raise Riffer::ArgumentError, "variant type must be a primitive type (#{primitives}), got #{type}"
-    end
-
     Riffer::Params::Param.new(
-      name: @name, type: type, required: true, description: description, enum: enum, format: format,
+      name: @name, type: Riffer::Params::Param.resolve_type!(type, "variant type", Riffer::Params::Param::PRIMITIVE_TYPES),
+      required: true,
+      description: description, enum: enum, format: format,
     )
   end
 end

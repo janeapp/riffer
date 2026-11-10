@@ -211,9 +211,9 @@ describe Riffer::Providers::Gemini do
     it "sends the strict JSON schema in responseFormat" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
-      params.required(:result, Riffer::Params::AnyOf) do
-        variant { required :name, String }
-        variant { required :error_code, String }
+      params.required(:result, :any_of) do
+        variant { required :name, :string }
+        variant { required :error_code, :string }
       end
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
@@ -235,8 +235,8 @@ describe Riffer::Providers::Gemini do
     it "makes optional fields required and nullable" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
-      params.required(:name, String)
-      params.optional(:postal_code, String)
+      params.required(:name, :string)
+      params.optional(:postal_code, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Extract")]
 
@@ -254,7 +254,7 @@ describe Riffer::Providers::Gemini do
     it "raises for a Hash param without a block" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
-      params.required(:address, Hash)
+      params.required(:address, :object)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Extract")]
       options = { structured_output: structured_output }
@@ -276,7 +276,7 @@ describe Riffer::Providers::Gemini do
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -324,7 +324,7 @@ describe Riffer::Providers::Gemini do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end
@@ -465,7 +465,7 @@ describe Riffer::Providers::Gemini do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end

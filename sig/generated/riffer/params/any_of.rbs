@@ -10,12 +10,12 @@ class Riffer::Params::AnyOf
   def initialize: (Symbol) -> void
 
   # --
-  # : (?Module?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def variant: (?Module?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  # : (?(Symbol | Module)?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def variant: (?(Symbol | Module)?, ?description: String?, ?enum: Array[untyped]?, ?format: String?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   private
 
   # --
-  # : (Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
-  def primitive: (Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
+  # : (Symbol | Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
+  def primitive: (Symbol | Module, String?, Array[untyped]?, String?) -> Riffer::Params::Param
 end

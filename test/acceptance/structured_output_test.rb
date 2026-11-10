@@ -29,8 +29,8 @@ describe "Acceptance: structured output" do
       describe "a flat object" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:sentiment, String, enum: %w[positive neutral negative], description: "The sentiment")
-            params.required(:score, Float, description: "Confidence between 0 and 1")
+            params.required(:sentiment, :string, enum: %w[positive neutral negative], description: "The sentiment")
+            params.required(:score, :number, description: "Confidence between 0 and 1")
           end
         end
         let(:prompt) { "Analyze the sentiment of: 'I love this product, it is amazing!'" }
@@ -59,12 +59,12 @@ describe "Acceptance: structured output" do
       describe "an address" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:name, String, description: "Person name")
-            params.required(:address, Hash, description: "Mailing address") do
-              required :street, String, description: "Street address"
-              required :city, String, description: "City"
-              optional :postal_code, String, description: "Postal or zip code"
-              optional :country, String, description: "Country"
+            params.required(:name, :string, description: "Person name")
+            params.required(:address, :object, description: "Mailing address") do
+              required :street, :string, description: "Street address"
+              required :city, :string, description: "City"
+              optional :postal_code, :string, description: "Postal or zip code"
+              optional :country, :string, description: "Country"
             end
           end
         end
@@ -104,8 +104,8 @@ describe "Acceptance: structured output" do
       describe "an optional enum" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:name, String, description: "Session name")
-            params.optional(:session_type, String, enum: %w[in_person online both], description: "Type of session")
+            params.required(:name, :string, description: "Session name")
+            params.optional(:session_type, :string, enum: %w[in_person online both], description: "Type of session")
           end
         end
 
@@ -140,8 +140,8 @@ describe "Acceptance: structured output" do
       describe "typed arrays" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:tags, Array, of: String, description: "Descriptive tags")
-            params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
+            params.required(:tags, :array, of: :string, description: "Descriptive tags")
+            params.required(:scores, :array, of: :number, description: "Relevance scores between 0 and 1")
           end
         end
         let(:prompt) { "List 3 tags and 3 scores (0.0-1.0) for: 'Ruby is a great programming language'" }
@@ -161,11 +161,11 @@ describe "Acceptance: structured output" do
       describe "an array of objects" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:order_id, String, description: "Order identifier")
-            params.required(:items, Array, description: "Line items") do
-              required :name, String, description: "Product name"
-              required :price, Float, description: "Price in dollars"
-              optional :quantity, Integer, description: "Quantity ordered"
+            params.required(:order_id, :string, description: "Order identifier")
+            params.required(:items, :array, description: "Line items") do
+              required :name, :string, description: "Product name"
+              required :price, :number, description: "Price in dollars"
+              optional :quantity, :integer, description: "Quantity ordered"
             end
           end
         end
@@ -183,14 +183,14 @@ describe "Acceptance: structured output" do
       describe "an any_of of objects" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:result, Riffer::Params::AnyOf, description: "The address, or why none was found") do
+            params.required(:result, :any_of, description: "The address, or why none was found") do
               variant do
-                required :street, String, description: "Street address"
-                required :city, String, description: "City"
+                required :street, :string, description: "Street address"
+                required :city, :string, description: "City"
               end
               variant do
-                required :error_code, String, enum: %w[no_address multiple_addresses], description: "Why no address"
-                required :error_message, String, description: "Explanation of the error"
+                required :error_code, :string, enum: %w[no_address multiple_addresses], description: "Why no address"
+                required :error_message, :string, description: "Explanation of the error"
               end
             end
           end
@@ -225,13 +225,13 @@ describe "Acceptance: structured output" do
         let(:params) do
           Riffer::Params.new.tap do |params|
             description = "A count, or a word when there is no count"
-            params.required(:quantity, Riffer::Params::AnyOf, description: description) do
-              variant Integer
-              variant String
+            params.required(:quantity, :any_of, description: description) do
+              variant :integer
+              variant :string
             end
-            params.optional(:due, Riffer::Params::AnyOf, description: "The due date, or none when there isn't one") do
-              variant String, format: "date"
-              variant String, enum: ["none"]
+            params.optional(:due, :any_of, description: "The due date, or none when there isn't one") do
+              variant :string, format: "date"
+              variant :string, enum: ["none"]
             end
           end
         end
@@ -265,7 +265,7 @@ describe "Acceptance: structured output" do
       describe "an enum array" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:tags, Array, of: String, enum: %w[urgent billing technical account], description: "Tags")
+            params.required(:tags, :array, of: :string, enum: %w[urgent billing technical account], description: "Tags")
           end
         end
         let(:prompt) { "Tag this support ticket: 'I was charged twice this month and need it fixed today.'" }
@@ -283,10 +283,10 @@ describe "Acceptance: structured output" do
         let(:clinic_id) { "550e8400-e29b-41d4-a716-446655440000" }
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:visit_on, String, format: "date", description: "Visit date")
-            params.required(:starts_at, String, format: "date-time", description: "Visit start, with its UTC offset")
-            params.optional(:email, String, format: "email", description: "Patient email, if given")
-            params.required(:clinic_ids, Array, of: String, format: "uuid", description: "Clinic IDs")
+            params.required(:visit_on, :string, format: "date", description: "Visit date")
+            params.required(:starts_at, :string, format: "date-time", description: "Visit start, with its UTC offset")
+            params.optional(:email, :string, format: "email", description: "Patient email, if given")
+            params.required(:clinic_ids, :array, of: :string, format: "uuid", description: "Clinic IDs")
           end
         end
         # The time is already ISO 8601: the scenario checks that the formats reach the
@@ -310,8 +310,8 @@ describe "Acceptance: structured output" do
       describe "arrays of arrays" do
         let(:params) do
           Riffer::Params.new.tap do |params|
-            params.required(:rows, Array, of: [Integer], description: "Seat numbers, one array per row")
-            params.optional(:boards, Array, of: [[String]], enum: %w[x o], description: "Tic-tac-toe boards")
+            params.required(:rows, :array, of: [:integer], description: "Seat numbers, one array per row")
+            params.optional(:boards, :array, of: [[:string]], enum: %w[x o], description: "Tic-tac-toe boards")
           end
         end
         let(:prompt) do
@@ -340,7 +340,7 @@ describe "Acceptance: structured output" do
               model acceptance_model_id(provider_name)
               instructions "Analyze the sentiment of the given text."
               structured_output strategy: strategy do
-                required :sentiment, String, enum: %w[positive neutral negative], description: "The sentiment"
+                required :sentiment, :string, enum: %w[positive neutral negative], description: "The sentiment"
               end
             end.new
 
@@ -359,8 +359,8 @@ describe "Acceptance: structured output" do
               instructions "Answer weather questions. Always look the weather up with the tool."
               uses_tools [weather_tool]
               structured_output strategy: strategy do
-                required :city, String, description: "The city"
-                required :celsius, Integer, description: "The temperature in degrees Celsius"
+                required :city, :string, description: "The city"
+                required :celsius, :integer, description: "The temperature in degrees Celsius"
               end
             end.new
 

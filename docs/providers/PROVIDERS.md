@@ -149,7 +149,7 @@ Providers convert tools to their native format:
 class WeatherTool < Riffer::Tool
   description "Gets weather"
   params do
-    required :city, String
+    required :city, :string
   end
   def call(context:, city:)
     text("Sunny in #{city}")

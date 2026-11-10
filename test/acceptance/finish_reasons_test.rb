@@ -16,7 +16,7 @@ describe "Acceptance: finish reasons" do
       let(:note_tool) do
         stub_tool("SaveNote") do
           description "Save a note"
-          params { required :body, String, description: "The full note text" }
+          params { required :body, :string, description: "The full note text" }
         end
       end
 
