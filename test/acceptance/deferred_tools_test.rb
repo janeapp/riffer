@@ -25,7 +25,7 @@ describe "Acceptance: deferred tools" do
         stub_tool("ListEvents") do
           identifier "calendar/list_events"
           description "List the user's calendar events on a date"
-          params { required :date, String, description: "The date, as YYYY-MM-DD" }
+          params { required :date, :string, description: "The date, as YYYY-MM-DD" }
 
           def call(context:, date:)
             text("On #{date}: dentist at 09:00, team lunch at 12:30.")
@@ -36,7 +36,7 @@ describe "Acceptance: deferred tools" do
       let(:send_invoice) do
         stub_tool("SendInvoice") do
           description "Send an invoice to a customer"
-          params { required :customer, String, description: "The customer name" }
+          params { required :customer, :string, description: "The customer name" }
         end
       end
 
@@ -44,7 +44,7 @@ describe "Acceptance: deferred tools" do
         loads = list_events
         stub_tool("FindTools") do
           description "Find more tools for a task. Describe what you need to do in a few words."
-          params { required :query, String, description: "What you need to do" }
+          params { required :query, :string, description: "What you need to do" }
 
           define_method(:call) { |context:, query:| load_tools([loads]) }
         end

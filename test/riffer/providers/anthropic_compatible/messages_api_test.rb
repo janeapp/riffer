@@ -96,7 +96,7 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
       stub_tool("ListEvents") do
         identifier "calendar/list_events"
         description "List calendar events"
-        params { required :date, String }
+        params { required :date, :string }
       end
     end
     let(:send_invoice) { stub_tool("SendInvoice") { description "Send an invoice" } }
