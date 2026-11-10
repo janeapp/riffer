@@ -392,7 +392,7 @@ class Riffer::Agent
       raise Riffer::ArgumentError, "Provider #{@provider_name} does not support deferred tools"
     end
 
-    assert_distinct_tool_names!(@tools + deferred)
+    assert_distinct_tool_names!(@tools + (@context.mcp_progressive_tools || []) + deferred)
     deferred.each(&:validate_as_tool!)
     deferred
   end

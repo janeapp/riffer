@@ -1231,6 +1231,23 @@ describe Riffer::Agent do
         expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
       end
 
+      it "raises when a deferred tool shares a name with a progressive MCP tool" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
+        deferred = stub_tool("DeferredToolA") do
+          identifier "srv__tool_a"
+          description "Deferred tool A"
+        end
+
+        klass = stub_mcp_agent("Agent") do
+          model "mock/riffer-1"
+          use_mcp :srv, progressive: true
+          deferred_tools [deferred]
+        end
+
+        err = expect { allow_deprecations { klass.new } }.must_raise Riffer::ArgumentError
+        expect(err.message).must_equal "Duplicate tool names: srv__tool_a"
+      end
+
       it "mixes regular and progressive use_mcp in the same agent" do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
         inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
