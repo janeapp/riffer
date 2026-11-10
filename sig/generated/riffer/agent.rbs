@@ -113,8 +113,6 @@ class Riffer::Agent
 
   attr_reader tools: Array[singleton(Riffer::Tool)]
 
-  attr_reader deferred_tools: Array[singleton(Riffer::Tool)]
-
   attr_reader tool_runtime: Riffer::Tools::Runtime
 
   # --
@@ -124,6 +122,10 @@ class Riffer::Agent
   # --
   # : () -> String
   def identifier: () -> String
+
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def deferred_tools: () -> Array[singleton(Riffer::Tool)]
 
   # --
   # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response

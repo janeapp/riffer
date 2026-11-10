@@ -201,7 +201,6 @@ class Riffer::Agent
 
   attr_reader :structured_output #: Riffer::Agent::StructuredOutput? # @dynamic structured_output
   attr_reader :tools #: Array[singleton(Riffer::Tool)] # @dynamic tools
-  attr_reader :deferred_tools #: Array[singleton(Riffer::Tool)] # @dynamic deferred_tools
   attr_reader :tool_runtime #: Riffer::Tools::Runtime # @dynamic tool_runtime
 
   #--
@@ -217,8 +216,7 @@ class Riffer::Agent
 
     @structured_output = resolve_structured_output
     @tools = resolve_tools
-    @deferred_tools = resolve_deferred_tools
-    @context.deferred_tools = @deferred_tools
+    @context.deferred_tools = resolve_deferred_tools
     @tool_runtime = resolve_tool_runtime
 
     @instruction_message = build_instruction_message
@@ -234,6 +232,12 @@ class Riffer::Agent
   #: () -> String
   def identifier
     config.identifier || self.class.identifier
+  end
+
+  #--
+  #: () -> Array[singleton(Riffer::Tool)]
+  def deferred_tools
+    @context.deferred_tools || []
   end
 
   #--

@@ -4384,5 +4384,22 @@ describe Riffer::Agent::Run do
 
       expect(tool_results(agent)).must_equal [["c_1", :tool_not_loaded, []]]
     end
+
+    it "refuses a same-turn call resumed after an interrupt that follows the load" do
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1"), call("list_events", "c_2")])
+      agent.provider.stub_response("Done")
+      interrupted = false
+      agent.session.on_message do |message|
+        next if interrupted || !message.is_a?(Riffer::Messages::Tool)
+
+        interrupted = true
+        agent.interrupt!("approval needed")
+      end
+      agent.generate("hi")
+      agent.generate
+
+      expect(tool_results(agent)).must_equal [["c_1", nil, ["list_events"]], ["c_2", :tool_not_loaded, []]]
+    end
   end
 end

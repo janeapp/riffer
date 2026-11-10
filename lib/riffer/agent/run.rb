@@ -277,8 +277,10 @@ module Riffer::Agent::Run
   def execute_tool_calls(agent, assistant_message, tool_calls: assistant_message.tool_calls, tags: {})
     return if tool_calls.empty?
 
-    # Computed once per batch: the model made every call in it before seeing any of its loads.
-    loaded = loaded_tools(agent.session.messages, agent.deferred_tools)
+    # Only from earlier turns: the model made every call in this one before seeing any of its loads, even when a
+    # resumed turn already has some of its results in the session.
+    earlier = agent.session.messages.take_while { |message| !message.equal?(assistant_message) }
+    loaded = loaded_tools(earlier, agent.deferred_tools)
     unloaded_names = (agent.deferred_tools - loaded).map(&:name)
     # Refused here rather than by the runtime, since a custom runtime may ignore +tools:+.
     refused, callable = tool_calls.partition { |tool_call| unloaded_names.include?(tool_call.name) }
