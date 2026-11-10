@@ -96,6 +96,10 @@ def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
 
+def configure_mcp_credentials(credentials)
+  allow_deprecations { Riffer.config.mcp.credentials = credentials }
+end
+
 def assert_round_trips(object, omitted: [])
   hash = object.to_h
   parameters = object.class.instance_method(:initialize).parameters

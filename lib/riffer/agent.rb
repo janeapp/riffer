@@ -86,10 +86,17 @@ class Riffer::Agent
     value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
+  # @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
   # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
   #--
   #: (String | Symbol, ?progressive: bool) -> void
   def self.use_mcp(tag, progressive: true)
+    Riffer::Deprecation.warn(
+      id: :use_mcp,
+      message: "use_mcp is deprecated; MCP client support will be removed in a future release. " \
+               "Wrap the mcp gem in your own Riffer::Tool instead (see docs/MCP.md).",
+    )
+
     config.add_mcp(tag, progressive: progressive)
   end
 

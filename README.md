@@ -60,7 +60,7 @@ Comprehensive guides live at [riffer.ai](https://riffer.ai):
 - [Evals](https://riffer.ai/guides/evals/) - Evaluating agent quality
 - [Guardrails](https://riffer.ai/guides/guardrails/) - Input/output validation
 - [Skills](https://riffer.ai/guides/skills/) - Packaged agent capabilities
-- [MCP](https://riffer.ai/guides/mcp/) - Integrating third-party MCP servers
+- [MCP](https://riffer.ai/guides/mcp/) - Integrating third-party MCP servers (deprecated)
 - [Serialization](https://riffer.ai/guides/serialization/) - Persisting and transferring agent definitions
 - [Tracing](https://riffer.ai/guides/tracing/) - OpenTelemetry span contract and host wiring
 - [Stability](https://riffer.ai/guides/stability/) - What's safe to depend on and how upgrades work

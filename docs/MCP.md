@@ -1,6 +1,42 @@
 # MCP
 
+> **Deprecated:** MCP client support is deprecated and will be removed in a future breaking release. Nothing replaces it in that release, but an MCP integration built on the new hooks system ([#534](https://github.com/janeapp/riffer/issues/534)) may follow later. `use_mcp`, `Riffer::Mcp.register` and the `config.mcp` setters each report a [deprecation](CONFIGURATION.md#deprecations) that names the line in your code that made the call. To find every call before the upgrade, run your suite with [deprecations raising](TESTING.md#deprecations). See [Moving off MCP](#moving-off-mcp) for what to use instead.
+
 Riffer can consume third-party [Model Context Protocol](https://modelcontextprotocol.io) (MCP) servers as tool sources. Tools are discovered automatically at registration time — no handwritten Ruby per tool required.
+
+## Moving off MCP
+
+To hold tools back from the model until it asks for them, the way progressive discovery does, use deferred tools ([#550](https://github.com/janeapp/riffer/issues/550)) once they ship.
+
+To keep calling an MCP server, wrap the [`mcp`](https://github.com/modelcontextprotocol/ruby-sdk) gem in your own [`Riffer::Tool`](TOOLS.md) and list it with `uses_tools`. Headers you build from `context` take the place of the `config.mcp.credentials` callback:
+
+```ruby
+# Gemfile: gem "mcp"
+require "mcp"
+
+class CreateIssueTool < Riffer::Tool
+  description "Creates a GitHub issue"
+
+  params do
+    required :title, String, description: "The issue title"
+    optional :body, String, description: "The issue body"
+  end
+
+  def call(context:, title:, body: nil)
+    transport = MCP::Client::HTTP.new(
+      url: "https://mcp.github.com",
+      headers: { "Authorization" => "Bearer #{context[:github_token]}" }
+    )
+    client = MCP::Client.new(transport: transport)
+    result = client.call_tool(name: "create_issue", arguments: { title: title, body: body }.compact).fetch("result")
+    content = result["content"].filter_map { |item| item["text"] }.join
+
+    result["isError"] ? error(content) : text(content)
+  end
+end
+```
+
+A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`.
 
 ## Overview
 
