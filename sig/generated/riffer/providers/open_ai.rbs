@@ -11,6 +11,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   FINISH_REASONS: Hash[String, Symbol | Hash[String, Symbol]]
 
   # --
+  # : () -> bool
+  def self.supports_deferred_tools?: () -> bool
+
+  # --
   # : () -> String
   def self.semconv_provider_name: () -> String
 
@@ -135,12 +139,20 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def handle_output_item_done_reasoning: (untyped, yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
-  def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
+  # : (Array[Riffer::Messages::Base], deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
+  def convert_messages_to_openai_format: (Array[Riffer::Messages::Base], deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
 
   # --
-  # : (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
-  def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
+  # : (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+  def loaded_deferred_tools: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+  def convert_additional_tools_to_openai_format: (Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant, deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
+  def convert_assistant_to_openai_format: (Riffer::Messages::Assistant, deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
 
   # --
   # : (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Array[Hash[Symbol, untyped]]

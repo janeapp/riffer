@@ -184,6 +184,26 @@ class MathAgent < Riffer::Agent
 end
 ```
 
+## Deferred Tools (experimental)
+
+The OpenAI provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively:
+
+```ruby
+class Assistant < Riffer::Agent
+  model 'openai/gpt-5.4-mini'
+  instructions "If you need a calendar tool you don't have, call connect_calendar first."
+
+  uses_tools [ConnectCalendar]
+  deferred_tools [ListEvents, CreateEvent]
+end
+```
+
+A deferred tool is left out of the request's `tools`. When a tool [loads it](../TOOLS.md#loading-deferred-tools-experimental), its full definition is sent in an `additional_tools` input item placed right after that tool's `function_call_output`, and the model can call it from its next turn. `tools` stays the same for the whole conversation and earlier input items never change, so loading a tool keeps the prompt cache. The loading tool's own output is empty.
+
+Riffer rebuilds the `additional_tools` items from the `loaded_tools` on the conversation's [tool messages](../MESSAGES.md#tool) on every request, so a restored session, or one started on another provider, loads the same tools. A tool loaded again is sent again, after each result that loaded it: without fresh definitions, a model that reloads a tool it already has can keep calling the loading tool instead of the loaded one.
+
+OpenAI returns a call to a loaded tool with a `namespace` field, and rejects a later request that replays the call without it. That namespace is always the tool's own name as sent to OpenAI, so riffer adds it back to every replayed call to a deferred tool and never stores it. Tools, the session, callbacks and traces see an ordinary tool call.
+
 ## Web Search
 
 Web search allows the model to search the web for up-to-date information. When enabled, the provider injects the `web_search_preview` tool into the request.

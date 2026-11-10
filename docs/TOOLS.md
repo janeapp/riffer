@@ -357,6 +357,8 @@ class ConnectCalendar < Riffer::Tool
 end
 ```
 
+How a load reaches the model depends on the provider: see [Anthropic](providers/ANTHROPIC.md#deferred-tools), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental), which load deferred tools natively.
+
 A load takes effect from the model's next turn. The model made every call in a turn before it saw any of that turn's results, so a call to a tool loaded in the same turn is refused like any other unloaded call; the model calls it again once it has seen the load.
 
 - A load can't carry text as well, because Anthropic rejects a tool result that mixes loaded tools with text. `load_tools` takes no text, and the response's `content` is `""`.

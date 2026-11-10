@@ -22,6 +22,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   }.freeze #: Hash[String, Symbol | Hash[String, Symbol]]
 
   #--
+  #: () -> bool
+  def self.supports_deferred_tools?
+    true
+  end
+
+  #--
   #: () -> String
   def self.semconv_provider_name
     "openai"
@@ -75,13 +81,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     tags = options[:tags] || {}
 
     params = {
-      input: convert_messages_to_openai_format(messages),
+      input: convert_messages_to_openai_format(messages, deferred_tools: options[:deferred_tools] || []),
       model: model,
       reasoning: reasoning && {
         effort: reasoning,
         summary: "auto",
       },
-      **options.except(:reasoning, :tools, :structured_output, :web_search, :tags),
+      **options.except(:reasoning, :tools, :structured_output, :web_search, :tags, :deferred_tools),
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
@@ -392,8 +398,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
-  def convert_messages_to_openai_format(messages)
+  #: (Array[Riffer::Messages::Base], deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
+  def convert_messages_to_openai_format(messages, deferred_tools:)
     messages.flat_map do |message|
       case message
       when Riffer::Messages::System
@@ -407,13 +413,17 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           { role: "user", content: content }
         end
       when Riffer::Messages::Assistant
-        convert_assistant_to_openai_format(message)
+        convert_assistant_to_openai_format(message, deferred_tools: deferred_tools)
       when Riffer::Messages::Tool
-        {
+        output = {
           type: "function_call_output",
           call_id: message.tool_call_id,
           output: message.content,
         }
+        loaded = loaded_deferred_tools(message, deferred_tools)
+        # A repeat load is sent again: a load that brings no definitions leaves the model unsure it worked, and
+        # it keeps calling the loading tool instead of the loaded one.
+        loaded.empty? ? output : [output, convert_additional_tools_to_openai_format(loaded)]
       else
         raise Riffer::ArgumentError, "unsupported message type: #{message.class}"
       end
@@ -421,8 +431,22 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
-  def convert_assistant_to_openai_format(message)
+  #: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+  def loaded_deferred_tools(message, deferred_tools)
+    return [] if message.error?
+
+    deferred_tools.select { |tool| message.loaded_tools.include?(tool.name) }
+  end
+
+  #--
+  #: (Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+  def convert_additional_tools_to_openai_format(tools)
+    { type: "additional_tools", role: "developer", tools: tools.map { |tool| convert_tool_to_openai_format(tool) } }
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant, deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
+  def convert_assistant_to_openai_format(message, deferred_tools:)
     items = convert_reasoning_to_openai_format(message.reasoning)
 
     if message.tool_calls.empty?
@@ -433,12 +457,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
                    content: message.content, }
       end
       message.tool_calls.each do |tc|
+        name = encode_tool_name(tc.name)
         items << {
           type: "function_call",
           call_id: tc.call_id,
-          name: encode_tool_name(tc.name),
+          name: name,
+          # The API rejects a replayed call to a tool loaded through additional_tools unless it carries the
+          # namespace the model returned, which is always the tool's own name; it accepts one on an unloaded call too.
+          namespace: (name if deferred_tools.any? { |tool| tool.name == tc.name }),
           arguments: tc.arguments,
-        }
+        }.compact
       end
     end
 
