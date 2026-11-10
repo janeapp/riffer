@@ -50,6 +50,13 @@ class Riffer::Evals::Evaluator
     private
 
     #--
+    #: (Class) -> void
+    def inherited(subclass)
+      super
+      Riffer::Deprecation.warn(id: :evals, message: Riffer::Evals::DEPRECATION_MESSAGE)
+    end
+
+    #--
     #: () -> String
     def derived_identifier
       # Anonymous classes derive an empty identifier.
@@ -100,7 +107,7 @@ class Riffer::Evals::Evaluator
   #: () -> Riffer::Evals::Judge
   def judge
     @judge ||= begin
-      model = self.class.judge_model || Riffer.config.evals.judge_model
+      model = Riffer::Deprecation.allow { self.class.judge_model || Riffer.config.evals.judge_model }
       unless model
         raise Riffer::ArgumentError,
               "No judge model configured. Set judge_model on the evaluator or Riffer.config.evals.judge_model"

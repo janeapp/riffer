@@ -7,6 +7,7 @@ module Riffer::Evals::EvaluatorRunner
   #--
   #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   def run(agent:, scenarios:, evaluators:, context: nil)
+    Riffer::Deprecation.warn(id: :evals, message: Riffer::Evals::DEPRECATION_MESSAGE)
     validate_agent!(agent)
     validate_evaluators!(evaluators)
 

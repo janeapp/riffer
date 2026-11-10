@@ -154,7 +154,9 @@ end
 
 See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
 
-### Evals
+### Evals (deprecated)
+
+`config.evals` is deprecated and will move out of riffer into the `riffer-evals` gem along with [evals](EVALS.md). Reading it reports a [deprecation](#deprecations).
 
 ```ruby
 Riffer.configure do |config|

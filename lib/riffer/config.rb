@@ -20,7 +20,18 @@ class Riffer::Config
 
   attr_reader :openrouter #: Riffer::Config::OpenRouter # @dynamic openrouter
 
-  attr_reader :evals #: Riffer::Config::Evals # @dynamic evals
+  # @rbs @evals: Riffer::Config::Evals
+
+  #--
+  #: () -> Riffer::Config::Evals
+  def evals
+    Riffer::Deprecation.warn(
+      id: :config_evals,
+      message: "config.evals is deprecated and will move out of riffer into the riffer-evals gem " \
+               "(see docs/EVALS.md).",
+    )
+    @evals
+  end
 
   attr_reader :mcp #: Riffer::Config::Mcp # @dynamic mcp
 

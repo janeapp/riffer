@@ -12,7 +12,9 @@ describe Riffer::Config do
         future pricing
       ]
 
-      expect(sections.map { |section| config.public_send(section).class }).must_equal [
+      classes = allow_deprecations { sections.map { |section| config.public_send(section).class } }
+
+      expect(classes).must_equal [
         Riffer::Config::AmazonBedrock,
         Riffer::Config::Anthropic,
         Riffer::Config::AzureOpenAI,
@@ -28,6 +30,25 @@ describe Riffer::Config do
         Riffer::Config::Future,
         Riffer::Config::Pricing,
       ]
+    end
+  end
+
+  describe "evals" do
+    after { reset_riffer_config! }
+
+    it "raises the config_evals deprecation in :raise mode" do
+      error = expect { Riffer::Config.new.evals }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "config.evals is deprecated"
+    end
+
+    it "reports the caller of evals as the location" do
+      events = []
+      Riffer.config.deprecations = ->(event) { events << event }
+      line = __LINE__ + 1
+      Riffer.config.evals
+
+      expect(events.map { |event| [event.id, event.location] }).must_equal [[:config_evals, "#{__FILE__}:#{line}"]]
     end
   end
 

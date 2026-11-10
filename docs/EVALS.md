@@ -1,5 +1,7 @@
 # Evals
 
+> **Deprecated:** evals will move out of riffer into a separate `riffer-evals` gem that keeps the `Riffer::Evals` API. Until then, using `Riffer::Evals` or `config.evals` reports a [deprecation](STABILITY.md#deprecations) warning.
+
 Evals let you measure the quality of agent outputs using LLM-as-judge evaluations.
 
 ## When to Use Evals

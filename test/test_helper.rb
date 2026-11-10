@@ -92,6 +92,10 @@ end
 
 reset_riffer_config!
 
+def evaluator_subclass(&)
+  Riffer::Deprecation.allow { Class.new(Riffer::Evals::Evaluator, &) }
+end
+
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end

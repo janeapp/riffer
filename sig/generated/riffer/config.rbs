@@ -19,7 +19,11 @@ class Riffer::Config
 
   attr_reader openrouter: Riffer::Config::OpenRouter
 
-  attr_reader evals: Riffer::Config::Evals
+  @evals: Riffer::Config::Evals
+
+  # --
+  # : () -> Riffer::Config::Evals
+  def evals: () -> Riffer::Config::Evals
 
   attr_reader mcp: Riffer::Config::Mcp
 
