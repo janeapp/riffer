@@ -50,6 +50,24 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe ".supports_deferred_tools?" do
+    it "returns true" do
+      expect(Riffer::Providers::Anthropic.supports_deferred_tools?).must_equal true
+    end
+
+    it "lets an agent defer tools" do
+      loader = stub_tool("FindTools") { description "Find more tools" }
+      deferred = stub_tool("ListEvents") { description "List calendar events" }
+      agent_class = Class.new(Riffer::Agent) do
+        model "anthropic/claude-haiku-5-5"
+        uses_tools [loader]
+        deferred_tools [deferred]
+      end
+
+      expect(agent_class.new.deferred_tools).must_equal [deferred]
+    end
+  end
+
   describe ".semconv_provider_name" do
     it "returns the semconv well-known value" do
       expect(Riffer::Providers::Anthropic.semconv_provider_name).must_equal "anthropic"

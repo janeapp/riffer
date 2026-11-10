@@ -14,6 +14,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
 
+  # --
+  # : () -> bool
+  def self.supports_deferred_tools?: () -> bool
+
   private
 
   # --
@@ -78,8 +82,16 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def structured_output_config: (Riffer::Agent::StructuredOutput) -> Hash[Symbol, untyped]
 
   # --
-  # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
-  def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+  # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+  def partition_messages: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+
+  # A load goes as tool_reference blocks alone, since the API rejects them mixed
+  # with text. Only this request's deferred tools are referenced: the API rejects
+  # a reference to a tool missing from +tools+, and a restored history may name
+  # tools the agent no longer defers.
+  # --
+  # : (Riffer::Messages::Tool, Array[String]) -> (String | Array[Hash[Symbol, untyped]])
+  def tool_result_content: (Riffer::Messages::Tool, Array[String]) -> (String | Array[Hash[Symbol, untyped]])
 
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]

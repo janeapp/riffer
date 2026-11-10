@@ -148,7 +148,7 @@ A tool can't be both: one that's in `uses_tools` (or comes from skills or MCP) a
 
 Any tool loads deferred tools by returning `load_tools(...)`; see [Tools → Loading deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are [serialized](SERIALIZATION.md) and restored. A call to a deferred tool that hasn't been loaded is refused.
 
-Deferring needs provider support, and building an agent with deferred tools on a provider without it raises `Riffer::ArgumentError` naming the provider. For now only the [Mock provider](providers/MOCK_PROVIDER.md) supports it, for tests; native support for Anthropic and OpenAI is coming. Riffer doesn't check which models support it, so an unsupported model on a supported provider gets the provider's own error.
+Deferring needs provider support, and building an agent with deferred tools on a provider without it raises `Riffer::ArgumentError` naming the provider. `anthropic` and `anthropic_vertex` load deferred tools natively (see [Anthropic → Deferred Tools](providers/ANTHROPIC.md#deferred-tools)), and the [Mock provider](providers/MOCK_PROVIDER.md) supports them for tests; native support for OpenAI and a fallback for the other providers are coming. Riffer doesn't check which models support it, so an unsupported model on a supported provider gets the provider's own error.
 
 Nothing tells the model that more tools exist unless you do, in a tool's description or the instructions. If no tool ever returns `load_tools`, the deferred tools can't be reached, and riffer can't detect that.
 

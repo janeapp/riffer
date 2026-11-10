@@ -52,6 +52,11 @@ class Riffer::Providers::Base
   # : () -> untyped
   def build_client: () -> untyped
 
+  # The model calls a loaded deferred tool by its wire name too.
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  def decodable_tools: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+
   # --
   # : (String) -> String
   def encode_tool_name: (String) -> String
