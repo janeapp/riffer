@@ -14,7 +14,7 @@ Experimental features are labelled _experimental_ in the guides, like the [promp
 
 ## Deprecations
 
-A breaking change to the public API lands first as a new API or an [opt-in flag](CONFIGURATION.md#future-flags), and the old way prints a deprecation warning. The warning appears for at least one release before the old way is removed, and it names the earliest version it can be removed in. For larger changes, it also names a date.
+A breaking change to the public API lands first as a new API or an [opt-in flag](CONFIGURATION.md#future-flags), and the old way prints a deprecation warning. The warning appears for at least one release before the old way is removed. For larger changes, it also names a date it won't be removed before. The CHANGELOG and [UPGRADING.md](https://github.com/janeapp/riffer/blob/main/UPGRADING.md) say which release removes it.
 
 ## Breaking releases
 
