@@ -204,8 +204,6 @@ Riffer rebuilds the `additional_tools` items from the `loaded_tools` on the conv
 
 OpenAI returns a call to a loaded tool with a `namespace` field, and rejects a later request that replays the call without it. That namespace is always the tool's own name as sent to OpenAI, so riffer adds it back to every replayed call to a deferred tool and never stores it. Tools, the session, callbacks and traces see an ordinary tool call.
 
-In testing, `gpt-4o-mini`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-5`, `gpt-5-mini`, `gpt-5.1`, `gpt-5.2`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.5`, `gpt-6-luna` and `o3` all called the tools they loaded. `gpt-5-nano` and `gpt-5.4-nano` accept the request but ignore the loaded tools, and call the loading tool again instead.
-
 ## Web Search
 
 Web search allows the model to search the web for up-to-date information. When enabled, the provider injects the `web_search_preview` tool into the request.
