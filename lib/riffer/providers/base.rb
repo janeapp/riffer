@@ -39,7 +39,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
+    @current_tools = decodable_tools(options)
     @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
@@ -76,7 +76,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
+    @current_tools = decodable_tools(options)
     @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
@@ -134,6 +134,13 @@ class Riffer::Providers::Base
   #: () -> untyped
   def build_client
     raise NotImplementedError, "Subclasses must implement #build_client"
+  end
+
+  # The model calls a loaded deferred tool by its wire name too.
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  def decodable_tools(options)
+    (options[:tools] || []) + (options[:deferred_tools] || [])
   end
 
   #--

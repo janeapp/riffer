@@ -27,6 +27,12 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     Riffer::Skills::XmlAdapter
   end
 
+  #--
+  #: () -> bool
+  def self.supports_deferred_tools?
+    true
+  end
+
   private
 
   #--
@@ -141,8 +147,9 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
-    partitioned_messages = partition_messages(messages)
     tools = options[:tools]
+    deferred_tools = options[:deferred_tools] || []
+    partitioned_messages = partition_messages(messages, deferred_tools)
     structured_output = options[:structured_output]
     web_search = options[:web_search]
     tags = options[:tags] || {}
@@ -153,7 +160,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
       model: model,
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
-      **options.except(:tools, :max_tokens, :structured_output, :web_search, :tags),
+      **options.except(:tools, :deferred_tools, :max_tokens, :structured_output, :web_search, :tags),
     } #: Hash[Symbol, untyped]
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
@@ -164,6 +171,9 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     api_tools = [] #: Array[Hash[Symbol, untyped]]
     api_tools.concat(tools.map { |t| convert_tool(t) }) if tools && !tools.empty?
     api_tools << web_search_tool(web_search) if web_search
+    # Every deferred tool goes on every request, loaded or not, so the tools
+    # array never changes and the prompt cache survives a load.
+    api_tools.concat(deferred_tools.map { |t| convert_tool(t).merge(defer_loading: true) })
 
     if structured_output
       # The format wins over caller output_config keys because the run loop
@@ -207,8 +217,9 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   end
 
   #--
-  #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
-  def partition_messages(messages)
+  #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+  def partition_messages(messages, deferred_tools)
+    deferred_names = deferred_tools.map(&:name)
     system_prompts = [] #: Array[Hash[Symbol, untyped]]
     conversation_messages = [] #: Array[Hash[Symbol, untyped]]
 
@@ -232,7 +243,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
           content: [{
             type: "tool_result",
             tool_use_id: message.tool_call_id,
-            content: message.content,
+            content: tool_result_content(message, deferred_names),
           }],
         }
       end
@@ -242,6 +253,19 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
       system: system_prompts.empty? ? nil : system_prompts,
       conversation: conversation_messages,
     }
+  end
+
+  # A load goes as tool_reference blocks alone, since the API rejects them mixed
+  # with text. Only this request's deferred tools are referenced: the API rejects
+  # a reference to a tool missing from +tools+, and a restored history may name
+  # tools the agent no longer defers.
+  #--
+  #: (Riffer::Messages::Tool, Array[String]) -> (String | Array[Hash[Symbol, untyped]])
+  def tool_result_content(message, deferred_names)
+    names = message.loaded_tools & deferred_names
+    return message.content if names.empty?
+
+    names.map { |name| { type: "tool_reference", tool_name: encode_tool_name(name) } }
   end
 
   #--

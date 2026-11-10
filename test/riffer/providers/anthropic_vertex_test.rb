@@ -28,6 +28,12 @@ describe Riffer::Providers::AnthropicVertex do
     end
   end
 
+  describe ".supports_deferred_tools?" do
+    it "returns true" do
+      expect(Riffer::Providers::AnthropicVertex.supports_deferred_tools?).must_equal true
+    end
+  end
+
   describe ".skills_adapter" do
     it "returns XmlAdapter" do
       expect(Riffer::Providers::AnthropicVertex.skills_adapter(model)).must_equal Riffer::Skills::XmlAdapter
@@ -192,6 +198,26 @@ describe Riffer::Providers::AnthropicVertex do
         { call_id: "toolu_1", name: "crm/lookup", arguments: '{"id":7}' },
       ]
       expect(result.finish_reason).must_equal :tool_calls
+    end
+
+    it "sends deferred tools with defer_loading and a load as tool_reference blocks" do
+      loader = stub_tool("FindTools") { description "Find more tools" }
+      deferred = stub_tool("ListEvents") { description "List calendar events" }
+      call = Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_1", name: "find_tools", arguments: "{}")
+      messages = [
+        Riffer::Messages::User.new("What's on my calendar?"),
+        Riffer::Messages::Assistant.new("", tool_calls: [call]),
+        Riffer::Messages::Tool.new("", tool_call_id: "toolu_1", name: "find_tools", loaded_tools: ["list_events"]),
+      ]
+      transport.response = message_body
+      provider.generate_text(messages: messages, model: model, tools: [loader], deferred_tools: [deferred])
+      body = transport.requests.first.last
+
+      expect(body[:tools].map { |tool| [tool[:name], tool[:defer_loading]] }).
+        must_equal [["find_tools", nil], ["list_events", true]]
+      expect(body[:messages].last[:content].first[:content]).
+        must_equal [{ type: "tool_reference", tool_name: "list_events" }]
+      expect(body.key?(:deferred_tools)).must_equal false
     end
 
     it "streams from streamRawPredict and emits finish reason then usage after the text" do

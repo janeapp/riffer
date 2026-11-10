@@ -349,6 +349,7 @@ Claude models on Agent Platform behave as they do on the Anthropic provider:
 - **Reasoning** is captured as [reasoning parts](../MESSAGES.md#reasoning) tagged `format: "anthropic-messages-v1"` and sent back on later turns, as described in [Anthropic → Reasoning Replay](ANTHROPIC.md#reasoning-replay). Thinking signatures are accepted by both APIs, so a conversation can move between `anthropic` and `anthropic_vertex`. The agent-level [`reasoning`](../AGENTS.md#reasoning) setting uses the Anthropic default; [catalog](../CATALOG.md#reasoning) entries go under `anthropic_vertex/...` keys.
 - **Web search:** `web_search: true` (or a hash of options) adds the `web_search_20250305` server tool and streams `WebSearchStatus` / `WebSearchDone` events.
 - **Structured output** is sent as a strict `output_config.format` JSON schema.
+- **Deferred tools** are loaded natively, the same way as on [Anthropic → Deferred Tools](ANTHROPIC.md#deferred-tools).
 - **Skills** are rendered with the XML skills adapter.
 - **Tags:** only the reserved `user_id` tag is sent, as `metadata.user_id`.
 - **Incomplete streams:** a stream that ends without a `message_stop` event raises `Riffer::IncompleteStreamError`.

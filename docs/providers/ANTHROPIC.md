@@ -226,6 +226,29 @@ Anthropic emits sources with `title` and `url` on the `WebSearchDone` event.
 
 Each `server_tool_use` block and its result block (`web_search_tool_result`, or `code_execution_tool_result` when a newer web search version runs the search from code execution) is kept on the assistant message as a `ServerToolPart` (see [Messages — Parts](../MESSAGES.md#parts)), and a streamed one also arrives as a `ServerToolDone` event. With `generate`, text blocks with citations keep their block too; a streamed turn keeps the text without its citations. Later turns send them back in place, so Claude reuses the results instead of searching again.
 
+## Deferred Tools
+
+The provider supports [deferred tools](../AGENTS.md#deferred_tools-experimental) through the Messages API's own deferred loading, with no beta header and no tool search tool:
+
+```ruby
+class Assistant < Riffer::Agent
+  model 'anthropic/claude-haiku-5-5'
+  instructions "If you need a tool you don't have, use find_tools."
+
+  uses_tools [FindTools]
+  deferred_tools [ListEvents, CreateEvent]
+end
+```
+
+- Every deferred tool is sent on every request with `defer_loading: true`, after the agent's other tools, whether it has been loaded or not. The `tools` array stays the same for the whole conversation, so a load doesn't break the prompt cache.
+- A tool result that [loads tools](../TOOLS.md#loading-deferred-tools-experimental) is sent as `tool_reference` blocks only, one per loaded tool. From then on Claude sees those tools' definitions and calls them by their own names. A load that names a tool the agent no longer defers, for example in a restored history, leaves that tool out, since the API rejects a reference to a tool that isn't in the request.
+
+Things to know:
+
+- At least one tool in the request must not be deferred, or the API returns a 400 (`All tools cannot be deferred`). An agent needs a tool in `uses_tools` to load its deferred tools anyway.
+- A deferred tool can't carry `cache_control` (400). Riffer never sets it on a tool; the top-level `model_options cache_control: {type: "ephemeral"}` works with deferred tools.
+- Deferred loading needs Claude Haiku 4.5, Sonnet 4.5, Opus 4.5 or a later model. An older model gets the API's own error.
+
 ## Message Format
 
 The provider converts Riffer messages to Anthropic format:
