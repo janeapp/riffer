@@ -20,13 +20,13 @@ describe Riffer::Providers::OpenAI do
     provider.instance_variable_set(:@client, client_double)
   end
 
-  def stream_events(provider, events)
+  def stream_events(provider, events, **options)
     events += [Struct.new(:type, :response).new(:"response.completed", nil)]
     stream_double = Object.new
     stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
     stream_double.define_singleton_method(:close) { nil }
     install_stream_double(provider, stream_double)
-    provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+    provider.stream_text(prompt: "Hi", model: "gpt-5-mini", **options).to_a
   end
 
   describe ".semconv_provider_name" do
@@ -270,7 +270,7 @@ describe Riffer::Providers::OpenAI do
 
     def convert(reasoning, content: "42", tool_calls: [])
       assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
-      provider.send(:convert_assistant_to_openai_format, assistant)
+      provider.send(:convert_assistant_to_openai_format, assistant, deferred_tools: [])
     end
 
     describe "capturing reasoning items" do
@@ -744,6 +744,193 @@ describe Riffer::Providers::OpenAI do
       result = provider.generate_text(prompt: "Hi", model: "gpt-5-mini")
 
       expect(result.tool_calls.map(&:call_id)).must_equal ["call_1"]
+    end
+  end
+
+  describe "deferred tools" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+
+    let(:list_events) do
+      stub_tool("ListEvents") do
+        identifier "calendar/list_events"
+        description "Lists calendar events"
+        params { required :date, String }
+      end
+    end
+
+    let(:create_event) { stub_tool("CreateEvent") { description "Creates a calendar event" } }
+    let(:get_weather) { stub_tool("GetWeather") { description "Gets the weather" } }
+    let(:connect_calendar) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
+
+    let(:question) { Riffer::Messages::User.new("What's on today?") }
+
+    def assistant_calling(*calls)
+      tool_calls = calls.map do |name, id|
+        Riffer::Messages::Assistant::ToolCall.new(call_id: id, name: name, arguments: "{}")
+      end
+      Riffer::Messages::Assistant.new("", tool_calls: tool_calls)
+    end
+
+    def result(id, name, loaded: [], error: nil)
+      Riffer::Messages::Tool.new("", tool_call_id: id, name: name, loaded_tools: loaded, error: error)
+    end
+
+    def loading_turn(id, *loaded)
+      [assistant_calling(["connect_calendar", id]), result(id, "connect_calendar", loaded: loaded)]
+    end
+
+    def request(messages)
+      provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5.4-mini",
+        { tools: [connect_calendar, get_weather], deferred_tools: [list_events, create_event] },
+      )
+    end
+
+    def additional_tools_names(params)
+      params[:input].
+        select { |item| item[:type] == "additional_tools" }.
+        map { |item| item[:tools].map { |tool| tool[:name] } }
+    end
+
+    let(:function_response) do
+      OpenAI::Models::Responses::Response.new(
+        output: [
+          OpenAI::Models::Responses::ResponseFunctionToolCall.new(
+            id: "fc_1",
+            call_id: "call_2",
+            name: "calendar__list_events",
+            namespace: "calendar__list_events",
+            arguments: '{"date":"2026-11-06"}',
+            status: :completed,
+          ),
+        ],
+        status: :completed,
+      )
+    end
+
+    it "is supported, and inherited by Azure OpenAI" do
+      supported = [Riffer::Providers::OpenAI, Riffer::Providers::AzureOpenAI].map(&:supports_deferred_tools?)
+
+      expect(supported).must_equal [true, true]
+    end
+
+    it "leaves every deferred tool out of tools, loaded or not" do
+      params = request([question, *loading_turn("call_1", "calendar/list_events")])
+
+      expect(params[:tools].map { |tool| tool[:name] }).must_equal %w[connect_calendar get_weather]
+    end
+
+    it "does not send the deferred_tools option to the API" do
+      expect(request([question]).key?(:deferred_tools)).must_equal false
+    end
+
+    it "sends a loaded tool's full definition in an additional_tools item right after the loading call's output" do
+      messages = [
+        question,
+        assistant_calling(%w[connect_calendar call_1], %w[get_weather call_2]),
+        result("call_1", "connect_calendar", loaded: ["calendar/list_events"]),
+        result("call_2", "get_weather"),
+      ]
+
+      expect(request(messages)[:input].drop(3)).must_equal [
+        { type: "function_call_output", call_id: "call_1", output: "" },
+        {
+          type: "additional_tools",
+          role: "developer",
+          tools: [provider.send(:convert_tool_to_openai_format, list_events)],
+        },
+        { type: "function_call_output", call_id: "call_2", output: "" },
+      ]
+    end
+
+    it "sends each tool once, after the first result that loaded it" do
+      messages = [
+        question,
+        *loading_turn("call_1", "calendar/list_events"),
+        *loading_turn("call_2", "calendar/list_events", "create_event"),
+        *loading_turn("call_3", "create_event"),
+      ]
+
+      expect(additional_tools_names(request(messages))).must_equal [["calendar__list_events"], ["create_event"]]
+    end
+
+    it "sends nothing for an error result or a name that isn't a deferred tool" do
+      messages = [
+        question,
+        assistant_calling(%w[connect_calendar call_1]),
+        result("call_1", "connect_calendar", loaded: ["calendar/list_events"], error: "Calendar is down"),
+        *loading_turn("call_2", "get_weather"),
+      ]
+
+      expect(request(messages)[:input].map { |item| item[:type] }).wont_include "additional_tools"
+    end
+
+    it "sends a call to a deferred tool back with its wire name as the namespace" do
+      messages = [
+        question,
+        *loading_turn("call_1", "calendar/list_events"),
+        assistant_calling(%w[calendar/list_events call_2], %w[get_weather call_3]),
+      ]
+      calls = request(messages)[:input].select { |item| item[:type] == "function_call" }
+
+      expect(calls.map { |call| call.slice(:name, :namespace) }).must_equal [
+        { name: "connect_calendar" },
+        { name: "calendar__list_events", namespace: "calendar__list_events" },
+        { name: "get_weather" },
+      ]
+    end
+
+    it "keeps the tools and every earlier input item identical as the conversation grows" do
+      before_load = [question, assistant_calling(%w[connect_calendar call_1])]
+      after_load = [*before_load, result("call_1", "connect_calendar", loaded: ["calendar/list_events"])]
+      after_call = [
+        *after_load,
+        assistant_calling(%w[calendar/list_events call_2]),
+        result("call_2", "calendar/list_events"),
+      ]
+      requests = [before_load, after_load, after_call].map { |messages| request(messages) }
+      prefixes_kept = requests.each_cons(2).map do |earlier, later|
+        later[:input].take(earlier[:input].size) == earlier[:input]
+      end
+
+      expect(requests.map { |params| params[:tools] }.uniq.size).must_equal 1
+      expect(prefixes_kept).must_equal [true, true]
+    end
+
+    it "rebuilds the same input from a history restored with to_h and from_hash" do
+      messages = [
+        question,
+        *loading_turn("call_1", "calendar/list_events"),
+        assistant_calling(%w[calendar/list_events call_2]),
+      ]
+      restored = messages.map do |message|
+        Riffer::Messages::Base.from_hash(JSON.parse(message.to_h.to_json, symbolize_names: true))
+      end
+
+      expect(request(restored)[:input]).must_equal request(messages)[:input]
+    end
+
+    it "returns a call to a loaded tool by its real name, without the namespace" do
+      responses_double = Object.new
+      response = function_response
+      responses_double.define_singleton_method(:create) { |_params| response }
+      Riffer.config.openai.client = Struct.new(:responses).new(responses_double)
+
+      message = provider.generate_text(prompt: "Hi", model: "gpt-5.4-mini", deferred_tools: [list_events])
+
+      expect(message.tool_calls.map(&:to_h)).must_equal [
+        { call_id: "call_2", name: "calendar/list_events", arguments: '{"date":"2026-11-06"}' },
+      ]
+    end
+
+    it "streams a call to a loaded tool by its real name" do
+      done = Struct.new(:type, :item).new(:"response.output_item.done", function_response.output.first)
+
+      streamed = stream_events(provider, [done], deferred_tools: [list_events])
+
+      expect(streamed.grep(Riffer::StreamEvents::ToolCallDone).map(&:name)).must_equal ["calendar/list_events"]
     end
   end
 

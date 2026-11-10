@@ -10,7 +10,6 @@ describe "Acceptance: deferred tools" do
       gemini: no_native_loading,
       google_cloud: no_native_loading,
       amazon_bedrock: no_native_loading,
-      openai: "Native loading through the Responses API is #555",
     },
   ).each do |provider_name|
     describe provider_name do
