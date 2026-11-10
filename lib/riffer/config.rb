@@ -27,8 +27,8 @@ class Riffer::Config
   def evals
     Riffer::Deprecation.warn(
       id: :config_evals,
-      message: "config.evals is deprecated; add the riffer-evals gem and set Riffer::Evals.config.judge_model " \
-               "instead (see docs/EVALS.md).",
+      message: "config.evals is deprecated and will move out of riffer into the riffer-evals gem " \
+               "(see docs/EVALS.md).",
     )
     @evals
   end

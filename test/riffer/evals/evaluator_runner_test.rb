@@ -50,7 +50,7 @@ describe Riffer::Evals::EvaluatorRunner do
         Riffer::Evals::EvaluatorRunner.run(agent: agent_class, scenarios: [], evaluators: [])
       end.must_raise Riffer::DeprecationError
 
-      expect(error.message).must_include "add the riffer-evals gem"
+      expect(error.message).must_include "Riffer::Evals is deprecated"
     end
 
     it "reports the caller of run as the location" do

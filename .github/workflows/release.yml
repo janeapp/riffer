@@ -13,7 +13,6 @@ jobs:
       pull-requests: write
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
-      evals_release_created: ${{ steps.release.outputs['riffer-evals--release_created'] }}
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
@@ -35,22 +34,6 @@ jobs:
       - uses: rubygems/configure-rubygems-credentials@v2.1.0
       - run: bin/build
       - run: gem push pkg/riffer-*.gem
-
-  publish-evals:
-    runs-on: ubuntu-latest
-    needs: release
-    if: ${{ needs.release.outputs.evals_release_created == 'true' }}
-    permissions:
-      id-token: write
-    defaults:
-      run:
-        working-directory: riffer-evals
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ruby/setup-ruby@v1
-      - uses: rubygems/configure-rubygems-credentials@v2.1.0
-      - run: gem build riffer-evals.gemspec
-      - run: gem push riffer-evals-*.gem
 
   docs:
     runs-on: ubuntu-latest

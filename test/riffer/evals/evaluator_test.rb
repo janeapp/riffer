@@ -11,7 +11,7 @@ describe Riffer::Evals::Evaluator do
     it "raises the evals deprecation when subclassed in :raise mode" do
       error = expect { Class.new(Riffer::Evals::Evaluator) }.must_raise Riffer::DeprecationError
 
-      expect(error.message).must_include "add the riffer-evals gem"
+      expect(error.message).must_include "Riffer::Evals is deprecated"
     end
 
     it "reports the subclassing line as the location" do

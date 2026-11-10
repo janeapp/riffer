@@ -39,7 +39,7 @@ describe Riffer::Config do
     it "raises the config_evals deprecation in :raise mode" do
       error = expect { Riffer::Config.new.evals }.must_raise Riffer::DeprecationError
 
-      expect(error.message).must_include "Riffer::Evals.config.judge_model"
+      expect(error.message).must_include "config.evals is deprecated"
     end
 
     it "reports the caller of evals as the location" do
