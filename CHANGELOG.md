@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.56.0](https://github.com/janeapp/riffer/compare/riffer/v0.55.0...riffer/v0.56.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **messages:** `Assistant#to_h` writes `parts` instead of `content`, `tool_calls` and `reasoning`, and `to_h` no longer accepts `parts:`. Build the old fields from `#content`, `#tool_calls` and `#reasoning` on the message. This also changes the assistant entries in `Riffer::Providers::Mock#calls` and `Riffer::Evals::ScenarioResult#to_h`.
+
+### Features
+
+* add Riffer::Deprecation for deprecation warnings ([#549](https://github.com/janeapp/riffer/issues/549)) ([6ad6046](https://github.com/janeapp/riffer/commit/6ad604647de1074d4f3f0739727940bcf06667fd))
+* add Riffer.config.future for opt-in future flags ([#556](https://github.com/janeapp/riffer/issues/556)) ([6e49471](https://github.com/janeapp/riffer/commit/6e4947197d01672466606cd10541e39a2dcd521a))
+* **messages:** keep assistant turns in order with Assistant#parts ([#527](https://github.com/janeapp/riffer/issues/527)) ([15e8eb9](https://github.com/janeapp/riffer/commit/15e8eb935f588a3937df449449d38712b0d12414))
+
+
+### Bug Fixes
+
+* **openai:** return web search sources and drop tool calls cut off by the token limit ([#541](https://github.com/janeapp/riffer/issues/541)) ([659e136](https://github.com/janeapp/riffer/commit/659e13672031f1867a5fd5345468db20487d3f27))
+
 ## [0.55.0](https://github.com/janeapp/riffer/compare/riffer/v0.54.0...riffer/v0.55.0) (2026-10-29)
 
 
