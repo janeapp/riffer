@@ -73,7 +73,25 @@ describe Riffer::Messages::Tool do
         error_type: :unknown_tool,
       )
 
-      assert_round_trips message
+      assert_round_trips message, omitted: [:loaded_tools]
+    end
+
+    it "round-trips every attribute of a load" do
+      message = Riffer::Messages::Tool.new(
+        "",
+        id: "t-1",
+        tool_call_id: "123",
+        name: "find_tools",
+        loaded_tools: %w[list_events create_event],
+      )
+
+      assert_round_trips message, omitted: %i[error error_type]
+    end
+
+    it "defaults loaded_tools to empty when the hash has none" do
+      message = Riffer::Messages::Tool.from_hash({ role: "tool", content: "Result", tool_call_id: "123", name: "t" })
+
+      expect(message.loaded_tools).must_equal []
     end
   end
 
@@ -110,6 +128,18 @@ describe Riffer::Messages::Tool do
 
       expect(message.to_h.key?(:error)).must_equal false
       expect(message.to_h.key?(:error_type)).must_equal false
+    end
+
+    it "includes loaded_tools when the result loaded tools" do
+      message = Riffer::Messages::Tool.new("", tool_call_id: "123", name: "find_tools", loaded_tools: ["list_events"])
+
+      expect(message.to_h[:loaded_tools]).must_equal ["list_events"]
+    end
+
+    it "excludes loaded_tools when nothing was loaded" do
+      message = Riffer::Messages::Tool.new("Success", tool_call_id: "123", name: "my_tool")
+
+      expect(message.to_h.key?(:loaded_tools)).must_equal false
     end
   end
 

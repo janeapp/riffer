@@ -124,6 +124,38 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+### deferred_tools (experimental)
+
+Holds tools back from the model until one of the agent's own tools loads them. Every tool you pass to `uses_tools` costs tokens on every request, and models pick tools less reliably from a long list, so defer the ones most turns don't need:
+
+```ruby
+class Assistant < Riffer::Agent
+  model 'mock/riffer-1'
+  instructions "If you need a tool you don't have, use find_tools."
+
+  uses_tools [GetWeather, FindTools, ConnectCalendar]
+  deferred_tools [ListEvents, CreateEvent, SendInvoice]
+end
+```
+
+Like `uses_tools`, `deferred_tools` takes an Array or a lambda that receives the context:
+
+```ruby
+deferred_tools ->(context) { context[:billing] ? [ListEvents, SendInvoice] : [ListEvents] }
+```
+
+A tool can't be both: one that's in `uses_tools` (or comes from skills or MCP) and in `deferred_tools` raises `Riffer::ArgumentError` when the agent is built. The resolved list is `agent.deferred_tools`, and tools read it at call time as `context.deferred_tools`.
+
+Any tool loads deferred tools by returning `load_tools(...)`; see [Tools → Loading deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are [serialized](SERIALIZATION.md) and restored. A call to a deferred tool that hasn't been loaded is refused.
+
+Deferring needs provider support, and building an agent with deferred tools on a provider without it raises `Riffer::ArgumentError` naming the provider. For now only the [Mock provider](providers/MOCK_PROVIDER.md) supports it, for tests; native support for Anthropic and OpenAI is coming. Riffer doesn't check which models support it, so an unsupported model on a supported provider gets the provider's own error.
+
+Nothing tells the model that more tools exist unless you do, in a tool's description or the instructions. If no tool ever returns `load_tools`, the deferred tools can't be reached, and riffer can't detect that.
+
+Deferring a tool hides it from the model; it doesn't restrict it. Any tool can load any deferred tool, so leave a tool out of the agent entirely if the user mustn't reach it.
+
+The feature is **experimental**: it can change in any minor release (see [Stability](STABILITY.md#experimental-features)).
+
 ### use_mcp (deprecated)
 
 Loads tools from registered [MCP](MCP.md) servers by tag. MCP client support is deprecated and will be removed in a future release; each `use_mcp` line reports a [deprecation](CONFIGURATION.md#deprecations). See [MCP → Moving off MCP](MCP.md#moving-off-mcp).

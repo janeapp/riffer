@@ -15,12 +15,14 @@ class Riffer::Agent::Context
       raise Riffer::ArgumentError,
             "Reserved keys cannot be passed in context: #{reserved.join(', ')}"
     end
+    warn_deferred_tools_key if data.key?(:deferred_tools)
 
     @data = data.dup
     @data[:skills] = nil
     @data[:token_usage] = nil
     @data[:mcp_progressive_tools] = nil
     @data[:discovered_tools] = nil
+    @deferred_tools = nil
   end
 
   #--
@@ -71,15 +73,7 @@ class Riffer::Agent::Context
   #--
   #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def mcp_progressive_tools=(value)
-    valid = value.nil? || (
-      value.is_a?(Array) &&
-      value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool }
-    )
-    unless valid
-      raise Riffer::ArgumentError,
-            "mcp_progressive_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
-    end
-    @data[:mcp_progressive_tools] = value
+    @data[:mcp_progressive_tools] = validate_tool_classes(:mcp_progressive_tools, value)
   end
 
   #--
@@ -91,15 +85,15 @@ class Riffer::Agent::Context
   #--
   #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def discovered_tools=(value)
-    valid = value.nil? || (
-      value.is_a?(Array) &&
-      value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool }
-    )
-    unless valid
-      raise Riffer::ArgumentError,
-            "discovered_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
-    end
-    @data[:discovered_tools] = value
+    @data[:discovered_tools] = validate_tool_classes(:discovered_tools, value)
+  end
+
+  attr_reader :deferred_tools #: Array[singleton(Riffer::Tool)]? # @dynamic deferred_tools
+
+  #--
+  #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def deferred_tools=(value)
+    @deferred_tools = validate_tool_classes(:deferred_tools, value)
   end
 
   #--
@@ -119,5 +113,29 @@ class Riffer::Agent::Context
   #: () -> Hash[Symbol, untyped]
   def to_h
     @data.dup
+  end
+
+  private
+
+  #--
+  #: (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def validate_tool_classes(name, value)
+    valid = value.nil? || (value.is_a?(Array) && value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool })
+    unless valid
+      raise Riffer::ArgumentError,
+            "#{name} must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
+    end
+
+    value
+  end
+
+  #--
+  #: () -> void
+  def warn_deferred_tools_key
+    Riffer::Deprecation.warn(
+      id: :context_deferred_tools_key,
+      message: "Passing :deferred_tools in context: is deprecated; a future breaking release reserves the key " \
+               "for the agent's deferred tools (context.deferred_tools). Rename the key.",
+    )
   end
 end

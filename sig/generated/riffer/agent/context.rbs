@@ -47,6 +47,12 @@ class Riffer::Agent::Context
   # : (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def discovered_tools=: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
 
+  attr_reader deferred_tools: Array[singleton(Riffer::Tool)]?
+
+  # --
+  # : (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def deferred_tools=: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+
   # --
   # : (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def discover_tools: (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
@@ -58,4 +64,14 @@ class Riffer::Agent::Context
   # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
+
+  private
+
+  # --
+  # : (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def validate_tool_classes: (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+
+  # --
+  # : () -> void
+  def warn_deferred_tools_key: () -> void
 end

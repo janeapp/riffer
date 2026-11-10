@@ -47,6 +47,10 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
+  # --
+  # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+  def self.deferred_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+
   # @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
   # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
   # --
@@ -120,6 +124,10 @@ class Riffer::Agent
   def identifier: () -> String
 
   # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def deferred_tools: () -> Array[singleton(Riffer::Tool)]
+
+  # --
   # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Riffer::Agent::Response
 
@@ -170,6 +178,10 @@ class Riffer::Agent
   # --
   # : () -> Array[singleton(Riffer::Tool)]
   def resolve_tools: () -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def resolve_deferred_tools: () -> Array[singleton(Riffer::Tool)]
 
   # --
   # : () -> Riffer::Tools::Runtime

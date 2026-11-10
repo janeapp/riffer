@@ -52,6 +52,22 @@ describe Riffer::Agent::Context do
       expect { Riffer::Agent::Context.new(discovered_tools: []) }.
         must_raise Riffer::ArgumentError
     end
+
+    it "deprecates passing :deferred_tools, which a future release reserves" do
+      error = expect { Riffer::Agent::Context.new(deferred_tools: []) }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_match(/Passing :deferred_tools in context: is deprecated/)
+    end
+
+    it "keeps a caller's :deferred_tools value apart from context.deferred_tools" do
+      context = allow_deprecations { Riffer::Agent::Context.new(deferred_tools: "mine") }
+
+      expect([context[:deferred_tools], context.deferred_tools]).must_equal ["mine", nil]
+    end
+
+    it "defaults deferred_tools to nil" do
+      expect(Riffer::Agent::Context.new.deferred_tools).must_be_nil
+    end
   end
 
   describe "#skills=" do
@@ -191,6 +207,31 @@ describe Riffer::Agent::Context do
       context.discovered_tools = [tool]
 
       expect(context[:discovered_tools]).must_equal [tool]
+    end
+  end
+
+  describe "#deferred_tools=" do
+    let(:context) { Riffer::Agent::Context.new }
+
+    it "accepts nil" do
+      context.deferred_tools = nil
+
+      expect(context.deferred_tools).must_be_nil
+    end
+
+    it "accepts an Array of Riffer::Tool subclasses" do
+      tool = stub_tool("Tool")
+      context.deferred_tools = [tool]
+
+      expect(context.deferred_tools).must_equal [tool]
+    end
+
+    it "raises on a non-Array, non-nil value" do
+      expect { context.deferred_tools = :nope }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises when Array contains non-Tool entries" do
+      expect { context.deferred_tools = [String] }.must_raise Riffer::ArgumentError
     end
   end
 

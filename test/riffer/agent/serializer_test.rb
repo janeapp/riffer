@@ -13,6 +13,14 @@ class SerializerWeatherTool < Riffer::Tool
   end
 end
 
+class SerializerForecastTool < Riffer::Tool
+  description "Look up the forecast"
+
+  def call(context:)
+    text("rain tomorrow")
+  end
+end
+
 describe Riffer::Agent::Serializer do
   def build_agent_class(&block)
     stub_agent("Support") do
@@ -87,6 +95,16 @@ describe Riffer::Agent::Serializer do
       expect(descriptor[:timeout]).must_equal 10
     end
 
+    it "emits deferred tools as descriptors" do
+      klass = build_agent_class { deferred_tools [SerializerForecastTool] }
+
+      expect(klass.new.to_h[:deferred_tools].map { |d| d[:name] }).must_equal ["serializer_forecast_tool"]
+    end
+
+    it "emits an empty deferred_tools list when the agent has none" do
+      expect(build_agent_class.new.to_h[:deferred_tools]).must_equal []
+    end
+
     it "carries the reasoning level on the wire" do
       dict = build_agent_class { reasoning :high }.new.to_h
 
@@ -133,6 +151,26 @@ describe Riffer::Agent::Serializer do
       agent = Riffer::Agent.from_h(wire, context: nil)
 
       expect(agent.tools.map(&:name)).must_equal ["serializer_weather_tool"]
+    end
+
+    it "round-trips deferred tools through JSON" do
+      dict = build_agent_class { deferred_tools [SerializerForecastTool] }.new.to_h
+      agent = Riffer::Agent.from_json(JSON.generate(dict))
+
+      expect([agent.tools, agent.deferred_tools.map(&:name)]).must_equal [[], ["serializer_forecast_tool"]]
+    end
+
+    it "decodes a hash without deferred_tools as deferring nothing" do
+      dict = build_agent_class.new.to_h.except(:deferred_tools)
+
+      expect(Riffer::Agent.from_h(dict).deferred_tools).must_equal []
+    end
+
+    it "resolves deferred tools through the tool_resolver" do
+      dict = build_agent_class { deferred_tools [SerializerForecastTool] }.new.to_h
+      agent = Riffer::Agent.from_h(dict, tool_resolver: ->(_descriptor) { SerializerForecastTool })
+
+      expect(agent.deferred_tools).must_equal [SerializerForecastTool]
     end
 
     it "round-trips the reasoning level through JSON" do

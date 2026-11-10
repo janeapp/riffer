@@ -465,7 +465,7 @@ describe Riffer::Agent do
     it "accounts for every field on Config" do
       known = %i[
         identifier model instructions model_options structured_output structured_output_strategy max_steps reasoning
-        tools_config mcp_configs tool_runtime skills_config guardrails
+        tools_config deferred_tools_config mcp_configs tool_runtime skills_config guardrails
       ]
 
       declared = Riffer::Agent::Config.instance_method(:initialize).parameters.map(&:last)
@@ -732,6 +732,126 @@ describe Riffer::Agent do
       end
 
       expect(agent.uses_tools).must_be_instance_of Proc
+    end
+  end
+
+  describe ".deferred_tools" do
+    let(:list_events) { stub_tool("ListEvents") { description "Lists calendar events" } }
+    let(:send_invoice) { stub_tool("SendInvoice") { description "Sends an invoice" } }
+
+    it "returns nil when not set" do
+      expect(agent_class.deferred_tools).must_be_nil
+    end
+
+    it "resolves an Array into #deferred_tools" do
+      tool = list_events
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [tool]
+      end
+
+      expect(klass.new.deferred_tools).must_equal [tool]
+    end
+
+    it "resolves a Proc against the context" do
+      tools = [list_events, send_invoice]
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools ->(context) { context[:billing] ? tools : tools.first(1) }
+      end
+
+      expect(klass.new(context: { billing: true }).deferred_tools).must_equal tools
+      expect(klass.new.deferred_tools).must_equal [list_events]
+    end
+
+    it "is empty when not declared" do
+      expect(agent_class.new.deferred_tools).must_equal []
+    end
+
+    it "exposes the resolved tools to tools as context.deferred_tools" do
+      tool = list_events
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [tool]
+      end
+
+      expect(klass.new.context.deferred_tools).must_equal [tool]
+    end
+
+    it "does not add deferred tools to #tools" do
+      tool = list_events
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [tool]
+      end
+
+      expect(klass.new.tools).must_equal []
+    end
+
+    it "is inherited by subclasses without sharing the parent's list" do
+      tool = list_events
+      parent = stub_agent("DeferredParentAgent") do
+        model "mock/riffer-1"
+        deferred_tools [tool]
+      end
+      child = stub_agent("DeferredChildAgent", base: parent)
+      child.deferred_tools << send_invoice
+
+      expect([parent.new.deferred_tools, child.new.deferred_tools]).must_equal [[tool], [tool, send_invoice]]
+    end
+
+    it "raises when a tool is both loaded up front and deferred" do
+      tool = list_events
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        uses_tools [tool]
+        deferred_tools [tool]
+      end
+
+      err = expect { klass.new }.must_raise Riffer::ArgumentError
+      expect(err.message).must_equal "Duplicate tool names: list_events"
+    end
+
+    it "validates each deferred tool" do
+      bad_tool = stub_tool("BadDeferredTool")
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [bad_tool]
+      end
+
+      err = expect { klass.new }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/must define a description/)
+    end
+
+    describe "on a provider without deferred tool support" do
+      before do
+        unsupported = Class.new(Riffer::Providers::Mock) do
+          def self.supports_deferred_tools? = false
+        end
+        Riffer::Providers::Repository.register(:no_deferred) { unsupported }
+      end
+
+      after { Riffer::Providers::Repository.unregister(:no_deferred) }
+
+      it "raises naming the provider" do
+        tool = list_events
+        klass = stub_agent("Agent") do
+          model "no_deferred/riffer-1"
+          deferred_tools [tool]
+        end
+
+        err = expect { klass.new }.must_raise Riffer::ArgumentError
+        expect(err.message).must_equal "Provider no_deferred does not support deferred tools"
+      end
+
+      it "builds an agent that defers nothing" do
+        klass = stub_agent("Agent") do
+          model "no_deferred/riffer-1"
+          deferred_tools []
+        end
+
+        expect(klass.new.deferred_tools).must_equal []
+      end
     end
   end
 
@@ -1109,6 +1229,23 @@ describe Riffer::Agent do
         expect(resp.content).must_include "srv__tool_a"
         expect(resp.discovered_tools).wont_be_empty
         expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
+      end
+
+      it "raises when a deferred tool shares a name with a progressive MCP tool" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
+        deferred = stub_tool("DeferredToolA") do
+          identifier "srv__tool_a"
+          description "Deferred tool A"
+        end
+
+        klass = stub_mcp_agent("Agent") do
+          model "mock/riffer-1"
+          use_mcp :srv, progressive: true
+          deferred_tools [deferred]
+        end
+
+        err = expect { allow_deprecations { klass.new } }.must_raise Riffer::ArgumentError
+        expect(err.message).must_equal "Duplicate tool names: srv__tool_a"
       end
 
       it "mixes regular and progressive use_mcp in the same agent" do

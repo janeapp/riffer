@@ -86,6 +86,12 @@ class Riffer::Agent
     value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
+  #--
+  #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+  def self.deferred_tools(value = nil)
+    value.nil? ? config.deferred_tools_config : (config.deferred_tools_config = value)
+  end
+
   # @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
   # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
   #--
@@ -210,6 +216,7 @@ class Riffer::Agent
 
     @structured_output = resolve_structured_output
     @tools = resolve_tools
+    @context.deferred_tools = resolve_deferred_tools
     @tool_runtime = resolve_tool_runtime
 
     @instruction_message = build_instruction_message
@@ -225,6 +232,12 @@ class Riffer::Agent
   #: () -> String
   def identifier
     config.identifier || self.class.identifier
+  end
+
+  #--
+  #: () -> Array[singleton(Riffer::Tool)]
+  def deferred_tools
+    @context.deferred_tools || []
   end
 
   #--
@@ -367,6 +380,21 @@ class Riffer::Agent
     assert_distinct_tool_names!(tools)
     tools.each(&:validate_as_tool!)
     tools
+  end
+
+  #--
+  #: () -> Array[singleton(Riffer::Tool)]
+  def resolve_deferred_tools
+    deferred = Riffer::Helpers::CallOrValue.resolve(@config.deferred_tools_config, context: @context, default: [])
+    return deferred if deferred.empty?
+
+    unless @provider.class.supports_deferred_tools?
+      raise Riffer::ArgumentError, "Provider #{@provider_name} does not support deferred tools"
+    end
+
+    assert_distinct_tool_names!(@tools + (@context.mcp_progressive_tools || []) + deferred)
+    deferred.each(&:validate_as_tool!)
+    deferred
   end
 
   #--

@@ -16,6 +16,12 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   #--
+  #: () -> bool
+  def self.supports_deferred_tools?
+    true
+  end
+
+  #--
   #: () -> String
   def self.semconv_provider_name
     "mock"

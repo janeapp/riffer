@@ -4152,4 +4152,254 @@ describe Riffer::Agent::Run do
       expect(agent.generate("Hi").reasoning).must_equal []
     end
   end
+
+  describe "deferred tools" do
+    let(:list_events) do
+      stub_tool("ListEvents") do
+        description "Lists calendar events"
+        def call(context:)
+          text("3 events")
+        end
+      end
+    end
+
+    let(:create_event) do
+      stub_tool("CreateEvent") do
+        description "Creates a calendar event"
+        def call(context:)
+          text("created")
+        end
+      end
+    end
+
+    let(:get_weather) do
+      stub_tool("GetWeather") do
+        description "Gets the weather"
+        def call(context:)
+          text("sunny")
+        end
+      end
+    end
+
+    def connect_calendar(*tools)
+      stub_tool("ConnectCalendar") do
+        description "Connects the calendar"
+        define_method(:call) { |context:| load_tools(tools) }
+      end
+    end
+
+    def deferred_agent(uses:, deferred:, runtime: nil, **options)
+      stub_agent("DeferredAgent") do
+        model "mock/riffer-1"
+        uses_tools uses
+        deferred_tools deferred
+        tool_runtime runtime if runtime
+      end.new(**options)
+    end
+
+    def call(name, id)
+      { name: name, arguments: "{}", call_id: id }
+    end
+
+    def tool_results(agent)
+      agent.session.messages.grep(Riffer::Messages::Tool).map do |m|
+        [m.tool_call_id, m.error_type, m.loaded_tools]
+      end
+    end
+
+    # Runs any call it is handed, ignoring +tools:+, the way a remote runtime might.
+    let(:permissive_runtime) do
+      Class.new(Riffer::Tools::Runtime::Inline) do
+        attr_reader :dispatched
+
+        private
+
+        def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
+          (@dispatched ||= []) << tool_call.name
+          Riffer::Tools::Response.text("ran #{tool_call.name}")
+        end
+      end.new
+    end
+
+    it "passes every deferred tool to the provider alongside the loaded-up-front tools" do
+      loader = connect_calendar(list_events)
+      agent = deferred_agent(uses: [loader], deferred: [list_events, create_event])
+      agent.generate("hi")
+
+      expect(agent.provider.calls.last.slice(:tools, :deferred_tools)).
+        must_equal({ tools: [loader], deferred_tools: [list_events, create_event] })
+    end
+
+    it "passes the deferred tools to the provider when streaming" do
+      agent = deferred_agent(uses: [], deferred: [list_events])
+      agent.stream("hi").each { |_| }
+
+      expect(agent.provider.calls.last[:deferred_tools]).must_equal [list_events]
+    end
+
+    it "passes no deferred_tools option when the agent defers nothing" do
+      agent = agent_class.new
+      agent.generate("hi")
+
+      refute_includes agent.provider.calls.last.keys, :deferred_tools
+    end
+
+    it "lets the next turn call a tool that was loaded" do
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_2")])
+      agent.provider.stub_response("Done")
+      agent.generate("What's on today?")
+
+      expect(tool_results(agent)).must_equal [["c_1", nil, ["list_events"]], ["c_2", nil, []]]
+      expect(agent.session.messages.grep(Riffer::Messages::Tool).last.content).must_equal "3 events"
+    end
+
+    it "refuses a call to an unloaded tool, keeping results in call order" do
+      agent = deferred_agent(uses: [get_weather], deferred: [list_events, create_event])
+      agent.provider.stub_response(
+        "",
+        tool_calls: [call("list_events", "c_1"), call("get_weather", "c_2"), call("create_event", "c_3")],
+      )
+      agent.generate("hi")
+
+      expect(tool_results(agent)).must_equal [
+        ["c_1", :tool_not_loaded, []], ["c_2", nil, []], ["c_3", :tool_not_loaded, []],
+      ]
+      expect(agent.session.messages.grep(Riffer::Messages::Tool).first.error).
+        must_equal "Tool 'list_events' has not been loaded"
+    end
+
+    it "keeps an unloaded call from a runtime that ignores tools:" do
+      runtime = permissive_runtime
+      agent = deferred_agent(uses: [get_weather], deferred: [list_events], runtime: runtime)
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_1"), call("get_weather", "c_2")])
+      agent.generate("hi")
+
+      expect(runtime.dispatched).must_equal ["get_weather"]
+    end
+
+    it "refuses a call made in the same turn as the load of its tool" do
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1"), call("list_events", "c_2")])
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_3")])
+      agent.generate("hi")
+
+      expect(tool_results(agent)).must_equal [
+        ["c_1", nil, ["list_events"]], ["c_2", :tool_not_loaded, []], ["c_3", nil, []],
+      ]
+    end
+
+    it "rejects a load of a tool that isn't deferred and loads nothing from it" do
+      agent = deferred_agent(uses: [connect_calendar(list_events, get_weather), get_weather], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_2")])
+      agent.generate("hi")
+
+      expect(tool_results(agent)).must_equal [["c_1", :invalid_tool_load, []], ["c_2", :tool_not_loaded, []]]
+      expect(agent.session.messages.grep(Riffer::Messages::Tool).first.error).must_match(/get_weather/)
+    end
+
+    it "treats load_tools([]) as a successful load of nothing" do
+      agent = deferred_agent(uses: [connect_calendar], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_2")])
+      agent.generate("hi")
+
+      expect(tool_results(agent)).must_equal [["c_1", nil, []], ["c_2", :tool_not_loaded, []]]
+    end
+
+    it "accepts a re-load of a loaded tool, which stays loaded once" do
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      runtime = agent.tool_runtime
+      tool_sets = []
+      runtime.define_singleton_method(:execute) do |tool_calls, tools:, **options|
+        tool_sets << tools.map(&:name)
+        super(tool_calls, tools: tools, **options)
+      end
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_2")])
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_3")])
+      agent.generate("hi")
+
+      expect(tool_results(agent)).must_equal [
+        ["c_1", nil, ["list_events"]], ["c_2", nil, ["list_events"]], ["c_3", nil, []],
+      ]
+      expect(tool_sets.last).must_equal %w[connect_calendar list_events]
+    end
+
+    it "works out the loaded set from a restored history" do
+      loader = connect_calendar(list_events)
+      original = deferred_agent(uses: [loader], deferred: [list_events])
+      original.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      original.generate("hi")
+      persisted = JSON.parse(JSON.generate(original.session.messages.map(&:to_h)), symbolize_names: true)
+
+      session = Riffer::Agent::Session.new(messages: persisted.map { |m| Riffer::Messages::Base.from_hash(m) })
+      restored = original.class.new(session: session)
+      restored.provider.stub_response("", tool_calls: [call("list_events", "c_2")])
+      restored.generate("And now?")
+
+      expect(tool_results(restored)).must_equal [["c_1", nil, ["list_events"]], ["c_2", nil, []]]
+    end
+
+    it "keeps the loaded set across agent to_h/from_h with body-less tool shells" do
+      original = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      original.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      original.generate("hi")
+
+      rebuilt = Riffer::Agent.from_h(
+        original.to_h,
+        session: Riffer::Agent::Session.new(messages: original.session.messages.dup),
+        tool_runtime: permissive_runtime,
+      )
+      rebuilt.provider.stub_response("", tool_calls: [call("list_events", "c_2")])
+      rebuilt.generate("And now?")
+
+      expect(tool_results(rebuilt).last).must_equal ["c_2", nil, []]
+      expect(rebuilt.tool_runtime.dispatched).must_equal ["list_events"]
+    end
+
+    it "matches a load against shells by name" do
+      original = deferred_agent(uses: [connect_calendar], deferred: [list_events])
+      runtime = Class.new(Riffer::Tools::Runtime::Inline) do
+        define_method(:dispatch_tool_call) do |_tool_call, tools:, context:, assistant_message: nil|
+          Riffer::Tools::Response.load_tools([ListEvents])
+        end
+        private :dispatch_tool_call
+      end.new
+      rebuilt = Riffer::Agent.from_h(original.to_h, tool_runtime: runtime)
+      rebuilt.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      rebuilt.generate("hi")
+
+      expect(tool_results(rebuilt)).must_equal [["c_1", nil, ["list_events"]]]
+    end
+
+    it "refuses a pending call to an unloaded tool in a restored session" do
+      list_events_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "list_events", arguments: "{}")
+      pending = Riffer::Messages::Assistant.new("", tool_calls: [list_events_call])
+      session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("hi"), pending])
+      agent = deferred_agent(uses: [], deferred: [list_events], session: session)
+      agent.generate
+
+      expect(tool_results(agent)).must_equal [["c_1", :tool_not_loaded, []]]
+    end
+
+    it "refuses a same-turn call resumed after an interrupt that follows the load" do
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1"), call("list_events", "c_2")])
+      agent.provider.stub_response("Done")
+      interrupted = false
+      agent.session.on_message do |message|
+        next if interrupted || !message.is_a?(Riffer::Messages::Tool)
+
+        interrupted = true
+        agent.interrupt!("approval needed")
+      end
+      agent.generate("hi")
+      agent.generate
+
+      expect(tool_results(agent)).must_equal [["c_1", nil, ["list_events"]], ["c_2", :tool_not_loaded, []]]
+    end
+  end
 end

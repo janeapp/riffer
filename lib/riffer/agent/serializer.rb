@@ -30,6 +30,7 @@ module Riffer::Agent::Serializer
       structured_output_strategy: config.structured_output_strategy,
       reasoning: config.reasoning,
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
+      deferred_tools: agent.deferred_tools.map { |tool_class| tool_descriptor(tool_class) },
     }
   end
 
@@ -71,6 +72,7 @@ module Riffer::Agent::Serializer
   #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, session: Riffer::Agent::Session?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def decode_v1(hash, context:, session:, tool_resolver:, tool_runtime:)
     tools = Array(hash[:tools]).map { |descriptor| tool_resolver.call(descriptor) }
+    deferred_tools = Array(hash[:deferred_tools]).map { |descriptor| tool_resolver.call(descriptor) }
 
     config_args = {
       identifier: hash[:identifier],
@@ -82,6 +84,7 @@ module Riffer::Agent::Serializer
       max_steps: decode_max_steps(hash),
       reasoning: hash[:reasoning],
       tools_config: tools,
+      deferred_tools_config: deferred_tools,
     } #: Hash[Symbol, untyped]
     # Config#tool_runtime= rejects nil.
     config_args[:tool_runtime] = tool_runtime if tool_runtime

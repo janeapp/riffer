@@ -14,6 +14,7 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
       name: msg[:name],
       error: msg[:error],
       error_type: msg[:error_type]&.to_sym,
+      loaded_tools: msg[:loaded_tools] || [],
     )
   end
 
@@ -21,15 +22,17 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   attr_reader :name #: String # @dynamic name
   attr_reader :error #: String? # @dynamic error
   attr_reader :error_type #: Symbol? # @dynamic error_type
+  attr_reader :loaded_tools #: Array[String] # @dynamic loaded_tools
 
   #--
-  #: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void
-  def initialize(content, tool_call_id:, name:, id: nil, error: nil, error_type: nil)
+  #: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?, ?loaded_tools: Array[String]) -> void
+  def initialize(content, tool_call_id:, name:, id: nil, error: nil, error_type: nil, loaded_tools: [])
     super(content, id: id)
     @tool_call_id = tool_call_id
     @name = name
     @error = error
     @error_type = error_type
+    @loaded_tools = loaded_tools
   end
 
   #--
@@ -53,6 +56,7 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
       hash[:error] = error
       hash[:error_type] = error_type
     end
+    hash[:loaded_tools] = loaded_tools unless loaded_tools.empty?
     hash
   end
 end
