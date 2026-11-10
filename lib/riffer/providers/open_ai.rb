@@ -400,8 +400,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base], deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format(messages, deferred_tools:)
-    loads = tools_by_loading_message(messages, deferred_tools)
-
     messages.flat_map do |message|
       case message
       when Riffer::Messages::System
@@ -422,8 +420,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           call_id: message.tool_call_id,
           output: message.content,
         }
-        loaded = loads.fetch(message, nil)
-        loaded ? [output, convert_additional_tools_to_openai_format(loaded)] : output
+        loaded = loaded_deferred_tools(message, deferred_tools)
+        # A repeat load is sent again: a load that brings no definitions leaves the model unsure it worked, and
+        # it keeps calling the loading tool instead of the loaded one.
+        loaded.empty? ? output : [output, convert_additional_tools_to_openai_format(loaded)]
       else
         raise Riffer::ArgumentError, "unsupported message type: #{message.class}"
       end
@@ -431,13 +431,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]]
-  def tools_by_loading_message(messages, deferred_tools)
-    tool_messages = messages.grep(Riffer::Messages::Tool) #: Array[Riffer::Messages::Tool]
-    loading = deferred_tools.group_by do |tool|
-      tool_messages.find { |message| !message.error? && message.loaded_tools.include?(tool.name) }
-    end
-    loading.except(nil) #: Hash[Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]]
+  #: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+  def loaded_deferred_tools(message, deferred_tools)
+    return [] if message.error?
+
+    deferred_tools.select { |tool| message.loaded_tools.include?(tool.name) }
   end
 
   #--

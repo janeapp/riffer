@@ -1,0 +1,930 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '557'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 10 Nov 2026 17:58:32 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a586f2222b0fb9d9-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '337'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_2b4ff290fb094c0890edd600bf50ee33
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_077c0acf01df5cd4006af35b481cd887d092b0ab41c94856a5","object":"response","created_at":1794333512,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_077c0acf01df5cd4006af35b481cd887d092b0ab41c94856a5","object":"response","created_at":1794333512,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","type":"function_call","status":"in_progress","arguments":"","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"tScormcnPuxqP2","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"query","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"4pm7n2SuC2o","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"L5lb0m3WwZzUt","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"Find","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"1g1NdmYBOLR8","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" calendar","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"eMCgEyz","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" events","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"021Mzd9Be","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" on","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"Th2p1LpV5xOIo","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" a","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"jzujGAuKjN8ExL","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" specific","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"ifHv4OV","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" date","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"1y8Qs2vjEK6","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":";","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"72mJnWbaM0QeYSE","output_index":0,"sequence_number":13}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" access","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"DiQ1xCeXS","output_index":0,"sequence_number":14}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" user's","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"ezb1N1JRv","output_index":0,"sequence_number":15}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" calendar","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"FSkJop9","output_index":0,"sequence_number":16}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":",","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"mOt4CTmg7e19p9q","output_index":0,"sequence_number":17}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" query","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"9jlxHjUZHB","output_index":0,"sequence_number":18}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" by","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"UiNGEQjYdFcGV","output_index":0,"sequence_number":19}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" date","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"qkCleuhsG2E","output_index":0,"sequence_number":20}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":".\"","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"1RosYZbAS9xx7k","output_index":0,"sequence_number":21}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"}","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","obfuscation":"RbDIAJdcvdP2QGz","output_index":0,"sequence_number":22}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"query\":\"Find calendar events on a specific date; access user's calendar, query by date.\"}","item_id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","output_index":0,"sequence_number":23}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","type":"function_call","status":"completed","arguments":"{\"query\":\"Find calendar events on a specific date; access user's calendar, query by date.\"}","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools"},"output_index":0,"sequence_number":24}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_077c0acf01df5cd4006af35b481cd887d092b0ab41c94856a5","object":"response","created_at":1794333512,"status":"completed","access_programs":null,"background":false,"completed_at":1794333513,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_077c0acf01df5cd4006af35b491bcc87d0913fef180d4f41f4","type":"function_call","status":"completed","arguments":"{\"query\":\"Find calendar events on a specific date; access user's calendar, query by date.\"}","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":94,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":33,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":127},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":25}
+
+  recorded_at: Tue, 10 Nov 2026 17:58:33 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specific date; access user''s calendar, query by date.\"}"},{"type":"function_call_output","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1180'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 10 Nov 2026 17:58:33 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a586f22c78b7b9d9-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '176'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_3371aac5c1444631b786642a75ba67e8
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_01ea9c93c9cd43ef006af35b49bdec87d09e6a6921a0d3418a","object":"response","created_at":1794333513,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_01ea9c93c9cd43ef006af35b49bdec87d09e6a6921a0d3418a","object":"response","created_at":1794333513,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","type":"function_call","status":"in_progress","arguments":"","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"H4Ub7FrlP6ypgc","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"date","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"cQKnaAuHE61y","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"nUOzJynjELqE0","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"AeRf2lzlO4b5P","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"cjybulm07wAl6mC","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"IPTQyANUowN9ZHK","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"jdDlXxshsED1B6","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"ZBEnTNnJirN2vAb","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"06","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"Qqr1naDJn38ZpR","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","obfuscation":"0ge4O43zWTj1uE","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"date\":\"2026-11-06\"}","item_id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","output_index":0,"sequence_number":13}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","type":"function_call","status":"completed","arguments":"{\"date\":\"2026-11-06\"}","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events"},"output_index":0,"sequence_number":14}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_01ea9c93c9cd43ef006af35b49bdec87d09e6a6921a0d3418a","object":"response","created_at":1794333513,"status":"completed","access_programs":null,"background":false,"completed_at":1794333514,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_01ea9c93c9cd43ef006af35b4a735887d0a0ab615a0bf01b79","type":"function_call","status":"completed","arguments":"{\"date\":\"2026-11-06\"}","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":270,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":25,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":295},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":15}
+
+  recorded_at: Tue, 10 Nov 2026 17:58:34 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specific date; access user''s calendar, query by date.\"}"},{"type":"function_call_output","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]},{"type":"function_call","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events","namespace":"calendar__list_events","arguments":"{\"date\":\"2026-11-06\"}"},{"type":"function_call_output","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1493'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 10 Nov 2026 17:58:35 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a586f2337bcdb9d9-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '338'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_4a41e8b9427e4be7927ececa6c3acab6
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0c62848c18f3506f006af35b4adcd487d09c2d8f5764a38f5f","object":"response","created_at":1794333514,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0c62848c18f3506f006af35b4adcd487d09c2d8f5764a38f5f","object":"response","created_at":1794333514,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":2}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":3}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"You","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"x7fUQzejdv2Xd","output_index":0,"sequence_number":4}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" have","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"MX7K1k7wFz2","output_index":0,"sequence_number":5}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"KNedfwMMeFyZPU","output_index":0,"sequence_number":6}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" dentist","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"TuCMaNLD","output_index":0,"sequence_number":7}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" appointment","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"wqlm","output_index":0,"sequence_number":8}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"XnwHVvvzVwGZ6","output_index":0,"sequence_number":9}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"4obVX1YfkMUNesK","output_index":0,"sequence_number":10}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"09","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"rEBLf7qoBs2I9Y","output_index":0,"sequence_number":11}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"rRb3cmEyc0ZgazQ","output_index":0,"sequence_number":12}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"00","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"mt6DhzPSHOrUqT","output_index":0,"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" and","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"Z5iKCkd46eB8","output_index":0,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"yuQl6DXBaQdoJw","output_index":0,"sequence_number":15}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" team","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"eS9ewP90i4C","output_index":0,"sequence_number":16}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" lunch","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"RmUtZpXZsv","output_index":0,"sequence_number":17}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"KhbpUzaZaiODS","output_index":0,"sequence_number":18}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"2mMXKXt8IiHzw8z","output_index":0,"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"12","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"QuEb8LgkUTrkX3","output_index":0,"sequence_number":20}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"z7rFX23OdPEwEAt","output_index":0,"sequence_number":21}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"30","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"gBd9g3vlYX309f","output_index":0,"sequence_number":22}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" on","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"mmwhgao9WaSC4","output_index":0,"sequence_number":23}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" November","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"LGmp36k","output_index":0,"sequence_number":24}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"JP55q5UQiLJHoV4","output_index":0,"sequence_number":25}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"Lhk1JCdLXJ5UaHt","output_index":0,"sequence_number":26}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"qjMi8WeljsCrOoe","output_index":0,"sequence_number":27}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"fKRzKY5scjGbmYg","output_index":0,"sequence_number":28}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"5xBtqpe6vdxZB","output_index":0,"sequence_number":29}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"oiMoXaUVlb2EbCv","output_index":0,"sequence_number":30}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"obfuscation":"Ho62kmEvFuHEgyi","output_index":0,"sequence_number":31}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","logprobs":[],"output_index":0,"sequence_number":32,"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 6, 2026."}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 6, 2026."},"sequence_number":33}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 6, 2026."}],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":34}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0c62848c18f3506f006af35b4adcd487d09c2d8f5764a38f5f","object":"response","created_at":1794333514,"status":"completed","access_programs":null,"background":false,"completed_at":1794333515,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"msg_0c62848c18f3506f006af35b4bb6f087d08ba0798e237da7c5","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 6, 2026."}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":338,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":32,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":370},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":35}
+
+  recorded_at: Tue, 10 Nov 2026 17:58:36 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specific date; access user''s calendar, query by date.\"}"},{"type":"function_call_output","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]},{"type":"function_call","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events","namespace":"calendar__list_events","arguments":"{\"date\":\"2026-11-06\"}"},{"type":"function_call_output","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"You
+        have a dentist appointment at 09:00 and a team lunch at 12:30 on November
+        6, 2026."},{"role":"user","content":"And on 2026-11-07?"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1660'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 10 Nov 2026 17:58:36 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a586f23d1df65580-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '236'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_fb298b90321746699e53ae77d6c841aa
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0b2b3689403ba76a006af35b4c673087d08afb4f1046c9555a","object":"response","created_at":1794333516,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0b2b3689403ba76a006af35b4c673087d08afb4f1046c9555a","object":"response","created_at":1794333516,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","type":"function_call","status":"in_progress","arguments":"","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","name":"find_tools"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"7Ex1hSoP22As6C","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"query","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"WyxaIOpHtwu","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"qPD6TvI1vdJZQ","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"Calendar","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"0nddfZat","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" list","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"dAEzDQHO7Za","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" events","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"p4zUcxbzg","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" for","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"bzRaQmrOWXNZ","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" a","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"Hv3DQKYTmTHJag","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" date","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"k3lNpcodyct","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","obfuscation":"BBHNdIBEEb1RaA","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"query\":\"Calendar list events for a date\"}","item_id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","output_index":0,"sequence_number":13}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","type":"function_call","status":"completed","arguments":"{\"query\":\"Calendar list events for a date\"}","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","name":"find_tools"},"output_index":0,"sequence_number":14}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0b2b3689403ba76a006af35b4c673087d08afb4f1046c9555a","object":"response","created_at":1794333516,"status":"completed","access_programs":null,"background":false,"completed_at":1794333517,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_0b2b3689403ba76a006af35b4d34a087d09194546e0f529294","type":"function_call","status":"completed","arguments":"{\"query\":\"Calendar list events for a date\"}","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","name":"find_tools"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":386,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":23,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":409},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":15}
+
+  recorded_at: Tue, 10 Nov 2026 17:58:37 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specific date; access user''s calendar, query by date.\"}"},{"type":"function_call_output","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]},{"type":"function_call","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events","namespace":"calendar__list_events","arguments":"{\"date\":\"2026-11-06\"}"},{"type":"function_call_output","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"You
+        have a dentist appointment at 09:00 and a team lunch at 12:30 on November
+        6, 2026."},{"role":"user","content":"And on 2026-11-07?"},{"type":"function_call","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","name":"find_tools","arguments":"{\"query\":\"Calendar
+        list events for a date\"}"},{"type":"function_call_output","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2235'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 10 Nov 2026 17:58:37 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a586f2452f7c5580-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '243'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_923d9a7f7a254eac8937ad2ef941045c
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_09bffda48dc27bee006af35b4db55887d090c81c4e3c4249b1","object":"response","created_at":1794333517,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_09bffda48dc27bee006af35b4db55887d090c81c4e3c4249b1","object":"response","created_at":1794333517,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","type":"function_call","status":"in_progress","arguments":"","call_id":"call_sgmnGZplpmP7Grw29nh2upO2","name":"calendar__list_events"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"NXPp4sxTdCLFer","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"date","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"nMk9nI22878D","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"sqygMGW21peBR","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"TwLDrlIuYnozm","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"2GTO4ndyR4p8SXJ","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"NUkzniDEZ3JsYKT","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"JbpxD7y6xbchxI","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"kW5SFkurEYwHBHv","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"07","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"ouS4OhrlBpvGpI","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","obfuscation":"C6bggOTVWDOZOq","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"date\":\"2026-11-07\"}","item_id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","output_index":0,"sequence_number":13}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","type":"function_call","status":"completed","arguments":"{\"date\":\"2026-11-07\"}","call_id":"call_sgmnGZplpmP7Grw29nh2upO2","name":"calendar__list_events"},"output_index":0,"sequence_number":14}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_09bffda48dc27bee006af35b4db55887d090c81c4e3c4249b1","object":"response","created_at":1794333517,"status":"completed","access_programs":null,"background":false,"completed_at":1794333518,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_09bffda48dc27bee006af35b4ebbac87d0b93170462268b7f1","type":"function_call","status":"completed","arguments":"{\"date\":\"2026-11-07\"}","call_id":"call_sgmnGZplpmP7Grw29nh2upO2","name":"calendar__list_events"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":552,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":25,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":577},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":15}
+
+  recorded_at: Tue, 10 Nov 2026 17:58:39 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specific date; access user''s calendar, query by date.\"}"},{"type":"function_call_output","call_id":"call_oqqh4UBZxuiZ1kEGhlqH0HbJ","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]},{"type":"function_call","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","name":"calendar__list_events","namespace":"calendar__list_events","arguments":"{\"date\":\"2026-11-06\"}"},{"type":"function_call_output","call_id":"call_PaM7JYYZcVCe8rIVqBoJXqwN","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"You
+        have a dentist appointment at 09:00 and a team lunch at 12:30 on November
+        6, 2026."},{"role":"user","content":"And on 2026-11-07?"},{"type":"function_call","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","name":"find_tools","arguments":"{\"query\":\"Calendar
+        list events for a date\"}"},{"type":"function_call_output","call_id":"call_Ca9KelksaQXFmHWXgWSGVVht","output":""},{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}]},{"type":"function_call","call_id":"call_sgmnGZplpmP7Grw29nh2upO2","name":"calendar__list_events","namespace":"calendar__list_events","arguments":"{\"date\":\"2026-11-07\"}"},{"type":"function_call_output","call_id":"call_sgmnGZplpmP7Grw29nh2upO2","output":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2548'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 10 Nov 2026 17:58:39 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a586f24e7b3d5580-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total
+      Openai-Processing-Ms:
+      - '282'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_f6b0b11f70d848b3945837817e8ce7b9
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0673bca5e49d5e70006af35b4f307087d09dacadae82f715fd","object":"response","created_at":1794333519,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0673bca5e49d5e70006af35b4f307087d09dacadae82f715fd","object":"response","created_at":1794333519,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":2}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":3}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"You","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"ZrY5euRDEtida","output_index":0,"sequence_number":4}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" have","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"LSUav3SzoVG","output_index":0,"sequence_number":5}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"d3ihP4TBP47vtO","output_index":0,"sequence_number":6}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" dentist","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"WrgBKv1h","output_index":0,"sequence_number":7}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" appointment","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"w7Hj","output_index":0,"sequence_number":8}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"7IApCv4jU4K4R","output_index":0,"sequence_number":9}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"MQ9AbvVK4BtuIpI","output_index":0,"sequence_number":10}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"09","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"j7jmkn9CJqYWrP","output_index":0,"sequence_number":11}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"z1mROoik2QdSwI3","output_index":0,"sequence_number":12}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"00","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"6ExdO72DG3oXxE","output_index":0,"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" and","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"47Y0SvM4HxGR","output_index":0,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"5CXKZ2XyCtLKnM","output_index":0,"sequence_number":15}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" team","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"fIZgEFfM8ZX","output_index":0,"sequence_number":16}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" lunch","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"9G4M3LshUO","output_index":0,"sequence_number":17}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"d43e8XJOhu2mc","output_index":0,"sequence_number":18}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"JB28N4MHkGYA7iA","output_index":0,"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"12","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"nYx3LnGTh8NuDH","output_index":0,"sequence_number":20}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"VsIyuAXIP1dKF9Y","output_index":0,"sequence_number":21}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"30","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"WM0CG6pKxIvis0","output_index":0,"sequence_number":22}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" on","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"kKLUD7YYy7RRl","output_index":0,"sequence_number":23}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" November","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"gljdoy7","output_index":0,"sequence_number":24}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"sLlIB1JoAxLvACG","output_index":0,"sequence_number":25}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"7","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"cZN3ahU9ExF3GRJ","output_index":0,"sequence_number":26}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"3tJAYYg22DW9SEI","output_index":0,"sequence_number":27}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"r2NeFWMfjGuLN4z","output_index":0,"sequence_number":28}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"9bUnqwoW76bUv","output_index":0,"sequence_number":29}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"Wu0zRudof2MzGQI","output_index":0,"sequence_number":30}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"obfuscation":"mQAH14apo4qGBoX","output_index":0,"sequence_number":31}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","logprobs":[],"output_index":0,"sequence_number":32,"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 7, 2026."}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 7, 2026."},"sequence_number":33}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 7, 2026."}],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":34}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0673bca5e49d5e70006af35b4f307087d09dacadae82f715fd","object":"response","created_at":1794333519,"status":"completed","access_programs":null,"background":false,"completed_at":1794333520,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"msg_0673bca5e49d5e70006af35b4fc4a087d099ccd42b653972df","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 09:00 and a team lunch at 12:30 on November 7, 2026."}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"List the user's calendar events on a date","name":"calendar__list_events","output_schema":null,"parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":620,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":32,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":652},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":35}
+
+  recorded_at: Tue, 10 Nov 2026 17:58:40 GMT
+recorded_with: VCR 6.4.0
+...

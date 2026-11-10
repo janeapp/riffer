@@ -845,15 +845,19 @@ describe Riffer::Providers::OpenAI do
       ]
     end
 
-    it "sends each tool once, after the first result that loaded it" do
+    it "sends the definitions again after every result that loaded them" do
       messages = [
         question,
         *loading_turn("call_1", "calendar/list_events"),
-        *loading_turn("call_2", "calendar/list_events", "create_event"),
+        *loading_turn("call_2", "create_event", "calendar/list_events"),
         *loading_turn("call_3", "create_event"),
       ]
 
-      expect(additional_tools_names(request(messages))).must_equal [["calendar__list_events"], ["create_event"]]
+      expect(additional_tools_names(request(messages))).must_equal [
+        ["calendar__list_events"],
+        %w[calendar__list_events create_event],
+        ["create_event"],
+      ]
     end
 
     it "sends nothing for an error result or a name that isn't a deferred tool" do

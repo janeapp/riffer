@@ -143,8 +143,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def convert_messages_to_openai_format: (Array[Riffer::Messages::Base], deferred_tools: Array[singleton(Riffer::Tool)]) -> Array[Hash[Symbol, untyped]]
 
   # --
-  # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]]
-  def tools_by_loading_message: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]]
+  # : (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+  def loaded_deferred_tools: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
 
   # --
   # : (Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
