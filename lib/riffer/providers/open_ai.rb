@@ -456,7 +456,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         items << { type: "message", role: "assistant",
                    content: message.content, }
       end
-      deferred_names = deferred_tools.map(&:name)
       message.tool_calls.each do |tc|
         name = encode_tool_name(tc.name)
         items << {
@@ -465,7 +464,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           name: name,
           # The API rejects a replayed call to a tool loaded through additional_tools unless it carries the
           # namespace the model returned, which is always the tool's own name; it accepts one on an unloaded call too.
-          namespace: (name if deferred_names.include?(tc.name)),
+          namespace: (name if deferred_tools.any? { |tool| tool.name == tc.name }),
           arguments: tc.arguments,
         }.compact
       end
