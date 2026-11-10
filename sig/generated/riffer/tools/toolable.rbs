@@ -1,66 +1,8 @@
 # Generated from lib/riffer/tools/toolable.rb with RBS::Inline
 
-# @rbs module-self Module
-module Riffer::Tools::Toolable : Module
-  @kind: Symbol?
-
-  @params_builder: Riffer::Params?
-
-  @timeout: (Integer | Float)?
-
-  @identifier: String?
-
-  @description: String?
-
-  self.@extenders: Array[Module]?
-
-  DEFAULT_TIMEOUT: Integer
-
+# @deprecated Subclass Riffer::Tool instead.
+module Riffer::Tools::Toolable
   # --
   # : (Module) -> void
   def self.extended: (Module) -> void
-
-  # --
-  # : () -> Array[Module]
-  def self.all: () -> Array[Module]
-
-  # --
-  # : (?String?) -> String?
-  def description: (?String?) -> String?
-
-  # --
-  # : (?String?) -> String
-  def identifier: (?String?) -> String
-
-  # --
-  # : (?String?) -> String
-  def name: (?String?) -> String
-
-  # --
-  # : (?(Integer | Float)?) -> (Integer | Float)
-  def timeout: (?(Integer | Float)?) -> (Integer | Float)
-
-  # --
-  # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
-  def params: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
-
-  # --
-  # : (?strict: bool) -> Hash[Symbol, untyped]
-  def parameters_schema: (?strict: bool) -> Hash[Symbol, untyped]
-
-  # --
-  # : (?Symbol?) -> Symbol
-  def kind: (?Symbol?) -> Symbol
-
-  # --
-  # : (?strict: bool) -> Hash[Symbol, untyped]
-  def to_tool_schema: (?strict: bool) -> Hash[Symbol, untyped]
-
-  # --
-  # : () -> true
-  def validate_as_tool!: () -> true
-
-  private
-
-  def empty_schema: () -> untyped
 end
