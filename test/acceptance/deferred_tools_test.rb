@@ -50,7 +50,7 @@ describe "Acceptance: deferred tools" do
         end
       end
 
-      def agent_with(instructions:, options: {})
+      def agent_with(instructions:, options: {}, session: nil)
         model_id = agent_model
         loader = find_tools
         deferred = [list_events, send_invoice]
@@ -60,7 +60,7 @@ describe "Acceptance: deferred tools" do
           model_options options
           uses_tools [loader]
           deferred_tools deferred
-        end.new
+        end.new(session: session)
       end
 
       ACCEPTANCE_MODES.each do |mode|
@@ -80,12 +80,31 @@ describe "Acceptance: deferred tools" do
           expect(tool_arrays.size).must_equal 3
           expect(tool_arrays.uniq.size).must_equal 1
         end
+
+        it "calls a loaded tool again in an agent restored from JSON (#{mode})" do
+          instructions = "If you need a tool you don't have, use find_tools. Be concise."
+          resumed = nil
+          response = acceptance_cassette("#{cassette_prefix}/resume_#{mode}") do
+            first = agent_with(instructions: instructions)
+            run_agent(first, mode, "What's on my calendar on 2026-11-06?")
+            persisted = JSON.parse(JSON.generate(first.session.messages.map(&:to_h)), symbolize_names: true)
+            messages = persisted.map { |hash| Riffer::Messages::Base.from_hash(hash) }
+            resumed = agent_with(instructions: instructions, session: Riffer::Agent::Session.new(messages: messages))
+            run_agent(resumed, mode, "And on 2026-11-07?")
+          end
+          later_calls = resumed.session.messages.grep(Riffer::Messages::Tool).drop(2)
+
+          expect(response.outcome.reason).must_equal :completed
+          expect(later_calls.filter_map(&:error_type)).must_be_empty
+          expect(later_calls.last.name).must_equal "calendar/list_events"
+          expect(response.content).must_match(/dentist/i)
+        end
       end
 
       it "reads the prompt cache on the turn after a load" do
-        rules = (1..400).map { |n| "Rule #{n}: staff member #{n} opens the clinic on day #{n % 7}." }.join("\n")
+        rules = (1..400).map { |n| "Rule #{n}: product PX-#{n} ships in box size #{n % 7}." }.join("\n")
         agent = agent_with(
-          instructions: "If you need a tool you don't have, use find_tools. Be concise.\n\n#{rules}",
+          instructions: "#{rules}\n\nIf you need a tool you don't have, use find_tools. Be concise.",
           options: cache_options,
         )
 
