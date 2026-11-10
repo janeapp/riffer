@@ -17,8 +17,8 @@ class Riffer::Config::Pricing
   def set(models, input:, output:, cache_read: nil, cache_write: nil)
     Riffer::Deprecation.warn(
       id: :config_pricing,
-      message: "config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files " \
-               "(see docs/CATALOG.md).",
+      message: "config.pricing is deprecated and will be removed in a future version; move rates into a catalog " \
+               "file listed in config.catalog_files (see docs/CATALOG.md).",
     )
 
     ids = models.is_a?(Array) ? models : [models]
