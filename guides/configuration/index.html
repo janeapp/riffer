@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -598,7 +603,7 @@
 
 <h3 id="pricing-deprecated">Pricing (deprecated)</h3>
 
-<p><code>config.pricing</code> is deprecated and will be removed in a future release. Move rates into a <a href="/guides/catalog/#pricing">catalog file</a>; the first <code>set</code> call prints a deprecation warning. Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.</p>
+<p><code>config.pricing</code> is deprecated and will be removed in a future release. Move rates into a <a href="/guides/catalog/#pricing">catalog file</a>; each line that calls <code>set</code> reports a <a href="#deprecations">deprecation</a>. Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># before</span>
 <span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
@@ -610,6 +615,85 @@
 </span></code></pre></div></div>
 
 <p><code>set</code> takes a <code>provider/model</code> id or an array of ids, plus <code>input:</code>, <code>output:</code>, and optional <code>cache_read:</code> and <code>cache_write:</code> rates per million tokens. The rates and cost formula are the same as <a href="/guides/catalog/#pricing">catalog pricing</a>.</p>
+
+<h3 id="deprecations">Deprecations</h3>
+
+<p>A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:</p>
+
+<pre><code>riffer: config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
+</code></pre>
+
+<p><code>config.deprecations</code> decides what happens:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">deprecations</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">{</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">logger</span><span class="p">.</span><span class="nf">warn</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="nf">to_s</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:warn</code> (default)</td>
+      <td>Prints the report to stderr with <code>Kernel.warn</code>, once per deprecation per calling line.</td>
+    </tr>
+    <tr>
+      <td><code>:raise</code></td>
+      <td>Raises <code>Riffer::DeprecationError</code> on every call, so a test suite fails on each test that makes one. See <a href="/guides/testing/#deprecations">Testing — Deprecations</a>.</td>
+    </tr>
+    <tr>
+      <td><code>:silence</code></td>
+      <td>Reports nothing.</td>
+    </tr>
+    <tr>
+      <td>A callable</td>
+      <td>Called with a <code>Riffer::Deprecation::Event</code> once per deprecation per calling line. The event has <code>id</code>, <code>message</code> and <code>location</code> (<code>"path:line"</code>); <code>to_s</code> is the report.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Any other value raises <code>Riffer::ArgumentError</code>.</p>
+
+<h3 id="future-flags">Future flags</h3>
+
+<p><code>config.future</code> lets you turn on new behaviour before it becomes the default, so you can try it and adapt ahead of the breaking release that switches it on for everyone:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">future</span><span class="p">.</span><span class="nf">some_flag</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>A flag accepts booleans, <code>'true'</code>/<code>'false'</code>/<code>'1'</code>/<code>'0'</code>, <code>1</code>/<code>0</code>, or <code>nil</code> (which turns an opt-in flag off); any other value raises <code>Riffer::ArgumentError</code>. Setting a flag Riffer doesn’t know raises <code>NoMethodError</code>.</p>
+
+<p>A flag goes through three stages:</p>
+
+<ol>
+  <li><strong>Opt-in.</strong> The flag is off by default, and setting it to <code>true</code> turns the new behaviour on.</li>
+  <li><strong>Default.</strong> A <a href="/guides/stability/#breaking-releases">breaking release</a> makes the new behaviour the default. The flag always reads as on, and setting it reports a <a href="#deprecations">deprecation</a> saying it’s no longer needed and can be removed.</li>
+  <li><strong>Removed.</strong> A release later the flag is gone, and setting it raises <code>NoMethodError</code>.</li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Stage</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>(none)</em></td>
+      <td> </td>
+      <td>Riffer has no future flags yet.</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="message-id-strategy">Message ID Strategy</h3>
 

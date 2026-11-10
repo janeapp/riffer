@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -262,7 +267,7 @@
   <span class="p">{</span><span class="ss">id: </span><span class="s2">"call_123"</span><span class="p">,</span> <span class="ss">call_id: </span><span class="s2">"call_123"</span><span class="p">,</span> <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span> <span class="ss">arguments: </span><span class="s1">'{"city":"Tokyo"}'</span><span class="p">}</span>
 <span class="p">])</span>
 <span class="n">msg</span><span class="p">.</span><span class="nf">tool_calls</span>  <span class="c1"># =&gt; [{id: "call_123", ...}]</span>
-<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>        <span class="c1"># =&gt; {role: "assistant", content: "", tool_calls: [...]}</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>        <span class="c1"># =&gt; {role: :assistant, parts: [{part: :tool_call, ...}]}</span>
 
 <span class="c1"># Accessing token usage data (when available from provider)</span>
 <span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span>
@@ -371,7 +376,7 @@
 <p>The <code>to_h</code> representation includes <code>structured_output</code> only when present:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'{"sentiment":"positive"}'</span><span class="p">,</span> <span class="ss">structured_output: </span><span class="p">{</span><span class="ss">sentiment: </span><span class="s2">"positive"</span><span class="p">})</span>
-<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :assistant, content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}}</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :assistant, parts: [{part: :text, text: '{"sentiment":"positive"}'}], structured_output: {sentiment: "positive"}}</span>
 </code></pre></div></div>
 
 <h4 id="reasoning">Reasoning</h4>
@@ -439,12 +444,13 @@
 
 <p><code>reasoning?</code> is true when the message carries any part. <code>reasoning_text</code> joins the <code>text</code> of the <code>:text</code> and <code>:summary</code> parts with blank lines, skipping <code>:encrypted</code> parts, and is <code>nil</code> when there is nothing to join. The run’s final assistant message projects its parts onto <code>response.reasoning</code> (see <a href="/guides/agent-lifecycle/#response-attributes">Agent Lifecycle — Response Attributes</a>).</p>
 
-<p>Parts round-trip through <code>to_h</code> / <code>from_hash</code> like every other message field, so an application that persists sessions can store and replay them. The <code>reasoning</code> key is absent from <code>to_h</code> when the message has no parts, and each part omits the fields it doesn’t carry:</p>
+<p>Parts round-trip through <code>to_h</code> / <code>from_hash</code> like every other message field, so an application that persists sessions can store and replay them. <code>to_h</code> writes each reasoning part as a <a href="#parts"><code>parts</code></a> entry tagged <code>part: :reasoning</code>, and each part omits the fields it doesn’t carry:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>
-<span class="c1"># =&gt; {role: :assistant, content: "42", reasoning: [</span>
-<span class="c1">#      {type: :summary, text: "The user wants the answer.", format: "mock-v1"},</span>
-<span class="c1">#      {type: :encrypted, data: "b3BhcXVl", format: "mock-v1"}</span>
+<span class="c1"># =&gt; {role: :assistant, parts: [</span>
+<span class="c1">#      {part: :reasoning, type: :summary, text: "The user wants the answer.", format: "mock-v1"},</span>
+<span class="c1">#      {part: :reasoning, type: :encrypted, data: "b3BhcXVl", format: "mock-v1"},</span>
+<span class="c1">#      {part: :text, text: "42"}</span>
 <span class="c1">#    ]}</span>
 
 <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Base</span><span class="p">.</span><span class="nf">from_hash</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span><span class="p">).</span><span class="nf">reasoning</span>  <span class="c1"># =&gt; [ReasoningPart, ReasoningPart]</span>
@@ -452,12 +458,177 @@
 
 <p><strong>The replay contract.</strong> A provider adapter replays only the parts whose <code>format</code> it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no <code>format</code> is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider’s signature covers their exact bytes.</p>
 
-<p>An application that would rather not store parts can leave the key out when it serializes:</p>
+<p>An application that would rather not store reasoning can drop the reasoning entries of <code>parts</code> when it serializes:</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:reasoning</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">hash</span> <span class="o">=</span> <span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>
+<span class="nb">hash</span><span class="p">[</span><span class="ss">:parts</span><span class="p">]</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:parts</span><span class="p">].</span><span class="nf">reject</span> <span class="p">{</span> <span class="o">|</span><span class="n">part</span><span class="o">|</span> <span class="n">part</span><span class="p">[</span><span class="ss">:part</span><span class="p">]</span> <span class="o">==</span> <span class="ss">:reasoning</span> <span class="p">}</span>
 </code></pre></div></div>
 
 <p>To drop parts from the in-memory session mid-run instead, <code>Session#update(id:, reasoning: [])</code> rewrites the message in place; it needs <a href="#ids">message ids</a> enabled to address it.</p>
+
+<h4 id="parts">Parts</h4>
+
+<p><code>parts</code> is the assistant turn in the order the provider produced it. <code>content</code>, <code>tool_calls</code> and <code>reasoning</code> are views over it. Some providers interleave reasoning, server-side tools and text in one turn, and Anthropic needs the turn back in that order: Claude signs each thinking block over every block before it. Sending earlier turns back unchanged also keeps the model’s own reasoning and search results, and keeps the prompt cache warm, since the history doesn’t change between requests.</p>
+
+<p>A part is one of:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Class</th>
+      <th>Holds</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>TextPart</code></td>
+      <td>One stretch of answer text (<code>text</code>). <code>data</code> keeps the provider’s block when it carries more than the text, such as Anthropic citations</td>
+    </tr>
+    <tr>
+      <td><code>ReasoningPart</code></td>
+      <td>A thinking block (see <a href="#reasoning">Reasoning</a>)</td>
+    </tr>
+    <tr>
+      <td><code>ToolCall</code></td>
+      <td>A function call riffer runs (see <a href="#tool-calls">Tool Calls</a>)</td>
+    </tr>
+    <tr>
+      <td><code>ServerToolPart</code></td>
+      <td>A call (<code>kind: :call</code>) or result (<code>kind: :result</code>) of a tool the provider ran itself, such as web search</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>TextPart</code> carries:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>text</code></td>
+      <td><code>String</code></td>
+      <td>The answer text</td>
+    </tr>
+    <tr>
+      <td><code>data</code></td>
+      <td><code>String?</code></td>
+      <td>The provider’s whole block as JSON, kept when it carries more than the text (e.g. Anthropic citations)</td>
+    </tr>
+    <tr>
+      <td><code>format</code></td>
+      <td><code>String?</code></td>
+      <td>The wire format of <code>data</code>, owned by the adapter that produced it</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>ServerToolPart</code> carries:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>String</code></td>
+      <td>The tool’s name (e.g. <code>"web_search"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>Symbol</code></td>
+      <td><code>:call</code> or <code>:result</code></td>
+    </tr>
+    <tr>
+      <td><code>data</code></td>
+      <td><code>String</code></td>
+      <td>The provider’s block as JSON, unchanged</td>
+    </tr>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>String?</code></td>
+      <td>The provider’s identifier, shared by a call and its result</td>
+    </tr>
+    <tr>
+      <td><code>format</code></td>
+      <td><code>String?</code></td>
+      <td>The wire format, owned by the adapter that produced the part (e.g. <code>"anthropic-messages-v1"</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A <code>kind</code> outside <code>:call</code> and <code>:result</code> raises <code>Riffer::ArgumentError</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">parts: </span><span class="p">[</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">TextPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Let me check. "</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ServerToolPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"web_search"</span><span class="p">,</span> <span class="ss">kind: :call</span><span class="p">,</span> <span class="ss">id: </span><span class="s2">"srvtoolu_1"</span><span class="p">,</span> <span class="ss">data: </span><span class="s2">"{...}"</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"anthropic-messages-v1"</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ServerToolPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"web_search"</span><span class="p">,</span> <span class="ss">kind: :result</span><span class="p">,</span> <span class="ss">id: </span><span class="s2">"srvtoolu_1"</span><span class="p">,</span> <span class="ss">data: </span><span class="s2">"{...}"</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"anthropic-messages-v1"</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">type: :text</span><span class="p">,</span> <span class="ss">text: </span><span class="s2">""</span><span class="p">,</span> <span class="ss">signature: </span><span class="s2">"CAQS..."</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"anthropic-messages-v1"</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">TextPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"The latest stable Ruby version is 4.0.9."</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">msg</span><span class="p">.</span><span class="nf">content</span>     <span class="c1"># =&gt; "Let me check. The latest stable Ruby version is 4.0.9."</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">reasoning</span>   <span class="c1"># =&gt; [ReasoningPart]</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">reasoning?</span>  <span class="c1"># =&gt; true; server tool parts don't count as reasoning</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code>content</code> joins the text parts with no separator.</li>
+  <li><code>Assistant.new(content, tool_calls:, reasoning:)</code> builds the parts in a fixed order: reasoning, then <code>content</code> as one text part (none when empty), then tool calls.</li>
+  <li>Passing <code>parts:</code> together with <code>content</code>, <code>tool_calls:</code> or <code>reasoning:</code> raises <code>Riffer::ArgumentError</code>.</li>
+  <li><code>ServerToolPart#data</code> holds the provider’s block as JSON, unchanged. It follows the same replay contract as reasoning: only the adapter that recognizes its <code>format</code> sends it back, and other adapters skip it. The same goes for a <code>TextPart</code> that carries <code>data</code>; other adapters send its <code>text</code>.</li>
+</ul>
+
+<p><code>to_h</code> writes the turn as a <code>parts</code> key, so it keeps the order, the server tool parts and the <code>data</code> of text parts. Each entry is the part’s own hash plus a <code>part</code> tag (<code>:text</code>, <code>:reasoning</code>, <code>:tool_call</code> or <code>:server_tool</code>). It doesn’t write <code>content</code>, <code>tool_calls</code> or <code>reasoning</code>; read those from the message:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>
+<span class="c1"># =&gt; {role: :assistant, parts: [</span>
+<span class="c1">#      {part: :text, text: "Let me check. "},</span>
+<span class="c1">#      {part: :server_tool, name: "web_search", kind: :call, data: "{...}", id: "srvtoolu_1", format: "anthropic-messages-v1"},</span>
+<span class="c1">#      ...</span>
+<span class="c1">#    ]}</span>
+
+<span class="p">{</span><span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="n">msg</span><span class="p">.</span><span class="nf">tool_calls</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_h</span><span class="p">),</span> <span class="ss">reasoning: </span><span class="n">msg</span><span class="p">.</span><span class="nf">reasoning</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_h</span><span class="p">)}</span>
+</code></pre></div></div>
+
+<p><code>from_hash</code> reads this shape and the older one with <code>content</code>, <code>tool_calls</code> and <code>reasoning</code> keys, so stored sessions still load. Rebuilt from the older shape, the turn is in the fixed order, without server tool parts or the <code>data</code> of text parts. A hash with <code>parts</code> and a non-nil <code>content</code>, or a non-empty <code>tool_calls</code> or <code>reasoning</code>, raises <code>Riffer::ArgumentError</code>.</p>
+
+<p><strong>Editing a turn.</strong> Riffer sends the parts back as they are. When you change a turn’s text (in an output guardrail, or with <code>Session#update</code>), keeping the rest of the turn consistent is up to you:</p>
+
+<ul>
+  <li>Drop that turn’s reasoning parts. They were signed over the old text, so Anthropic would reject them or drop them silently, and they may still hold the text you removed.</li>
+  <li>Keep server tool parts and tool calls, so the model doesn’t search again and tool results keep their call.</li>
+  <li>Put the new text after the last server tool part and before the first tool call.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">redact</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+  <span class="n">kept</span> <span class="o">=</span> <span class="n">message</span><span class="p">.</span><span class="nf">parts</span><span class="p">.</span><span class="nf">reject</span> <span class="k">do</span> <span class="o">|</span><span class="n">part</span><span class="o">|</span>
+    <span class="n">part</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">)</span> <span class="o">||</span> <span class="n">part</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">TextPart</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="n">index</span> <span class="o">=</span> <span class="n">kept</span><span class="p">.</span><span class="nf">index</span> <span class="p">{</span> <span class="o">|</span><span class="n">part</span><span class="o">|</span> <span class="n">part</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ToolCall</span><span class="p">)</span> <span class="p">}</span> <span class="o">||</span> <span class="n">kept</span><span class="p">.</span><span class="nf">length</span>
+  <span class="n">parts</span> <span class="o">=</span> <span class="n">kept</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">TextPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">parts: </span><span class="n">parts</span><span class="p">,</span>
+    <span class="ss">id: </span><span class="n">message</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+    <span class="ss">token_usage: </span><span class="n">message</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">,</span>
+    <span class="ss">finish_reason: </span><span class="n">message</span><span class="p">.</span><span class="nf">finish_reason</span><span class="p">,</span>
+    <span class="ss">finish_reason_raw: </span><span class="n">message</span><span class="p">.</span><span class="nf">finish_reason_raw</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>Assistant.new(text)</code> and <code>Session#update(id:, content:)</code> don’t follow these rules. They rebuild the turn in the fixed order, which keeps the reasoning and drops server tool parts. Use <code>Session#update(id:, parts:)</code> to replace the parts as given.</p>
 
 <h3 id="tool">Tool</h3>
 
@@ -644,7 +815,7 @@
     <tr>
       <td><code>Assistant</code></td>
       <td>Joined with <code>"\n\n"</code></td>
-      <td><code>tool_calls</code> arrays concatenated</td>
+      <td><code>tool_calls</code> and <code>reasoning</code> arrays concatenated</td>
       <td>Yes</td>
     </tr>
     <tr>
@@ -655,6 +826,8 @@
     </tr>
   </tbody>
 </table>
+
+<p>When either assistant message has <a href="#parts">parts</a> its fields can’t rebuild, the merged message concatenates the two <code>parts</code> lists instead, with a <code>"\n\n"</code> text part between the texts.</p>
 
 <h3 id="example">Example</h3>
 
@@ -719,7 +892,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Subclasses implement <code>role</code> and optionally extend <code>to_h</code> with additional fields.</p>
+<p>Subclasses implement <code>role</code> and optionally extend <code>to_h</code> with additional fields. <code>Assistant</code> writes <code>parts</code> in place of <code>content</code>.</p>
 
 <h2 id="editing-history-after-the-fact">Editing history after the fact</h2>
 

@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -464,7 +469,7 @@
 <p>The session exposes a small set of in-place mutators that enforce the <code>tool_use</code> ↔ <code>tool_result</code> invariant on every operation. Use these to align history with external state (persisted transcript, partial output that wasn’t actually delivered, etc.) without rebuilding the agent.</p>
 
 <ul>
-  <li><strong><code>agent.session.update(id:, **attrs)</code></strong> — In-place partial update. Looks up by message <code>id:</code>; builds a replacement of the same type with <code>attrs</code> overlaid on the existing fields. Use this to edit assistant content (<code>update(id:, content:)</code>), restate a system message, etc. When the target is an assistant and the update drops entries from <code>tool_calls</code>, matching <code>Tool</code> children are removed atomically.</li>
+  <li><strong><code>agent.session.update(id:, **attrs)</code></strong> — In-place partial update. Looks up by message <code>id:</code>; builds a replacement of the same type with <code>attrs</code> overlaid on the existing fields. Use this to edit assistant content (<code>update(id:, content:)</code>), restate a system message, etc. When the target is an assistant and the update drops entries from <code>tool_calls</code>, matching <code>Tool</code> children are removed atomically. An assistant update with <code>content:</code>, <code>tool_calls:</code> or <code>reasoning:</code> rebuilds the turn’s <a href="/guides/messages/#parts">parts</a> in the default order, which drops server tool parts; pass <code>parts:</code> to replace them as given.</li>
   <li><strong><code>agent.session.update(tool_call_id:, **attrs)</code></strong> — Same as above but looks up the tool result by <code>tool_call_id:</code>. Preserves <code>name</code> and <code>id</code>. Use this to upgrade a <code>discard_pending_tool_calls</code> placeholder once the real result is available (<code>update(tool_call_id:, content:, error: nil, error_type: nil)</code>).</li>
   <li><strong><code>agent.session.remove(id:)</code></strong> — Removes a message; cascades to its <code>Tool</code> children when the target carries <code>tool_calls</code>. Raises if called on a <code>Tool</code> message (use <code>update(tool_call_id:, ...)</code> to rewrite a tool result instead).</li>
   <li><strong><code>agent.session.discard_pending_tool_calls</code></strong> — Answers every unanswered <code>tool_use</code> with an <code>:interrupted</code> placeholder result and returns the filled <code>call_id</code>s (see “Discarding pending tool calls after an interrupt” above).</li>

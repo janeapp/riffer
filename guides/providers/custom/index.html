@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -132,6 +132,11 @@
                   ><span class="num">18</span> Tracing</a
                 >
               </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
+                >
+              </li>
             </ul>
             <span class="group-label jane">Providers</span>
             <ul>
@@ -208,6 +213,7 @@
               <li><a href="#token-usage-semantics">Token Usage Semantics</a></li>
               <li><a href="#finish-reasons">Finish Reasons</a></li>
               <li><a href="#reasoning">Reasoning</a></li>
+              <li><a href="#ordered-parts">Ordered Parts</a></li>
               <li><a href="#reasoning-level">Reasoning Level</a></li>
               <li><a href="#tags">Tags</a></li>
               <li><a href="#trace-provider-name">Trace Provider Name</a></li>
@@ -470,6 +476,9 @@
 <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"thinking..."</span><span class="p">)</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
 
+<span class="c1"># Server tool blocks (if supported); see the Ordered Parts section</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ServerToolDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">server_tool_part</span><span class="p">)</span>
+
 <span class="c1"># Web search (if supported)</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"searching"</span><span class="p">,</span> <span class="ss">query: </span><span class="s2">"search query"</span><span class="p">)</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
@@ -549,6 +558,26 @@
 </code></pre></div></div>
 
 <p>If your adapter surfaces reasoning text but cannot yet replay it, call <code>yield_reasoning_done(yielder, text)</code> instead. It wraps the text in a <code>:text</code> part with no <code>format</code>, which persists for display and is skipped on replay.</p>
+
+<h2 id="ordered-parts">Ordered Parts</h2>
+
+<p>By default the base class builds the assistant message’s <a href="/guides/messages/#parts">parts</a> from <code>extract_reasoning</code>, <code>extract_content</code> and <code>extract_tool_calls</code>, in that order. If your provider interleaves blocks in one turn and needs them back in that order, override <code>extract_parts</code> instead and return every block as a part, in response order:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_parts</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">response</span><span class="p">.</span><span class="nf">blocks</span><span class="p">.</span><span class="nf">filter_map</span> <span class="k">do</span> <span class="o">|</span><span class="n">block</span><span class="o">|</span>
+    <span class="k">case</span> <span class="n">block</span><span class="p">.</span><span class="nf">type</span>
+    <span class="k">when</span> <span class="s2">"text"</span> <span class="k">then</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">TextPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="nf">text</span><span class="p">)</span>
+    <span class="k">when</span> <span class="s2">"thinking"</span> <span class="k">then</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">type: :text</span><span class="p">,</span> <span class="ss">text: </span><span class="n">block</span><span class="p">.</span><span class="nf">text</span><span class="p">,</span> <span class="ss">signature: </span><span class="n">block</span><span class="p">.</span><span class="nf">signature</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"my-provider-v1"</span><span class="p">)</span>
+    <span class="k">when</span> <span class="s2">"tool_call"</span> <span class="k">then</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ToolCall</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">call_id: </span><span class="n">block</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span> <span class="ss">name: </span><span class="n">block</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span> <span class="ss">arguments: </span><span class="n">block</span><span class="p">.</span><span class="nf">arguments</span><span class="p">)</span>
+    <span class="k">when</span> <span class="s2">"search"</span> <span class="k">then</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ServerToolPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"web_search"</span><span class="p">,</span> <span class="ss">kind: :call</span><span class="p">,</span> <span class="ss">id: </span><span class="n">block</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span> <span class="ss">data: </span><span class="n">block</span><span class="p">.</span><span class="nf">to_json</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"my-provider-v1"</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Then replay by walking <code>message.parts</code> rather than reading <code>content</code>, <code>tool_calls</code> and <code>reasoning</code> separately, and skip parts whose <code>format</code> you don’t recognize.</p>
+
+<p>For streaming, emit <code>ServerToolDone</code> for each server tool block, and keep text deltas, <code>ReasoningDone</code> and <code>ToolCallDone</code> in the order the blocks arrive. The agent loop builds the parts in that order.</p>
 
 <h2 id="reasoning-level">Reasoning Level</h2>
 

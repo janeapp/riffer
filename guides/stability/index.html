@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stability — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.56.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/catalog/"
+                  ><span class="num">11</span> Model Catalog</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">12</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/testing/"
+                  ><span class="num">13</span> Testing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">14</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">15</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">16</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">17</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/" class="active" aria-current="page"
+                  ><span class="num">19</span> Stability</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/google-cloud/"
+                  ><span class="num">07</span> Google Cloud Providers</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">08</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">09</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">10</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 19</span></p>
+          <h1>Stability</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#public-api">Public API</a></li>
+              <li><a href="#experimental-features">Experimental features</a></li>
+              <li><a href="#deprecations">Deprecations</a></li>
+              <li><a href="#breaking-releases">Breaking releases</a></li>
+              <li><a href="#saved-formats">Saved formats</a></li>
+            </ul>
+          </nav>
+          
+<p>This page covers which parts of Riffer you can depend on, how changes to them are announced, and how breaking releases work. Riffer is not at 1.0 yet; the <a href="https://github.com/janeapp/riffer/issues/528">roadmap</a> tracks the path there.</p>
+
+<h2 id="public-api">Public API</h2>
+
+<p>The public API is everything documented in these guides. You can build on it, and it changes only in the ways this page describes.</p>
+
+<p>Everything else is internal, even when Ruby lets you reach it. That includes classes, methods and constants that appear in the <a href="https://riffer.ai/api/">API reference</a> but not in a guide. Internal code can change in any release without notice. At 1.0, every public constant will be documented and everything else marked private.</p>
+
+<h2 id="experimental-features">Experimental features</h2>
+
+<p>Experimental features are labelled <em>experimental</em> in the guides, like the <a href="/guides/agents/#structured-output-strategy-experimental">prompted structured output strategy</a>. They can change in any minor release, and the <a href="https://github.com/janeapp/riffer/blob/main/CHANGELOG.md">CHANGELOG</a> notes each change.</p>
+
+<h2 id="deprecations">Deprecations</h2>
+
+<p>A breaking change to the public API lands first as a new API or an <a href="/guides/configuration/#future-flags">opt-in flag</a>, and the old way prints a deprecation warning. The warning appears for at least one release before the old way is removed, and it names the earliest version it can be removed in. For larger changes, it also names a date.</p>
+
+<h2 id="breaking-releases">Breaking releases</h2>
+
+<p>Before 1.0, any minor release can include breaking changes, but never without notice: an earlier release deprecates what’s changing first, so you’ll see the warnings before anything breaks. Each breaking release comes with an upgrade guide in <a href="https://github.com/janeapp/riffer/blob/main/UPGRADING.md">UPGRADING.md</a>, and the CHANGELOG lists its changes under <strong>⚠ BREAKING CHANGES</strong>.</p>
+
+<p>After 1.0, breaking changes ship only in major versions.</p>
+
+<h2 id="saved-formats">Saved formats</h2>
+
+<p>Saved formats are the data Riffer produces for you to store and load later, such as <a href="/guides/serialization/">serialized agents</a> and <a href="/guides/messages/#parts">messages persisted with <code>to_h</code></a>.</p>
+
+<ul>
+  <li>Riffer can read a new format at least one release before it starts writing it, so a deploy that runs a release alongside the one before it keeps working.</li>
+  <li>Anything saved by a 1.x release loads in every later 1.x release.</li>
+</ul>
+
+<p>See <a href="/guides/serialization/#versioning">Serialization → Versioning</a> for how agent data records its format version.</p>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/tracing/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Tracing</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/overview/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Providers Overview</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

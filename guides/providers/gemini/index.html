@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -403,7 +408,7 @@
 
 <p>Riffer keeps each signature on the assistant message as the <code>data</code> of an <code>:encrypted</code> <a href="/guides/messages/#reasoning">reasoning part</a> tagged <code>format: "gemini-generate-content-v1"</code> (<code>Riffer::Providers::Gemini::REASONING_FORMAT</code>). A signature from a function call carries that tool call’s <code>call_id</code> as its <code>id</code>; the text signature has no <code>id</code>. Streams emit them as <code>ReasoningDone</code> events. On later turns riffer puts each signature back on the part it came from. You don’t have to do anything as long as the assistant messages stay in the history.</p>
 
-<p>A function call that Gemini didn’t sign, such as one another provider made before the conversation switched to Gemini, goes out with Gemini’s placeholder signature (<code>skip_thought_signature_validator</code>), which Gemini accepts in place of a real one. That covers the first call of each step when that call has no signature for this provider. Google warns that a call without its real signature may degrade the model’s answer, so if you persist sessions, keep the <code>reasoning</code> key when you store messages.</p>
+<p>A function call that Gemini didn’t sign, such as one another provider made before the conversation switched to Gemini, goes out with Gemini’s placeholder signature (<code>skip_thought_signature_validator</code>), which Gemini accepts in place of a real one. That covers the first call of each step when that call has no signature for this provider. Google warns that a call without its real signature may degrade the model’s answer, so if you persist sessions, keep the reasoning when you store messages.</p>
 
 <h3 id="web-search">Web Search</h3>
 

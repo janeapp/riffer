@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -301,6 +306,8 @@
 <span class="c1"># Check what was sent</span>
 <span class="n">expect</span><span class="p">(</span><span class="n">provider</span><span class="p">.</span><span class="nf">calls</span><span class="p">.</span><span class="nf">last</span><span class="p">[</span><span class="ss">:messages</span><span class="p">].</span><span class="nf">last</span><span class="p">[</span><span class="ss">:content</span><span class="p">]).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"Hi"</span><span class="p">)</span>
 </code></pre></div></div>
+
+<p>Each message is recorded as its <code>to_h</code>, so an assistant message has <code>parts</code> rather than <code>content</code> (see <a href="/guides/messages/#parts">Messages — Parts</a>).</p>
 
 <h2 id="clearing-state">Clearing State</h2>
 

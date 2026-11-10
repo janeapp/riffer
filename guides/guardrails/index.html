@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -533,6 +538,8 @@
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p><code>Assistant.new(text)</code> builds a new turn with only that text, so this example also drops the response’s tool calls and server tool parts. When a guardrail changes the text of a response that carries reasoning, server tool parts or tool calls, rebuild its <code>parts</code> instead; see <a href="/guides/messages/#parts">Messages — Editing a turn</a>.</p>
 
 <h3 id="content-policy-filter">Content Policy Filter</h3>
 

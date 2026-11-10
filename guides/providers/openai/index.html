@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -315,7 +320,7 @@
 
 <p>The <code>:encrypted</code> part is always present, even when the response carried no <code>encrypted_content</code>, so the item’s <code>id</code> is kept. When streaming, the parts are yielded as <code>ReasoningDone</code> events once the item completes; summary text still arrives as <code>ReasoningDelta</code> events before that.</p>
 
-<p>On the next request, parts sharing an <code>id</code> go back as one <code>reasoning</code> item, ahead of the assistant’s text and function calls, in their original order and unchanged. This lets reasoning models carry their reasoning across turns and tool-call loops. You don’t have to do anything as long as the assistant messages stay in the history; if you persist sessions, keep the <code>reasoning</code> key when you store them.</p>
+<p>On the next request, parts sharing an <code>id</code> go back as one <code>reasoning</code> item, ahead of the assistant’s text and function calls, in their original order and unchanged. This lets reasoning models carry their reasoning across turns and tool-call loops. You don’t have to do anything as long as the assistant messages stay in the history; if you persist sessions, keep the reasoning when you store them.</p>
 
 <p>With <code>store</code> left on (the API default), OpenAI can resolve a replayed item from its <code>id</code> alone. With <code>model_options store: false</code>, the item can only be replayed from its encrypted payload, so request it explicitly:</p>
 
@@ -334,6 +339,8 @@
 <span class="c1"># With custom configuration</span>
 <span class="n">model_options</span> <span class="ss">web_search: </span><span class="p">{</span><span class="ss">search_context_size: </span><span class="s2">"medium"</span><span class="p">}</span>
 </code></pre></div></div>
+
+<p>With web search on, riffer also adds <code>"web_search_call.action.sources"</code> to the request’s <code>include</code>, keeping any entries you pass, so <code>WebSearchDone</code> carries the sources OpenAI searched.</p>
 
 <h2 id="example">Example</h2>
 

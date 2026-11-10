@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -132,6 +132,11 @@
                   ><span class="num">18</span> Tracing</a
                 >
               </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
+                >
+              </li>
             </ul>
             <span class="group-label jane">Providers</span>
             <ul>
@@ -203,6 +208,7 @@
               <li><a href="#naming-a-stub">Naming a stub</a></li>
               <li><a href="#stubbing-under-an-intermediate-base-class">Stubbing under an intermediate base class</a></li>
               <li><a href="#cleanup">Cleanup</a></li>
+              <li><a href="#deprecations">Deprecations</a></li>
               <li><a href="#when-a-stub-leaks">When a stub leaks</a></li>
               <li><a href="#registering-without-a-stub">Registering without a stub</a></li>
             </ul>
@@ -222,7 +228,7 @@
 <span class="nb">require</span> <span class="s1">'riffer/testing/minitest'</span>
 </code></pre></div></div>
 
-<p>Either one adds <code>stub_agent</code> and <code>stub_tool</code> to every example and cleans up after each one. Neither RSpec nor minitest is a riffer dependency; the adapter files are only loaded when you require them yourself.</p>
+<p>Either one adds <code>stub_agent</code>, <code>stub_tool</code> and <code>allow_deprecations</code> to every example and cleans up after each one. Neither RSpec nor minitest is a riffer dependency; the adapter files are only loaded when you require them yourself.</p>
 
 <h2 id="stubbing-a-tool">Stubbing a tool</h2>
 
@@ -308,6 +314,25 @@
 </code></pre></div></div>
 
 <p>Tracking lives on <code>Riffer::Testing</code> itself, so <code>Riffer::Testing.stub_tool(...)</code> outside an example and <code>stub_tool(...)</code> inside one share one list. Tracking is not synchronized — stub from a single-threaded test, before concurrent lookups begin.</p>
+
+<h2 id="deprecations">Deprecations</h2>
+
+<p>Make your suite fail when it hits a deprecated riffer call, so you find each one before an upgrade removes it:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test/test_helper.rb</span>
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">deprecations</span> <span class="o">=</span> <span class="ss">:raise</span>
+</code></pre></div></div>
+
+<p>Every deprecated call then raises <code>Riffer::DeprecationError</code>, naming the line that made it. A test that uses a deprecated call on purpose wraps it in <code>allow_deprecations</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">it</span> <span class="s1">'still reads legacy pricing'</span> <span class="k">do</span>
+  <span class="n">allow_deprecations</span> <span class="p">{</span> <span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s1">'openai/gpt-5'</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">1.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">2.0</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>allow_deprecations</code> silences deprecations until the block returns or raises, and returns the block’s value. It applies to the current thread or fiber and to threads and fibers started inside the block; other threads keep reporting. It is also available as <code>Riffer::Testing.allow_deprecations</code> outside an example. See <a href="/guides/configuration/#deprecations">Configuration — Deprecations</a> for the other modes.</p>
 
 <h2 id="when-a-stub-leaks">When a stub leaks</h2>
 

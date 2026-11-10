@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -258,6 +263,8 @@
 
 <p>Fires once per model response, after its last <code>TextDelta</code>, and contains the response’s full text: every text block the provider returned, concatenated in order, so it always equals the joined <code>TextDelta</code> contents. A response that carries no text (for example, only tool calls) emits no <code>TextDone</code>.</p>
 
+<p>The agent loop builds the message’s <a href="/guides/messages/#parts">text parts</a> from the <code>TextDelta</code> events: the deltas between two other parts (reasoning, a tool call, a server tool block) form one text part. An adapter that sends no deltas gets one text part, from <code>TextDone</code>, at the end of the turn.</p>
+
 <h3 id="toolcalldelta">ToolCallDelta</h3>
 
 <p>Emitted when tool call arguments are being streamed:</p>
@@ -351,6 +358,19 @@
 </code></pre></div></div>
 
 <p>Contains the search query and an array of source hashes with <code>title</code> and <code>url</code> keys.</p>
+
+<h3 id="servertooldone">ServerToolDone</h3>
+
+<p>Emitted when a block from a tool the provider ran itself (such as web search) is complete. It carries the block for replay; use <code>WebSearchStatus</code> and <code>WebSearchDone</code> to show progress.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">part</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ServerToolPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"web_search"</span><span class="p">,</span> <span class="ss">kind: :call</span><span class="p">,</span> <span class="ss">data: </span><span class="s2">"{...}"</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"anthropic-messages-v1"</span><span class="p">)</span>
+<span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ServerToolDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>  <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">part</span>  <span class="c1"># =&gt; the ServerToolPart</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :assistant, part: {name: "web_search", kind: :call, data: "{...}", format: "anthropic-messages-v1"}}</span>
+</code></pre></div></div>
+
+<p>The agent loop adds <code>part</code> to the assistant message’s <a href="/guides/messages/#parts">parts</a>. Only Anthropic emits it today.</p>
 
 <h3 id="guardrailtripwire">GuardrailTripwire</h3>
 

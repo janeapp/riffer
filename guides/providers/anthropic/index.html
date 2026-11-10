@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.55.0</span>
+            <span class="version">v0.56.0</span>
           </div>
         </nav>
       </div>
@@ -130,6 +130,11 @@
               <li>
                 <a href="/guides/tracing/"
                   ><span class="num">18</span> Tracing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stability/"
+                  ><span class="num">19</span> Stability</a
                 >
               </li>
             </ul>
@@ -411,9 +416,11 @@
 
 <h3 id="reasoning-replay">Reasoning Replay</h3>
 
-<p>Riffer sends the reasoning back to Anthropic on every later turn, as <code>thinking</code> and <code>redacted_thinking</code> blocks ahead of the message’s text and <code>tool_use</code> blocks, in their original order and unchanged. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don’t have to do anything; it happens as long as the assistant messages stay in the history.</p>
+<p>Riffer sends every earlier turn back to Anthropic as the API returned it: the <code>thinking</code>, <code>redacted_thinking</code>, text, web search and <code>tool_use</code> blocks, in their original order and unchanged (see <a href="/guides/messages/#parts">Messages — Parts</a>). Order matters because Claude signs each thinking block over everything before it, including earlier blocks of the same turn. A turn sent back in a different order loses that reasoning, or is rejected with a 400 on accounts that enforce the binding. For tool calls, sending the reasoning back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don’t have to do anything; it happens as long as the assistant messages stay in the history.</p>
 
-<p>If you persist sessions, keep the <code>reasoning</code> key when you store messages (see <a href="/guides/messages/#reasoning">Messages — Reasoning</a>). If you drop it, later turns lose the model’s earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.</p>
+<p>If you persist sessions, <code>to_h</code> keeps the web search results and the turn’s block order (see <a href="/guides/messages/#parts">Messages — Parts</a>). Dropping the reasoning loses the model’s earlier thinking, and a tool-calling turn with thinking enabled may be rejected.</p>
+
+<p>If you change a turn’s text, drop that turn’s reasoning yourself; see <a href="/guides/messages/#parts">Editing a turn</a>.</p>
 
 <p>Only reasoning that this provider produced is sent back to Anthropic. A conversation that switches providers midway still works: reasoning from other providers (including OpenRouter’s <code>anthropic-claude-v1</code> parts) is kept on the messages but left out of Anthropic requests.</p>
 
@@ -443,6 +450,8 @@
 
 <p>Anthropic emits sources with <code>title</code> and <code>url</code> on the <code>WebSearchDone</code> event.</p>
 
+<p>Each <code>server_tool_use</code> block and its result block (<code>web_search_tool_result</code>, or <code>code_execution_tool_result</code> when a newer web search version runs the search from code execution) is kept on the assistant message as a <code>ServerToolPart</code> (see <a href="/guides/messages/#parts">Messages — Parts</a>), and a streamed one also arrives as a <code>ServerToolDone</code> event. With <code>generate</code>, text blocks with citations keep their block too; a streamed turn keeps the text without its citations. Later turns send them back in place, so Claude reuses the results instead of searching again.</p>
+
 <h2 id="message-format">Message Format</h2>
 
 <p>The provider converts Riffer messages to Anthropic format:</p>
@@ -465,7 +474,7 @@
     </tr>
     <tr>
       <td><code>Assistant</code></td>
-      <td><code>{role: "assistant", content: [...]}</code> with text/tool_use blocks</td>
+      <td><code>{role: "assistant", content: [...]}</code>, one block per part, in part order</td>
     </tr>
     <tr>
       <td><code>Tool</code></td>
