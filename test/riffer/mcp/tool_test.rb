@@ -30,7 +30,7 @@ describe Riffer::Mcp::Tool do
 
     it "falls back to the params DSL when no input schema is set" do
       klass = Class.new(Riffer::Mcp::Tool) do
-        params { required :city, String }
+        params { required :city, :string }
       end
 
       assert_equal ["city"], klass.parameters_schema[:required]

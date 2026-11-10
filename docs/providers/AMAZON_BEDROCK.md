@@ -150,8 +150,8 @@ class S3ListTool < Riffer::Tool
   description "Lists objects in an S3 bucket"
 
   params do
-    required :bucket, String, description: "The S3 bucket name"
-    optional :prefix, String, description: "Object prefix filter"
+    required :bucket, :string, description: "The S3 bucket name"
+    optional :prefix, :string, description: "Object prefix filter"
   end
 
   def call(context:, bucket:, prefix: nil)

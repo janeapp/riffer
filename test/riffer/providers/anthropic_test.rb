@@ -261,8 +261,8 @@ describe Riffer::Providers::Anthropic do
     it "includes output_config.format in request params" do
       provider = Riffer::Providers::Anthropic.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
-      params.required(:score, Float)
+      params.required(:sentiment, :string)
+      params.required(:score, :number)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -279,7 +279,7 @@ describe Riffer::Providers::Anthropic do
     it "includes json_schema in format" do
       provider = Riffer::Providers::Anthropic.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -305,7 +305,7 @@ describe Riffer::Providers::Anthropic do
     it "preserves caller-supplied output_config keys alongside format" do
       provider = Riffer::Providers::Anthropic.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -323,7 +323,7 @@ describe Riffer::Providers::Anthropic do
     it "overrides a caller-supplied format with the structured output format" do
       provider = Riffer::Providers::Anthropic.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -355,7 +355,7 @@ describe Riffer::Providers::Anthropic do
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::Anthropic.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -408,8 +408,8 @@ describe Riffer::Providers::Anthropic do
       tool = stub_tool("TestTool") do
         description "A test tool"
         params do
-          required :name, String
-          optional :age, Integer
+          required :name, :string
+          optional :age, :integer
         end
       end
 
@@ -440,7 +440,7 @@ describe Riffer::Providers::Anthropic do
 
     it "keeps the effort next to a structured output format" do
       params = Riffer::Params.new
-      params.required(:answer, String)
+      params.required(:answer, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       options = { riffer_reasoning_level: :low, structured_output: structured_output }
       merged = provider.send(:apply_reasoning, "claude-sonnet-4-6", options).except(:riffer_reasoning_level)

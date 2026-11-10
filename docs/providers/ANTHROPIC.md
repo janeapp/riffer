@@ -139,8 +139,8 @@ class WeatherTool < Riffer::Tool
   description "Gets the current weather for a location"
 
   params do
-    required :city, String, description: "The city name"
-    optional :unit, String, description: "Temperature unit (celsius or fahrenheit)"
+    required :city, :string, description: "The city name"
+    optional :unit, :string, description: "Temperature unit (celsius or fahrenheit)"
   end
 
   def call(context:, city:, unit: "celsius")

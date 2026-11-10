@@ -19,7 +19,7 @@ class Riffer::Mcp::SearchTool < Riffer::Tool
   description "Search for available MCP tools by name or description."
 
   params do
-    required :query, String, description: "Non-empty substring to filter tools by name or description."
+    required :query, :string, description: "Non-empty substring to filter tools by name or description."
   end
 
   #--

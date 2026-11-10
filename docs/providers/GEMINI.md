@@ -132,8 +132,8 @@ end
 
 ```ruby
 params = Riffer::Params.new
-params.required(:sentiment, String)
-params.required(:score, Float)
+params.required(:sentiment, :string)
+params.required(:score, :number)
 structured_output = Riffer::Agent::StructuredOutput.new(params)
 
 response = provider.generate_text(
@@ -146,7 +146,7 @@ puts response.structured_output
 
 Structured output is sent as `responseFormat`, which needs a gemini-3 model or later. gemini-2.x models ignore it and return prose.
 
-The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return `null` for a value it doesn't know instead of making one up. A `Hash` param needs a block and an `Array` param a block or `of:` (see [Structured Output Limitations](../AGENTS.md#limitations)).
+The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return `null` for a value it doesn't know instead of making one up. An `:object` param needs a block and an `:array` param a block or `of:` (see [Structured Output Limitations](../AGENTS.md#limitations)).
 
 ### Tool Calling
 
@@ -154,7 +154,7 @@ The schema is sent in strict form: every field is listed as required, and an opt
 class WeatherTool < Riffer::Tool
   description "Gets weather"
   params do
-    required :city, String
+    required :city, :string
   end
   def call(context:, city:)
     text("Sunny in #{city}")

@@ -257,7 +257,7 @@ describe Riffer::Providers::OpenRouter do
 
     it "does not leak structured_output kwarg to the request body" do
       params_obj = Riffer::Params.new
-      params_obj.required(:sentiment, String)
+      params_obj.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params_obj)
 
       params = provider.send(
@@ -272,7 +272,7 @@ describe Riffer::Providers::OpenRouter do
 
     it "converts structured_output to response_format json_schema" do
       params_obj = Riffer::Params.new
-      params_obj.required(:sentiment, String)
+      params_obj.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params_obj)
 
       params = provider.send(
@@ -363,7 +363,7 @@ describe Riffer::Providers::OpenRouter do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end
@@ -584,8 +584,8 @@ describe Riffer::Providers::OpenRouter do
   describe "structured output" do
     let(:basic_structured_output) do
       params = Riffer::Params.new
-      params.required(:sentiment, String)
-      params.required(:score, Float)
+      params.required(:sentiment, :string)
+      params.required(:score, :number)
       Riffer::Agent::StructuredOutput.new(params)
     end
 
@@ -622,7 +622,7 @@ describe Riffer::Providers::OpenRouter do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end
@@ -843,7 +843,7 @@ describe Riffer::Providers::OpenRouter do
           weather_tool = stub_tool("GetWeather") do
             description "Get the current weather for a city"
             params do
-              required :city, String, description: "The city name"
+              required :city, :string, description: "The city name"
             end
           end
           provider = Riffer::Providers::OpenRouter.new

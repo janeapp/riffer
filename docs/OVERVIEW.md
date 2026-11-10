@@ -26,7 +26,7 @@ class WeatherTool < Riffer::Tool
   description "Gets the weather for a city"
 
   params do
-    required :city, String, description: "The city name"
+    required :city, :string, description: "The city name"
   end
 
   def call(context:, city:)
@@ -39,17 +39,17 @@ See [Tools](TOOLS.md) for details.
 
 ### Structured Output
 
-Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (`Hash`), typed arrays (`Array, of:`), arrays of arrays (`Array, of: [Integer]`), arrays of objects (`Array` with block), and either/or shapes (`Riffer::Params::AnyOf`):
+Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (`:object`), typed arrays (`:array, of:`), arrays of arrays (`:array, of: [:integer]`), arrays of objects (`:array` with block), and either/or shapes (`:any_of`):
 
 ```ruby
 class SentimentAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   structured_output do
-    required :sentiment, String
-    required :score, Float
-    required :entities, Array, description: "Named entities" do
-      required :name, String
-      required :type, String, enum: ["person", "place", "org"]
+    required :sentiment, :string
+    required :score, :number
+    required :entities, :array, description: "Named entities" do
+      required :name, :string
+      required :type, :string, enum: ["person", "place", "org"]
     end
   end
 end

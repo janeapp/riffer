@@ -5,14 +5,14 @@ require "test_helper"
 describe Riffer::Agent::StructuredOutput do
   let(:sentiment_params) do
     params = Riffer::Params.new
-    params.required(:sentiment, String)
+    params.required(:sentiment, :string)
     params
   end
 
   let(:sentiment_score_params) do
     params = Riffer::Params.new
-    params.required(:sentiment, String)
-    params.required(:score, Float)
+    params.required(:sentiment, :string)
+    params.required(:score, :number)
     params
   end
 
@@ -31,13 +31,13 @@ describe Riffer::Agent::StructuredOutput do
   describe "#prompt_instructions" do
     it "follows the schema with an example of its shape and a nudge to answer directly" do
       params = Riffer::Params.new
-      params.required(:answer, String, description: "The answer")
-      params.required(:details, Hash) do
-        required :confidence, String, enum: %w[low medium high]
-        optional :follow_up, String
+      params.required(:answer, :string, description: "The answer")
+      params.required(:details, :object) do
+        required :confidence, :string, enum: %w[low medium high]
+        optional :follow_up, :string
       end
-      params.required(:sources, Array) do
-        required :id, String
+      params.required(:sources, :array) do
+        required :id, :string
       end
       so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
 
@@ -55,14 +55,14 @@ describe Riffer::Agent::StructuredOutput do
 
     it "gives every schema type a placeholder in the example" do
       params = Riffer::Params.new
-      params.required(:count, Integer)
-      params.required(:score, Float)
-      params.required(:active, Riffer::Params::Boolean)
-      params.required(:level, Integer, enum: [1, 2, 3])
-      params.required(:tags, Array, of: String)
-      params.required(:grid, Array, of: [Integer])
-      params.required(:anything, Array)
-      params.required(:metadata, Hash)
+      params.required(:count, :integer)
+      params.required(:score, :number)
+      params.required(:active, :boolean)
+      params.required(:level, :integer, enum: [1, 2, 3])
+      params.required(:tags, :array, of: :string)
+      params.required(:grid, :array, of: [:integer])
+      params.required(:anything, :array)
+      params.required(:metadata, :object)
       so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
 
       example = so.prompt_instructions[/^Example of the shape \(placeholder values\):\n(.+)$/, 1]
@@ -81,9 +81,9 @@ describe Riffer::Agent::StructuredOutput do
 
     it "shows the first variant of an AnyOf field in the example" do
       params = Riffer::Params.new
-      params.required(:contact, Riffer::Params::AnyOf) do
-        variant { required :email, String }
-        variant { required :phone, Integer }
+      params.required(:contact, :any_of) do
+        variant { required :email, :string }
+        variant { required :phone, :integer }
       end
       so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
 
@@ -94,9 +94,9 @@ describe Riffer::Agent::StructuredOutput do
 
     it "shows every primitive variant of an AnyOf field in the example" do
       params = Riffer::Params.new
-      params.required(:quantity, Riffer::Params::AnyOf) do
-        variant Integer
-        variant String, enum: %w[some many]
+      params.required(:quantity, :any_of) do
+        variant :integer
+        variant :string, enum: %w[some many]
       end
       so = Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
 
@@ -216,27 +216,27 @@ describe Riffer::Agent::StructuredOutput do
     describe "with null optional fields" do
       let(:nested_params) do
         params = Riffer::Params.new
-        params.required(:name, String)
-        params.required(:address, Hash) do
-          required :city, String
-          optional :zip, String
+        params.required(:name, :string)
+        params.required(:address, :object) do
+          required :city, :string
+          optional :zip, :string
         end
         params
       end
 
       let(:array_of_objects_params) do
         params = Riffer::Params.new
-        params.required(:items, Array) do
-          required :sku, String
-          optional :notes, String
+        params.required(:items, :array) do
+          required :sku, :string
+          optional :notes, :string
         end
         params
       end
 
       it "accepts null for a top-level optional field" do
         params = Riffer::Params.new
-        params.required(:name, String)
-        params.optional(:age, Integer)
+        params.required(:name, :string)
+        params.optional(:age, :integer)
         so = Riffer::Agent::StructuredOutput.new(params)
         result = so.parse_and_validate('{"name":"John","age":null}')
 
@@ -265,8 +265,8 @@ describe Riffer::Agent::StructuredOutput do
 
       it "accepts absent optional fields the same as null" do
         params = Riffer::Params.new
-        params.required(:name, String)
-        params.optional(:age, Integer)
+        params.required(:name, :string)
+        params.optional(:age, :integer)
         so = Riffer::Agent::StructuredOutput.new(params)
         result = so.parse_and_validate('{"name":"John"}')
 
@@ -276,8 +276,8 @@ describe Riffer::Agent::StructuredOutput do
 
       it "still rejects null for required fields" do
         params = Riffer::Params.new
-        params.required(:name, String)
-        params.optional(:age, Integer)
+        params.required(:name, :string)
+        params.optional(:age, :integer)
         so = Riffer::Agent::StructuredOutput.new(params)
         result = so.parse_and_validate('{"name":null,"age":25}')
 

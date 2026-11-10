@@ -8,8 +8,8 @@ describe Riffer::Tool do
       description "Gets the current weather"
 
       params do
-        required :city, String, description: "The city name"
-        optional :units, String, default: "celsius"
+        required :city, :string, description: "The city name"
+        optional :units, :string, default: "celsius"
       end
 
       def call(context:, city:, units: nil)
@@ -111,14 +111,14 @@ describe Riffer::Tool do
       expect(schema[:properties]).must_equal({})
     end
 
-    describe "with a Hash param that has no block" do
+    describe "with an :object param that has no block" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
           identifier "apply_rule"
           description "Applies a rule"
 
           params do
-            required :applies_when, Hash
+            required :applies_when, :object
           end
         end
       end
@@ -127,7 +127,7 @@ describe Riffer::Tool do
         error = expect { tool_class.parameters_schema(strict: true) }.must_raise(Riffer::ArgumentError)
 
         expect(error.message).must_equal(
-          "applies_when: a Hash param requires a block defining its properties under strict schemas",
+          "applies_when: an :object param requires a block defining its properties under strict schemas",
         )
       end
 
@@ -143,9 +143,9 @@ describe Riffer::Tool do
           description "Finds a patient"
 
           params do
-            required :lookup, Riffer::Params::AnyOf do
-              variant { required :email, String }
-              variant { required :phone, String }
+            required :lookup, :any_of do
+              variant { required :email, :string }
+              variant { required :phone, :string }
             end
           end
         end
@@ -178,9 +178,9 @@ describe Riffer::Tool do
           description "Sets a quantity"
 
           params do
-            optional :quantity, Riffer::Params::AnyOf do
-              variant Integer
-              variant String
+            optional :quantity, :any_of do
+              variant :integer
+              variant :string
             end
           end
         end
@@ -200,7 +200,7 @@ describe Riffer::Tool do
           description "Tags a ticket"
 
           params do
-            required :tags, Array, of: String, enum: %w[urgent billing]
+            required :tags, :array, of: :string, enum: %w[urgent billing]
           end
         end
       end
@@ -219,7 +219,7 @@ describe Riffer::Tool do
           description "Books a visit"
 
           params do
-            optional :on, String, format: "date"
+            optional :on, :string, format: "date"
           end
         end
       end
@@ -238,7 +238,7 @@ describe Riffer::Tool do
           description "Plots a route"
 
           params do
-            optional :points, Array, of: [Float]
+            optional :points, :array, of: [:number]
           end
         end
       end
@@ -332,7 +332,7 @@ describe Riffer::Tool do
     it "returns a validation_error response for a value outside its format" do
       tool_class = stub_tool("Tool") do
         params do
-          required :on, String, format: "date"
+          required :on, :string, format: "date"
         end
 
         def call(context:, on:)
@@ -348,7 +348,7 @@ describe Riffer::Tool do
     it "returns a validation_error response for a nested array item of the wrong type" do
       tool_class = stub_tool("Tool") do
         params do
-          required :points, Array, of: [Float]
+          required :points, :array, of: [:number]
         end
 
         def call(context:, points:)
@@ -371,7 +371,7 @@ describe Riffer::Tool do
     it "passes context to call" do
       tool_class = stub_tool("Tool") do
         params do
-          required :name, String
+          required :name, :string
         end
 
         def call(context:, name:)

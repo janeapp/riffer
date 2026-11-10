@@ -378,11 +378,11 @@ describe Riffer::Agent do
     it "does not let a subclass's added schema field reach the parent" do
       parent = stub_agent("SchemaParentAgent") do
         model "mock/riffer-1"
-        structured_output { required :verdict, String }
+        structured_output { required :verdict, :string }
       end
       child = stub_agent("SchemaChildAgent", base: parent)
 
-      child.config.structured_output.required(:confidence, Float)
+      child.config.structured_output.required(:confidence, :number)
 
       expect(child.config.structured_output.parameters.map(&:name)).must_equal %i[verdict confidence]
       expect(parent.config.structured_output.parameters.map(&:name)).must_equal %i[verdict]
@@ -393,14 +393,14 @@ describe Riffer::Agent do
       parent = stub_agent("NestedSchemaParentAgent") do
         model "mock/riffer-1"
         structured_output do
-          required :claim, Hash do
-            required :id, String
+          required :claim, :object do
+            required :id, :string
           end
         end
       end
       child = stub_agent("NestedSchemaChildAgent", base: parent)
 
-      child.config.structured_output.parameters.first.nested_params.required(:amount, Float)
+      child.config.structured_output.parameters.first.nested_params.required(:amount, :number)
 
       child_nested = child.config.structured_output.parameters.first.nested_params
       parent_nested = parent.config.structured_output.parameters.first.nested_params
@@ -536,7 +536,7 @@ describe Riffer::Agent do
   describe ".structured_output" do
     it "stores Params instance" do
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
       end
@@ -549,8 +549,8 @@ describe Riffer::Agent do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String, description: "The sentiment"
-          optional :score, Float
+          required :sentiment, :string, description: "The sentiment"
+          optional :score, :number
         end
       end
 
@@ -561,7 +561,7 @@ describe Riffer::Agent do
     it "defaults to the native strategy" do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
-        structured_output { required :sentiment, String }
+        structured_output { required :sentiment, :string }
       end
 
       expect(klass.new.structured_output.prompted?).must_equal false
@@ -570,7 +570,7 @@ describe Riffer::Agent do
     it "stores the strategy: keyword" do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
-        structured_output(strategy: :prompted) { required :sentiment, String }
+        structured_output(strategy: :prompted) { required :sentiment, :string }
       end
 
       expect(klass.config.structured_output_strategy).must_equal :prompted
@@ -586,7 +586,7 @@ describe Riffer::Agent do
     it "is inherited by subclasses" do
       parent = stub_agent("PromptedParentAgent") do
         model "mock/riffer-1"
-        structured_output(strategy: :prompted) { required :sentiment, String }
+        structured_output(strategy: :prompted) { required :sentiment, :string }
       end
       child = stub_agent("PromptedChildAgent", base: parent)
 
@@ -630,7 +630,7 @@ describe Riffer::Agent do
       context_tool = stub_tool("ClassGenerateContextTool") do
         description "Gets user info"
         params do
-          required :field, String
+          required :field, :string
         end
         def call(context:, field:)
           text(context[field.to_sym] || "unknown")
@@ -670,7 +670,7 @@ describe Riffer::Agent do
       context_tool = stub_tool("ClassStreamContextTool") do
         description "Gets user info"
         params do
-          required :field, String
+          required :field, :string
         end
         def call(context:, field:)
           text(context[field.to_sym] || "unknown")
@@ -699,7 +699,7 @@ describe Riffer::Agent do
         description "Gets the weather"
 
         params do
-          required :city, String
+          required :city, :string
         end
 
         def call(context:, city:)

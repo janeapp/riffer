@@ -13,8 +13,8 @@ class Riffer::Evals::Judge
     description "Submit your evaluation score and reasoning"
 
     params do
-      required :score, Float, description: "Evaluation score between 0.0 and 1.0"
-      required :reason, String, description: "Brief explanation for the score"
+      required :score, :number, description: "Evaluation score between 0.0 and 1.0"
+      required :reason, :string, description: "Brief explanation for the score"
     end
 
     #--

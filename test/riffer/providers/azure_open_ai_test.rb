@@ -139,8 +139,8 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AzureOpenAI.new
           params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
+          params.required(:sentiment, :string)
+          params.required(:score, :number)
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
@@ -156,8 +156,8 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AzureOpenAI.new
           params = Riffer::Params.new
-          params.required(:sentiment, String)
-          params.required(:score, Float)
+          params.required(:sentiment, :string)
+          params.required(:score, :number)
           structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
@@ -237,7 +237,7 @@ describe Riffer::Providers::AzureOpenAI do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
-          required :city, String, description: "The city name"
+          required :city, :string, description: "The city name"
         end
       end
     end

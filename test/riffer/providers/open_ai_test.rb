@@ -424,8 +424,8 @@ describe Riffer::Providers::OpenAI do
     it "includes text.format in request params" do
       provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
-      params.required(:score, Float)
+      params.required(:sentiment, :string)
+      params.required(:score, :number)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -437,7 +437,7 @@ describe Riffer::Providers::OpenAI do
     it "sets schema name to response" do
       provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -449,7 +449,7 @@ describe Riffer::Providers::OpenAI do
     it "sets strict to true" do
       provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -461,7 +461,7 @@ describe Riffer::Providers::OpenAI do
     it "includes json_schema in format" do
       provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -482,7 +482,7 @@ describe Riffer::Providers::OpenAI do
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -494,8 +494,8 @@ describe Riffer::Providers::OpenAI do
     it "puts all properties in required for strict mode" do
       provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
-      p.required(:name, String)
-      p.optional(:age, Integer)
+      p.required(:name, :string)
+      p.optional(:age, :integer)
       structured_output = Riffer::Agent::StructuredOutput.new(p)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -508,8 +508,8 @@ describe Riffer::Providers::OpenAI do
     it "makes optional properties nullable for strict mode" do
       provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
-      p.required(:name, String)
-      p.optional(:age, Integer)
+      p.required(:name, :string)
+      p.optional(:age, :integer)
       structured_output = Riffer::Agent::StructuredOutput.new(p)
       messages = [Riffer::Messages::User.new("Analyze")]
 
@@ -523,9 +523,9 @@ describe Riffer::Providers::OpenAI do
     it "makes nested optional properties nullable for strict mode" do
       provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
-      p.required(:address, Hash) do
-        required :city, String
-        optional :zip, String
+      p.required(:address, :object) do
+        required :city, :string
+        optional :zip, :string
       end
       structured_output = Riffer::Agent::StructuredOutput.new(p)
       messages = [Riffer::Messages::User.new("Analyze")]
@@ -541,9 +541,9 @@ describe Riffer::Providers::OpenAI do
     it "makes optional properties in array items nullable for strict mode" do
       provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
-      p.required(:items, Array) do
-        required :sku, String
-        optional :notes, String
+      p.required(:items, :array) do
+        required :sku, :string
+        optional :notes, :string
       end
       structured_output = Riffer::Agent::StructuredOutput.new(p)
       messages = [Riffer::Messages::User.new("Analyze")]
@@ -558,11 +558,11 @@ describe Riffer::Providers::OpenAI do
 
     it "validates successfully when nullable optional fields return null" do
       p = Riffer::Params.new
-      p.required(:name, String)
-      p.optional(:age, Integer)
-      p.required(:address, Hash) do
-        required :city, String
-        optional :zip, String
+      p.required(:name, :string)
+      p.optional(:age, :integer)
+      p.required(:address, :object) do
+        required :city, :string
+        optional :zip, :string
       end
       structured_output = Riffer::Agent::StructuredOutput.new(p)
 
@@ -665,8 +665,8 @@ describe Riffer::Providers::OpenAI do
       tool = stub_tool("TestTool") do
         description "A test tool"
         params do
-          required :name, String
-          optional :age, Integer
+          required :name, :string
+          optional :age, :integer
         end
       end
 

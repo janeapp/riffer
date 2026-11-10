@@ -133,9 +133,9 @@ class CalculatorTool < Riffer::Tool
   description "Performs basic math operations"
 
   params do
-    required :operation, String, enum: ["add", "subtract", "multiply", "divide"]
-    required :a, Float, description: "First number"
-    required :b, Float, description: "Second number"
+    required :operation, :string, enum: ["add", "subtract", "multiply", "divide"]
+    required :a, :number, description: "First number"
+    required :b, :number, description: "Second number"
   end
 
   def call(context:, operation:, a:, b:)

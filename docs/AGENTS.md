@@ -206,9 +206,9 @@ class SentimentAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   instructions 'Analyze the sentiment of the given text.'
   structured_output do
-    required :sentiment, String, description: "positive, negative, or neutral"
-    required :score, Float, description: "Confidence score between 0 and 1"
-    optional :explanation, String, description: "Brief explanation"
+    required :sentiment, :string, description: "positive, negative, or neutral"
+    required :score, :number, description: "Confidence score between 0 and 1"
+    optional :explanation, :string, description: "Brief explanation"
   end
 end
 ```
@@ -239,12 +239,12 @@ class SentimentAgent < Riffer::Agent
   model 'amazon_bedrock/my-model'
   instructions 'Analyze the sentiment of the given text.'
   structured_output strategy: :prompted do
-    required :sentiment, String, description: "positive, negative, or neutral"
+    required :sentiment, :string, description: "positive, negative, or neutral"
   end
 end
 ```
 
-With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in `session.messages`, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (`"<string>"`, enum values as `"a | b"`, an `AnyOf` field as its first variant, or as `"<integer> | <string>"` when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
+With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in `session.messages`, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (`"<string>"`, enum values as `"a | b"`, an `:any_of` field as its first variant, or as `"<integer> | <string>"` when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
 
 | Strategy            | Behavior                                                        |
 | ------------------- | --------------------------------------------------------------- |
@@ -255,15 +255,15 @@ Riffer does not pick a strategy per model — the choice is always yours. The st
 
 #### Nested Objects
 
-Use `Hash` with a block to define nested object schemas:
+Use `:object` with a block to define nested object schemas:
 
 ```ruby
 structured_output do
-  required :name, String, description: "Person name"
-  required :address, Hash, description: "Mailing address" do
-    required :street, String, description: "Street address"
-    required :city, String, description: "City"
-    optional :postal_code, String, description: "Postal or zip code"
+  required :name, :string, description: "Person name"
+  required :address, :object, description: "Mailing address" do
+    required :street, :string, description: "Street address"
+    required :city, :string, description: "City"
+    optional :postal_code, :string, description: "Postal or zip code"
   end
 end
 ```
@@ -272,22 +272,22 @@ Validation errors use dot-path notation: `address.city is required`.
 
 #### Typed Arrays
 
-Use `Array` with the `of:` keyword for arrays of primitive types:
+Use `:array` with the `of:` keyword for arrays of primitive types:
 
 ```ruby
 structured_output do
-  required :tags, Array, of: String, description: "Tags"
-  required :scores, Array, of: Float, description: "Scores"
+  required :tags, :array, of: :string, description: "Tags"
+  required :scores, :array, of: :number, description: "Scores"
 end
 ```
 
-`of:` takes a primitive type: `String`, `Integer`, `Float`, `Riffer::Params::Boolean`, `TrueClass`, `FalseClass`.
+`of:` takes a primitive type: `:string`, `:integer`, `:number` or `:boolean`.
 
 Add `enum:` to limit each item to a list of values:
 
 ```ruby
 structured_output do
-  required :tags, Array, of: String, enum: %w[urgent billing technical]
+  required :tags, :array, of: :string, enum: %w[urgent billing technical]
 end
 ```
 
@@ -297,8 +297,8 @@ For an array of arrays, put the type in brackets. Each pair of brackets adds a l
 
 ```ruby
 structured_output do
-  required :rows, Array, of: [Integer], description: "Seat numbers, one array per row"
-  required :board, Array, of: [String], enum: %w[x o]
+  required :rows, :array, of: [:integer], description: "Seat numbers, one array per row"
+  required :board, :array, of: [:string], enum: %w[x o]
 end
 ```
 
@@ -306,13 +306,13 @@ A row that isn't an array fails validation with its index: `rows[1] must be an a
 
 #### Formats
 
-Use `format:` on a `String`, or on an `Array` whose innermost type is `String`, to require a standard string format:
+Use `format:` on a `:string`, or on an `:array` whose innermost type is `:string`, to require a standard string format:
 
 ```ruby
 structured_output do
-  required :born_on, String, format: "date"
-  optional :email, String, format: "email"
-  required :visit_ids, Array, of: String, format: "uuid"
+  required :born_on, :string, format: "date"
+  optional :email, :string, format: "email"
+  required :visit_ids, :array, of: :string, format: "uuid"
 end
 ```
 
@@ -324,14 +324,14 @@ A model that must match a format writes a matching value even when it has none, 
 
 #### Arrays of Objects
 
-Use `Array` with a block to define arrays of objects:
+Use `:array` with a block to define arrays of objects:
 
 ```ruby
 structured_output do
-  required :items, Array, description: "Line items" do
-    required :name, String, description: "Product name"
-    required :price, Float, description: "Price"
-    optional :quantity, Integer, description: "Quantity"
+  required :items, :array, description: "Line items" do
+    required :name, :string, description: "Product name"
+    required :price, :number, description: "Price"
+    optional :quantity, :integer, description: "Quantity"
   end
 end
 ```
@@ -344,12 +344,12 @@ Blocks can be nested arbitrarily deep:
 
 ```ruby
 structured_output do
-  required :orders, Array, description: "Orders" do
-    required :id, String, description: "Order ID"
-    required :shipping, Hash, description: "Shipping info" do
-      required :address, Hash, description: "Address" do
-        required :street, String
-        required :city, String
+  required :orders, :array, description: "Orders" do
+    required :id, :string, description: "Order ID"
+    required :shipping, :object, description: "Shipping info" do
+      required :address, :object, description: "Address" do
+        required :street, :string
+        required :city, :string
       end
     end
   end
@@ -358,18 +358,18 @@ end
 
 #### Either/Or Shapes
 
-Use `Riffer::Params::AnyOf` when a field must be one of several object shapes. Each `variant` block defines one shape, the same way a `Hash` block does:
+Use `:any_of` when a field must be one of several object shapes. Each `variant` block defines one shape, the same way an `:object` block does:
 
 ```ruby
 structured_output do
-  required :result, Riffer::Params::AnyOf, description: "The address, or why none was found" do
+  required :result, :any_of, description: "The address, or why none was found" do
     variant do
-      required :street, String, description: "Street address"
-      required :city, String, description: "City"
+      required :street, :string, description: "Street address"
+      required :city, :string, description: "City"
     end
     variant do
-      required :error_code, String, enum: %w[no_address multiple_addresses]
-      required :error_message, String
+      required :error_code, :string, enum: %w[no_address multiple_addresses]
+      required :error_message, :string
     end
   end
 end
@@ -377,19 +377,19 @@ end
 
 The schema sends the field as `anyOf`, with one object per variant. An answer must match one variant completely: every required field of that variant, and no field from outside it. Variants are tried in order and the first match is returned. When none match, the error lists each variant's problems: `result must match one of the variants: variant 1 (street is required, city is required), variant 2 (error_code is required, error_message is required)`.
 
-An optional `AnyOf` field can also be `null`.
+An optional `:any_of` field can also be `null`.
 
 A variant can be a primitive type instead of a block, with its own `description:`, `enum:` or `format:`, and one field can mix both kinds:
 
 ```ruby
 structured_output do
-  required :quantity, Riffer::Params::AnyOf, description: "A count, or a word like 'several'" do
-    variant Integer
-    variant String
+  required :quantity, :any_of, description: "A count, or a word like 'several'" do
+    variant :integer
+    variant :string
   end
-  optional :due, Riffer::Params::AnyOf do
-    variant String, format: "date"
-    variant String, enum: ["none"]
+  optional :due, :any_of do
+    variant :string, format: "date"
+    variant :string, enum: ["none"]
   end
 end
 ```
@@ -398,9 +398,9 @@ Each primitive variant is sent as its own `anyOf` branch. A value whose type mat
 
 #### Limitations
 
-Anthropic and Bedrock reject a structured output schema with more than 16 union-type fields. Every `AnyOf` field counts, and so does every optional field, since strict mode sends it as nullable.
+Anthropic and Bedrock reject a structured output schema with more than 16 union-type fields. Every `:any_of` field counts, and so does every optional field, since strict mode sends it as nullable.
 
-A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash` or `of: [Hash]`), or with more than one type (`of: [Integer, String]`), also raises `Riffer::ArgumentError`. An `AnyOf` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. A `variant` takes either a primitive type, with optional `description:`, `enum:` or `format:`, or a block. Anything else raises `Riffer::ArgumentError`, and so does an `Integer` variant after a `Float` variant without `enum:`, since that `Float` variant accepts every number and the first match wins. Using `enum:` on a `Hash`, or on an `Array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `String` or an `Array` whose innermost type is `String`, or together with `enum:`.
+An `:object` param requires a block, and an `:array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: :object` or `of: [:object]`), or with more than one type (`of: [:integer, :string]`), also raises `Riffer::ArgumentError`. An `:any_of` param requires a block with at least two `variant`s, and can't be used with `of:` or `enum:`. A `variant` takes either a primitive type, with optional `description:`, `enum:` or `format:`, or a block. Anything else raises `Riffer::ArgumentError`, and so does an `:integer` variant after a `:number` variant without `enum:`, since that `:number` variant accepts every number and the first match wins. Using `enum:` on an `:object`, or on an `:array` without `of:`, also raises `Riffer::ArgumentError`. So does `format:` with an unsupported format, on a type other than `:string` or an `:array` whose innermost type is `:string`, or together with `enum:`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 

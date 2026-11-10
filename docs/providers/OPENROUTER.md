@@ -151,9 +151,9 @@ Tools are converted to OpenAI Chat Completions function format. The provider han
 class CalculatorTool < Riffer::Tool
   description 'Performs basic math'
   params do
-    required :operation, String, enum: ['add', 'subtract', 'multiply', 'divide']
-    required :a, Float
-    required :b, Float
+    required :operation, :string, enum: ['add', 'subtract', 'multiply', 'divide']
+    required :a, :number
+    required :b, :number
   end
 
   def call(context:, operation:, a:, b:)

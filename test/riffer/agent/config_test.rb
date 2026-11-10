@@ -401,8 +401,8 @@ describe Riffer::Agent::Config do
       config.skills_config = Riffer::Skills::Config.new.tap { |sc| sc.activate(["a-skill"]) }
       config.add_guardrail(:around, klass: Riffer::Guardrail, options: { phase: :both })
       config.structured_output = Riffer::Params.new.tap do |params|
-        params.required(:claim, Hash) { required :id, String }
-        params.optional(:status, String, enum: %w[open closed], default: { note: ["seen"] })
+        params.required(:claim, :object) { required :id, :string }
+        params.optional(:status, :string, enum: %w[open closed], default: { note: ["seen"] })
       end
       config
     end

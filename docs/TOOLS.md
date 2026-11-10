@@ -15,8 +15,8 @@ class WeatherTool < Riffer::Tool
   description "Gets the current weather for a city"
 
   params do
-    required :city, String, description: "The city name"
-    optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
+    required :city, :string, description: "The city name"
+    optional :units, :string, default: "celsius", enum: ["celsius", "fahrenheit"]
   end
 
   def call(context:, city:, units: nil)
@@ -58,10 +58,10 @@ Defines the tool's parameters using a DSL:
 ```ruby
 class CreateOrderTool < Riffer::Tool
   params do
-    required :product_id, Integer, description: "The product ID"
-    required :quantity, Integer, description: "Number of items"
-    optional :notes, String, description: "Order notes"
-    optional :priority, String, default: "normal", enum: ["low", "normal", "high"]
+    required :product_id, :integer, description: "The product ID"
+    required :quantity, :integer, description: "Number of items"
+    optional :notes, :string, description: "Order notes"
+    optional :priority, :string, default: "normal", enum: ["low", "normal", "high"]
   end
 end
 ```
@@ -74,16 +74,16 @@ Defines a required parameter:
 
 ```ruby
 params do
-  required :name, String, description: "The user's name"
-  required :age, Integer, description: "The user's age"
+  required :name, :string, description: "The user's name"
+  required :age, :integer, description: "The user's age"
 end
 ```
 
 Options:
 
 - `description` - Human-readable description for the LLM
-- `enum` - Array of allowed values (for the innermost items of an `Array` with `of:`)
-- `format` - String format such as `"date"` or `"email"` (for the innermost `String` items of an `Array`; see [Formats](AGENTS.md#formats))
+- `enum` - Array of allowed values (for the innermost items of an `:array` with `of:`)
+- `format` - String format such as `"date"` or `"email"` (for the innermost `:string` items of an `:array`; see [Formats](AGENTS.md#formats))
 
 ### optional
 
@@ -91,8 +91,8 @@ Defines an optional parameter:
 
 ```ruby
 params do
-  optional :limit, Integer, default: 10, description: "Max results"
-  optional :format, String, enum: ["json", "xml"], description: "Output format"
+  optional :limit, :integer, default: 10, description: "Max results"
+  optional :format, :string, enum: ["json", "xml"], description: "Output format"
 end
 ```
 
@@ -100,44 +100,43 @@ Options:
 
 - `description` - Human-readable description
 - `default` - Default value when not provided
-- `enum` - Array of allowed values (for the innermost items of an `Array` with `of:`)
-- `format` - String format such as `"date"` or `"email"` (for the innermost `String` items of an `Array`; see [Formats](AGENTS.md#formats))
+- `enum` - Array of allowed values (for the innermost items of an `:array` with `of:`)
+- `format` - String format such as `"date"` or `"email"` (for the innermost `:string` items of an `:array`; see [Formats](AGENTS.md#formats))
 
 ### Supported Types
 
-| Ruby Type                  | JSON Schema Type                 |
-| -------------------------- | -------------------------------- |
-| `String`                   | `string`                         |
-| `Integer`                  | `integer`                        |
-| `Float`                    | `number`                         |
-| `Riffer::Params::Boolean`  | `boolean`                        |
-| `TrueClass` / `FalseClass` | `boolean`                        |
-| `Array`                    | `array`                          |
-| `Hash`                     | `object`                         |
-| `Riffer::Params::AnyOf`    | `anyOf` of objects or primitives |
+| Type       | JSON Schema type                 | Validated value                   | Deprecated class                                     |
+| ---------- | -------------------------------- | --------------------------------- | ---------------------------------------------------- |
+| `:string`  | `string`                         | `String`                          | `String`                                             |
+| `:integer` | `integer`                        | `Integer`                         | `Integer`                                            |
+| `:number`  | `number`                         | `Float`                           | `Float`                                              |
+| `:boolean` | `boolean`                        | `true` or `false`                 | `Riffer::Params::Boolean`, `TrueClass`, `FalseClass` |
+| `:array`   | `array`                          | `Array`                           | `Array`                                              |
+| `:object`  | `object`                         | `Hash` with symbol keys           | `Hash`                                               |
+| `:any_of`  | `anyOf` of objects or primitives | The value of the matching variant | `Riffer::Params::AnyOf`                              |
 
-`Riffer::Params::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
+`required`, `optional`, `of:` and `variant` still accept the deprecated Ruby classes, and each line that uses one reports a [deprecation](CONFIGURATION.md#deprecations). They won't be removed before 1 December 2026.
 
-A `Float` param accepts a whole number too, since JSON Schema's `number` covers integers — a model returning `120` for a `Float` is valid, and the validated value is coerced to `120.0`. `Integer` stays strict: `1.0` is rejected, matching JSON Schema's `integer`.
+A `:number` param accepts a whole number too, since JSON Schema's `number` covers integers — a model returning `120` for a `:number` is valid, and the validated value is coerced to `120.0`. `:integer` stays strict: `1.0` is rejected, matching JSON Schema's `integer`.
 
 ### Nested Parameters
 
-Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), arrays of arrays (`Array, of: [Integer]`), arrays of objects (`Array` with block), and either/or shapes (`Riffer::Params::AnyOf` with `variant`s). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
+Tool params support the same nested DSL as structured output — nested objects (`:object` with block), typed arrays (`:array, of:`), arrays of arrays (`:array, of: [:integer]`), arrays of objects (`:array` with block), and either/or shapes (`:any_of` with `variant`s). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
 
 ```ruby
 class CreateOrderTool < Riffer::Tool
   description "Creates an order"
 
   params do
-    required :items, Array, description: "Line items" do
-      required :product_id, Integer
-      required :quantity, Integer
-      optional :notes, String
+    required :items, :array, description: "Line items" do
+      required :product_id, :integer
+      required :quantity, :integer
+      optional :notes, :string
     end
-    required :shipping, Hash, description: "Shipping address" do
-      required :street, String
-      required :city, String
-      optional :zip, String
+    required :shipping, :object, description: "Shipping address" do
+      required :street, :string
+      required :city, :string
+      optional :zip, :string
     end
   end
 

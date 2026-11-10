@@ -86,7 +86,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
       agent = klass.new
@@ -106,8 +106,8 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
-          required :score, Float
+          required :sentiment, :string
+          required :score, :number
         end
       end
 
@@ -124,7 +124,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
 
@@ -141,7 +141,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
 
@@ -156,7 +156,7 @@ describe Riffer::Agent::Run do
 
     it "works with Params instance at class level" do
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
 
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
@@ -183,7 +183,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
 
@@ -203,7 +203,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
 
@@ -228,7 +228,7 @@ describe Riffer::Agent::Run do
         model "mock/riffer-1"
         instructions "You are a sentiment analyzer."
         structured_output strategy: :prompted do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
     end
@@ -264,7 +264,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [tc]
-        structured_output(strategy: :prompted) { required :sentiment, String }
+        structured_output(strategy: :prompted) { required :sentiment, :string }
       end
       agent = klass.new
       agent.provider.stub_response("", tool_calls: [{ name: "prompted_lookup_tool", arguments: "{}" }])
@@ -322,7 +322,7 @@ describe Riffer::Agent::Run do
       stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :a, Integer
+          required :a, :integer
         end
       end
     end
@@ -439,7 +439,7 @@ describe Riffer::Agent::Run do
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
-          required :sentiment, String
+          required :sentiment, :string
         end
       end
 
@@ -1194,7 +1194,7 @@ describe Riffer::Agent::Run do
         description "Gets the weather"
 
         params do
-          required :city, String
+          required :city, :string
         end
 
         def call(context:, city:)
@@ -1208,7 +1208,7 @@ describe Riffer::Agent::Run do
         description "Gets user info"
 
         params do
-          required :field, String
+          required :field, :string
         end
 
         def call(context:, field:)
@@ -2368,7 +2368,7 @@ describe Riffer::Agent::Run do
         stub_tool("EmitWeatherTool") do
           description "Gets the weather"
           params do
-            required :city, String
+            required :city, :string
           end
           def call(context:, city:)
             text("Weather in #{city}: 20 degrees")
@@ -2434,7 +2434,7 @@ describe Riffer::Agent::Run do
         stub_tool("FailingTool") do
           description "A failing tool"
           params do
-            required :value, String
+            required :value, :string
           end
           def call(context:, value:)
             raise "Something went wrong"
@@ -2734,7 +2734,7 @@ describe Riffer::Agent::Run do
         stub_tool("ResumeWeatherTool") do
           description "Gets the weather"
           params do
-            required :city, String
+            required :city, :string
           end
           def call(context:, city:)
             text("Weather in #{city}: 20 degrees")
@@ -2818,7 +2818,7 @@ describe Riffer::Agent::Run do
         context_tool = stub_tool("ResumeContextTool") do
           description "Gets user info"
           params do
-            required :field, String
+            required :field, :string
           end
           def call(context:, field:)
             text(context[field.to_sym] || "unknown")
@@ -3022,7 +3022,7 @@ describe Riffer::Agent::Run do
         klass = stub_agent("Agent") do
           model "mock/riffer-1"
           structured_output do
-            required :sentiment, String
+            required :sentiment, :string
           end
         end
 
@@ -3050,7 +3050,7 @@ describe Riffer::Agent::Run do
         klass = stub_agent("Agent") do
           model "mock/riffer-1"
           structured_output do
-            required :sentiment, String
+            required :sentiment, :string
           end
         end
 
@@ -3393,7 +3393,7 @@ describe Riffer::Agent::Run do
         stub_tool("StreamEmitWeatherTool") do
           description "Gets the weather"
           params do
-            required :city, String
+            required :city, :string
           end
           def call(context:, city:)
             text("Weather in #{city}: 20 degrees")

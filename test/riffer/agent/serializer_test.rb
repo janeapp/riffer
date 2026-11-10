@@ -5,7 +5,7 @@ require "test_helper"
 class SerializerWeatherTool < Riffer::Tool
   description "Look up the weather"
   params do
-    required :city, String, description: "the city"
+    required :city, :string, description: "the city"
   end
 
   def call(context:, city:)
@@ -63,8 +63,8 @@ describe Riffer::Agent::Serializer do
     it "carries structured output as JSON Schema" do
       klass = build_agent_class do
         structured_output do
-          required :answer, String
-          optional :score, Float, default: 0.0
+          required :answer, :string
+          optional :score, :number, default: 0.0
         end
       end
       dict = klass.new.to_h
@@ -75,7 +75,7 @@ describe Riffer::Agent::Serializer do
 
     it "carries the structured output strategy" do
       klass = build_agent_class do
-        structured_output(strategy: :prompted) { required :answer, String }
+        structured_output(strategy: :prompted) { required :answer, :string }
       end
 
       expect(klass.new.to_h[:structured_output_strategy]).must_equal :prompted
@@ -191,8 +191,8 @@ describe Riffer::Agent::Serializer do
     it "reconstructs a validating structured output" do
       klass = build_agent_class do
         structured_output do
-          required :answer, String
-          optional :score, Float, default: 0.0
+          required :answer, :string
+          optional :score, :number, default: 0.0
         end
       end
       agent = Riffer::Agent.from_h(klass.new.to_h, context: nil)
@@ -204,9 +204,9 @@ describe Riffer::Agent::Serializer do
     it "reconstructs a structured output with AnyOf through JSON" do
       klass = build_agent_class do
         structured_output do
-          required :result, Riffer::Params::AnyOf do
-            variant { required :name, String }
-            variant { required :error_code, String }
+          required :result, :any_of do
+            variant { required :name, :string }
+            variant { required :error_code, :string }
           end
         end
       end
@@ -222,9 +222,9 @@ describe Riffer::Agent::Serializer do
     it "reconstructs a structured output with primitive AnyOf variants through JSON" do
       klass = build_agent_class do
         structured_output do
-          required :quantity, Riffer::Params::AnyOf do
-            variant Integer
-            variant String, format: "date"
+          required :quantity, :any_of do
+            variant :integer
+            variant :string, format: "date"
           end
         end
       end
@@ -240,7 +240,7 @@ describe Riffer::Agent::Serializer do
 
     it "reconstructs a structured output with an array of enum values through JSON" do
       klass = build_agent_class do
-        structured_output { required :tags, Array, of: String, enum: %w[urgent billing] }
+        structured_output { required :tags, :array, of: :string, enum: %w[urgent billing] }
       end
       wire = JSON.parse(klass.new.to_json, symbolize_names: true)
       agent = Riffer::Agent.from_h(wire, context: nil)
@@ -253,7 +253,7 @@ describe Riffer::Agent::Serializer do
 
     it "reconstructs a structured output with a format through JSON" do
       klass = build_agent_class do
-        structured_output { required :born_on, String, format: "date" }
+        structured_output { required :born_on, :string, format: "date" }
       end
       wire = JSON.parse(klass.new.to_json, symbolize_names: true)
       agent = Riffer::Agent.from_h(wire, context: nil)
@@ -266,7 +266,7 @@ describe Riffer::Agent::Serializer do
 
     it "reconstructs a structured output with an array of arrays through JSON" do
       klass = build_agent_class do
-        structured_output { required :grid, Array, of: [Integer] }
+        structured_output { required :grid, :array, of: [:integer] }
       end
       wire = JSON.parse(klass.new.to_json, symbolize_names: true)
       agent = Riffer::Agent.from_h(wire, context: nil)
@@ -279,7 +279,7 @@ describe Riffer::Agent::Serializer do
 
     it "round-trips the prompted structured output strategy through JSON" do
       klass = build_agent_class do
-        structured_output(strategy: :prompted) { required :answer, String }
+        structured_output(strategy: :prompted) { required :answer, :string }
       end
       wire = JSON.parse(klass.new.to_json, symbolize_names: true)
       agent = Riffer::Agent.from_h(wire, context: nil)
@@ -289,7 +289,7 @@ describe Riffer::Agent::Serializer do
     end
 
     it "decodes a hash without a strategy as native" do
-      klass = build_agent_class { structured_output { required :answer, String } }
+      klass = build_agent_class { structured_output { required :answer, :string } }
       dict = klass.new.to_h.except(:structured_output_strategy)
 
       expect(Riffer::Agent.from_h(dict).structured_output.prompted?).must_equal false

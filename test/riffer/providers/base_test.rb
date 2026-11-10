@@ -174,7 +174,7 @@ describe Riffer::Providers::Base do
     let(:provider) { Riffer::Providers::Mock.new }
     let(:structured_output) do
       params = Riffer::Params.new
-      params.required(:sentiment, String)
+      params.required(:sentiment, :string)
       Riffer::Agent::StructuredOutput.new(params, strategy: :prompted)
     end
 

@@ -4,31 +4,27 @@
 require "json"
 
 class Riffer::Params::Param
-  TYPE_MAPPINGS = {
-    String => "string",
-    Integer => "integer",
-    Float => "number",
-    Riffer::Params::Boolean => "boolean",
-    TrueClass => "boolean",
-    FalseClass => "boolean",
-    Array => "array",
-    Hash => "object",
-  }.freeze #: Hash[Module, String]
+  PRIMITIVE_TYPES = %i[string integer number boolean].freeze #: Array[Symbol]
 
-  PRIMITIVE_TYPES = (TYPE_MAPPINGS.keys - [Array, Hash]).freeze #: Array[Module]
+  TYPES = [*PRIMITIVE_TYPES, :array, :object, :any_of].freeze #: Array[Symbol]
 
-  JSON_TYPE_MAPPINGS = {
-    "string" => String,
-    "integer" => Integer,
-    "number" => Float,
-    "boolean" => Riffer::Params::Boolean,
-    "array" => Array,
-    "object" => Hash,
-  }.freeze #: Hash[String, Module]
+  CLASS_TYPES = {
+    String => :string,
+    Integer => :integer,
+    Float => :number,
+    Riffer::Params::Boolean => :boolean,
+    TrueClass => :boolean,
+    FalseClass => :boolean,
+    Array => :array,
+    Hash => :object,
+    Riffer::Params::AnyOf => :any_of,
+  }.freeze #: Hash[Module, Symbol]
+
+  JSON_TYPE_MAPPINGS = (TYPES - [:any_of]).to_h { |type| [type.name, type] }.freeze #: Hash[String, Symbol]
 
   attr_reader :name #: Symbol # @dynamic name
 
-  attr_reader :type #: Module # @dynamic type
+  attr_reader :type #: Symbol # @dynamic type
 
   attr_reader :required #: bool # @dynamic required
 
@@ -40,7 +36,7 @@ class Riffer::Params::Param
 
   attr_reader :default #: untyped # @dynamic default
 
-  attr_reader :item_type #: Module? # @dynamic item_type
+  attr_reader :item_type #: Symbol? # @dynamic item_type
 
   attr_reader :dimensions #: Integer # @dynamic dimensions
 
@@ -49,16 +45,55 @@ class Riffer::Params::Param
   attr_reader :variants #: Array[Riffer::Params | Riffer::Params::Param]? # @dynamic variants
 
   #--
+  #: (untyped) -> Symbol?
+  def self.resolve_type(type)
+    return type if TYPES.include?(type)
+
+    symbol = CLASS_TYPES[type] #: Symbol?
+    return unless symbol
+
+    Riffer::Deprecation.warn(
+      id: :param_class_types,
+      message: "#{type.name} as a param type is deprecated and will be removed in a future version, " \
+               "not before 1 December 2026; use #{symbol.inspect}.",
+    )
+    symbol
+  end
+
+  #--
+  #: (untyped, String, Array[Symbol]) -> Symbol
+  def self.resolve_type!(type, subject, allowed)
+    resolved = resolve_type(type)
+    return resolved if resolved && allowed.include?(resolved)
+
+    raise Riffer::ArgumentError, "#{subject} must be one of #{allowed.map(&:inspect).join(', ')}, got #{type.inspect}"
+  end
+
+  #--
+  #: (Symbol, untyped) -> bool
+  def self.value_of_type?(type, value)
+    case type
+    when :string then value.is_a?(String)
+    when :integer then value.is_a?(Integer)
+    when :number then value.is_a?(Numeric)
+    when :boolean then [true, false].include?(value)
+    when :array then value.is_a?(Array)
+    when :object then value.is_a?(Hash)
+    else false
+    end
+  end
+
+  #--
   #: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema(name, schema, required:)
     variants = resolve_variants(name, schema[:anyOf]) if schema.key?(:anyOf)
-    ruby_type = variants ? Riffer::Params::AnyOf : json_type_to_ruby(schema[:type])
-    nested = resolve_nested_params(ruby_type, schema)
-    item_type, dimensions, items = resolve_typed_items(schema) if ruby_type == Array && !nested
+    type = variants ? :any_of : json_type(schema[:type])
+    nested = resolve_nested_params(type, schema)
+    item_type, dimensions, items = resolve_typed_items(schema) if type == :array && !nested
 
     new(
       name: name,
-      type: ruby_type,
+      type: type,
       required: required,
       description: schema[:description],
       enum: schema[:enum] || items&.dig(:enum),
@@ -91,18 +126,18 @@ class Riffer::Params::Param
   private_class_method :resolve_variants
 
   #--
-  #: (Module, Hash[Symbol, untyped]) -> Riffer::Params?
-  def self.resolve_nested_params(ruby_type, schema)
-    if ruby_type == Hash && schema[:properties]
+  #: (Symbol, Hash[Symbol, untyped]) -> Riffer::Params?
+  def self.resolve_nested_params(type, schema)
+    if type == :object && schema[:properties]
       Riffer::Params.from_json_schema(schema)
-    elsif ruby_type == Array && schema[:items].is_a?(Hash) && schema[:items][:properties]
+    elsif type == :array && schema[:items].is_a?(Hash) && schema[:items][:properties]
       Riffer::Params.from_json_schema(schema[:items])
     end
   end
   private_class_method :resolve_nested_params
 
   #--
-  #: (Hash[Symbol, untyped]) -> [Module, Integer, Hash[Symbol, untyped]]?
+  #: (Hash[Symbol, untyped]) -> [Symbol, Integer, Hash[Symbol, untyped]]?
   def self.resolve_typed_items(schema)
     items = schema[:items]
     return unless items.is_a?(Hash)
@@ -110,7 +145,7 @@ class Riffer::Params::Param
     dimensions = 1
     # Riffer only writes nested arrays with enum/format and a single primitive type on the innermost
     # items, and no nullable inner arrays; any other shape would read back with a different meaning.
-    while json_type_to_ruby(items[:type]) == Array
+    while json_type(items[:type]) == :array
       inner = items[:items]
       unless items[:type] == "array" && inner.is_a?(Hash) && !items.keys.intersect?(%i[enum format])
         raise Riffer::ArgumentError, "Unsupported nested array: #{items.to_json}"
@@ -120,7 +155,7 @@ class Riffer::Params::Param
       dimensions += 1
     end
 
-    item_type = json_type_to_ruby(items[:type])
+    item_type = json_type(items[:type])
     if dimensions > 1
       if schema.keys.intersect?(%i[enum format])
         raise Riffer::ArgumentError, "Unsupported nested array: #{schema.to_json}"
@@ -135,21 +170,19 @@ class Riffer::Params::Param
   private_class_method :resolve_typed_items
 
   #--
-  #: (untyped) -> Module
-  def self.json_type_to_ruby(type)
+  #: (untyped) -> Symbol
+  def self.json_type(type)
     types = Array(type) - ["null"]
-    ruby_type = JSON_TYPE_MAPPINGS[types.first] if types.one?
-    ruby_type || raise(Riffer::ArgumentError, "Unsupported JSON Schema type: #{type.inspect}")
+    symbol = JSON_TYPE_MAPPINGS[types.first] if types.one?
+    symbol || raise(Riffer::ArgumentError, "Unsupported JSON Schema type: #{type.inspect}")
   end
-  private_class_method :json_type_to_ruby
+  private_class_method :json_type
 
   #--
-  #: (name: Symbol, type: Module, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Module?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
+  #: (name: Symbol, type: Symbol, required: bool, ?description: String?, ?enum: Array[untyped]?, ?format: String?, ?default: untyped, ?item_type: Symbol?, ?dimensions: Integer, ?nested_params: Riffer::Params?, ?variants: Array[Riffer::Params | Riffer::Params::Param]?) -> void
   def initialize(name:, type:, required:, description: nil, enum: nil, format: nil, default: nil, item_type: nil,
                  dimensions: 1, nested_params: nil, variants: nil)
-    if type == Riffer::Params::AnyOf && variants.nil?
-      raise Riffer::ArgumentError, "#{name}: an AnyOf param requires variants"
-    end
+    raise Riffer::ArgumentError, "#{name}: an :any_of param requires variants" if type == :any_of && variants.nil?
 
     @name = name.to_sym
     @type = type
@@ -173,26 +206,22 @@ class Riffer::Params::Param
   def valid_type?(value)
     return true if value.nil? && !required
 
-    if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(type)
-      [true, false].include?(value)
-    elsif type == Float
-      value.is_a?(Numeric)
-    elsif type == Riffer::Params::AnyOf
+    if type == :any_of
       Array(variants).any? { |variant| variant.is_a?(Riffer::Params) ? value.is_a?(Hash) : variant.valid_type?(value) }
     else
-      value.is_a?(type)
+      self.class.value_of_type?(type, value)
     end
   end
 
   #--
   #: () -> String
   def type_name
-    if type == Riffer::Params::AnyOf
+    if type == :any_of
       names = Array(variants).map { |variant| variant.is_a?(Riffer::Params) ? "object" : variant.type_name }
       return names.uniq.join(" or ")
     end
 
-    TYPE_MAPPINGS[type] || type.to_s.downcase
+    type.name
   end
 
   #--
@@ -202,7 +231,7 @@ class Riffer::Params::Param
     # Nullable so strict providers can distinguish absent from present.
     nullable = strict && !required
 
-    if type == Riffer::Params::AnyOf && variants
+    if type == :any_of && variants
       schema = { anyOf: variants.map { |variant| variant.to_json_schema(strict: strict) } } #: Hash[Symbol, untyped]
       schema[:anyOf] << { type: "null" } if nullable
       schema[:description] = description if description
@@ -233,13 +262,13 @@ class Riffer::Params::Param
     # source for +from_json_schema+.
     schema[:default] = default unless strict || default.nil?
 
-    if self.type == Array && nested_params
+    if self.type == :array && nested_params
       schema[:items] = nested_params.to_json_schema(strict: strict)
-    elsif self.type == Array && item_type
-      items = { type: TYPE_MAPPINGS[item_type], enum: enum, format: format }.compact #: Hash[Symbol, untyped]
+    elsif self.type == :array && item_type
+      items = { type: item_type.name, enum: enum, format: format }.compact #: Hash[Symbol, untyped]
       (dimensions - 1).times { items = { type: "array", items: items } }
       schema[:items] = items
-    elsif self.type == Hash && nested_params
+    elsif self.type == :object && nested_params
       # The nested schema carries its own type: "object", which would clobber a nullable union.
       schema.merge!(nested_params.to_json_schema(strict: strict).except(:type))
     end
@@ -262,16 +291,16 @@ class Riffer::Params::Param
     @default = Riffer::Helpers::DeepDup.call(source.default)
   end
 
-  # The first matching variant wins, and a Float variant without an enum accepts any number.
+  # The first matching variant wins, and a :number variant without an enum accepts any number.
   #--
   #: () -> void
   def validate_variant_order!
     primitives = Array(variants).grep(Riffer::Params::Param) #: Array[Riffer::Params::Param]
-    float = primitives.index { |variant| variant.type == Float && variant.enum.nil? }
-    integer = primitives.rindex { |variant| variant.type == Integer }
-    return unless float && integer && float < integer
+    number = primitives.index { |variant| variant.type == :number && variant.enum.nil? }
+    integer = primitives.rindex { |variant| variant.type == :integer }
+    return unless number && integer && number < integer
 
-    raise Riffer::ArgumentError, "#{name}: an Integer variant after a Float variant without enum: can never match"
+    raise Riffer::ArgumentError, "#{name}: an :integer variant after a :number variant without enum: can never match"
   end
 
   #--
@@ -282,8 +311,8 @@ class Riffer::Params::Param
             "#{name}: format: must be a supported format (#{Riffer::Params::Format::NAMES.join(', ')}), " \
             "got #{format.inspect}"
     end
-    unless type == String || (type == Array && item_type == String)
-      raise Riffer::ArgumentError, "#{name}: format: requires a String or an Array whose innermost type is String"
+    unless type == :string || (type == :array && item_type == :string)
+      raise Riffer::ArgumentError, "#{name}: format: requires :string or an :array whose innermost type is :string"
     end
     raise Riffer::ArgumentError, "#{name}: format: cannot be used with enum:" if enum
   end
@@ -292,12 +321,12 @@ class Riffer::Params::Param
   #: () -> void
   def validate_strict_shape!
     # Strict providers reject objects without properties and arrays without items.
-    if type == Hash && nested_params.nil?
+    if type == :object && nested_params.nil?
       raise Riffer::ArgumentError,
-            "#{name}: a Hash param requires a block defining its properties under strict schemas"
-    elsif type == Array && nested_params.nil? && item_type.nil?
+            "#{name}: an :object param requires a block defining its properties under strict schemas"
+    elsif type == :array && nested_params.nil? && item_type.nil?
       raise Riffer::ArgumentError,
-            "#{name}: an Array param requires a block or of: defining its items under strict schemas"
+            "#{name}: an :array param requires a block or of: defining its items under strict schemas"
     end
   end
 end

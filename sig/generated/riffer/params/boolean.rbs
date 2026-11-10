@@ -1,5 +1,5 @@
 # Generated from lib/riffer/params/boolean.rb with RBS::Inline
 
-# Ruby has no +Boolean+ class, so params declare booleans with this sentinel.
+# Deprecated: declare boolean params with +:boolean+.
 module Riffer::Params::Boolean
 end
