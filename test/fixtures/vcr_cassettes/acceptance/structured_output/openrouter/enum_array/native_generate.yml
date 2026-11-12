@@ -1,0 +1,153 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Tag
+        this support ticket: ''I was charged twice this month and need it fixed today.''"}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Tags","items":{"type":"string","enum":["urgent","billing","technical","account"]}}},"required":["tags"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '455'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:19:22 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356362-e0kTMpP41Q16vL9etjyj
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58920007e207e58-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n\n         \n{\"id\":\"gen-1794356362-e0kTMpP41Q16vL9etjyj\",\"object\":\"chat.completion\",\"created\":1794356362,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"CoreWeave\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n
+        \ \\\"tags\\\": [\\n    \\\"billing\\\",\\n    \\\"billing\\\",\\n    \\\"billing\\\"\\n
+        \ ]\\n}\",\"refusal\":null,\"reasoning\":\"The user is asking me to tag a
+        support ticket. Let me analyze the content:\\n\\n\\\"I was charged twice this
+        month and need it fixed today.\\\"\\n\\nThis is a billing issue - specifically
+        a duplicate charge/overcharge issue. The customer also indicates urgency (\\\"need
+        it fixed today\\\").\\n\\nLet me think about what appropriate tags would be:\\n\\n**Primary
+        issue tags:**\\n- Billing\\n- Duplicate charge / Double charge\\n- Payment
+        issue\\n- Refund request (likely implied - they were charged twice, so presumably
+        they want one charge refunded)\\n\\n**Priority/urgency tags:**\\n- High priority
+        / Urgent (customer says \\\"need it fixed today\\\")\\n- SLA-sensitive possibly\\n\\n**Category
+        tags:**\\n- Account/Billing department routing\\n- Possibly \\\"Escalation\\\"
+        if there's urgency\\n\\nLet me think about how support ticket tagging typically
+        works:\\n\\n1. **Category/Topic**: Billing > Duplicate Charge\\n2. **Priority**:
+        High or Urgent (based on customer's stated urgency)\\n3. **Sentiment**: Possibly
+        negative/frustrated (though the tone is more demanding than angry - \\\"need
+        it fixed today\\\" suggests urgency and impatience)\\n4. **Action needed**:
+        Refund or charge reversal\\n\\nCommon tagging structures:\\n- Department:
+        Billing\\n- Issue type: Duplicate charge / Billing error\\n- Priority: High
+        (or P1/P2 depending on the system)\\n- Urgency: Time-sensitive (customer requested
+        same-day resolution)\\n- Sentiment: Negative (mild frustration)\\n\\nThe format
+        should be concise and useful. The person asking is likely a support agent,
+        someone building a ticketing system, or testing a classification task. They
+        want a quick, actionable answer.\\n\\nI should provide tags in a clear format.
+        Maybe:\\n\\n**Tags:**\\n- Category: Billing\\n- Issue: Duplicate charge\\n-
+        Priority: High\\n- Urgency: Same-day resolution requested\\n- Sentiment: Negative/Frustrated\\n-
+        Suggested action: Refund/reverse duplicate charge\\n\\nOr a simpler list:\\n-
+        billing\\n- duplicate-charge\\n- refund-request\\n- high-priority\\n- urgent\\n\\nI
+        think a structured format works well here. Not too long. The task is simple
+        classification, so the response should be scannable.\\n\\nShould I use headers?
+        Probably not needed for something this short. A few bolded labels or a simple
+        bulleted list would work.\\n\\nLet me also consider: should I flag anything
+        else? The \\\"need it fixed today\\\" could indicate:\\n- Customer churn risk\\n-
+        Possible SLA breach if not resolved\\n- Might warrant escalation\\n\\nI could
+        add a brief note about suggested handling, but the request was just to tag.
+        I'll keep it focused on tags with maybe one line of optional context. Actually,
+        keeping it tight to just the tags is probably best, maybe with a very brief
+        note if useful.\\n\\nFormat: A short list of tags, possibly grouped by type
+        (category, priority, sentiment). Markdown bullets are appropriate since this
+        will likely be rendered. Keep it concise - this is a quick classification
+        task.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user is asking me to tag a support ticket. Let me analyze the content:\\n\\n\\\"I
+        was charged twice this month and need it fixed today.\\\"\\n\\nThis is a billing
+        issue - specifically a duplicate charge/overcharge issue. The customer also
+        indicates urgency (\\\"need it fixed today\\\").\\n\\nLet me think about what
+        appropriate tags would be:\\n\\n**Primary issue tags:**\\n- Billing\\n- Duplicate
+        charge / Double charge\\n- Payment issue\\n- Refund request (likely implied
+        - they were charged twice, so presumably they want one charge refunded)\\n\\n**Priority/urgency
+        tags:**\\n- High priority / Urgent (customer says \\\"need it fixed today\\\")\\n-
+        SLA-sensitive possibly\\n\\n**Category tags:**\\n- Account/Billing department
+        routing\\n- Possibly \\\"Escalation\\\" if there's urgency\\n\\nLet me think
+        about how support ticket tagging typically works:\\n\\n1. **Category/Topic**:
+        Billing > Duplicate Charge\\n2. **Priority**: High or Urgent (based on customer's
+        stated urgency)\\n3. **Sentiment**: Possibly negative/frustrated (though the
+        tone is more demanding than angry - \\\"need it fixed today\\\" suggests urgency
+        and impatience)\\n4. **Action needed**: Refund or charge reversal\\n\\nCommon
+        tagging structures:\\n- Department: Billing\\n- Issue type: Duplicate charge
+        / Billing error\\n- Priority: High (or P1/P2 depending on the system)\\n-
+        Urgency: Time-sensitive (customer requested same-day resolution)\\n- Sentiment:
+        Negative (mild frustration)\\n\\nThe format should be concise and useful.
+        The person asking is likely a support agent, someone building a ticketing
+        system, or testing a classification task. They want a quick, actionable answer.\\n\\nI
+        should provide tags in a clear format. Maybe:\\n\\n**Tags:**\\n- Category:
+        Billing\\n- Issue: Duplicate charge\\n- Priority: High\\n- Urgency: Same-day
+        resolution requested\\n- Sentiment: Negative/Frustrated\\n- Suggested action:
+        Refund/reverse duplicate charge\\n\\nOr a simpler list:\\n- billing\\n- duplicate-charge\\n-
+        refund-request\\n- high-priority\\n- urgent\\n\\nI think a structured format
+        works well here. Not too long. The task is simple classification, so the response
+        should be scannable.\\n\\nShould I use headers? Probably not needed for something
+        this short. A few bolded labels or a simple bulleted list would work.\\n\\nLet
+        me also consider: should I flag anything else? The \\\"need it fixed today\\\"
+        could indicate:\\n- Customer churn risk\\n- Possible SLA breach if not resolved\\n-
+        Might warrant escalation\\n\\nI could add a brief note about suggested handling,
+        but the request was just to tag. I'll keep it focused on tags with maybe one
+        line of optional context. Actually, keeping it tight to just the tags is probably
+        best, maybe with a very brief note if useful.\\n\\nFormat: A short list of
+        tags, possibly grouped by type (category, priority, sentiment). Markdown bullets
+        are appropriate since this will likely be rendered. Keep it concise - this
+        is a quick classification task.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":30,\"completion_tokens\":641,\"total_tokens\":671,\"cost\":0.00024718,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00024718,\"upstream_inference_prompt_cost\":0.0000036,\"upstream_inference_completions_cost\":0.00024358},\"completion_tokens_details\":{\"reasoning_tokens\":619,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:19:26 GMT
+recorded_with: VCR 6.4.0

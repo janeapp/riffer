@@ -1,0 +1,149 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Book
+        an online visit on 2026-11-03 for Ada Lovelace (ada@example.com): a 30-minute
+        checkup, then a 15-minute vaccination. Any room is fine."}],"tools":[{"type":"function","function":{"name":"book_visit","description":"Book
+        a clinic visit","parameters":{"type":"object","properties":{"patient":{"type":"object","description":"The
+        patient","properties":{"name":{"type":"string","description":"Full name"},"email":{"type":["string","null"],"description":"Email
+        address, if given","format":"email"}},"required":["name","email"],"additionalProperties":false},"visit_type":{"type":"string","description":"How
+        the visit happens","enum":["in_person","online"]},"visit_on":{"type":"string","description":"Visit
+        date","format":"date"},"services":{"type":"array","description":"Services
+        to book, in the order given","items":{"type":"object","properties":{"name":{"type":"string","description":"Service
+        name"},"minutes":{"type":"integer","description":"Length in minutes"}},"required":["name","minutes"],"additionalProperties":false}},"room":{"anyOf":[{"type":"integer"},{"type":"string","enum":["any","accessible","quiet"]}],"description":"Room
+        number, or a kind of room"}},"required":["patient","visit_type","visit_on","services","room"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1397'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:05 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356524-rwXxbfDe34YqkBtT7tua
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58923f73fb875bf-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants to book an online","reasoning_details":[{"type":"reasoning.text","text":" user wants to book an online","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" visit on","reasoning_details":[{"type":"reasoning.text","text":" visit on","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" 2026-11","reasoning_details":[{"type":"reasoning.text","text":" 2026-11","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"-03 for Ada Lovel","reasoning_details":[{"type":"reasoning.text","text":"-03 for Ada Lovel","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"ace (ada@example.com),","reasoning_details":[{"type":"reasoning.text","text":"ace (ada@example.com),","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" with a","reasoning_details":[{"type":"reasoning.text","text":" with a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" 30-minute checkup followed","reasoning_details":[{"type":"reasoning.text","text":" 30-minute checkup followed","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" by a 15-minute vaccination","reasoning_details":[{"type":"reasoning.text","text":" by a 15-minute vaccination","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":", any","reasoning_details":[{"type":"reasoning.text","text":", any","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" room.\n\nLet","reasoning_details":[{"type":"reasoning.text","text":" room.\n\nLet","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" me construct","reasoning_details":[{"type":"reasoning.text","text":" me construct","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the call","reasoning_details":[{"type":"reasoning.text","text":" the call","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":":\n- patient: {","reasoning_details":[{"type":"reasoning.text","text":":\n- patient: {","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"name: \"Ada Lovel","reasoning_details":[{"type":"reasoning.text","text":"name: \"Ada Lovel","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"ace\", email: \"ada","reasoning_details":[{"type":"reasoning.text","text":"ace\", email: \"ada","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"@example.com\"}\n- visit_type","reasoning_details":[{"type":"reasoning.text","text":"@example.com\"}\n- visit_type","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": \"online\"\n- visit","reasoning_details":[{"type":"reasoning.text","text":": \"online\"\n- visit","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"_on: \"","reasoning_details":[{"type":"reasoning.text","text":"_on: \"","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"2026-11-03","reasoning_details":[{"type":"reasoning.text","text":"2026-11-03","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"\"\n- services: [{name","reasoning_details":[{"type":"reasoning.text","text":"\"\n- services: [{name","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": \"checkup\", minutes","reasoning_details":[{"type":"reasoning.text","text":": \"checkup\", minutes","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": 30}, {name","reasoning_details":[{"type":"reasoning.text","text":": 30}, {name","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": \"vaccination\",","reasoning_details":[{"type":"reasoning.text","text":": \"vaccination\",","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" minutes: 15}]\n-","reasoning_details":[{"type":"reasoning.text","text":" minutes: 15}]\n-","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" room: \"any\"","reasoning_details":[{"type":"reasoning.text","text":" room: \"any\"","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"010f0b7e-0a00-4105-a483-3ee3d0a7212e","type":"function","function":{"name":"book_visit","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"services\":[{\"minutes\":30,\"name\":\"checkup\"},{\"minutes\":15,\"name\":\"vaccination\"}],\"visit_type\":\"online\",\"visit_on\":\"2026-11-03\",\"patient\":{\"email\":\"ada@example.com\",\"name\":\"Ada Lovelace\"},\"room\":\"any\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356524-rwXxbfDe34YqkBtT7tua","object":"chat.completion.chunk","created":1794356524,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":464,"completion_tokens":209,"total_tokens":673,"cost":0.0001351,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0001351,"upstream_inference_prompt_cost":0.00005568,"upstream_inference_completions_cost":0.00007942},"completion_tokens_details":{"reasoning_tokens":123,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:22:06 GMT
+recorded_with: VCR 6.4.0
+...

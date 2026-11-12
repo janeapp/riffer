@@ -1,0 +1,84 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Extract
+        the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada\n\nWhen
+        you give your final answer, respond with only a JSON object that conforms
+        to the following JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1191'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:19:38 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356377-fidCs0HSM2IheEXcaiih
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5892060c8ceca84-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYzNzctZmlkQ3MwSFNNMkloZUVYY2FpaWgiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2Mzc3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiVG9nZXRoZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJkZWZhdWx0Iiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6IntcIm5hbWVcIjpcIkpvaG5cIixcImFkZHJlc3NcIjp7XCJzdHJlZXRcIjpcIjEyMyBNYWluIFN0XCIsXCJjaXR5XCI6XCJUb3JvbnRvXCIsXCJwb3N0YWxfY29kZVwiOlwiTTVWIDJUNlwiLFwiY291bnRyeVwiOlwiQ2FuYWRhXCJ9fSIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6IlRoZSB0YXNrIGlzIHRvIGV4dHJhY3QgdGhlIGFkZHJlc3MgZnJvbTogXCJKb2huIGxpdmVzIGF0IDEyMyBNYWluIFN0LCBUb3JvbnRvLCBPTiBNNVYgMlQ2LCBDYW5hZGFcIlxuXG5OYW1lOiBKb2huXG5TdHJlZXQ6IDEyMyBNYWluIFN0XG5DaXR5OiBUb3JvbnRvXG5Qb3N0YWwgY29kZTogTTVWIDJUNlxuQ291bnRyeTogQ2FuYWRhXG5cblRoZSBzY2hlbWEgaGFzIGFkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZSBhdCB0aGUgdG9wIGxldmVsLCBzbyBJIGNhbiBvbmx5IGluY2x1ZGUgbmFtZSBhbmQgYWRkcmVzcy4gVGhlIGFkZHJlc3Mgb2JqZWN0IGFsbG93cyBzdHJlZXQsIGNpdHksIHBvc3RhbF9jb2RlLCBjb3VudHJ5LiBOb3RlOiB0aGUgc2NoZW1hIGRvZXNuJ3QgaW5jbHVkZSBhIFwic3RhdGUvcHJvdmluY2VcIiBmaWVsZCAoT04pLCBzbyBJIHNob3VsZCBub3QgaW5jbHVkZSBpdCDigJQgYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlIHdvdWxkIHJlamVjdCBpdC4gUmVxdWlyZWQ6IHN0cmVldCwgY2l0eS4gcG9zdGFsX2NvZGUgYW5kIGNvdW50cnkgYXJlIG9wdGlvbmFsIGJ1dCBJIGhhdmUgdmFsdWVzIGZvciB0aGVtLlxuXG5SZXNwb25kIHdpdGggb25seSB0aGUgSlNPTiBvYmplY3QuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJUaGUgdGFzayBpcyB0byBleHRyYWN0IHRoZSBhZGRyZXNzIGZyb206IFwiSm9obiBsaXZlcyBhdCAxMjMgTWFpbiBTdCwgVG9yb250bywgT04gTTVWIDJUNiwgQ2FuYWRhXCJcblxuTmFtZTogSm9oblxuU3RyZWV0OiAxMjMgTWFpbiBTdFxuQ2l0eTogVG9yb250b1xuUG9zdGFsIGNvZGU6IE01ViAyVDZcbkNvdW50cnk6IENhbmFkYVxuXG5UaGUgc2NoZW1hIGhhcyBhZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UgYXQgdGhlIHRvcCBsZXZlbCwgc28gSSBjYW4gb25seSBpbmNsdWRlIG5hbWUgYW5kIGFkZHJlc3MuIFRoZSBhZGRyZXNzIG9iamVjdCBhbGxvd3Mgc3RyZWV0LCBjaXR5LCBwb3N0YWxfY29kZSwgY291bnRyeS4gTm90ZTogdGhlIHNjaGVtYSBkb2Vzbid0IGluY2x1ZGUgYSBcInN0YXRlL3Byb3ZpbmNlXCIgZmllbGQgKE9OKSwgc28gSSBzaG91bGQgbm90IGluY2x1ZGUgaXQg4oCUIGFkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZSB3b3VsZCByZWplY3QgaXQuIFJlcXVpcmVkOiBzdHJlZXQsIGNpdHkuIHBvc3RhbF9jb2RlIGFuZCBjb3VudHJ5IGFyZSBvcHRpb25hbCBidXQgSSBoYXZlIHZhbHVlcyBmb3IgdGhlbS5cblxuUmVzcG9uZCB3aXRoIG9ubHkgdGhlIEpTT04gb2JqZWN0LiIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfX1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjoyMzUsImNvbXBsZXRpb25fdG9rZW5zIjoxODcsInRvdGFsX3Rva2VucyI6NDIyLCJjb3N0IjowLjAwMDEyODc1LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMTI4NzUsInVwc3RyZWFtX2luZmVyZW5jZV9wcm9tcHRfY29zdCI6MC4wMDAwMzUyNSwidXBzdHJlYW1faW5mZXJlbmNlX2NvbXBsZXRpb25zX2Nvc3QiOjAuMDAwMDkzNX0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MTUzLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Wed, 11 Nov 2026 00:19:39 GMT
+recorded_with: VCR 6.4.0

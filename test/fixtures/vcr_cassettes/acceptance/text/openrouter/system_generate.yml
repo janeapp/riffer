@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Always
+        answer in French, in one short sentence."},{"role":"user","content":"Say good
+        morning."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '167'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:16:02 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356161-eUaNTJ6si00KALPGSthj
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891b19dc3c816e-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYxNjEtZVVhTlRKNnNpMDBLQUxQR1N0aGoiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MTYxLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ3J1c29lIiwic3lzdGVtX2ZpbmdlcnByaW50IjpudWxsLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjoiQm9uam91ciAhIiwicmVmdXNhbCI6bnVsbCwicmVhc29uaW5nIjoiVGhlIHVzZXIgd2FudHMgbWUgdG8gc2F5IGdvb2QgbW9ybmluZy4gVGhlIGluc3RydWN0aW9uIGlzIHRvIGFsd2F5cyBhbnN3ZXIgaW4gRnJlbmNoLCBpbiBvbmUgc2hvcnQgc2VudGVuY2UuIFNvIEkgc2hvdWxkIHNheSBcIkJvbmpvdXJcIiBvciBcIkJvbmpvdXIsIGplIHZvdXMgc291aGFpdGUgdW5lIGV4Y2VsbGVudGUgbWF0aW7DqWVcIiDigJQgYnV0IGl0IG5lZWRzIHRvIGJlIG9uZSBzaG9ydCBzZW50ZW5jZS4gSnVzdCBcIkJvbmpvdXIgIVwiIHdvdWxkIHdvcmsuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJUaGUgdXNlciB3YW50cyBtZSB0byBzYXkgZ29vZCBtb3JuaW5nLiBUaGUgaW5zdHJ1Y3Rpb24gaXMgdG8gYWx3YXlzIGFuc3dlciBpbiBGcmVuY2gsIGluIG9uZSBzaG9ydCBzZW50ZW5jZS4gU28gSSBzaG91bGQgc2F5IFwiQm9uam91clwiIG9yIFwiQm9uam91ciwgamUgdm91cyBzb3VoYWl0ZSB1bmUgZXhjZWxsZW50ZSBtYXRpbsOpZVwiIOKAlCBidXQgaXQgbmVlZHMgdG8gYmUgb25lIHNob3J0IHNlbnRlbmNlLiBKdXN0IFwiQm9uam91ciAhXCIgd291bGQgd29yay4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MjcsImNvbXBsZXRpb25fdG9rZW5zIjo2NCwidG90YWxfdG9rZW5zIjo5MSwiY29zdCI6MC4wMDAwMzYwNSwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDAzNjA1LCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMDA0MDUsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAzMn0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6NjAsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Wed, 11 Nov 2026 00:16:03 GMT
+recorded_with: VCR 6.4.0

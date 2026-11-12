@@ -1,0 +1,174 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Answer
+        weather questions. Always look the weather up with the tool."},{"role":"user","content":"What
+        is the weather in Toronto?\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1141'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:20:38 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356437-VXSf0uzSNNnYplmK2JI7
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58921d8bcb8629c-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356437-VXSf0uzSNNnYplmK2JI7\",\"object\":\"chat.completion\",\"created\":1794356437,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"CoreWeave\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
+        user wants the weather in Toronto. I need to call the get_weather tool. Then
+        respond with only a JSON object matching the schema.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"558e6bb2-a172-4eca-b2dd-39bce4908247\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Toronto\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants the weather in Toronto. I need to call the get_weather tool. Then
+        respond with only a JSON object matching the schema.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":311,\"completion_tokens\":40,\"total_tokens\":351,\"cost\":0.00005252,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00005252,\"upstream_inference_prompt_cost\":0.00003732,\"upstream_inference_completions_cost\":0.0000152},\"completion_tokens_details\":{\"reasoning_tokens\":29,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:20:38 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Answer
+        weather questions. Always look the weather up with the tool."},{"role":"user","content":"What
+        is the weather in Toronto?\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."},{"role":"assistant","tool_calls":[{"id":"558e6bb2-a172-4eca-b2dd-39bce4908247","type":"function","function":{"name":"get_weather","arguments":"{\"city\":\"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants the weather in Toronto. I need to call the get_weather tool. Then
+        respond with only a JSON object matching the schema.","format":"unknown"}]},{"role":"tool","tool_call_id":"558e6bb2-a172-4eca-b2dd-39bce4908247","content":"It
+        is 15 degrees Celsius in Toronto."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1641'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:20:39 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356438-WbYx30WWC1FW7O2wEget
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58921dd094e629c-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356438-WbYx30WWC1FW7O2wEget\",\"object\":\"chat.completion\",\"created\":1794356438,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Crusoe\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"city\\\":\\\"Toronto\\\",\\\"celsius\\\":15}\",\"refusal\":null,\"reasoning\":null}}],\"usage\":{\"prompt_tokens\":364,\"completion_tokens\":12,\"total_tokens\":376,\"cost\":0.0000606,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000606,\"upstream_inference_prompt_cost\":0.0000546,\"upstream_inference_completions_cost\":0.000006},\"completion_tokens_details\":{\"reasoning_tokens\":0,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:20:39 GMT
+recorded_with: VCR 6.4.0

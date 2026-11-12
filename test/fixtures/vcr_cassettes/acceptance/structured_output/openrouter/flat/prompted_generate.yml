@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Analyze
+        the sentiment of: ''I love this product, it is amazing!''\n\nWhen you give
+        your final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]},\"score\":{\"type\":\"number\",\"description\":\"Confidence
+        between 0 and 1\"}},\"required\":[\"sentiment\",\"score\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"sentiment\":\"positive | neutral |
+        negative\",\"score\":\"<number>\"}\n\nOnly call tools when the request needs
+        them. If you can answer directly, reply with the JSON object right away."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '831'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:21:32 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356491-PeGzcndvJ6Ov52WwP1im
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58923281ea5fa59-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356491-PeGzcndvJ6Ov52WwP1im\",\"object\":\"chat.completion\",\"created\":1794356491,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"CoreWeave\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"sentiment\\\":\\\"positive\\\",\\\"score\\\":0.98}\",\"refusal\":null,\"reasoning\":\"The
+        user wants me to analyze sentiment of \\\"I love this product, it is amazing!\\\"
+        and respond with only a JSON object matching the schema.\\n\\nThe sentiment
+        is clearly positive - \\\"love\\\" and \\\"amazing\\\" are strong positive
+        indicators. Confidence should be high, like 0.98 or 0.99.\\n\\nI need to output
+        only the JSON object, no other text.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants me to analyze sentiment of \\\"I love this product, it is amazing!\\\"
+        and respond with only a JSON object matching the schema.\\n\\nThe sentiment
+        is clearly positive - \\\"love\\\" and \\\"amazing\\\" are strong positive
+        indicators. Confidence should be high, like 0.98 or 0.99.\\n\\nI need to output
+        only the JSON object, no other text.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":164,\"completion_tokens\":91,\"total_tokens\":255,\"cost\":0.00005426,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00005426,\"upstream_inference_prompt_cost\":0.00001968,\"upstream_inference_completions_cost\":0.00003458},\"completion_tokens_details\":{\"reasoning_tokens\":78,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:21:32 GMT
+recorded_with: VCR 6.4.0

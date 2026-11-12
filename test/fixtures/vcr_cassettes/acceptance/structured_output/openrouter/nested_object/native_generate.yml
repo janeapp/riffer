@@ -1,0 +1,103 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Extract
+        the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '793'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:19:34 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356373-N4Rdc9g3zc4NpXPcJliC
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5892046ca617bf2-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356373-N4Rdc9g3zc4NpXPcJliC\",\"object\":\"chat.completion\",\"created\":1794356373,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Mistral\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"name\\\":
+        \\\"John\\\", \\\"address\\\": {\\\"street\\\": \\\"123 Main St\\\", \\\"city\\\":
+        \\\"Toronto\\\", \\\"postal_code\\\": \\\"M5V 2T6\\\", \\\"country\\\": \\\"Canada\\\"}
+        }\",\"refusal\":null,\"reasoning\":\"The user wants me to extract the address
+        from a sentence. This is a simple text extraction task.\\n\\nThe sentence:
+        \\\"John lives at 123 Main St, Toronto, ON M5V 2T6, Canada\\\"\\n\\nThe address
+        portion is: \\\"123 Main St, Toronto, ON M5V 2T6, Canada\\\"\\n\\nBreaking
+        it down:\\n- Street address: 123 Main St\\n- City: Toronto\\n- Province/State:
+        ON (Ontario)\\n- Postal/ZIP code: M5V 2T6\\n- Country: Canada\\n\\nThis is
+        a simple, direct request. The answer should be concise. I could just give
+        the extracted address, possibly with a structured breakdown. Given the simplicity,
+        a short answer with the address, maybe formatted nicely or with components
+        labeled, would be appropriate.\\n\\nFormat: Short response. The extracted
+        address itself, perhaps with a labeled breakdown. No need for headers or lengthy
+        explanation. A simple answer is best here.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants me to extract the address from a sentence. This is a simple text
+        extraction task.\\n\\nThe sentence: \\\"John lives at 123 Main St, Toronto,
+        ON M5V 2T6, Canada\\\"\\n\\nThe address portion is: \\\"123 Main St, Toronto,
+        ON M5V 2T6, Canada\\\"\\n\\nBreaking it down:\\n- Street address: 123 Main
+        St\\n- City: Toronto\\n- Province/State: ON (Ontario)\\n- Postal/ZIP code:
+        M5V 2T6\\n- Country: Canada\\n\\nThis is a simple, direct request. The answer
+        should be concise. I could just give the extracted address, possibly with
+        a structured breakdown. Given the simplicity, a short answer with the address,
+        maybe formatted nicely or with components labeled, would be appropriate.\\n\\nFormat:
+        Short response. The extracted address itself, perhaps with a labeled breakdown.
+        No need for headers or lengthy explanation. A simple answer is best here.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":37,\"completion_tokens\":242,\"total_tokens\":279,\"cost\":0.00012655,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00012655,\"upstream_inference_prompt_cost\":0.00000555,\"upstream_inference_completions_cost\":0.000121},\"completion_tokens_details\":{\"reasoning_tokens\":197,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:19:35 GMT
+recorded_with: VCR 6.4.0

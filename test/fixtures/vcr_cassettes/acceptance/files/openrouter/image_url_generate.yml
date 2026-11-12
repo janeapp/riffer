@@ -1,0 +1,83 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":[{"type":"text","text":"What
+        color is this square? One word."},{"type":"image_url","image_url":{"url":"https://raw.githubusercontent.com/janeapp/riffer/main/test/acceptance/fixtures/red_square.png"}}]}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '270'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:42 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356262-utjWurfG6T2rs9m72iWK
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891d8dacad5ea8-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356262-utjWurfG6T2rs9m72iWK\",\"object\":\"chat.completion\",\"created\":1794356262,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Friendli\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"Red\",\"refusal\":null,\"reasoning\":\"The
+        user is showing me what appears to be a red square (the hexadecimal/HTML code
+        or an image reference showing red). They're asking what color the square is,
+        and want a one-word answer.\\n\\nBased on the image reference \\\"red,\\\"
+        the answer is red.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user is showing me what appears to be a red square (the hexadecimal/HTML code
+        or an image reference showing red). They're asking what color the square is,
+        and want a one-word answer.\\n\\nBased on the image reference \\\"red,\\\"
+        the answer is red.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":39,\"completion_tokens\":57,\"total_tokens\":96,\"cost\":0.00003435,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00003435,\"upstream_inference_prompt_cost\":0.00000585,\"upstream_inference_completions_cost\":0.0000285},\"completion_tokens_details\":{\"reasoning_tokens\":61,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:17:42 GMT
+recorded_with: VCR 6.4.0

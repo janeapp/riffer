@@ -1,0 +1,161 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"What is tomorrow''s
+        forecast for Toronto? If the tool fails, say so."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '525'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:18 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356537-FYgBXxRMBYJDtaTZkPdA
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58924487ba3f7ed-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356537-FYgBXxRMBYJDtaTZkPdA\",\"object\":\"chat.completion\",\"created\":1794356537,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Together\",\"system_fingerprint\":\"default\",\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
+        user wants tomorrow's forecast for Toronto. I should call the get_forecast
+        tool with city \\\"Toronto\\\". If it fails, I should say so.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_01a1c7fbeb3b7d73805b8e12\",\"function\":{\"name\":\"get_forecast\",\"arguments\":\"{\\\"city\\\":\\\"Toronto\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants tomorrow's forecast for Toronto. I should call the get_forecast
+        tool with city \\\"Toronto\\\". If it fails, I should say so.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":196,\"completion_tokens\":44,\"total_tokens\":240,\"cost\":0.0000514,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000514,\"upstream_inference_prompt_cost\":0.0000294,\"upstream_inference_completions_cost\":0.000022},\"completion_tokens_details\":{\"reasoning_tokens\":29,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:22:18 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"What is tomorrow''s
+        forecast for Toronto? If the tool fails, say so."},{"role":"assistant","tool_calls":[{"id":"call_01a1c7fbeb3b7d73805b8e12","type":"function","function":{"name":"get_forecast","arguments":"{\"city\":\"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants tomorrow''s forecast for Toronto. I should call the get_forecast
+        tool with city \"Toronto\". If it fails, I should say so.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_01a1c7fbeb3b7d73805b8e12","content":"The
+        forecast service for Toronto is down"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1019'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:18 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356538-ur1687rGXrM1lGcFkBgc
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589244c3df7f7ed-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTY1MzgtdXIxNjg3ckdYck0xbEdjRmtCZ2MiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2NTM4LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiVG9nZXRoZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJkZWZhdWx0Iiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6IlRoZSB0b29sIGZhaWxlZCDigJQgdGhlIGZvcmVjYXN0IHNlcnZpY2UgZm9yIFRvcm9udG8gaXMgY3VycmVudGx5IGRvd24sIHNvIEkgY291bGRuJ3QgcmV0cmlldmUgdG9tb3Jyb3cncyBmb3JlY2FzdC4gUGxlYXNlIHRyeSBhZ2FpbiBsYXRlci4iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOiJUaGUgdG9vbCBmYWlsZWQgd2l0aCBhbiBlcnJvciBtZXNzYWdlLiBJIHNob3VsZCB0ZWxsIHRoZSB1c2VyIHRoYXQgdGhlIHRvb2wgZmFpbGVkLiIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiVGhlIHRvb2wgZmFpbGVkIHdpdGggYW4gZXJyb3IgbWVzc2FnZS4gSSBzaG91bGQgdGVsbCB0aGUgdXNlciB0aGF0IHRoZSB0b29sIGZhaWxlZC4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MjUxLCJjb21wbGV0aW9uX3Rva2VucyI6NDcsInRvdGFsX3Rva2VucyI6Mjk4LCJjb3N0IjowLjAwMDA0NTc5LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjEyOCwiY2FjaGVfd3JpdGVfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjAsInZpZGVvX3Rva2VucyI6MH0sImNvc3RfZGV0YWlscyI6eyJ1cHN0cmVhbV9pbmZlcmVuY2VfY29zdCI6MC4wMDAwNDU3OSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDAyMjI5LCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAwMjM1fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjoxNywiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0=
+  recorded_at: Wed, 11 Nov 2026 00:22:18 GMT
+recorded_with: VCR 6.4.0

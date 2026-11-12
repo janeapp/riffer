@@ -1,0 +1,83 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Classify
+        the session: yoga class, underwater format. The session_type enum does not
+        cover this, so return null for session_type.\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '865'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:18:46 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356325-DJoZt4Bs3ksUeigZmpf9
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891f1ccf01be02-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYzMjUtREpvWnQ0QnMza3NVZWlnWm1wZjkiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MzI1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ3J1c29lIiwic3lzdGVtX2ZpbmdlcnByaW50IjpudWxsLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1wibmFtZVwiOlwiVW5kZXJ3YXRlciBZb2dhIENsYXNzXCIsXCJzZXNzaW9uX3R5cGVcIjpudWxsfSIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6IlRoZSB1c2VyIHdhbnRzIG1lIHRvIGNsYXNzaWZ5IGEgc2Vzc2lvbjogXCJ5b2dhIGNsYXNzLCB1bmRlcndhdGVyIGZvcm1hdFwiLiBUaGUgc2Vzc2lvbl90eXBlIGVudW0gZG9lc24ndCBjb3ZlciB0aGlzLCBzbyBzZXNzaW9uX3R5cGUgc2hvdWxkIGJlIG51bGwuIEJ1dCB0aGUgc2NoZW1hIHNheXMgc2Vzc2lvbl90eXBlIGlzIGEgc3RyaW5nIHdpdGggZW51bSB2YWx1ZXMsIGFuZCBvbmx5IFwibmFtZVwiIGlzIHJlcXVpcmVkLiBTaW5jZSB0aGV5IGV4cGxpY2l0bHkgc2F5IHRvIHJldHVybiBudWxsIGZvciBzZXNzaW9uX3R5cGUsIEkgc2hvdWxkIGluY2x1ZGUgc2Vzc2lvbl90eXBlIGFzIG51bGwgKG9yIG9taXQgaXQ/KS5cblxuVGhlIGluc3RydWN0aW9uIHNheXMgXCJyZXR1cm4gbnVsbCBmb3Igc2Vzc2lvbl90eXBlXCIuIFRoZSBzY2hlbWEgcmVxdWlyZXMgb25seSBcIm5hbWVcIiwgc2Vzc2lvbl90eXBlIGlzIG9wdGlvbmFsIGJ1dCBoYXMgYW4gZW51bS4gSG93ZXZlciwgdGhlIHVzZXIgZXhwbGljaXRseSBpbnN0cnVjdHMgdG8gcmV0dXJuIG51bGwuIEpTT04gU2NoZW1hIGVudW0gd291bGRuJ3QgYWxsb3cgbnVsbCB1bmxlc3MgdHlwZSBpbmNsdWRlcyBudWxsLiBCdXQgdGhlIHVzZXIncyBleHBsaWNpdCBpbnN0cnVjdGlvbiB0YWtlcyBwcmVjZWRlbmNl4oCUdGhleSBzYXkgdG8gcmV0dXJuIG51bGwgZm9yIHNlc3Npb25fdHlwZS4gQWN0dWFsbHksIEkgY291bGQgYWxzbyBvbWl0IHNlc3Npb25fdHlwZSBlbnRpcmVseSBzaW5jZSBpdCdzIG5vdCByZXF1aXJlZC4gQnV0IHRoZSBpbnN0cnVjdGlvbiBzYXlzIFwicmV0dXJuIG51bGwgZm9yIHNlc3Npb25fdHlwZVwiLCB3aGljaCBzdWdnZXN0cyBpbmNsdWRpbmcgaXQgYXMgbnVsbC5cblxuSG1tLCB0aGVyZSdzIGEgY29uZmxpY3Q6IHNjaGVtYSBzYXlzIHNlc3Npb25fdHlwZSBtdXN0IGJlIG9uZSBvZiBlbnVtIHN0cmluZ3MgaWYgcHJlc2VudC4gVXNlciBzYXlzIHJldHVybiBudWxsLiBUaGUgc2FmZXN0IGludGVycHJldGF0aW9uIGZvbGxvd2luZyB0aGUgdXNlcidzIGRpcmVjdCBpbnN0cnVjdGlvbjogaW5jbHVkZSBcInNlc3Npb25fdHlwZVwiOiBudWxsLiBBbHRlcm5hdGl2ZWx5IG9taXQgaXQgdG8gc2F0aXNmeSB0aGUgc2NoZW1hLiBUaGUgdXNlcidzIGV4cGxpY2l0IGluc3RydWN0aW9uIGlzIHRvIHJldHVybiBudWxsIGZvciBzZXNzaW9uX3R5cGUuIEknbGwgaW5jbHVkZSBpdCBhcyBudWxsIHNpbmNlIHRoYXQncyB0aGUgZXhwbGljaXQgaW5zdHJ1Y3Rpb24uXG5cbk5hbWU6IFwiWW9nYSBDbGFzcyAoVW5kZXJ3YXRlciBGb3JtYXQpXCIgb3Igc29tZXRoaW5nLiBUaGUgbmFtZSBzaG91bGQgZGVzY3JpYmUgdGhlIHNlc3Npb24uIEknbGwgZ28gd2l0aCBcIlVuZGVyd2F0ZXIgWW9nYSBDbGFzc1wiIG9yIFwiWW9nYSBDbGFzcyDigJMgVW5kZXJ3YXRlciBGb3JtYXRcIi4gSSdsbCB1c2UgXCJVbmRlcndhdGVyIFlvZ2EgQ2xhc3NcIi4iLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IlRoZSB1c2VyIHdhbnRzIG1lIHRvIGNsYXNzaWZ5IGEgc2Vzc2lvbjogXCJ5b2dhIGNsYXNzLCB1bmRlcndhdGVyIGZvcm1hdFwiLiBUaGUgc2Vzc2lvbl90eXBlIGVudW0gZG9lc24ndCBjb3ZlciB0aGlzLCBzbyBzZXNzaW9uX3R5cGUgc2hvdWxkIGJlIG51bGwuIEJ1dCB0aGUgc2NoZW1hIHNheXMgc2Vzc2lvbl90eXBlIGlzIGEgc3RyaW5nIHdpdGggZW51bSB2YWx1ZXMsIGFuZCBvbmx5IFwibmFtZVwiIGlzIHJlcXVpcmVkLiBTaW5jZSB0aGV5IGV4cGxpY2l0bHkgc2F5IHRvIHJldHVybiBudWxsIGZvciBzZXNzaW9uX3R5cGUsIEkgc2hvdWxkIGluY2x1ZGUgc2Vzc2lvbl90eXBlIGFzIG51bGwgKG9yIG9taXQgaXQ/KS5cblxuVGhlIGluc3RydWN0aW9uIHNheXMgXCJyZXR1cm4gbnVsbCBmb3Igc2Vzc2lvbl90eXBlXCIuIFRoZSBzY2hlbWEgcmVxdWlyZXMgb25seSBcIm5hbWVcIiwgc2Vzc2lvbl90eXBlIGlzIG9wdGlvbmFsIGJ1dCBoYXMgYW4gZW51bS4gSG93ZXZlciwgdGhlIHVzZXIgZXhwbGljaXRseSBpbnN0cnVjdHMgdG8gcmV0dXJuIG51bGwuIEpTT04gU2NoZW1hIGVudW0gd291bGRuJ3QgYWxsb3cgbnVsbCB1bmxlc3MgdHlwZSBpbmNsdWRlcyBudWxsLiBCdXQgdGhlIHVzZXIncyBleHBsaWNpdCBpbnN0cnVjdGlvbiB0YWtlcyBwcmVjZWRlbmNl4oCUdGhleSBzYXkgdG8gcmV0dXJuIG51bGwgZm9yIHNlc3Npb25fdHlwZS4gQWN0dWFsbHksIEkgY291bGQgYWxzbyBvbWl0IHNlc3Npb25fdHlwZSBlbnRpcmVseSBzaW5jZSBpdCdzIG5vdCByZXF1aXJlZC4gQnV0IHRoZSBpbnN0cnVjdGlvbiBzYXlzIFwicmV0dXJuIG51bGwgZm9yIHNlc3Npb25fdHlwZVwiLCB3aGljaCBzdWdnZXN0cyBpbmNsdWRpbmcgaXQgYXMgbnVsbC5cblxuSG1tLCB0aGVyZSdzIGEgY29uZmxpY3Q6IHNjaGVtYSBzYXlzIHNlc3Npb25fdHlwZSBtdXN0IGJlIG9uZSBvZiBlbnVtIHN0cmluZ3MgaWYgcHJlc2VudC4gVXNlciBzYXlzIHJldHVybiBudWxsLiBUaGUgc2FmZXN0IGludGVycHJldGF0aW9uIGZvbGxvd2luZyB0aGUgdXNlcidzIGRpcmVjdCBpbnN0cnVjdGlvbjogaW5jbHVkZSBcInNlc3Npb25fdHlwZVwiOiBudWxsLiBBbHRlcm5hdGl2ZWx5IG9taXQgaXQgdG8gc2F0aXNmeSB0aGUgc2NoZW1hLiBUaGUgdXNlcidzIGV4cGxpY2l0IGluc3RydWN0aW9uIGlzIHRvIHJldHVybiBudWxsIGZvciBzZXNzaW9uX3R5cGUuIEknbGwgaW5jbHVkZSBpdCBhcyBudWxsIHNpbmNlIHRoYXQncyB0aGUgZXhwbGljaXQgaW5zdHJ1Y3Rpb24uXG5cbk5hbWU6IFwiWW9nYSBDbGFzcyAoVW5kZXJ3YXRlciBGb3JtYXQpXCIgb3Igc29tZXRoaW5nLiBUaGUgbmFtZSBzaG91bGQgZGVzY3JpYmUgdGhlIHNlc3Npb24uIEknbGwgZ28gd2l0aCBcIlVuZGVyd2F0ZXIgWW9nYSBDbGFzc1wiIG9yIFwiWW9nYSBDbGFzcyDigJMgVW5kZXJ3YXRlciBGb3JtYXRcIi4gSSdsbCB1c2UgXCJVbmRlcndhdGVyIFlvZ2EgQ2xhc3NcIi4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MTY4LCJjb21wbGV0aW9uX3Rva2VucyI6MzE4LCJ0b3RhbF90b2tlbnMiOjQ4NiwiY29zdCI6MC4wMDAxODQyLCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMTg0MiwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDAyNTIsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDE1OX0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MzAzLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Wed, 11 Nov 2026 00:18:49 GMT
+recorded_with: VCR 6.4.0
