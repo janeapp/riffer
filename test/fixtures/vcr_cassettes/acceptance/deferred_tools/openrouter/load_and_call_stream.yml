@@ -12,9 +12,10 @@ http_interactions:
         you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
     headers:
       Accept-Encoding:
       - identity
@@ -41,14 +42,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1206'
+      - '1347'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Thu, 12 Nov 2026 19:00:45 GMT
+      - Thu, 12 Nov 2026 21:15:28 GMT
       Content-Type:
       - text/event-stream
       Transfer-Encoding:
@@ -60,11 +61,11 @@ http_interactions:
       Cache-Control:
       - no-cache
       X-Generation-Id:
-      - gen-1794510045-j18hqdOcVjCqbWPyrkJ1
+      - gen-1794518128-3G47MOT8TbOdzcbDtn8W
       Access-Control-Expose-Headers:
       - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
       X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -75,71 +76,29 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - a597c807ff1df328-SEA
+      - a5988d5e1872ba18-SEA
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: UTF-8
       string: |+
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"I","reasoning_details":[{"type":"reasoning.text","text":"I","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants","reasoning_details":[{"type":"reasoning.text","text":" user wants","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" need a calendar tool. Use find_tools.","reasoning_details":[{"type":"reasoning.text","text":" need a calendar tool. Use find_tools.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" to know","reasoning_details":[{"type":"reasoning.text","text":" to know","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"chatcmpl-tool-2e5b84b3e2364d65a34776db941b8ad6","type":"function","function":{"name":"find_tools","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" what's","reasoning_details":[{"type":"reasoning.text","text":" what's","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"query\": \"check calendar events for a specific"}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" on their","reasoning_details":[{"type":"reasoning.text","text":" on their","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":" date\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" calendar on","reasoning_details":[{"type":"reasoning.text","text":" calendar on","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
 
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" 202","reasoning_details":[{"type":"reasoning.text","text":" 202","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"6-","reasoning_details":[{"type":"reasoning.text","text":"6-","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"11-","reasoning_details":[{"type":"reasoning.text","text":"11-","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"06.","reasoning_details":[{"type":"reasoning.text","text":"06.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" I need","reasoning_details":[{"type":"reasoning.text","text":" I need","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" to find","reasoning_details":[{"type":"reasoning.text","text":" to find","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" a tool","reasoning_details":[{"type":"reasoning.text","text":" a tool","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" for calendar","reasoning_details":[{"type":"reasoning.text","text":" for calendar","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" lookup","reasoning_details":[{"type":"reasoning.text","text":" lookup","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". Let","reasoning_details":[{"type":"reasoning.text","text":". Let","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" me use","reasoning_details":[{"type":"reasoning.text","text":" me use","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" find_tools","reasoning_details":[{"type":"reasoning.text","text":" find_tools","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"chatcmpl-tool-89977190b044dca2","type":"function","function":{"name":"find_tools","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"query\": \"check"}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":" calendar events"}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":" for a"}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":" specific"}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":" date"}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
-
-        data: {"id":"gen-1794510045-j18hqdOcVjCqbWPyrkJ1","object":"chat.completion.chunk","created":1794510045,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":352,"completion_tokens":53,"total_tokens":405,"cost":0.0000793,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000793,"upstream_inference_prompt_cost":0.0000528,"upstream_inference_completions_cost":0.0000265},"completion_tokens_details":{"reasoning_tokens":35,"image_tokens":0,"audio_tokens":0}}}
+        data: {"id":"gen-1794518128-3G47MOT8TbOdzcbDtn8W","object":"chat.completion.chunk","created":1794518128,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":383,"completion_tokens":28,"total_tokens":411,"cost":0.00007145,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00007145,"upstream_inference_prompt_cost":0.00005745,"upstream_inference_completions_cost":0.000014},"completion_tokens_details":{"reasoning_tokens":10,"image_tokens":0,"audio_tokens":0}}}
 
         data: [DONE]
 
-  recorded_at: Thu, 12 Nov 2026 19:00:46 GMT
+  recorded_at: Thu, 12 Nov 2026 21:15:28 GMT
 - request:
     method: post
     uri: https://openrouter.ai/api/v1/chat/completions
@@ -147,22 +106,24 @@ http_interactions:
       encoding: UTF-8
       string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
         you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-89977190b044dca2","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
-        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user wants to know what''s on their calendar on 2026-11-06. I need to find
-        a tool for calendar lookup. Let me use find_tools.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-89977190b044dca2","content":"Loaded
-        tools. Call each one through riffer/providers/deferred_tool_gateway/tool,
-        with name set to the tool''s name and arguments set to its arguments as a
-        JSON-encoded object.\n\nTool: calendar/list_events\nDescription: List the
-        user''s calendar events on a date\nParameters: {\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-2e5b84b3e2364d65a34776db941b8ad6","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"I
+        need a calendar tool. Use find_tools.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-2e5b84b3e2364d65a34776db941b8ad6","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
+        tool: set name to the tool''s name exactly as written below, and set arguments
+        to a string holding its arguments as a JSON object that matches its parameters.
+        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
         you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
     headers:
       Accept-Encoding:
       - identity
@@ -189,14 +150,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '2130'
+      - '2442'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Thu, 12 Nov 2026 19:00:47 GMT
+      - Thu, 12 Nov 2026 21:15:29 GMT
       Content-Type:
       - text/event-stream
       Transfer-Encoding:
@@ -208,11 +169,11 @@ http_interactions:
       Cache-Control:
       - no-cache
       X-Generation-Id:
-      - gen-1794510046-QwpW54AdSlAcRwMyjwia
+      - gen-1794518129-MMtnGNiBHZYPeqslLnHX
       Access-Control-Expose-Headers:
       - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
       X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -223,25 +184,27 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - a597c80eeddbf328-SEA
+      - a5988d622a3aba18-SEA
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: UTF-8
       string: |+
-        data: {"id":"gen-1794510046-QwpW54AdSlAcRwMyjwia","object":"chat.completion.chunk","created":1794510046,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_01a1d122478b73c08c90448a","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518129-MMtnGNiBHZYPeqslLnHX","object":"chat.completion.chunk","created":1794518129,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"chatcmpl-tool-30fb74adf87246ba9568d8309617449a","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510046-QwpW54AdSlAcRwMyjwia","object":"chat.completion.chunk","created":1794510046,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{"}}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518129-MMtnGNiBHZYPeqslLnHX","object":"chat.completion.chunk","created":1794518129,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"name\": \"calendar/list_events\", \"arguments\": "}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510046-QwpW54AdSlAcRwMyjwia","object":"chat.completion.chunk","created":1794510046,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"arguments\":\"{\\\"date\\\": \\\"2026-11-06\\\"}\",\"name\":\"calendar/list_events\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+        data: {"id":"gen-1794518129-MMtnGNiBHZYPeqslLnHX","object":"chat.completion.chunk","created":1794518129,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"{\\\"date\\\": \\\"2026-11-06\\\"}\""}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510046-QwpW54AdSlAcRwMyjwia","object":"chat.completion.chunk","created":1794510046,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+        data: {"id":"gen-1794518129-MMtnGNiBHZYPeqslLnHX","object":"chat.completion.chunk","created":1794518129,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
 
-        data: {"id":"gen-1794510046-QwpW54AdSlAcRwMyjwia","object":"chat.completion.chunk","created":1794510046,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":499,"completion_tokens":39,"total_tokens":538,"cost":0.00006363,"is_byok":false,"prompt_tokens_details":{"cached_tokens":256,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00006363,"upstream_inference_prompt_cost":0.00004413,"upstream_inference_completions_cost":0.0000195},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
+        data: {"id":"gen-1794518129-MMtnGNiBHZYPeqslLnHX","object":"chat.completion.chunk","created":1794518129,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794518129-MMtnGNiBHZYPeqslLnHX","object":"chat.completion.chunk","created":1794518129,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":552,"completion_tokens":39,"total_tokens":591,"cost":0.0001023,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0001023,"upstream_inference_prompt_cost":0.0000828,"upstream_inference_completions_cost":0.0000195},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
 
         data: [DONE]
 
-  recorded_at: Thu, 12 Nov 2026 19:00:47 GMT
+  recorded_at: Thu, 12 Nov 2026 21:15:29 GMT
 - request:
     method: post
     uri: https://openrouter.ai/api/v1/chat/completions
@@ -249,24 +212,26 @@ http_interactions:
       encoding: UTF-8
       string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
         you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-89977190b044dca2","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
-        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user wants to know what''s on their calendar on 2026-11-06. I need to find
-        a tool for calendar lookup. Let me use find_tools.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-89977190b044dca2","content":"Loaded
-        tools. Call each one through riffer/providers/deferred_tool_gateway/tool,
-        with name set to the tool''s name and arguments set to its arguments as a
-        JSON-encoded object.\n\nTool: calendar/list_events\nDescription: List the
-        user''s calendar events on a date\nParameters: {\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}"},{"role":"assistant","tool_calls":[{"id":"call_01a1d122478b73c08c90448a","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
-        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_01a1d122478b73c08c90448a","content":"On
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-2e5b84b3e2364d65a34776db941b8ad6","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"I
+        need a calendar tool. Use find_tools.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-2e5b84b3e2364d65a34776db941b8ad6","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
+        tool: set name to the tool''s name exactly as written below, and set arguments
+        to a string holding its arguments as a JSON object that matches its parameters.
+        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-30fb74adf87246ba9568d8309617449a","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"chatcmpl-tool-30fb74adf87246ba9568d8309617449a","content":"On
         2026-11-06: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
         you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
     headers:
       Accept-Encoding:
       - identity
@@ -293,14 +258,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '2524'
+      - '2870'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Thu, 12 Nov 2026 19:00:47 GMT
+      - Thu, 12 Nov 2026 21:15:30 GMT
       Content-Type:
       - text/event-stream
       Transfer-Encoding:
@@ -312,11 +277,11 @@ http_interactions:
       Cache-Control:
       - no-cache
       X-Generation-Id:
-      - gen-1794510047-WynC8ZluXLHX0SCmI2P0
+      - gen-1794518130-cXUb1T3agraxgPktTtO7
       Access-Control-Expose-Headers:
       - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
       X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -327,12 +292,24 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - a597c813ace9f328-SEA
+      - a5988d680d19ba18-SEA
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        ZGF0YTogeyJpZCI6Imdlbi0xNzk0NTEwMDQ3LVd5bkM4Wmx1WExIWDBTQ21JMlAwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDUxMDA0NywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlRvZ2V0aGVyIiwic3lzdGVtX2ZpbmdlcnByaW50IjoiZGVmYXVsdCIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IlNpbXBsZSIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiU2ltcGxlIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NTEwMDQ3LVd5bkM4Wmx1WExIWDBTQ21JMlAwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDUxMDA0NywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlRvZ2V0aGVyIiwic3lzdGVtX2ZpbmdlcnByaW50IjoiZGVmYXVsdCIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiBhbnN3ZXIuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgYW5zd2VyLiIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDUxMDA0Ny1XeW5DOFpsdVhMSFgwU0NtSTJQMCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ1MTAwNDcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJUb2dldGhlciIsInN5c3RlbV9maW5nZXJwcmludCI6ImRlZmF1bHQiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IkhlcmUncyB3aGF0J3Mgb24geW91ciBjYWxlbmRhciBmb3IiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ1MTAwNDctV3luQzhabHVYTEhYMFNDbUkyUDAiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NTEwMDQ3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiVG9nZXRoZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJkZWZhdWx0IiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgKipGcmlkYXksIDIwMjYtMTEtMDYqKjoiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ1MTAwNDctV3luQzhabHVYTEhYMFNDbUkyUDAiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NTEwMDQ3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiVG9nZXRoZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJkZWZhdWx0IiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJcblxuLSAqKjA5OjAwKiog4oCUIERlbnRpc3QiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ1MTAwNDctV3luQzhabHVYTEhYMFNDbUkyUDAiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NTEwMDQ3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiVG9nZXRoZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJkZWZhdWx0IiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJcbi0gKioxMjozMCoqIOKAlCBUZWFtIGx1bmNoIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NTEwMDQ3LVd5bkM4Wmx1WExIWDBTQ21JMlAwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDUxMDA0NywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlRvZ2V0aGVyIiwic3lzdGVtX2ZpbmdlcnByaW50IjoiZGVmYXVsdCIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6bnVsbH0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NTEwMDQ3LVd5bkM4Wmx1WExIWDBTQ21JMlAwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDUxMDA0NywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlRvZ2V0aGVyIiwic3lzdGVtX2ZpbmdlcnByaW50IjoiZGVmYXVsdCIsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjo1NjYsImNvbXBsZXRpb25fdG9rZW5zIjo0NCwidG90YWxfdG9rZW5zIjo2MTAsImNvc3QiOjAuMDAwMDYwODIsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6Mzg0LCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDA2MDgyLCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMDM4ODIsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAyMn0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MywiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0KCmRhdGE6IFtET05FXQoK
-  recorded_at: Thu, 12 Nov 2026 19:00:48 GMT
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794518130-cXUb1T3agraxgPktTtO7","object":"chat.completion.chunk","created":1794518130,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"On 2026-11-06 you have:\n\n-","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794518130-cXUb1T3agraxgPktTtO7","object":"chat.completion.chunk","created":1794518130,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":" **Dentist** at 09:00","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794518130-cXUb1T3agraxgPktTtO7","object":"chat.completion.chunk","created":1794518130,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"\n- **Team lunch** at 12:30","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794518130-cXUb1T3agraxgPktTtO7","object":"chat.completion.chunk","created":1794518130,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1794518130-cXUb1T3agraxgPktTtO7","object":"chat.completion.chunk","created":1794518130,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":619,"completion_tokens":35,"total_tokens":654,"cost":0.00007963,"is_byok":false,"prompt_tokens_details":{"cached_tokens":256,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00007963,"upstream_inference_prompt_cost":0.00006213,"upstream_inference_completions_cost":0.0000175},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Thu, 12 Nov 2026 21:15:30 GMT
 recorded_with: VCR 6.4.0
+...

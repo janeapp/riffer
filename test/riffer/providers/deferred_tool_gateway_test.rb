@@ -35,11 +35,13 @@ describe Riffer::Providers::DeferredToolGateway do
       {
         type: "object",
         properties: {
-          "name" => { type: "string", description: "The name of the loaded tool to call" },
+          "name" => { type: "string",
+                      description: "The loaded tool's exact name, copied from the result that loaded it", },
           "arguments" => {
             type: "string",
-            description: "The loaded tool's arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}. " \
-                         "Use {} for a tool without parameters.",
+            description: "The loaded tool's arguments as a JSON-encoded object string matching its parameters, such " \
+                         "as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay " \
+                         "unquoted inside it. Use \"{}\" for a tool without parameters.",
           },
         },
         required: %w[name arguments],
@@ -92,22 +94,18 @@ describe Riffer::Providers::DeferredToolGateway do
 
       expect(wrapped.name).must_equal "connect_calendar"
       expect(wrapped.content).must_equal <<~TEXT.chomp
-        Loaded tools. Call each one through riffer/providers/deferred_tool_gateway/tool, with name set to the tool's name and arguments set to its arguments as a JSON-encoded object.
+        These tools are now loaded. They are not in your tool list, so calling one by its own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool tool: set name to the tool's name exactly as written below, and set arguments to a string holding its arguments as a JSON object that matches its parameters. Use "{}" as arguments for a tool without parameters.
 
-        Tool: calendar/list_events
-        Description: Lists calendar events
-        Parameters: {"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false}
-
-        Tool: create_event
-        Description: Creates a calendar event
-        Parameters: {"type":"object","properties":{},"required":[],"additionalProperties":false}
+        [{"name":"calendar/list_events","description":"Lists calendar events","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false}},{"name":"create_event","description":"Creates a calendar event","parameters":{"type":"object","properties":{},"required":[],"additionalProperties":false}}]
       TEXT
     end
 
     it "keeps a loading result's own content ahead of the description" do
       loading = result("c_1", "connect_calendar", content: "Connected.", loaded: ["create_event"])
 
-      expect(gateway.wrap_messages([loading], deferred).first.content).must_match(/\AConnected\.\n\nLoaded tools\./)
+      content = gateway.wrap_messages([loading], deferred).first.content
+
+      expect(content).must_match(/\AConnected\.\n\nThese tools are now loaded\./)
     end
 
     it "describes a body-less tool shell from its stored schema" do

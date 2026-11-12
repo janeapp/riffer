@@ -133,15 +133,18 @@ module Riffer::Providers::DeferredToolGateway
   #: (Array[singleton(Riffer::Tool)]) -> String
   def describe_loaded_tools(tools)
     entries = tools.map do |tool|
-      "Tool: #{tool.name}\nDescription: #{tool.description}\nParameters: #{JSON.generate(tool.parameters_schema)}"
+      { name: tool.name, description: tool.description, parameters: tool.parameters_schema }
     end
-    [loaded_tools_header, *entries].join("\n\n")
+    [loaded_tools_header, JSON.generate(entries)].join("\n\n")
   end
 
+  # Names the gateway as the model sees it in its tool list; models copy a raw namespaced name into calls verbatim.
   #--
   #: () -> String
   def loaded_tools_header
-    "Loaded tools. Call each one through #{Tool.name}, with name set to the tool's name and arguments set to its " \
-      "arguments as a JSON-encoded object."
+    "These tools are now loaded. They are not in your tool list, so calling one by its own name fails. Call each " \
+      "one through the #{Riffer::Wire.encode_tool_name(Tool.name)} tool: set name to the tool's name exactly as " \
+      "written below, and set arguments to a string holding its arguments as a JSON object that matches its " \
+      "parameters. Use \"{}\" as arguments for a tool without parameters."
   end
 end

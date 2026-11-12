@@ -223,7 +223,7 @@ describe Riffer::Providers::Base do
       generate(loaded_history)
       sent = provider.calls.last[:messages]
 
-      expect(sent[2][:content]).must_match(%r{\ALoaded tools\..*Tool: calendar/list_events}m)
+      expect(sent[2][:content]).must_match(%r{\AThese tools are now loaded\..*"name":"calendar/list_events"}m)
       expect(sent[3][:parts].first.slice(:name, :arguments)).
         must_equal({ name: gateway_name, arguments: gateway_arguments })
       expect(sent[4].slice(:tool_call_id, :name, :content)).

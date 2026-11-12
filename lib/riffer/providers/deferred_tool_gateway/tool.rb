@@ -7,9 +7,10 @@ class Riffer::Providers::DeferredToolGateway::Tool < Riffer::Tool
 
   # The arguments are a string rather than an object, since strict mode rejects an object without fixed properties.
   params do
-    required :name, :string, description: "The name of the loaded tool to call"
+    required :name, :string, description: "The loaded tool's exact name, copied from the result that loaded it"
     required :arguments, :string,
-             description: "The loaded tool's arguments as a JSON-encoded object, such as " \
-                          "{\"date\":\"2026-11-06\"}. Use {} for a tool without parameters."
+             description: "The loaded tool's arguments as a JSON-encoded object string matching its parameters, " \
+                          "such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans " \
+                          "stay unquoted inside it. Use \"{}\" for a tool without parameters."
   end
 end

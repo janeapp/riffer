@@ -4458,7 +4458,7 @@ describe Riffer::Agent::Run do
         expect(agent.provider.calls.map { |c| c[:tools] }.uniq).
           must_equal [[loader, Riffer::Providers::DeferredToolGateway::Tool]]
         expect(sent.last.take(sent[1].size)).must_equal sent[1]
-        expect(sent.last[2][:content]).must_match(/Tool: list_events/)
+        expect(sent.last[2][:content]).must_match(/"name":"list_events"/)
         expect(agent.session.messages.grep(Riffer::Messages::Tool).first.content).must_equal ""
       end
 

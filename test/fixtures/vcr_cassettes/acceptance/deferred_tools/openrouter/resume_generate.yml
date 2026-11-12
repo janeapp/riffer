@@ -12,9 +12,10 @@ http_interactions:
         you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -41,14 +42,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '1152'
+      - '1293'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Thu, 12 Nov 2026 19:00:31 GMT
+      - Thu, 12 Nov 2026 21:15:31 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -58,11 +59,11 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       X-Generation-Id:
-      - gen-1794510031-vIKzDqDVMAba6HGg9Dul
+      - gen-1794518130-3pJPRbsV2T9TemhEV6Dx
       Access-Control-Expose-Headers:
       - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
       X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -73,18 +74,20 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - a597c7ad596d2817-SEA
+      - a5988d6e3fb07598-SEA
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
-      string: "\n         \n{\"id\":\"gen-1794510031-vIKzDqDVMAba6HGg9Dul\",\"object\":\"chat.completion\",\"created\":1794510031,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Modal\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
-        user wants to know what's on their calendar on 2026-11-06. I need to find
-        a calendar tool. Let me search for one.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_78a2581e2d26487eabf14a67\",\"function\":{\"name\":\"find_tools\",\"arguments\":\"{\\\"query\\\":
-        \\\"read calendar events for a date\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
-        user wants to know what's on their calendar on 2026-11-06. I need to find
-        a calendar tool. Let me search for one.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":352,\"completion_tokens\":50,\"total_tokens\":402,\"cost\":0.0000778,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000778,\"upstream_inference_prompt_cost\":0.0000528,\"upstream_inference_completions_cost\":0.000025},\"completion_tokens_details\":{\"reasoning_tokens\":34,\"image_tokens\":0,\"audio_tokens\":0}}}"
-  recorded_at: Thu, 12 Nov 2026 19:00:31 GMT
+      string: '{"id":"gen-1794518130-3pJPRbsV2T9TemhEV6Dx","object":"chat.completion","created":1794518130,"model":"z-ai/glm-5.3-flash","provider":"Friendli","system_fingerprint":null,"service_tier":null,"choices":[{"index":0,"logprobs":null,"finish_reason":"tool_calls","native_finish_reason":"tool_calls","message":{"role":"assistant","content":null,"refusal":null,"reasoning":"The
+        user wants to know what''s on their calendar on 2026-11-06. I don''t have
+        a calendar tool available directly. I should use find_tools to find a calendar
+        tool.","tool_calls":[{"type":"function","index":0,"id":"call_TEXoTZXsd2cUH248qR5Vmdtx","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I don''t have
+        a calendar tool available directly. I should use find_tools to find a calendar
+        tool.","format":"unknown","index":0}]}}],"usage":{"prompt_tokens":382,"completion_tokens":58,"total_tokens":440,"cost":0.0000863,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000863,"upstream_inference_prompt_cost":0.0000573,"upstream_inference_completions_cost":0.000029},"completion_tokens_details":{"reasoning_tokens":40,"image_tokens":0,"audio_tokens":0}}}'
+  recorded_at: Thu, 12 Nov 2026 21:15:31 GMT
 - request:
     method: post
     uri: https://openrouter.ai/api/v1/chat/completions
@@ -92,22 +95,26 @@ http_interactions:
       encoding: UTF-8
       string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
         you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_78a2581e2d26487eabf14a67","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
-        \"read calendar events for a date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user wants to know what''s on their calendar on 2026-11-06. I need to find
-        a calendar tool. Let me search for one.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_78a2581e2d26487eabf14a67","content":"Loaded
-        tools. Call each one through riffer/providers/deferred_tool_gateway/tool,
-        with name set to the tool''s name and arguments set to its arguments as a
-        JSON-encoded object.\n\nTool: calendar/list_events\nDescription: List the
-        user''s calendar events on a date\nParameters: {\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_TEXoTZXsd2cUH248qR5Vmdtx","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I don''t have
+        a calendar tool available directly. I should use find_tools to find a calendar
+        tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_TEXoTZXsd2cUH248qR5Vmdtx","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
+        tool: set name to the tool''s name exactly as written below, and set arguments
+        to a string holding its arguments as a JSON object that matches its parameters.
+        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
         you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -134,14 +141,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '2053'
+      - '2475'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Thu, 12 Nov 2026 19:00:33 GMT
+      - Thu, 12 Nov 2026 21:15:31 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -151,11 +158,11 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       X-Generation-Id:
-      - gen-1794510032-nYE20YCQ2Ah9kjB2RWgr
+      - gen-1794518131-18cyD3XlO7PooZmmbjB6
       Access-Control-Expose-Headers:
       - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
       X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -166,14 +173,14 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - a597c7b2f9062817-SEA
+      - a5988d7159977598-SEA
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
-      string: "\n         \n{\"id\":\"gen-1794510032-nYE20YCQ2Ah9kjB2RWgr\",\"object\":\"chat.completion\",\"created\":1794510032,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Together\",\"system_fingerprint\":\"default\",\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":null,\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_01a1d122110173208320b9ae\",\"function\":{\"name\":\"riffer__providers__deferred_tool_gateway__tool\",\"arguments\":\"{\\\"arguments\\\":\\\"{\\\\\\\"date\\\\\\\":
-        \\\\\\\"2026-11-06\\\\\\\"}\\\",\\\"name\\\":\\\"calendar/list_events\\\"}\"}}]}}],\"usage\":{\"prompt_tokens\":496,\"completion_tokens\":39,\"total_tokens\":535,\"cost\":0.00006318,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":256,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00006318,\"upstream_inference_prompt_cost\":0.00004368,\"upstream_inference_completions_cost\":0.0000195},\"completion_tokens_details\":{\"reasoning_tokens\":0,\"image_tokens\":0,\"audio_tokens\":0}}}"
-  recorded_at: Thu, 12 Nov 2026 19:00:33 GMT
+      string: '{"id":"gen-1794518131-18cyD3XlO7PooZmmbjB6","object":"chat.completion","created":1794518131,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","system_fingerprint":null,"service_tier":null,"choices":[{"index":0,"logprobs":null,"finish_reason":"tool_calls","native_finish_reason":"tool_calls","message":{"role":"assistant","content":null,"refusal":null,"reasoning":null,"tool_calls":[{"type":"function","index":0,"id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":
+        \"calendar/list_events\", \"arguments\": \"{\\\"date\\\": \\\"2026-11-06\\\"}\"}"}}]}}],"usage":{"prompt_tokens":582,"completion_tokens":39,"total_tokens":621,"cost":0.0001068,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0001068,"upstream_inference_prompt_cost":0.0000873,"upstream_inference_completions_cost":0.0000195},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}'
+  recorded_at: Thu, 12 Nov 2026 21:15:31 GMT
 - request:
     method: post
     uri: https://openrouter.ai/api/v1/chat/completions
@@ -181,24 +188,28 @@ http_interactions:
       encoding: UTF-8
       string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
         you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_78a2581e2d26487eabf14a67","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
-        \"read calendar events for a date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user wants to know what''s on their calendar on 2026-11-06. I need to find
-        a calendar tool. Let me search for one.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_78a2581e2d26487eabf14a67","content":"Loaded
-        tools. Call each one through riffer/providers/deferred_tool_gateway/tool,
-        with name set to the tool''s name and arguments set to its arguments as a
-        JSON-encoded object.\n\nTool: calendar/list_events\nDescription: List the
-        user''s calendar events on a date\nParameters: {\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}"},{"role":"assistant","tool_calls":[{"id":"call_01a1d122110173208320b9ae","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
-        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_01a1d122110173208320b9ae","content":"On
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_TEXoTZXsd2cUH248qR5Vmdtx","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I don''t have
+        a calendar tool available directly. I should use find_tools to find a calendar
+        tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_TEXoTZXsd2cUH248qR5Vmdtx","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
+        tool: set name to the tool''s name exactly as written below, and set arguments
+        to a string holding its arguments as a JSON object that matches its parameters.
+        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","content":"On
         2026-11-06: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
         you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -225,14 +236,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '2447'
+      - '2903'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Thu, 12 Nov 2026 19:00:34 GMT
+      - Thu, 12 Nov 2026 21:15:32 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -242,11 +253,11 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       X-Generation-Id:
-      - gen-1794510033-m95pgOcGlYozaQKAZnJ7
+      - gen-1794518132-TrXgQmKD8YZoH4Wy3D4J
       Access-Control-Expose-Headers:
       - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
       X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -257,208 +268,208 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - a597c7bcfc6f2817-SEA
-      Alt-Svc:
-      - h3=":443"; ma=86400
-    body:
-      encoding: ASCII-8BIT
-      string: "\n         \n{\"id\":\"gen-1794510033-m95pgOcGlYozaQKAZnJ7\",\"object\":\"chat.completion\",\"created\":1794510033,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Together\",\"system_fingerprint\":\"default\",\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"On
-        **2026-11-06** you have:\\n- **Dentist** at 09:00\\n- **Team lunch** at 12:30\",\"refusal\":null,\"reasoning\":\"Simple
-        answer.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"Simple
-        answer.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":563,\"completion_tokens\":39,\"total_tokens\":602,\"cost\":0.00005787,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":384,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00005787,\"upstream_inference_prompt_cost\":0.00003837,\"upstream_inference_completions_cost\":0.0000195},\"completion_tokens_details\":{\"reasoning_tokens\":4,\"image_tokens\":0,\"audio_tokens\":0}}}"
-  recorded_at: Thu, 12 Nov 2026 19:00:34 GMT
-- request:
-    method: post
-    uri: https://openrouter.ai/api/v1/chat/completions
-    body:
-      encoding: UTF-8
-      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
-        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_78a2581e2d26487eabf14a67","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
-        \"read calendar events for a date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user wants to know what''s on their calendar on 2026-11-06. I need to find
-        a calendar tool. Let me search for one.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_78a2581e2d26487eabf14a67","content":"Loaded
-        tools. Call each one through riffer/providers/deferred_tool_gateway/tool,
-        with name set to the tool''s name and arguments set to its arguments as a
-        JSON-encoded object.\n\nTool: calendar/list_events\nDescription: List the
-        user''s calendar events on a date\nParameters: {\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}"},{"role":"assistant","tool_calls":[{"id":"call_01a1d122110173208320b9ae","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
-        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_01a1d122110173208320b9ae","content":"On
-        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"On
-        **2026-11-06** you have:\n- **Dentist** at 09:00\n- **Team lunch** at 12:30","reasoning_details":[{"type":"reasoning.text","text":"Simple
-        answer.","format":"unknown"}]},{"role":"user","content":"And on 2026-11-07?"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
-        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
-        a tool that another tool has loaded. The result of the tool that loaded it
-        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
-    headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - application/json
-      User-Agent:
-      - OpenAI::Client/Ruby 0.97.0
-      X-Stainless-Arch:
-      - arm64
-      X-Stainless-Lang:
-      - ruby
-      X-Stainless-Os:
-      - MacOS
-      X-Stainless-Package-Version:
-      - 0.97.0
-      X-Stainless-Runtime:
-      - ruby
-      X-Stainless-Runtime-Version:
-      - 4.0.9
-      Content-Type:
-      - application/json
-      X-Stainless-Retry-Count:
-      - '0'
-      X-Stainless-Timeout:
-      - '600.0'
-      Content-Length:
-      - '2697'
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Thu, 12 Nov 2026 19:00:34 GMT
-      Content-Type:
-      - application/json
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Origin:
-      - "*"
-      X-Generation-Id:
-      - gen-1794510034-piJ87Lx0vv2BVrqwLzdk
-      Access-Control-Expose-Headers:
-      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
-      X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
-      Permissions-Policy:
-      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
-        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
-      Referrer-Policy:
-      - no-referrer, strict-origin-when-cross-origin
-      X-Content-Type-Options:
-      - nosniff
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - a597c7c39c3b838f-SEA
-      Alt-Svc:
-      - h3=":443"; ma=86400
-    body:
-      encoding: ASCII-8BIT
-      string: "\n         \n{\"id\":\"gen-1794510034-piJ87Lx0vv2BVrqwLzdk\",\"object\":\"chat.completion\",\"created\":1794510034,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Together\",\"system_fingerprint\":\"default\",\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
-        user is asking for calendar events on 2026-11-07. I already have the calendar_list_events
-        tool loaded, so I can call it directly.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_01a1d12218a07b7087d59a0b\",\"function\":{\"name\":\"riffer__providers__deferred_tool_gateway__tool\",\"arguments\":\"{\\\"arguments\\\":\\\"{\\\\\\\"date\\\\\\\":
-        \\\\\\\"2026-11-07\\\\\\\"}\\\",\\\"name\\\":\\\"calendar/list_events\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
-        user is asking for calendar events on 2026-11-07. I already have the calendar_list_events
-        tool loaded, so I can call it directly.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":614,\"completion_tokens\":72,\"total_tokens\":686,\"cost\":0.00007434,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":448,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00007434,\"upstream_inference_prompt_cost\":0.00003834,\"upstream_inference_completions_cost\":0.000036},\"completion_tokens_details\":{\"reasoning_tokens\":32,\"image_tokens\":0,\"audio_tokens\":0}}}"
-  recorded_at: Thu, 12 Nov 2026 19:00:35 GMT
-- request:
-    method: post
-    uri: https://openrouter.ai/api/v1/chat/completions
-    body:
-      encoding: UTF-8
-      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
-        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_78a2581e2d26487eabf14a67","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
-        \"read calendar events for a date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user wants to know what''s on their calendar on 2026-11-06. I need to find
-        a calendar tool. Let me search for one.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_78a2581e2d26487eabf14a67","content":"Loaded
-        tools. Call each one through riffer/providers/deferred_tool_gateway/tool,
-        with name set to the tool''s name and arguments set to its arguments as a
-        JSON-encoded object.\n\nTool: calendar/list_events\nDescription: List the
-        user''s calendar events on a date\nParameters: {\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}"},{"role":"assistant","tool_calls":[{"id":"call_01a1d122110173208320b9ae","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
-        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_01a1d122110173208320b9ae","content":"On
-        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"On
-        **2026-11-06** you have:\n- **Dentist** at 09:00\n- **Team lunch** at 12:30","reasoning_details":[{"type":"reasoning.text","text":"Simple
-        answer.","format":"unknown"}]},{"role":"user","content":"And on 2026-11-07?"},{"role":"assistant","tool_calls":[{"id":"call_01a1d12218a07b7087d59a0b","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
-        \\\"2026-11-07\\\"}\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user is asking for calendar events on 2026-11-07. I already have the calendar_list_events
-        tool loaded, so I can call it directly.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_01a1d12218a07b7087d59a0b","content":"On
-        2026-11-07: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
-        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
-        a tool that another tool has loaded. The result of the tool that loaded it
-        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
-        name of the loaded tool to call"},"arguments":{"type":"string","description":"The
-        loaded tool''s arguments as a JSON-encoded object, such as {\"date\":\"2026-11-06\"}.
-        Use {} for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
-    headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - application/json
-      User-Agent:
-      - OpenAI::Client/Ruby 0.97.0
-      X-Stainless-Arch:
-      - arm64
-      X-Stainless-Lang:
-      - ruby
-      X-Stainless-Os:
-      - MacOS
-      X-Stainless-Package-Version:
-      - 0.97.0
-      X-Stainless-Runtime:
-      - ruby
-      X-Stainless-Runtime-Version:
-      - 4.0.9
-      Content-Type:
-      - application/json
-      X-Stainless-Retry-Count:
-      - '0'
-      X-Stainless-Timeout:
-      - '600.0'
-      Content-Length:
-      - '3301'
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Thu, 12 Nov 2026 19:00:36 GMT
-      Content-Type:
-      - application/json
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Origin:
-      - "*"
-      X-Generation-Id:
-      - gen-1794510035-XCjHouAbJuOpY6VrI1p6
-      Access-Control-Expose-Headers:
-      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
-      X-Openrouter-Release:
-      - api;a3ec4f93-2a1a-4dd7-81fd-daf83c73c6ee
-      Permissions-Policy:
-      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
-        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
-      Referrer-Policy:
-      - no-referrer, strict-origin-when-cross-origin
-      X-Content-Type-Options:
-      - nosniff
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - a597c7c85d84838f-SEA
+      - a5988d74ab707598-SEA
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQ1MTAwMzUtWENqSG91QWJKdU9wWTZWckkxcDYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0NTEwMDM1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiVG9nZXRoZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJkZWZhdWx0Iiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6Ik9uICoqMjAyNi0xMS0wNyoqIHlvdSBoYXZlOlxuLSAqKkRlbnRpc3QqKiBhdCAwOTowMFxuLSAqKlRlYW0gbHVuY2gqKiBhdCAxMjozMFxuXG5JbnRlcmVzdGluZ2x5LCB0aGF0J3MgdGhlIHNhbWUgc2NoZWR1bGUgYXMgdGhlIGRheSBiZWZvcmUg4oCUIHRoZXNlIG1heSBiZSByZWN1cnJpbmcgZXZlbnRzLCBvciBwb3NzaWJseSBhIGR1cGxpY2F0ZSBib29raW5nLiBZb3UgbWlnaHQgd2FudCB0byBkb3VibGUtY2hlY2sgdGhhdCB0aGUgZGVudGlzdCBhcHBvaW50bWVudCBhbmQgdGVhbSBsdW5jaCBhcmVuJ3QgYWNjaWRlbnRhbGx5IHNjaGVkdWxlZCB0d2ljZS4iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOiJJbnRlcmVzdGluZyAtIHRoZSByZXN1bHQgaXMgaWRlbnRpY2FsIHRvIDIwMjYtMTEtMDYuIFRoYXQgY291bGQgYmUgYSByZWN1cnJpbmcgZXZlbnQsIG9yIHRoZSBBUEkgbWF5IGJlIHJldHVybmluZyB0aGUgc2FtZSBkYXRhLiBJJ2xsIGp1c3QgcmVwb3J0IHdoYXQgdGhlIGNhbGVuZGFyIHNheXMuIE1heWJlIG5vdGUgdGhlIHNpbWlsYXJpdHkuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJJbnRlcmVzdGluZyAtIHRoZSByZXN1bHQgaXMgaWRlbnRpY2FsIHRvIDIwMjYtMTEtMDYuIFRoYXQgY291bGQgYmUgYSByZWN1cnJpbmcgZXZlbnQsIG9yIHRoZSBBUEkgbWF5IGJlIHJldHVybmluZyB0aGUgc2FtZSBkYXRhLiBJJ2xsIGp1c3QgcmVwb3J0IHdoYXQgdGhlIGNhbGVuZGFyIHNheXMuIE1heWJlIG5vdGUgdGhlIHNpbWlsYXJpdHkuIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjcxNCwiY29tcGxldGlvbl90b2tlbnMiOjEyNiwidG90YWxfdG9rZW5zIjo4NDAsImNvc3QiOjAuMDAwMTA4NjYsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6NTEyLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDEwODY2LCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMDQ1NjYsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDA2M30sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6NDUsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
-  recorded_at: Thu, 12 Nov 2026 19:00:36 GMT
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQ1MTgxMzItVHJYZ1FtS0Q4WVpvSDRXeTNENEoiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0NTE4MTMyLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQmFzZVRlbiIsInN5c3RlbV9maW5nZXJwcmludCI6bnVsbCwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6Ik9uIDIwMjYtMTEtMDYgeW91IGhhdmUgdHdvIGV2ZW50czpcblxuLSAqKkRlbnRpc3QqKiDigJQgMDk6MDBcbi0gKipUZWFtIGx1bmNoKiog4oCUIDEyOjMwIiwicmVmdXNhbCI6bnVsbCwicmVhc29uaW5nIjpudWxsfX1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjo2NDksImNvbXBsZXRpb25fdG9rZW5zIjozNywidG90YWxfdG9rZW5zIjo2ODYsImNvc3QiOjAuMDAwMTE1ODUsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6MCwiY2FjaGVfd3JpdGVfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjAsInZpZGVvX3Rva2VucyI6MH0sImNvc3RfZGV0YWlscyI6eyJ1cHN0cmVhbV9pbmZlcmVuY2VfY29zdCI6MC4wMDAxMTU4NSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDA5NzM1LCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAwMTg1fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjowLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Thu, 12 Nov 2026 21:15:32 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_TEXoTZXsd2cUH248qR5Vmdtx","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I don''t have
+        a calendar tool available directly. I should use find_tools to find a calendar
+        tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_TEXoTZXsd2cUH248qR5Vmdtx","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
+        tool: set name to the tool''s name exactly as written below, and set arguments
+        to a string holding its arguments as a JSON object that matches its parameters.
+        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"On
+        2026-11-06 you have two events:\n\n- **Dentist** — 09:00\n- **Team lunch**
+        — 12:30"},{"role":"user","content":"And on 2026-11-07?"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '3073'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 12 Nov 2026 21:15:33 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794518132-YPAkvTEH2oum5yCHLrXY
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5988d78f9e85e58-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"gen-1794518132-YPAkvTEH2oum5yCHLrXY","object":"chat.completion","created":1794518132,"model":"z-ai/glm-5.3-flash","provider":"BaseTen","system_fingerprint":null,"service_tier":null,"choices":[{"index":0,"logprobs":null,"finish_reason":"tool_calls","native_finish_reason":"tool_calls","message":{"role":"assistant","content":null,"refusal":null,"reasoning":null,"tool_calls":[{"type":"function","index":0,"id":"chatcmpl-tool-a48495c7c25643719339ccecaa312261","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":
+        \"calendar/list_events\", \"arguments\": \"{\\\"date\\\": \\\"2026-11-07\\\"}\"}"}}]}}],"usage":{"prompt_tokens":698,"completion_tokens":39,"total_tokens":737,"cost":0.00006276,"is_byok":false,"prompt_tokens_details":{"cached_tokens":512,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00006276,"upstream_inference_prompt_cost":0.00004326,"upstream_inference_completions_cost":0.0000195},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}'
+  recorded_at: Thu, 12 Nov 2026 21:15:33 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_TEXoTZXsd2cUH248qR5Vmdtx","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"check calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I don''t have
+        a calendar tool available directly. I should use find_tools to find a calendar
+        tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_TEXoTZXsd2cUH248qR5Vmdtx","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
+        tool: set name to the tool''s name exactly as written below, and set arguments
+        to a string holding its arguments as a JSON object that matches its parameters.
+        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"chatcmpl-tool-ce24a50f518d49e0a1a5a142d17888de","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"On
+        2026-11-06 you have two events:\n\n- **Dentist** — 09:00\n- **Team lunch**
+        — 12:30"},{"role":"user","content":"And on 2026-11-07?"},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-a48495c7c25643719339ccecaa312261","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-07\\\"}\"}"}}]},{"role":"tool","tool_call_id":"chatcmpl-tool-a48495c7c25643719339ccecaa312261","content":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '3501'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 12 Nov 2026 21:15:33 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794518133-FXcdvqLrVoPTBu4UKbWR
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5988d7c4d0d5e58-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQ1MTgxMzMtRlhjZHZxTHJWb1BUQnU0VUtiV1IiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0NTE4MTMzLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQmFzZVRlbiIsInN5c3RlbV9maW5nZXJwcmludCI6bnVsbCwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6Ik9uIDIwMjYtMTEtMDcgeW91IGFsc28gaGF2ZSB0d28gZXZlbnRzOlxuXG4tICoqRGVudGlzdCoqIOKAlCAwOTowMFxuLSAqKlRlYW0gbHVuY2gqKiDigJQgMTI6MzBcblxuSW50ZXJlc3RpbmdseSwgdGhpcyBsb29rcyBpZGVudGljYWwgdG8geW91ciAyMDI2LTExLTA2IHNjaGVkdWxlIOKAlCBwb3NzaWJseSBhIHJlY3VycmluZyBhcHBvaW50bWVudC4gTGV0IG1lIGtub3cgaWYgeW91J2QgbGlrZSBtZSB0byBjaGVjayBvdGhlciBkYXRlcy4iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOiJTYW1lIHJlc3VsdCDigJQgcHJvYmFibHkgbW9jayBkYXRhLiBSZXBvcnQgaXQuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJTYW1lIHJlc3VsdCDigJQgcHJvYmFibHkgbW9jayBkYXRhLiBSZXBvcnQgaXQuIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjc2NSwiY29tcGxldGlvbl90b2tlbnMiOjgzLCJ0b3RhbF90b2tlbnMiOjg0OCwiY29zdCI6MC4wMDAxNTYyNSwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDE1NjI1LCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMTE0NzUsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDA0MTV9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjEwLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Thu, 12 Nov 2026 21:15:34 GMT
 recorded_with: VCR 6.4.0
