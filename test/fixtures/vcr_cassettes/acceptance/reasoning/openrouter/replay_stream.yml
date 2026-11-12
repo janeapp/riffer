@@ -1,0 +1,312 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '489'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:18:15 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356294-cUEAFQZacrykwahvz7p3
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891e5b0945ef20-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants","reasoning_details":[{"type":"reasoning.text","text":" user wants","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" to know which Canadian provincial capital","reasoning_details":[{"type":"reasoning.text","text":" to know which Canadian provincial capital","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" has the largest population,","reasoning_details":[{"type":"reasoning.text","text":" has the largest population,","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" then get the weather there.","reasoning_details":[{"type":"reasoning.text","text":" then get the weather there.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"\n\nCanadian provincial capitals:","reasoning_details":[{"type":"reasoning.text","text":"\n\nCanadian provincial capitals:","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"\n- Toronto (","reasoning_details":[{"type":"reasoning.text","text":"\n- Toronto (","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"Ontario)","reasoning_details":[{"type":"reasoning.text","text":"Ontario)","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" - ~","reasoning_details":[{"type":"reasoning.text","text":" - ~","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"2.8","reasoning_details":[{"type":"reasoning.text","text":"2.8","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" million\n- Quebec","reasoning_details":[{"type":"reasoning.text","text":" million\n- Quebec","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" City (Que","reasoning_details":[{"type":"reasoning.text","text":" City (Que","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"bec) - ~5","reasoning_details":[{"type":"reasoning.text","text":"bec) - ~5","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"40,","reasoning_details":[{"type":"reasoning.text","text":"40,","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"000\n- Victoria","reasoning_details":[{"type":"reasoning.text","text":"000\n- Victoria","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" (BC","reasoning_details":[{"type":"reasoning.text","text":" (BC","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":") - ~90","reasoning_details":[{"type":"reasoning.text","text":") - ~90","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n- Edmonton (","reasoning_details":[{"type":"reasoning.text","text":",000\n- Edmonton (","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"Alberta) - ~1","reasoning_details":[{"type":"reasoning.text","text":"Alberta) - ~1","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" million\n- Winnipeg (Man","reasoning_details":[{"type":"reasoning.text","text":" million\n- Winnipeg (Man","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"itoba","reasoning_details":[{"type":"reasoning.text","text":"itoba","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":") - ~750","reasoning_details":[{"type":"reasoning.text","text":") - ~750","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n- Halifax","reasoning_details":[{"type":"reasoning.text","text":",000\n- Halifax","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" (Nova","reasoning_details":[{"type":"reasoning.text","text":" (Nova","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" Scotia) - ~400","reasoning_details":[{"type":"reasoning.text","text":" Scotia) - ~400","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n- Freder","reasoning_details":[{"type":"reasoning.text","text":",000\n- Freder","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"icton","reasoning_details":[{"type":"reasoning.text","text":"icton","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" (NB) - ~58","reasoning_details":[{"type":"reasoning.text","text":" (NB) - ~58","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n- Charl","reasoning_details":[{"type":"reasoning.text","text":",000\n- Charl","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"ottet","reasoning_details":[{"type":"reasoning.text","text":"ottet","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"own (PE","reasoning_details":[{"type":"reasoning.text","text":"own (PE","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"I) - ~36","reasoning_details":[{"type":"reasoning.text","text":"I) - ~36","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n- Regina","reasoning_details":[{"type":"reasoning.text","text":",000\n- Regina","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" (S","reasoning_details":[{"type":"reasoning.text","text":" (S","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"askatchewan) - ~215","reasoning_details":[{"type":"reasoning.text","text":"askatchewan) - ~215","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n- St.","reasoning_details":[{"type":"reasoning.text","text":",000\n- St.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" John's (NL","reasoning_details":[{"type":"reasoning.text","text":" John's (NL","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":") - ~110","reasoning_details":[{"type":"reasoning.text","text":") - ~110","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",000\n\nToronto is by","reasoning_details":[{"type":"reasoning.text","text":",000\n\nToronto is by","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" far the largest.","reasoning_details":[{"type":"reasoning.text","text":" far the largest.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" Note","reasoning_details":[{"type":"reasoning.text","text":" Note","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": Toronto is a","reasoning_details":[{"type":"reasoning.text","text":": Toronto is a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" provincial capital but","reasoning_details":[{"type":"reasoning.text","text":" provincial capital but","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" not the","reasoning_details":[{"type":"reasoning.text","text":" not the","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" national capital (that","reasoning_details":[{"type":"reasoning.text","text":" national capital (that","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"'s Ottawa). So","reasoning_details":[{"type":"reasoning.text","text":"'s Ottawa). So","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the answer is Toronto.\n\nThen","reasoning_details":[{"type":"reasoning.text","text":" the answer is Toronto.\n\nThen","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" I need","reasoning_details":[{"type":"reasoning.text","text":" I need","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" to get the weather there","reasoning_details":[{"type":"reasoning.text","text":" to get the weather there","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" using","reasoning_details":[{"type":"reasoning.text","text":" using","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the tool","reasoning_details":[{"type":"reasoning.text","text":" the tool","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"Toronto,","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" the","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" capital of Ontario, is the","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" largest Canadian provincial capital with a","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" population of roughly 2.","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"9","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" million (","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"over","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" 6","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" million in the greater","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" metropolitan","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" area). Let me get the","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" weather there.","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"chatcmpl-tool-8503ec175e07a5a4","type":"function","function":{"name":"get_weather","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"city\": \"Toronto"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356294-cUEAFQZacrykwahvz7p3","object":"chat.completion.chunk","created":1794356294,"model":"z-ai/glm-5.3-flash","provider":"Mistral","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":183,"completion_tokens":248,"total_tokens":431,"cost":0.00015145,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00015145,"upstream_inference_prompt_cost":0.00002745,"upstream_inference_completions_cost":0.000124},"completion_tokens_details":{"reasoning_tokens":195,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:18:16 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."},{"role":"assistant","content":"Toronto,
+        the capital of Ontario, is the largest Canadian provincial capital with a
+        population of roughly 2.9 million (over 6 million in the greater metropolitan
+        area). Let me get the weather there.","tool_calls":[{"id":"chatcmpl-tool-8503ec175e07a5a4","type":"function","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know which Canadian provincial capital has the largest population,
+        then get the weather there.\n\nCanadian provincial capitals:\n- Toronto (Ontario)
+        - ~2.8 million\n- Quebec City (Quebec) - ~540,000\n- Victoria (BC) - ~90,000\n-
+        Edmonton (Alberta) - ~1 million\n- Winnipeg (Manitoba) - ~750,000\n- Halifax
+        (Nova Scotia) - ~400,000\n- Fredericton (NB) - ~58,000\n- Charlottetown (PEI)
+        - ~36,000\n- Regina (Saskatchewan) - ~215,000\n- St. John''s (NL) - ~110,000\n\nToronto
+        is by far the largest. Note: Toronto is a provincial capital but not the national
+        capital (that''s Ottawa). So the answer is Toronto.\n\nThen I need to get
+        the weather there using the tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-8503ec175e07a5a4","content":"It
+        is 15 degrees Celsius in Toronto."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1732'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:18:16 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356296-3KOHzzFl5F8Vv1zNZufV
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891e642b66ef20-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IlRoZSIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiVGhlIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiB3ZWF0aGVyIHJlc3VsdCIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIHdlYXRoZXIgcmVzdWx0IiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiBpcyBpbiIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIGlzIGluIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6Ii4iLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6Ii4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIExldCIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIExldCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgbWUgZ2l2ZSIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIG1lIGdpdmUiLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIHRoZSBhbnN3ZXIuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgdGhlIGFuc3dlci4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIqKiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IlRvcm9udG8sIE9udGFyaW8iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIqKiBpcyB0aGUgYW5zd2VyIOKAlCIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiB3aXRoIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGEgcG9wdWxhdGlvbiBvZiBhYm91dCAiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIyLjkgbWlsbGlvbiwiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgaXQncyIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBieSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBmYXIgdGhlIGxhcmdlc3QgcHJvdmluY2lhbCBjYXBpdGFsIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGluIENhbmFkYSAodGhlIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIG5leHQgY2xvc2VzdCIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBpcyIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBFZG1vbnRvbiBhdCByb3VnaGx5Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIDEuIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiMSBtaWxsaW9uKS5cblxuVGhlIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGN1cnJlbnQgd2VhdGhlciBpbiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBUb3JvbnRvOiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjI5Ni0zS09IenpGbDVGOFZ2MXpOWnVmViIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTYyOTYsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb2hlcmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiAqKjE1wrBDKioiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIuIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2Mjk2LTNLT0h6ekZsNUY4VnYxek5adWZWIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjI5NiwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvaGVyZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIPCfjKQiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiLvuI8iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwic3lzdGVtX2ZpbmdlcnByaW50IjoidmxsbS0wLjMyLjFyYzEuZGV2MzYxK2c4M2MwNzhkOTUtdHAyLWZiMjhhYWMwIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjpudWxsfSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AifV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTYyOTYtM0tPSHp6Rmw1RjhWdjF6Tlp1ZlYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2Mjk2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwic3lzdGVtX2ZpbmdlcnByaW50IjoidmxsbS0wLjMyLjFyYzEuZGV2MzYxK2c4M2MwNzhkOTUtdHAyLWZiMjhhYWMwIiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AifV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjQ0NCwiY29tcGxldGlvbl90b2tlbnMiOjczLCJ0b3RhbF90b2tlbnMiOjUxNywiY29zdCI6MC4wMDAxMDMxLCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMTAzMSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDA2NjYsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAzNjV9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjEyLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQoKZGF0YTogW0RPTkVdCgo=
+  recorded_at: Wed, 11 Nov 2026 00:18:17 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,190 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"What
+        is the weather in Toronto and in Paris?"}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '449'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:22 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58924658ef268f1-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants to","reasoning_details":[{"type":"reasoning.text","text":" user wants to","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" know the weather in two","reasoning_details":[{"type":"reasoning.text","text":" know the weather in two","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" cities: Toronto and Paris","reasoning_details":[{"type":"reasoning.text","text":" cities: Toronto and Paris","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". These are independent calls,","reasoning_details":[{"type":"reasoning.text","text":". These are independent calls,","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" so I can make both","reasoning_details":[{"type":"reasoning.text","text":" so I can make both","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" calls","reasoning_details":[{"type":"reasoning.text","text":" calls","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" in the same block.","reasoning_details":[{"type":"reasoning.text","text":" in the same block.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"f31cb26d-1c55-422e-850a-a6e3c0d73d3f","type":"function","function":{"name":"get_weather","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"city\":\"Toronto\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":1,"id":"4f188e4b-b35d-4f70-b387-7353e14c6daf","type":"function","function":{"name":"get_weather","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":1,"function":{"arguments":"{\"city\":\"Paris\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356542-NAB8ZiMG7Tr5hiSYjfRS","object":"chat.completion.chunk","created":1794356542,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":179,"completion_tokens":53,"total_tokens":232,"cost":0.00002882,"is_byok":false,"prompt_tokens_details":{"cached_tokens":128,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00002882,"upstream_inference_prompt_cost":0.00000868,"upstream_inference_completions_cost":0.00002014},"completion_tokens_details":{"reasoning_tokens":32,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:22:23 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"What
+        is the weather in Toronto and in Paris?"},{"role":"assistant","tool_calls":[{"id":"f31cb26d-1c55-422e-850a-a6e3c0d73d3f","type":"function","function":{"name":"get_weather","arguments":"{\"city\":\"Toronto\"}"}},{"id":"4f188e4b-b35d-4f70-b387-7353e14c6daf","type":"function","function":{"name":"get_weather","arguments":"{\"city\":\"Paris\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know the weather in two cities: Toronto and Paris. These are
+        independent calls, so I can make both calls in the same block.","format":"unknown"}]},{"role":"tool","tool_call_id":"f31cb26d-1c55-422e-850a-a6e3c0d73d3f","content":"It
+        is 15 degrees Celsius in Toronto."},{"role":"tool","tool_call_id":"4f188e4b-b35d-4f70-b387-7353e14c6daf","content":"It
+        is 22 degrees Celsius in Paris."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1207'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:23 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356543-SkTU4eMEcMMyj2bOTN8r
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589246a3c3c68f1-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQzLVNrVFU0ZU1FY01NeWoyYk9UTjhyIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvcmVXZWF2ZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiSGVyZSdzIHRoZSBjdXJyZW50IHdlYXRoZXI6XG5cbiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0My1Ta1RVNGVNRWNNTXlqMmJPVE44ciIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDMsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb3JlV2VhdmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6Ii0gKipUb3JvbnRvKio6Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQzLVNrVFU0ZU1FY01NeWoyYk9UTjhyIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvcmVXZWF2ZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIDE1wrBDXG4iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDMtU2tUVTRlTUVjTU15ajJiT1ROOHIiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQzLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiItICoqUGFyaXMqKjogMjIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDMtU2tUVTRlTUVjTU15ajJiT1ROOHIiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQzLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiLCsENcblxuUGFyaXMiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDMtU2tUVTRlTUVjTU15ajJiT1ROOHIiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQzLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgaXMgY3VycmVudGx5IGFib3V0Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQzLVNrVFU0ZU1FY01NeWoyYk9UTjhyIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvcmVXZWF2ZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIDcgZGVncmVlcyIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0My1Ta1RVNGVNRWNNTXlqMmJPVE44ciIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDMsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb3JlV2VhdmUiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiB3YXJtZXIgdGhhbiBUb3JvbnRvLiBMZXQgbWUiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDMtU2tUVTRlTUVjTU15ajJiT1ROOHIiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQzLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIga25vdyBpZiB5b3UnZCBsaWtlIHdlYXRoZXIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDMtU2tUVTRlTUVjTU15ajJiT1ROOHIiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQzLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgZm9yIGFueSBvdGhlciBjaXRpZXMhIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQzLVNrVFU0ZU1FY01NeWoyYk9UTjhyIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkNvcmVXZWF2ZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjoic3RvcCIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoic3RvcCJ9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0My1Ta1RVNGVNRWNNTXlqMmJPVE44ciIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDMsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJDb3JlV2VhdmUiLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjoic3RvcCIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoic3RvcCJ9XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MjU2LCJjb21wbGV0aW9uX3Rva2VucyI6NDgsInRvdGFsX3Rva2VucyI6MzA0LCJjb3N0IjowLjAwMDAzNjE2LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjEyOCwiY2FjaGVfd3JpdGVfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjAsInZpZGVvX3Rva2VucyI6MH0sImNvc3RfZGV0YWlscyI6eyJ1cHN0cmVhbV9pbmZlcmVuY2VfY29zdCI6MC4wMDAwMzYxNiwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDAxNzkyLCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAwMTgyNH0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MSwiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0KCmRhdGE6IFtET05FXQoK
+  recorded_at: Wed, 11 Nov 2026 00:22:23 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,170 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '435'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:17 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356235-q7bUFex2DXBXpbAdxFP0
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891ce8cc497cc8-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYyMzUtcTdiVUZleDJEWEJYcGJBZHhGUDAiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MjM1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOm51bGwsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImxvZ3Byb2JzIjpudWxsLCJmaW5pc2hfcmVhc29uIjoidG9vbF9jYWxscyIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoidG9vbF9jYWxscyIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJUaGUgbGFyZ2VzdCBDYW5hZGlhbiBwcm92aW5jaWFsIGNhcGl0YWwgYnkgcG9wdWxhdGlvbiBpcyAqKlRvcm9udG8sIE9udGFyaW8qKiAoYXBwcm94aW1hdGVseSAyLjggbWlsbGlvbiBwZW9wbGUpLiBOb3RlIHRoYXQgdGhpcyBpcyBsYXJnZXIgdGhhbiBvdGhlciBwcm92aW5jaWFsIGNhcGl0YWxzIGxpa2UgUXVlYmVjIENpdHkgb3IgRWRtb250b24sIHNpbmNlIHNvbWUgb2YgQ2FuYWRhJ3MgYmlnZ2VzdCBjaXRpZXMgKGxpa2UgTW9udHJlYWwgYW5kIFZhbmNvdXZlcikgYXJlIG5vdCBjYXBpdGFscy5cblxuTGV0IG1lIGdldCB0aGUgY3VycmVudCB3ZWF0aGVyIHRoZXJlOiIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6IlRoZSB1c2VyIHdhbnRzIHRvIGtub3cgd2hpY2ggQ2FuYWRpYW4gcHJvdmluY2lhbCBjYXBpdGFsIGhhcyB0aGUgbGFyZ2VzdCBwb3B1bGF0aW9uLCB0aGVuIGdldCB0aGUgd2VhdGhlciB0aGVyZS5cblxuVGhlIGxhcmdlc3QgQ2FuYWRpYW4gcHJvdmluY2lhbCBjYXBpdGFsIGJ5IHBvcHVsYXRpb24gaXMgVG9yb250bywgT250YXJpbyAocG9wdWxhdGlvbiBhcm91bmQgMi44IG1pbGxpb24pLiBRdWViZWMgQ2l0eSBpcyB0aGUgY2FwaXRhbCBvZiBRdWViZWMgYnV0IE1vbnRyZWFsIGlzIGxhcmdlciDigJQgTW9udHJlYWwgaXMgbm90IGEgY2FwaXRhbC4gUHJvdmluY2lhbCBjYXBpdGFsczogVG9yb250byAoT250YXJpbyksIFF1ZWJlYyBDaXR5IChRdWViZWMpLCBWaWN0b3JpYSAoQkMpLCBFZG1vbnRvbiAoQWxiZXJ0YSksIFdpbm5pcGVnIChNYW5pdG9iYSksIFJlZ2luYSAoU2Fza2F0Y2hld2FuKSwgSGFsaWZheCAoTm92YSBTY290aWEpLCBGcmVkZXJpY3RvbiAoTmV3IEJydW5zd2ljayksIFN0LiBKb2huJ3MgKE5ld2ZvdW5kbGFuZCBhbmQgTGFicmFkb3IpLCBDaGFybG90dGV0b3duIChQRUkpLCBXaGl0ZWhvcnNlIChZdWtvbiAtIHRlcnJpdG9yaWFsKSwgWWVsbG93a25pZmUgKE5XVCAtIHRlcnJpdG9yaWFsKSwgSXFhbHVpdCAoTnVuYXZ1dCAtIHRlcnJpdG9yaWFsKS5cblxuVG9yb250byBpcyB0aGUgbGFyZ2VzdCBwcm92aW5jaWFsIGNhcGl0YWwgYnkgcG9wdWxhdGlvbi4gU28gSSBzaG91bGQgZ2V0IHRoZSB3ZWF0aGVyIGZvciBUb3JvbnRvLiIsInRvb2xfY2FsbHMiOlt7InR5cGUiOiJmdW5jdGlvbiIsImluZGV4IjowLCJpZCI6ImNhbGxfTWptc1FvTzJNU3I5NVpST0VjaVRPRnBmIiwiZnVuY3Rpb24iOnsibmFtZSI6ImdldF93ZWF0aGVyIiwiYXJndW1lbnRzIjoie1wiY2l0eVwiOiBcIlRvcm9udG9cIn0ifX1dLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IlRoZSB1c2VyIHdhbnRzIHRvIGtub3cgd2hpY2ggQ2FuYWRpYW4gcHJvdmluY2lhbCBjYXBpdGFsIGhhcyB0aGUgbGFyZ2VzdCBwb3B1bGF0aW9uLCB0aGVuIGdldCB0aGUgd2VhdGhlciB0aGVyZS5cblxuVGhlIGxhcmdlc3QgQ2FuYWRpYW4gcHJvdmluY2lhbCBjYXBpdGFsIGJ5IHBvcHVsYXRpb24gaXMgVG9yb250bywgT250YXJpbyAocG9wdWxhdGlvbiBhcm91bmQgMi44IG1pbGxpb24pLiBRdWViZWMgQ2l0eSBpcyB0aGUgY2FwaXRhbCBvZiBRdWViZWMgYnV0IE1vbnRyZWFsIGlzIGxhcmdlciDigJQgTW9udHJlYWwgaXMgbm90IGEgY2FwaXRhbC4gUHJvdmluY2lhbCBjYXBpdGFsczogVG9yb250byAoT250YXJpbyksIFF1ZWJlYyBDaXR5IChRdWViZWMpLCBWaWN0b3JpYSAoQkMpLCBFZG1vbnRvbiAoQWxiZXJ0YSksIFdpbm5pcGVnIChNYW5pdG9iYSksIFJlZ2luYSAoU2Fza2F0Y2hld2FuKSwgSGFsaWZheCAoTm92YSBTY290aWEpLCBGcmVkZXJpY3RvbiAoTmV3IEJydW5zd2ljayksIFN0LiBKb2huJ3MgKE5ld2ZvdW5kbGFuZCBhbmQgTGFicmFkb3IpLCBDaGFybG90dGV0b3duIChQRUkpLCBXaGl0ZWhvcnNlIChZdWtvbiAtIHRlcnJpdG9yaWFsKSwgWWVsbG93a25pZmUgKE5XVCAtIHRlcnJpdG9yaWFsKSwgSXFhbHVpdCAoTnVuYXZ1dCAtIHRlcnJpdG9yaWFsKS5cblxuVG9yb250byBpcyB0aGUgbGFyZ2VzdCBwcm92aW5jaWFsIGNhcGl0YWwgYnkgcG9wdWxhdGlvbi4gU28gSSBzaG91bGQgZ2V0IHRoZSB3ZWF0aGVyIGZvciBUb3JvbnRvLiIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfX1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjoxODMsImNvbXBsZXRpb25fdG9rZW5zIjoyNDMsInRvdGFsX3Rva2VucyI6NDI2LCJjb3N0IjowLjAwMDE0ODk1LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMTQ4OTUsInVwc3RyZWFtX2luZmVyZW5jZV9wcm9tcHRfY29zdCI6MC4wMDAwMjc0NSwidXBzdHJlYW1faW5mZXJlbmNlX2NvbXBsZXRpb25zX2Nvc3QiOjAuMDAwMTIxNX0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MTkzLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Wed, 11 Nov 2026 00:17:18 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."},{"role":"assistant","content":"The
+        largest Canadian provincial capital by population is **Toronto, Ontario**
+        (approximately 2.8 million people). Note that this is larger than other provincial
+        capitals like Quebec City or Edmonton, since some of Canada''s biggest cities
+        (like Montreal and Vancouver) are not capitals.\n\nLet me get the current
+        weather there:","tool_calls":[{"id":"call_MjmsQoO2MSr95ZROEciTOFpf","type":"function","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know which Canadian provincial capital has the largest population,
+        then get the weather there.\n\nThe largest Canadian provincial capital by
+        population is Toronto, Ontario (population around 2.8 million). Quebec City
+        is the capital of Quebec but Montreal is larger — Montreal is not a capital.
+        Provincial capitals: Toronto (Ontario), Quebec City (Quebec), Victoria (BC),
+        Edmonton (Alberta), Winnipeg (Manitoba), Regina (Saskatchewan), Halifax (Nova
+        Scotia), Fredericton (New Brunswick), St. John''s (Newfoundland and Labrador),
+        Charlottetown (PEI), Whitehorse (Yukon - territorial), Yellowknife (NWT -
+        territorial), Iqaluit (Nunavut - territorial).\n\nToronto is the largest provincial
+        capital by population. So I should get the weather for Toronto.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_MjmsQoO2MSr95ZROEciTOFpf","content":"It
+        is 15 degrees Celsius in Toronto."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1896'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:18 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356238-GSuAxAAuhAMUY7mmF8or
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891cf8496e7cc8-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYyMzgtR1N1QXhBQXVoQU1VWTdtbUY4b3IiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MjM4LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwic3lzdGVtX2ZpbmdlcnByaW50IjoidmxsbS0wLjMyLjFyYzEuZGV2MzYxK2c4M2MwNzhkOTUtdHAyLWZiMjhhYWMwIiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6Ikl0J3MgY3VycmVudGx5ICoqMTXCsEMgaW4gVG9yb250byoqLiBcblxuVG9yb250byBpcyB0aGUgY2FwaXRhbCBvZiBPbnRhcmlvIGFuZCBob2xkcyB0aGUgdGl0bGUgb2YgQ2FuYWRhJ3MgbGFyZ2VzdCBjaXR5IG92ZXJhbGwsIG1ha2luZyBpdCBieSBmYXIgdGhlIG1vc3QgcG9wdWxvdXMgcHJvdmluY2lhbCBjYXBpdGFsIOKAlCBtb3JlIHRoYW4gZG91YmxlIHRoZSBwb3B1bGF0aW9uIG9mIHRoZSBuZXh0IGxhcmdlc3QsIEVkbW9udG9uLCBBbGJlcnRhLiIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6bnVsbH19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6NDM5LCJjb21wbGV0aW9uX3Rva2VucyI6NTQsInRvdGFsX3Rva2VucyI6NDkzLCJjb3N0IjowLjAwMDA5Mjg1LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMDkyODUsInVwc3RyZWFtX2luZmVyZW5jZV9wcm9tcHRfY29zdCI6MC4wMDAwNjU4NSwidXBzdHJlYW1faW5mZXJlbmNlX2NvbXBsZXRpb25zX2Nvc3QiOjAuMDAwMDI3fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjowLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Wed, 11 Nov 2026 00:17:18 GMT
+recorded_with: VCR 6.4.0

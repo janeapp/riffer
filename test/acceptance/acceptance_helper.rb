@@ -134,6 +134,23 @@ ACCEPTANCE_PROVIDERS = {
     break_credentials: -> { Riffer.config.openai.api_key = "invalid-api-key" },
     reset: -> { Riffer.config.openai.api_key = nil },
   },
+  openrouter: {
+    model: "z-ai/glm-5.3-flash",
+    # The efforts OpenRouter lists for GLM 5.3 Flash.
+    reasoning_levels: %i[low high max],
+    token_limit_options: { max_tokens: 20 },
+    invalid_options: { temperature: 5 },
+    # GLM 5.3 Flash always reasons.
+    thinking_options: {},
+    # Caching is implicit, but OpenRouter spreads requests across GLM's
+    # upstreams and they share no cache, so one is pinned.
+    cache_options: { provider: { order: ["coreweave"], allow_fallbacks: false } },
+    wire_tags: { "metadata" => ACCEPTANCE_TAGS, "user" => "u_1" },
+    error_contract: { class: OpenAI::Errors::APIStatusError, status: :status.to_proc, detail: :message.to_proc },
+    configure: -> { Riffer.config.openrouter.api_key = ENV.fetch("OPENROUTER_API_KEY", "test_api_key") },
+    break_credentials: -> { Riffer.config.openrouter.api_key = "invalid-api-key" },
+    reset: -> { Riffer.config.openrouter.api_key = nil },
+  },
 }.freeze
 
 def acceptance_cassette(name, &)

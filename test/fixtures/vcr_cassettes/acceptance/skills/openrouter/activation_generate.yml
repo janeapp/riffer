@@ -1,0 +1,178 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"You
+        are a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request
+        matches a skill description below, call the `skill_activate` tool with the
+        skill name. After activation, follow the skill''s instructions. If a skill''s
+        instructions already appear in your context (inside <skill_content> tags),
+        follow them instead of activating the skill again.\n\n- **code-review**: Reviews
+        code for quality, style, and potential issues.\n- **data-analysis**: Analyzes
+        datasets and generates summary reports."},{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1061'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:50 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356269-3srhE8THh1PZvnz7HQmF
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891dbebe6fcb66-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356269-3srhE8THh1PZvnz7HQmF\",\"object\":\"chat.completion\",\"created\":1794356269,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Modal\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
+        user wants me to review Ruby code. The `code-review` skill matches this request.
+        I should activate it.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_655aa849f66e4e18a9f876f7\",\"function\":{\"name\":\"skill_activate\",\"arguments\":\"{\\\"name\\\":
+        \\\"code-review\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants me to review Ruby code. The `code-review` skill matches this request.
+        I should activate it.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":298,\"completion_tokens\":37,\"total_tokens\":335,\"cost\":0.0000632,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000632,\"upstream_inference_prompt_cost\":0.0000447,\"upstream_inference_completions_cost\":0.0000185},\"completion_tokens_details\":{\"reasoning_tokens\":25,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:17:50 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"You
+        are a helpful assistant.\n\n## Available Skills\n\nWhen a user''s request
+        matches a skill description below, call the `skill_activate` tool with the
+        skill name. After activation, follow the skill''s instructions. If a skill''s
+        instructions already appear in your context (inside <skill_content> tags),
+        follow them instead of activating the skill again.\n\n- **code-review**: Reviews
+        code for quality, style, and potential issues.\n- **data-analysis**: Analyzes
+        datasets and generates summary reports."},{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"},{"role":"assistant","tool_calls":[{"id":"call_655aa849f66e4e18a9f876f7","type":"function","function":{"name":"skill_activate","arguments":"{\"name\":
+        \"code-review\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants me to review Ruby code. The `code-review` skill matches this request.
+        I should activate it.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_655aa849f66e4e18a9f876f7","content":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1666'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:51 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356270-ndpQRupnLytBMllx9yVY
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891dc329ebcb66-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYyNzAtbmRwUVJ1cG5MeXRCTWxseDl5VlkiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MjcwLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29oZXJlIiwic3lzdGVtX2ZpbmdlcnByaW50IjoidmxsbS0wLjMyLjFyYzEuZGV2MzYxK2c4M2MwNzhkOTUtdHAyLWNmOTlkYTA0Iiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwibG9ncHJvYnMiOm51bGwsImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIiwibWVzc2FnZSI6eyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6IkhlcmUncyBhIHJldmlldyBvZiB5b3VyIFJ1YnkgY29kZTpcblxuYGBgcnVieVxuZGVmIGFkZChhLCBiKVxuICBhICsgYlxuZW5kXG5gYGBcblxuIyMgT3ZlcmFsbDogQ2xlYW4gYW5kIGlkaW9tYXRpYyDinIVcblxuIyMjIFN0eWxlXG4tICoqR29vZCoqOiBUd28tc3BhY2UgaW5kZW50YXRpb24gYW5kIGltcGxpY2l0IHJldHVybiAoYGEgKyBiYCBpcyB0aGUgbGFzdCBleHByZXNzaW9uKSBmb2xsb3cgUnVieSBjb252ZW50aW9ucy5cbi0gKipNaW5vcioqOiBUaGUgbmFtZSBgYWRkYCBpcyBnZW5lcmljLiBJZiB0aGlzIGhhcyBhIGRvbWFpbiBtZWFuaW5nIChtb25leSwgY29vcmRpbmF0ZXMsIGV0Yy4pLCBhIG1vcmUgZGVzY3JpcHRpdmUgbmFtZSBsaWtlIGBzdW1gLCBgdG90YWxgLCBvciBgY29tYmluZWAgd291bGQgY29tbXVuaWNhdGUgaW50ZW50IGJldHRlci4gQWxzbywgUnVieSdzIGJ1aWx0LWluIGArYCBvcGVyYXRvciBtYXkgbWFrZSBhIHdyYXBwZXIgbGlrZSB0aGlzIHJlZHVuZGFudCB1bmxlc3MgaXQgYWRkcyBiZWhhdmlvci5cblxuIyMjIFBvdGVudGlhbCBCdWdzXG4tICoqTm8gdHlwZSBzYWZldHkqKjogVGhlIG1ldGhvZCBhY2NlcHRzIGFueXRoaW5nLiBDYWxscyBsaWtlIGBhZGQoXCJhXCIsIDEpYCByYWlzZSBgVHlwZUVycm9yYCwgYW5kIGBhZGQobmlsLCAxKWAgcmFpc2VzIGBOb01ldGhvZEVycm9yOiB1bmRlZmluZWQgbWV0aG9kICcrJyBmb3IgbmlsYC4gSWYgaW5wdXRzIGFyZSB1bnRydXN0ZWQsIGNvbnNpZGVyIHZhbGlkYXRpbmc6XG4gIGBgYHJ1YnlcbiAgZGVmIGFkZChhLCBiKVxuICAgIHJhaXNlIEFyZ3VtZW50RXJyb3IsIFwibnVtYmVycyByZXF1aXJlZFwiIHVubGVzcyBhLmlzX2E/KE51bWVyaWMpICYmIGIuaXNfYT8oTnVtZXJpYylcbiAgICBhICsgYlxuICBlbmRcbiAgYGBgXG4tICoqRmxvYXQgcHJlY2lzaW9uKio6IElmIGNhbGxlcnMgcGFzcyBmbG9hdHMsIHJlc3VsdHMgbWF5IGNhcnJ5IGZsb2F0aW5nLXBvaW50IGVycm9yIChgYWRkKDAuMSwgMC4yKSAjID0+IDAuMzAwMDAwMDAwMDAwMDAwMDRgKS4gRm9yIG1vbmV5LCB1c2UgYEJpZ0RlY2ltYWxgIG9yIGludGVnZXIgY2VudHMuXG5cbiMjIyBQZXJmb3JtYW5jZVxuLSAqKk5vIGNvbmNlcm5zKiog4oCUIGl0J3MgYSBzaW5nbGUgYXJpdGhtZXRpYyBvcGVyYXRpb24uIE1ldGhvZCBjYWxsIG92ZXJoZWFkIGlzIG5lZ2xpZ2libGUsIGFuZCBSdWJ5IGludGVnZXJzIGRvbid0IG92ZXJmbG93ICh0aGV5IGF1dG8tcHJvbW90ZSB0byBhcmJpdHJhcnkgcHJlY2lzaW9uKSwgc28gdGhlcmUncyBubyBoaWRkZW4gY29zdCB0aGVyZS5cblxuKipWZXJkaWN0Kio6IEFzLWlzLCB0aGlzIGlzIGZpbmUgZm9yIHRydXN0ZWQgaW50ZXJuYWwgdXNlLiBUaGUgb25seSByZWFsIHJpc2sgaXMgdW5leHBlY3RlZCBhcmd1bWVudCB0eXBlcyBhdCB0aGUgY2FsbCBzaXRlLiIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6IlRoZSBza2lsbCBpbnN0cnVjdHMgbWUgdG8gcmV2aWV3IHRoZSBjb2RlIGZvciBzdHlsZSBpc3N1ZXMsIHBvdGVudGlhbCBidWdzLCBhbmQgcGVyZm9ybWFuY2UgcHJvYmxlbXMuIExldCBtZSByZXZpZXcgdGhlIFJ1YnkgY29kZTpcblxuYGBgcnVieVxuZGVmIGFkZChhLCBiKVxuICBhICsgYlxuZW5kXG5gYGBcblxuVGhpcyBpcyBhIHZlcnkgc2ltcGxlIG1ldGhvZC4gTGV0IG1lIHRoaW5rIGFib3V0IHdoYXQgdG8gc2F5OlxuXG4qKlN0eWxlOioqXG4tIFRoZSBjb2RlIGlzIGlkaW9tYXRpYyBSdWJ5LiBUd28tc3BhY2UgaW5kZW50YXRpb24gaXMgdXNlZCBjb3JyZWN0bHkuXG4tIE1ldGhvZCBuYW1lIGBhZGRgIGlzIGZpbmUsIHRob3VnaCBzb21lIG1pZ2h0IGFyZ3VlIGArYCBhbHJlYWR5IGV4aXN0cy4gQ291bGQgbmFtZSBpdCBtb3JlIGRlc2NyaXB0aXZlbHkgYmFzZWQgb24gZG9tYWluIChlLmcuLCBgc3VtYCkuXG4tIE5vIGV4cGxpY2l0IHJldHVybiBuZWVkZWQg4oCUIFJ1YnkgcmV0dXJucyBsYXN0IGV4cHJlc3Npb24sIHdoaWNoIGlzIGlkaW9tYXRpYy5cblxuKipQb3RlbnRpYWwgYnVnczoqKlxuLSBObyB0eXBlIGNoZWNraW5nIOKAlCBgYWRkYCB3aWxsIHJhaXNlIGBUeXBlRXJyb3JgIG9yIGBOb01ldGhvZEVycm9yYCBpZiBwYXNzZWQgaW5jb21wYXRpYmxlIHR5cGVzIChlLmcuLCBgYWRkKFwiYVwiLCAxKWAgcmFpc2VzIFR5cGVFcnJvcjsgYGFkZChuaWwsIDEpYCByYWlzZXMgTm9NZXRob2RFcnJvcikuIENvbnNpZGVyIGd1YXJkaW5nIG9yIGRvY3VtZW50aW5nIGV4cGVjdGVkIHR5cGVzLlxuLSBJbnRlZ2VyIG92ZXJmbG93OiBpbiBSdWJ5LCBpbnRlZ2VycyBhdXRvLXByb21vdGUgdG8gQmlnbnVtLCBzbyBubyBvdmVyZmxvdyBidWcgbGlrZSBvdGhlciBsYW5ndWFnZXMuIE5vdCBhbiBpc3N1ZS5cbi0gSWYgdGhlIGludGVudCBpcyBpbnRlZ2VyIGFkZGl0aW9uLCBmbG9hdHMgY291bGQgc2lsZW50bHkgYmUgYWNjZXB0ZWQuXG5cbioqUGVyZm9ybWFuY2U6Kipcbi0gTm8gcGVyZm9ybWFuY2UgaXNzdWVzOyB0cml2aWFsIG1ldGhvZC4gTWV0aG9kIGNhbGwgb3ZlcmhlYWQgaXMgbmVnbGlnaWJsZS4gSWYgaW4gYSBob3QgbG9vcCwgYGEgKyBiYCBpbmxpbmUgd291bGQgYmUgbWFyZ2luYWxseSBmYXN0ZXIsIGJ1dCB0aGF0J3MgbWljcm8tb3B0aW1pemF0aW9uLlxuXG5JIHNob3VsZCBnaXZlIGEgYmFsYW5jZWQsIGNvbmNpc2UgcmV2aWV3LiBLZWVwIGl0IHJlYXNvbmFibHkgc2hvcnQgZ2l2ZW4gdGhlIHRyaXZpYWwgY29kZS4iLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IlRoZSBza2lsbCBpbnN0cnVjdHMgbWUgdG8gcmV2aWV3IHRoZSBjb2RlIGZvciBzdHlsZSBpc3N1ZXMsIHBvdGVudGlhbCBidWdzLCBhbmQgcGVyZm9ybWFuY2UgcHJvYmxlbXMuIExldCBtZSByZXZpZXcgdGhlIFJ1YnkgY29kZTpcblxuYGBgcnVieVxuZGVmIGFkZChhLCBiKVxuICBhICsgYlxuZW5kXG5gYGBcblxuVGhpcyBpcyBhIHZlcnkgc2ltcGxlIG1ldGhvZC4gTGV0IG1lIHRoaW5rIGFib3V0IHdoYXQgdG8gc2F5OlxuXG4qKlN0eWxlOioqXG4tIFRoZSBjb2RlIGlzIGlkaW9tYXRpYyBSdWJ5LiBUd28tc3BhY2UgaW5kZW50YXRpb24gaXMgdXNlZCBjb3JyZWN0bHkuXG4tIE1ldGhvZCBuYW1lIGBhZGRgIGlzIGZpbmUsIHRob3VnaCBzb21lIG1pZ2h0IGFyZ3VlIGArYCBhbHJlYWR5IGV4aXN0cy4gQ291bGQgbmFtZSBpdCBtb3JlIGRlc2NyaXB0aXZlbHkgYmFzZWQgb24gZG9tYWluIChlLmcuLCBgc3VtYCkuXG4tIE5vIGV4cGxpY2l0IHJldHVybiBuZWVkZWQg4oCUIFJ1YnkgcmV0dXJucyBsYXN0IGV4cHJlc3Npb24sIHdoaWNoIGlzIGlkaW9tYXRpYy5cblxuKipQb3RlbnRpYWwgYnVnczoqKlxuLSBObyB0eXBlIGNoZWNraW5nIOKAlCBgYWRkYCB3aWxsIHJhaXNlIGBUeXBlRXJyb3JgIG9yIGBOb01ldGhvZEVycm9yYCBpZiBwYXNzZWQgaW5jb21wYXRpYmxlIHR5cGVzIChlLmcuLCBgYWRkKFwiYVwiLCAxKWAgcmFpc2VzIFR5cGVFcnJvcjsgYGFkZChuaWwsIDEpYCByYWlzZXMgTm9NZXRob2RFcnJvcikuIENvbnNpZGVyIGd1YXJkaW5nIG9yIGRvY3VtZW50aW5nIGV4cGVjdGVkIHR5cGVzLlxuLSBJbnRlZ2VyIG92ZXJmbG93OiBpbiBSdWJ5LCBpbnRlZ2VycyBhdXRvLXByb21vdGUgdG8gQmlnbnVtLCBzbyBubyBvdmVyZmxvdyBidWcgbGlrZSBvdGhlciBsYW5ndWFnZXMuIE5vdCBhbiBpc3N1ZS5cbi0gSWYgdGhlIGludGVudCBpcyBpbnRlZ2VyIGFkZGl0aW9uLCBmbG9hdHMgY291bGQgc2lsZW50bHkgYmUgYWNjZXB0ZWQuXG5cbioqUGVyZm9ybWFuY2U6Kipcbi0gTm8gcGVyZm9ybWFuY2UgaXNzdWVzOyB0cml2aWFsIG1ldGhvZC4gTWV0aG9kIGNhbGwgb3ZlcmhlYWQgaXMgbmVnbGlnaWJsZS4gSWYgaW4gYSBob3QgbG9vcCwgYGEgKyBiYCBpbmxpbmUgd291bGQgYmUgbWFyZ2luYWxseSBmYXN0ZXIsIGJ1dCB0aGF0J3MgbWljcm8tb3B0aW1pemF0aW9uLlxuXG5JIHNob3VsZCBnaXZlIGEgYmFsYW5jZWQsIGNvbmNpc2UgcmV2aWV3LiBLZWVwIGl0IHJlYXNvbmFibHkgc2hvcnQgZ2l2ZW4gdGhlIHRyaXZpYWwgY29kZS4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6Mzc1LCJjb21wbGV0aW9uX3Rva2VucyI6NjU1LCJ0b3RhbF90b2tlbnMiOjEwMzAsImNvc3QiOjAuMDAwMzgzNzUsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6MCwiY2FjaGVfd3JpdGVfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjAsInZpZGVvX3Rva2VucyI6MH0sImNvc3RfZGV0YWlscyI6eyJ1cHN0cmVhbV9pbmZlcmVuY2VfY29zdCI6MC4wMDAzODM3NSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDA1NjI1LCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAzMjc1fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjoyOTcsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Wed, 11 Nov 2026 00:17:54 GMT
+recorded_with: VCR 6.4.0

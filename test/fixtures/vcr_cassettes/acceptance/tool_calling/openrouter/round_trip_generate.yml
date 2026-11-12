@@ -1,0 +1,161 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '382'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:08 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356528-fgzzi0T987EfeHHqSPps
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589240c08f975ba-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356528-fgzzi0T987EfeHHqSPps\",\"object\":\"chat.completion\",\"created\":1794356528,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Modal\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
+        user wants to know the weather in Toronto. I have a get_weather tool available.
+        I'll call it with the city \\\"Toronto\\\".\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_9fe6cfdc95544582ab07ee49\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":
+        \\\"Toronto\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants to know the weather in Toronto. I have a get_weather tool available.
+        I'll call it with the city \\\"Toronto\\\".\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":176,\"completion_tokens\":40,\"total_tokens\":216,\"cost\":0.0000464,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000464,\"upstream_inference_prompt_cost\":0.0000264,\"upstream_inference_completions_cost\":0.00002},\"completion_tokens_details\":{\"reasoning_tokens\":29,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:22:08 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","tool_calls":[{"id":"call_9fe6cfdc95544582ab07ee49","type":"function","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know the weather in Toronto. I have a get_weather tool available.
+        I''ll call it with the city \"Toronto\".","format":"unknown"}]},{"role":"tool","tool_call_id":"call_9fe6cfdc95544582ab07ee49","content":"It
+        is 15 degrees Celsius in Toronto."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '859'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:09 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356528-uVpCdStlGsJ0UW9rTULF
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5892410baf275ba-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTY1MjgtdVZwQ2RTdGxHc0owVVc5clRVTEYiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2NTI4LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiTW9kYWwiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOm51bGwsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImxvZ3Byb2JzIjpudWxsLCJmaW5pc2hfcmVhc29uIjoic3RvcCIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoic3RvcCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJUaGUgd2VhdGhlciBpbiBUb3JvbnRvIGlzIGN1cnJlbnRseSAqKjE1wrBDKiouIEl0J3MgYSBtaWxkIGRheSDigJQgYSBsaWdodCBqYWNrZXQgbWlnaHQgYmUgYSBnb29kIGlkZWEgaWYgeW91J3JlIGhlYWRpbmcgb3V0ISBJcyB0aGVyZSBhbnl0aGluZyBlbHNlIHlvdSdkIGxpa2UgdG8ga25vdz8iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOm51bGx9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjIyOSwiY29tcGxldGlvbl90b2tlbnMiOjQzLCJ0b3RhbF90b2tlbnMiOjI3MiwiY29zdCI6MC4wMDAwNTU4NSwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDA1NTg1LCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMDM0MzUsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAyMTV9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjEsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Wed, 11 Nov 2026 00:22:09 GMT
+recorded_with: VCR 6.4.0

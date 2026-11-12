@@ -1,0 +1,112 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Classify
+        the session: yoga class, in-person format."}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false},"strict":true}},"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '556'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:21:55 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356515-pzHVOlSZGhwWmbpHCnEl
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58923bccc7b9d6b-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        : OPENROUTER PROCESSING
+
+        data: {"id":"gen-1794356515-pzHVOlSZGhwWmbpHCnEl","object":"chat.completion.chunk","created":1794356515,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The user is asking me to classify a session: \"yoga class, in-person format.\"\n\nThis is a fairly minimal prompt. It seems like the user wants some kind of classification or categorization of a yoga class session that's held in person. This could be:\n1. A data classification task (e.g., for scheduling software, fitness app categorization)\n2. Part of a booking system\n3. A categorization exercise\n\nThe request is quite terse - \"Classify the session: yoga class, in-person format.\" This looks like it could be a prompt from some kind of system or workflow where sessions need to be classified into categories.\n\nWithout more context about what classification scheme or taxonomy to use, I should provide a reasonable classification. Common ways to classify fitness/wellness sessions:\n\n- **Activity type**: Yoga / Mind-body / Group fitness\n- **Format**: In-person (as opposed to virtual/online/hybrid)\n- **Category**: Fitness, wellness, exercise class\n- **Setting**: Studio, group class\n\nLet me think about how to structure a helpful response. The user gave me:\n- Session type: yoga class\n- Format: in-person\n\nA classification might include:\n- Domain/Category: Fitness & Wellness / Mind-Body Exercise\n- Activity: Yoga\n- Delivery format: In-person (physical location, instructor-led)\n- Possibly: Group or individual (not specified)\n\nI could provide a structured classification. Since the request is minimal, I shouldn't over-elaborate with tons of caveats. A clean, structured output seems appropriate here. Maybe a simple classification with fields.\n\nLet me draft:\n\n**Session Classification**\n- Category: Fitness & Wellness\n- Subcategory: Mind-Body / Group Exercise\n- Activity Type: Yoga class\n- Format: In-person\n- Delivery: On-site (studio/gym/home), instructor-led\n- Modality: Synchronous, physical attendance required\n\nHmm, that might be over-engineered. But given the terse prompt, a structured classification response seems to be what's wanted. Alternatively, the user might want just a simple label.\n\nActually, thinking about this more - this could be a test of how I handle classification tasks. The best approach is probably to give a clean, structured classification that captures the essential attributes without excessive padding. I could also note if there are ambiguities (e.g., group vs. private, style of yoga not specified).\n\nFormat considerations: A short structured list would work well. Maybe a small classification block with a few fields, and perhaps a brief note about unspecified attributes. Keep it concise - this is a simple task, so the response should be brief. Maybe 5-8 lines total. Headers probably unnecessary; a bold label or simple list works.\n\nLet me write a concise classification:\n\n**Classification:**\n- **Session type:** Yoga class\n- **Category:** Fitness / Mind-body wellness\n- **Format:** In-person (on-site, instructor-led)\n- **Attendance:** Physical location required; not virtual/online\n- **Interaction:** Synchronous\n\nThen maybe one line noting unspecified details (yoga style, group vs. private, skill level) if they want a more granular classification.\n\nThat seems balanced. Keep it short.","reasoning_details":[{"type":"reasoning.text","text":"The user is asking me to classify a session: \"yoga class, in-person format.\"\n\nThis is a fairly minimal prompt. It seems like the user wants some kind of classification or categorization of a yoga class session that's held in person. This could be:\n1. A data classification task (e.g., for scheduling software, fitness app categorization)\n2. Part of a booking system\n3. A categorization exercise\n\nThe request is quite terse - \"Classify the session: yoga class, in-person format.\" This looks like it could be a prompt from some kind of system or workflow where sessions need to be classified into categories.\n\nWithout more context about what classification scheme or taxonomy to use, I should provide a reasonable classification. Common ways to classify fitness/wellness sessions:\n\n- **Activity type**: Yoga / Mind-body / Group fitness\n- **Format**: In-person (as opposed to virtual/online/hybrid)\n- **Category**: Fitness, wellness, exercise class\n- **Setting**: Studio, group class\n\nLet me think about how to structure a helpful response. The user gave me:\n- Session type: yoga class\n- Format: in-person\n\nA classification might include:\n- Domain/Category: Fitness & Wellness / Mind-Body Exercise\n- Activity: Yoga\n- Delivery format: In-person (physical location, instructor-led)\n- Possibly: Group or individual (not specified)\n\nI could provide a structured classification. Since the request is minimal, I shouldn't over-elaborate with tons of caveats. A clean, structured output seems appropriate here. Maybe a simple classification with fields.\n\nLet me draft:\n\n**Session Classification**\n- Category: Fitness & Wellness\n- Subcategory: Mind-Body / Group Exercise\n- Activity Type: Yoga class\n- Format: In-person\n- Delivery: On-site (studio/gym/home), instructor-led\n- Modality: Synchronous, physical attendance required\n\nHmm, that might be over-engineered. But given the terse prompt, a structured classification response seems to be what's wanted. Alternatively, the user might want just a simple label.\n\nActually, thinking about this more - this could be a test of how I handle classification tasks. The best approach is probably to give a clean, structured classification that captures the essential attributes without excessive padding. I could also note if there are ambiguities (e.g., group vs. private, style of yoga not specified).\n\nFormat considerations: A short structured list would work well. Maybe a small classification block with a few fields, and perhaps a brief note about unspecified attributes. Keep it concise - this is a simple task, so the response should be brief. Maybe 5-8 lines total. Headers probably unnecessary; a bold label or simple list works.\n\nLet me write a concise classification:\n\n**Classification:**\n- **Session type:** Yoga class\n- **Category:** Fitness / Mind-body wellness\n- **Format:** In-person (on-site, instructor-led)\n- **Attendance:** Physical location required; not virtual/online\n- **Interaction:** Synchronous\n\nThen maybe one line noting unspecified details (yoga style, group vs. private, skill level) if they want a more granular classification.\n\nThat seems balanced. Keep it short.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356515-pzHVOlSZGhwWmbpHCnEl","object":"chat.completion.chunk","created":1794356515,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"{\"name","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356515-pzHVOlSZGhwWmbpHCnEl","object":"chat.completion.chunk","created":1794356515,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"\":\"Session Classification\",\"session_type\":\"in_person\"","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356515-pzHVOlSZGhwWmbpHCnEl","object":"chat.completion.chunk","created":1794356515,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"}","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356515-pzHVOlSZGhwWmbpHCnEl","object":"chat.completion.chunk","created":1794356515,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1794356515-pzHVOlSZGhwWmbpHCnEl","object":"chat.completion.chunk","created":1794356515,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":24,"completion_tokens":673,"total_tokens":697,"cost":0.0003401,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0003401,"upstream_inference_prompt_cost":0.0000036,"upstream_inference_completions_cost":0.0003365},"completion_tokens_details":{"reasoning_tokens":658,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:21:59 GMT
+recorded_with: VCR 6.4.0
+...

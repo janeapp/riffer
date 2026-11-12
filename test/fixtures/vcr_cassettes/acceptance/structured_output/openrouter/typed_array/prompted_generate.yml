@@ -1,0 +1,84 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"List
+        3 tags and 3 scores (0.0-1.0) for: ''Ruby is a great programming language''\n\nWhen
+        you give your final answer, respond with only a JSON object that conforms
+        to the following JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Descriptive
+        tags\",\"items\":{\"type\":\"string\"}},\"scores\":{\"type\":\"array\",\"description\":\"Relevance
+        scores between 0 and 1\",\"items\":{\"type\":\"number\"}}},\"required\":[\"tags\",\"scores\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"tags\":[\"<string>\"],\"scores\":[\"<number>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '839'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:21:31 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356490-VmdUdQtobuDUMZX5ePmr
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5892321e978a970-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356490-VmdUdQtobuDUMZX5ePmr\",\"object\":\"chat.completion\",\"created\":1794356490,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"BaseTen\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"tags\\\":[\\\"programming\\\",\\\"ruby\\\",\\\"language\\\"],\\\"scores\\\":[0.9,0.85,0.7]}\",\"refusal\":null,\"reasoning\":\"Simple.
+        Provide tags and scores.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"Simple.
+        Provide tags and scores.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":177,\"completion_tokens\":32,\"total_tokens\":209,\"cost\":0.00004255,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00004255,\"upstream_inference_prompt_cost\":0.00002655,\"upstream_inference_completions_cost\":0.000016},\"completion_tokens_details\":{\"reasoning_tokens\":7,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:21:31 GMT
+recorded_with: VCR 6.4.0

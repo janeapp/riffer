@@ -4,6 +4,12 @@ require "acceptance/acceptance_helper"
 
 describe "Acceptance: structured output" do
   strategies = %i[native prompted]
+  native_none_variant_providers = acceptance_providers(
+    except: { openrouter: "GLM 5.3 Flash answers null, which strict mode allows, rather than the none variant" },
+  )
+  native_tool_providers = acceptance_providers(
+    except: { openrouter: "GLM's upstreams apply response_format to tool turns, so the tool is skipped or looped" },
+  )
 
   acceptance_providers.each do |provider_name|
     describe provider_name do
@@ -251,7 +257,9 @@ describe "Acceptance: structured output" do
         describe "when the order has neither" do
           let(:prompt) { "Read this order: several boxes, with no due date" }
 
-          strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
+          none_strategies = native_none_variant_providers.include?(provider_name) ? strategies : strategies - [:native]
+
+          none_strategies.product(ACCEPTANCE_MODES).each do |strategy, mode|
             it "returns the string and enum variants (#{strategy}, #{mode})" do
               object = structured_result("primitive_any_of_second", strategy, mode)
 
@@ -351,7 +359,11 @@ describe "Acceptance: structured output" do
             expect(response.outcome.reason).must_equal :completed
             expect(response.structured_output).must_equal({ sentiment: "positive" })
           end
+        end
 
+        tool_strategies = native_tool_providers.include?(provider_name) ? strategies : strategies - [:native]
+
+        tool_strategies.each do |strategy|
           it "calls a tool before the structured answer (#{strategy})" do
             weather_tool = acceptance_weather_tool
             agent = Class.new(Riffer::Agent) do

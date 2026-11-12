@@ -1,0 +1,193 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Extract
+        the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}},"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '847'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:19:35 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356375-1wo4lkCbLVCKSPzOfWvq
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5892050da285907-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants me to extract the","reasoning_details":[{"type":"reasoning.text","text":" user wants me to extract the","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" address from the","reasoning_details":[{"type":"reasoning.text","text":" address from the","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" sentence: \"John lives at","reasoning_details":[{"type":"reasoning.text","text":" sentence: \"John lives at","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" 123 Main St, Toronto","reasoning_details":[{"type":"reasoning.text","text":" 123 Main St, Toronto","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":", ON M5V ","reasoning_details":[{"type":"reasoning.text","text":", ON M5V ","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"2T6, Canada\"\n\n","reasoning_details":[{"type":"reasoning.text","text":"2T6, Canada\"\n\n","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"This","reasoning_details":[{"type":"reasoning.text","text":"This","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" is a simple extraction task.","reasoning_details":[{"type":"reasoning.text","text":" is a simple extraction task.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" The","reasoning_details":[{"type":"reasoning.text","text":" The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" address is:","reasoning_details":[{"type":"reasoning.text","text":" address is:","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" 123 Main St, Toronto","reasoning_details":[{"type":"reasoning.text","text":" 123 Main St, Toronto","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":", ON M5V ","reasoning_details":[{"type":"reasoning.text","text":", ON M5V ","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"2T6, Canada\n\n","reasoning_details":[{"type":"reasoning.text","text":"2T6, Canada\n\n","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"I","reasoning_details":[{"type":"reasoning.text","text":"I","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" could break it","reasoning_details":[{"type":"reasoning.text","text":" could break it","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" down into components too","reasoning_details":[{"type":"reasoning.text","text":" down into components too","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":":\n- Street:","reasoning_details":[{"type":"reasoning.text","text":":\n- Street:","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" 123 Main St\n","reasoning_details":[{"type":"reasoning.text","text":" 123 Main St\n","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"- City: Toronto\n-","reasoning_details":[{"type":"reasoning.text","text":"- City: Toronto\n-","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" Province:","reasoning_details":[{"type":"reasoning.text","text":" Province:","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" ON (","reasoning_details":[{"type":"reasoning.text","text":" ON (","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"Ontario)\n- Postal Code","reasoning_details":[{"type":"reasoning.text","text":"Ontario)\n- Postal Code","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": M5V 2","reasoning_details":[{"type":"reasoning.text","text":": M5V 2","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"T6\n- Country","reasoning_details":[{"type":"reasoning.text","text":"T6\n- Country","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":": Canada\n\nThe simplest","reasoning_details":[{"type":"reasoning.text","text":": Canada\n\nThe simplest","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" answer would","reasoning_details":[{"type":"reasoning.text","text":" answer would","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" just be the address","reasoning_details":[{"type":"reasoning.text","text":" just be the address","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" itself","reasoning_details":[{"type":"reasoning.text","text":" itself","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". Maybe","reasoning_details":[{"type":"reasoning.text","text":". Maybe","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" I'll","reasoning_details":[{"type":"reasoning.text","text":" I'll","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" provide the full address and","reasoning_details":[{"type":"reasoning.text","text":" provide the full address and","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" optionally a structured","reasoning_details":[{"type":"reasoning.text","text":" optionally a structured","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" breakdown. Keep it concise since","reasoning_details":[{"type":"reasoning.text","text":" breakdown. Keep it concise since","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" this is a simple extraction task","reasoning_details":[{"type":"reasoning.text","text":" this is a simple extraction task","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"{","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\n ","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":" \"address\": {","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\n    \"city","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\": \"Toronto\",\n    \"","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"country\": \"Canada\",\n   ","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":" \"postal_code\": \"M","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"5V 2T6","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\",\n    \"street","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\":","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":" \"123 Main St\"","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\n  }","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\n\t","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":",","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\n  \"name","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\": \"John\"","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"\n}","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1794356375-1wo4lkCbLVCKSPzOfWvq","object":"chat.completion.chunk","created":1794356375,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":37,"completion_tokens":202,"total_tokens":239,"cost":0.0000799125,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000799125,"upstream_inference_prompt_cost":0.0000041625,"upstream_inference_completions_cost":0.00007575},"completion_tokens_details":{"reasoning_tokens":144,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:19:37 GMT
+recorded_with: VCR 6.4.0
+...

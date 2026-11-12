@@ -1,0 +1,357 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"First find the
+        city the Eiffel Tower is in, then get the weather there."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '863'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:24 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356543-jsnKRnmBZUkbN7PFFD8I
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589246f1fe8283a-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants","reasoning_details":[{"type":"reasoning.text","text":" user wants","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" me to","reasoning_details":[{"type":"reasoning.text","text":" me to","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" first find","reasoning_details":[{"type":"reasoning.text","text":" first find","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the city","reasoning_details":[{"type":"reasoning.text","text":" the city","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the E","reasoning_details":[{"type":"reasoning.text","text":" the E","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"iffel","reasoning_details":[{"type":"reasoning.text","text":"iffel","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" Tower is","reasoning_details":[{"type":"reasoning.text","text":" Tower is","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" in,","reasoning_details":[{"type":"reasoning.text","text":" in,","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" then get","reasoning_details":[{"type":"reasoning.text","text":" then get","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the weather","reasoning_details":[{"type":"reasoning.text","text":" the weather","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" there.","reasoning_details":[{"type":"reasoning.text","text":" there.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" These are","reasoning_details":[{"type":"reasoning.text","text":" These are","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" dependent calls","reasoning_details":[{"type":"reasoning.text","text":" dependent calls","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" - I","reasoning_details":[{"type":"reasoning.text","text":" - I","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" need the","reasoning_details":[{"type":"reasoning.text","text":" need the","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" result of","reasoning_details":[{"type":"reasoning.text","text":" result of","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the first","reasoning_details":[{"type":"reasoning.text","text":" the first","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" call","reasoning_details":[{"type":"reasoning.text","text":" call","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" to determine","reasoning_details":[{"type":"reasoning.text","text":" to determine","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the city","reasoning_details":[{"type":"reasoning.text","text":" the city","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" for the","reasoning_details":[{"type":"reasoning.text","text":" for the","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" weather","reasoning_details":[{"type":"reasoning.text","text":" weather","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" call.","reasoning_details":[{"type":"reasoning.text","text":" call.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" So I","reasoning_details":[{"type":"reasoning.text","text":" So I","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" must call","reasoning_details":[{"type":"reasoning.text","text":" must call","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" locate_land","reasoning_details":[{"type":"reasoning.text","text":" locate_land","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"mark first","reasoning_details":[{"type":"reasoning.text","text":"mark first","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":", wait","reasoning_details":[{"type":"reasoning.text","text":", wait","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" for the","reasoning_details":[{"type":"reasoning.text","text":" for the","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" result,","reasoning_details":[{"type":"reasoning.text","text":" result,","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" then call","reasoning_details":[{"type":"reasoning.text","text":" then call","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" get_weather","reasoning_details":[{"type":"reasoning.text","text":" get_weather","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"chatcmpl-tool-8aa32c9107562bf0","type":"function","function":{"name":"locate_landmark","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"landmark\": \"E"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"iffel"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":" Tower"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356543-jsnKRnmBZUkbN7PFFD8I","object":"chat.completion.chunk","created":1794356543,"model":"z-ai/glm-5.3-flash","provider":"Crusoe","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":261,"completion_tokens":81,"total_tokens":342,"cost":0.00007965,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00007965,"upstream_inference_prompt_cost":0.00003915,"upstream_inference_completions_cost":0.0000405},"completion_tokens_details":{"reasoning_tokens":64,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:22:25 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"First find the
+        city the Eiffel Tower is in, then get the weather there."},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-8aa32c9107562bf0","type":"function","function":{"name":"locate_landmark","arguments":"{\"landmark\":
+        \"Eiffel Tower\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants me to first find the city the Eiffel Tower is in, then get the
+        weather there. These are dependent calls - I need the result of the first
+        call to determine the city for the weather call. So I must call locate_landmark
+        first, wait for the result, then call get_weather.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-8aa32c9107562bf0","content":"The
+        Eiffel Tower is in Paris."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1507'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:25 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356545-DQUdu1snAWp1M6ZksAAH
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58924771b9c283a-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_woMHqp7r1wYMEKu1YeXSJCCR","type":"function","function":{"name":"get_weather","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"city\": "}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"Paris"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356545-DQUdu1snAWp1M6ZksAAH","object":"chat.completion.chunk","created":1794356545,"model":"z-ai/glm-5.3-flash","provider":"Friendli","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":355,"completion_tokens":12,"total_tokens":367,"cost":0.00005925,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00005925,"upstream_inference_prompt_cost":0.00005325,"upstream_inference_completions_cost":0.000006},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:22:25 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"First find the
+        city the Eiffel Tower is in, then get the weather there."},{"role":"assistant","tool_calls":[{"id":"chatcmpl-tool-8aa32c9107562bf0","type":"function","function":{"name":"locate_landmark","arguments":"{\"landmark\":
+        \"Eiffel Tower\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants me to first find the city the Eiffel Tower is in, then get the
+        weather there. These are dependent calls - I need the result of the first
+        call to determine the city for the weather call. So I must call locate_landmark
+        first, wait for the result, then call get_weather.","format":"unknown"}]},{"role":"tool","tool_call_id":"chatcmpl-tool-8aa32c9107562bf0","content":"The
+        Eiffel Tower is in Paris."},{"role":"assistant","tool_calls":[{"id":"call_woMHqp7r1wYMEKu1YeXSJCCR","type":"function","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Paris\"}"}}]},{"role":"tool","tool_call_id":"call_woMHqp7r1wYMEKu1YeXSJCCR","content":"It
+        is 22 degrees Celsius in Paris."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1780'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:26 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356545-S12f4kQXOW3ZdTcOplH7
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589247b8e1b283a-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJUaGUiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBFIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJpZmYiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6ImVsIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgVG93ZXIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBpcyIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0NS1TMTJmNGtRWE9XM1pkVGNPcGxINyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGxvY2F0ZWQiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBpbiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0NS1TMTJmNGtRWE9XM1pkVGNPcGxINyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiICoqIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJQYXJpcyIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0NS1TMTJmNGtRWE9XM1pkVGNPcGxINyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiKiosIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgd2hlcmUiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiB0aGUiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBjdXJyZW50Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgd2VhdGhlciIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0NS1TMTJmNGtRWE9XM1pkVGNPcGxINyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGlzIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgKioiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IjIyIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiLCsEMiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDUtUzEyZjRrUVhPVzNaZFRjT3BsSDciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQ1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IioqIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIuIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQ1LVMxMmY0a1FYT1czWmRUY09wbEg3Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0NSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AifV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM4MCwiY29tcGxldGlvbl90b2tlbnMiOjIzLCJ0b3RhbF90b2tlbnMiOjQwMywiY29zdCI6MC4wMDAwNjg1LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMDY4NSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDA1NywidXBzdHJlYW1faW5mZXJlbmNlX2NvbXBsZXRpb25zX2Nvc3QiOjAuMDAwMDExNX0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MCwiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0KCmRhdGE6IFtET05FXQoK
+  recorded_at: Wed, 11 Nov 2026 00:22:26 GMT
+recorded_with: VCR 6.4.0

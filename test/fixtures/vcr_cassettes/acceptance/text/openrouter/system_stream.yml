@@ -1,0 +1,101 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Always
+        answer in French, in one short sentence."},{"role":"user","content":"Say good
+        morning."}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '221'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:16:04 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356163-Y8pSaSDaGDY0XuyS7hS8
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891b23f856dc73-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants me to say good","reasoning_details":[{"type":"reasoning.text","text":" user wants me to say good","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" morning, and I must respond","reasoning_details":[{"type":"reasoning.text","text":" morning, and I must respond","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" in French in","reasoning_details":[{"type":"reasoning.text","text":" in French in","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" one short sentence. Simple","reasoning_details":[{"type":"reasoning.text","text":" one short sentence. Simple","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" task","reasoning_details":[{"type":"reasoning.text","text":" task","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"Bonjour !","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1794356163-Y8pSaSDaGDY0XuyS7hS8","object":"chat.completion.chunk","created":1794356163,"model":"z-ai/glm-5.3-flash","provider":"DigitalOcean","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":27,"completion_tokens":27,"total_tokens":54,"cost":0.0000131625,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000131625,"upstream_inference_prompt_cost":0.0000030375,"upstream_inference_completions_cost":0.000010125},"completion_tokens_details":{"reasoning_tokens":23,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:16:04 GMT
+recorded_with: VCR 6.4.0
+...

@@ -1,0 +1,79 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Order
+        A-17 has 2 items: a book costing $12.99 and a pen costing $1.50"}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
+        identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
+        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":["integer","null"],"description":"Quantity
+        ordered"}},"required":["name","price","quantity"],"additionalProperties":false}}},"required":["order_id","items"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '741'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:18:50 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356330-g0AuSHHk5Rj9XanLOeYL
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891f37cd83ff4c-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYzMzAtZzBBdVNISGs1Umo5WGFuTE9lWUwiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MzMwLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwic3lzdGVtX2ZpbmdlcnByaW50IjpudWxsLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjoieyBcIm9yZGVyX2lkXCI6IFwiQS0xN1wiLCBcIml0ZW1zXCI6IFsgeyBcIm5hbWVcIjogXCJib29rXCIsIFwicHJpY2VcIjogMTIuOTksIFwicXVhbnRpdHlcIjogMSB9LCB7IFwibmFtZVwiOiBcInBlblwiLCBcInByaWNlXCI6IDEuNTAsIFwicXVhbnRpdHlcIjogMSB9IF0gfSIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6IlRoZSB1c2VyIGhhcyBzZW50IG1lIGEgZnJhZ21lbnQgb2YgdGV4dCB0aGF0IGxvb2tzIGxpa2Ugb3JkZXIgaW5mb3JtYXRpb246IFwiT3JkZXIgQS0xNyBoYXMgMiBpdGVtczogYSBib29rIGNvc3RpbmcgJDEyLjk5IGFuZCBhIHBlbiBjb3N0aW5nICQxLjUwXCJcblxuVGhlcmUncyBubyBleHBsaWNpdCBxdWVzdGlvbiBvciByZXF1ZXN0IGhlcmUuIFRoaXMgbG9va3MgbGlrZSBpdCBjb3VsZCBiZTpcbjEuIEEgdGVzdCBtZXNzYWdlIHRvIHNlZSBob3cgSSByZXNwb25kXG4yLiBTb21lb25lIHN0YXJ0aW5nIHRvIHNoYXJlIGRhdGEsIGV4cGVjdGluZyBtZSB0byBhY2tub3dsZWRnZSBpdFxuMy4gUGFydCBvZiBhIHRhc2sgd2hlcmUgdGhleSdsbCBmb2xsb3cgdXAgd2l0aCBtb3JlIGluc3RydWN0aW9uc1xuNC4gUG9zc2libHkgdGVzdGluZyBpZiBJJ2xsIGRvIHNvbWV0aGluZyB3aXRoIHRoaXMgZGF0YSAobGlrZSBjYWxjdWxhdGUgYSB0b3RhbClcblxuVGhlIG1vc3QgaGVscGZ1bCByZXNwb25zZSB3b3VsZCBwcm9iYWJseSBiZSB0byBhY2tub3dsZWRnZSB0aGUgaW5mb3JtYXRpb24gYW5kIHBlcmhhcHMgb2ZmZXIgdGhlIG9idmlvdXMgdXNlZnVsIGNvbXB1dGF0aW9uICh0aGUgdG90YWwpLCB3aGlsZSBhc2tpbmcgd2hhdCB0aGV5J2QgbGlrZSBtZSB0byBkbyB3aXRoIHRoaXMgaW5mb3JtYXRpb24uXG5cbkxldCBtZSBjYWxjdWxhdGU6ICQxMi45OSArICQxLjUwID0gJDE0LjQ5XG5cblRoYXQncyBhIHNpbXBsZSB0b3RhbC4gSWYgdGhlcmUgd2VyZSB0YXggb3Igc2hpcHBpbmcgaW52b2x2ZWQsIEkgZG9uJ3Qga25vdyB0aG9zZSByYXRlcy5cblxuSSBzaG91bGQgYWNrbm93bGVkZ2Ugd2hhdCB0aGV5J3ZlIHNoYXJlZCBhbmQgYXNrIHdoYXQgdGhleSdkIGxpa2UgbWUgdG8gZG/igJRtYXliZSBvZmZlciBzb21lIHBvc3NpYmlsaXRpZXMgbGlrZSBjYWxjdWxhdGluZyB0aGUgdG90YWwsIGhlbHBpbmcgd2l0aCBhIHJlY2VpcHQsIHRyYWNraW5nIG9yZGVycywgZXRjLiBCdXQgSSBzaG91bGRuJ3Qgb3Zlci1lbGFib3JhdGUgd2l0aCBhIGh1Z2UgbWVudSBvZiBvcHRpb25zLlxuXG5BIGNvbmNpc2UgcmVzcG9uc2U6XG4tIE5vdGUgdGhlIG9yZGVyIGRldGFpbHNcbi0gT2ZmZXIgdGhlIHRvdGFsIHNpbmNlIHRoYXQncyB0aGUgbW9zdCBsaWtlbHkgaW50ZW50XG4tIEFzayB3aGF0IHRoZXknZCBsaWtlIGhlbHAgd2l0aFxuXG5Gb3JtYXQ6IFRoaXMgc2hvdWxkIGJlIHNob3J0LiBNYXliZSBhIGJyaWVmIHN1bW1hcnkgYW5kIHRoZSB0b3RhbCwgdGhlbiBhIHF1ZXN0aW9uLiBObyBuZWVkIGZvciBoZWFkZXJzIG9yIGV4dGVuc2l2ZSBsaXN0cy4gQSBzaG9ydCBwYXJhZ3JhcGggb3IgdHdvIGxpbmVzIHdvdWxkIHdvcmsgd2VsbC4gTWF5YmUgYSB0aW55IHN0cnVjdHVyZWQgcmVjYXAgY291bGQgYmUgbmljZSBidXQgbm90IG5lY2Vzc2FyeS4gS2VlcCBpdCBjb252ZXJzYXRpb25hbCBhbmQgYnJpZWYuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJUaGUgdXNlciBoYXMgc2VudCBtZSBhIGZyYWdtZW50IG9mIHRleHQgdGhhdCBsb29rcyBsaWtlIG9yZGVyIGluZm9ybWF0aW9uOiBcIk9yZGVyIEEtMTcgaGFzIDIgaXRlbXM6IGEgYm9vayBjb3N0aW5nICQxMi45OSBhbmQgYSBwZW4gY29zdGluZyAkMS41MFwiXG5cblRoZXJlJ3Mgbm8gZXhwbGljaXQgcXVlc3Rpb24gb3IgcmVxdWVzdCBoZXJlLiBUaGlzIGxvb2tzIGxpa2UgaXQgY291bGQgYmU6XG4xLiBBIHRlc3QgbWVzc2FnZSB0byBzZWUgaG93IEkgcmVzcG9uZFxuMi4gU29tZW9uZSBzdGFydGluZyB0byBzaGFyZSBkYXRhLCBleHBlY3RpbmcgbWUgdG8gYWNrbm93bGVkZ2UgaXRcbjMuIFBhcnQgb2YgYSB0YXNrIHdoZXJlIHRoZXknbGwgZm9sbG93IHVwIHdpdGggbW9yZSBpbnN0cnVjdGlvbnNcbjQuIFBvc3NpYmx5IHRlc3RpbmcgaWYgSSdsbCBkbyBzb21ldGhpbmcgd2l0aCB0aGlzIGRhdGEgKGxpa2UgY2FsY3VsYXRlIGEgdG90YWwpXG5cblRoZSBtb3N0IGhlbHBmdWwgcmVzcG9uc2Ugd291bGQgcHJvYmFibHkgYmUgdG8gYWNrbm93bGVkZ2UgdGhlIGluZm9ybWF0aW9uIGFuZCBwZXJoYXBzIG9mZmVyIHRoZSBvYnZpb3VzIHVzZWZ1bCBjb21wdXRhdGlvbiAodGhlIHRvdGFsKSwgd2hpbGUgYXNraW5nIHdoYXQgdGhleSdkIGxpa2UgbWUgdG8gZG8gd2l0aCB0aGlzIGluZm9ybWF0aW9uLlxuXG5MZXQgbWUgY2FsY3VsYXRlOiAkMTIuOTkgKyAkMS41MCA9ICQxNC40OVxuXG5UaGF0J3MgYSBzaW1wbGUgdG90YWwuIElmIHRoZXJlIHdlcmUgdGF4IG9yIHNoaXBwaW5nIGludm9sdmVkLCBJIGRvbid0IGtub3cgdGhvc2UgcmF0ZXMuXG5cbkkgc2hvdWxkIGFja25vd2xlZGdlIHdoYXQgdGhleSd2ZSBzaGFyZWQgYW5kIGFzayB3aGF0IHRoZXknZCBsaWtlIG1lIHRvIGRv4oCUbWF5YmUgb2ZmZXIgc29tZSBwb3NzaWJpbGl0aWVzIGxpa2UgY2FsY3VsYXRpbmcgdGhlIHRvdGFsLCBoZWxwaW5nIHdpdGggYSByZWNlaXB0LCB0cmFja2luZyBvcmRlcnMsIGV0Yy4gQnV0IEkgc2hvdWxkbid0IG92ZXItZWxhYm9yYXRlIHdpdGggYSBodWdlIG1lbnUgb2Ygb3B0aW9ucy5cblxuQSBjb25jaXNlIHJlc3BvbnNlOlxuLSBOb3RlIHRoZSBvcmRlciBkZXRhaWxzXG4tIE9mZmVyIHRoZSB0b3RhbCBzaW5jZSB0aGF0J3MgdGhlIG1vc3QgbGlrZWx5IGludGVudFxuLSBBc2sgd2hhdCB0aGV5J2QgbGlrZSBoZWxwIHdpdGhcblxuRm9ybWF0OiBUaGlzIHNob3VsZCBiZSBzaG9ydC4gTWF5YmUgYSBicmllZiBzdW1tYXJ5IGFuZCB0aGUgdG90YWwsIHRoZW4gYSBxdWVzdGlvbi4gTm8gbmVlZCBmb3IgaGVhZGVycyBvciBleHRlbnNpdmUgbGlzdHMuIEEgc2hvcnQgcGFyYWdyYXBoIG9yIHR3byBsaW5lcyB3b3VsZCB3b3JrIHdlbGwuIE1heWJlIGEgdGlueSBzdHJ1Y3R1cmVkIHJlY2FwIGNvdWxkIGJlIG5pY2UgYnV0IG5vdCBuZWNlc3NhcnkuIEtlZXAgaXQgY29udmVyc2F0aW9uYWwgYW5kIGJyaWVmLiIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfX1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjozNiwiY29tcGxldGlvbl90b2tlbnMiOjM4OCwidG90YWxfdG9rZW5zIjo0MjQsImNvc3QiOjAuMDAwMTUxNzYsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6MCwiY2FjaGVfd3JpdGVfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjAsInZpZGVvX3Rva2VucyI6MH0sImNvc3RfZGV0YWlscyI6eyJ1cHN0cmVhbV9pbmZlcmVuY2VfY29zdCI6MC4wMDAxNTE3NiwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDAwNDMyLCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAxNDc0NH0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MzI5LCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
+  recorded_at: Wed, 11 Nov 2026 00:18:53 GMT
+recorded_with: VCR 6.4.0

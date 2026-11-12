@@ -1,0 +1,85 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Extract
+        info from: Jane works at 42 King St in Vancouver. No other details are known.
+        Return null for any unknown fields.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1232'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:21:02 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356462-oQLz91chpqMBxJtxk8Aq
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589226fce80d106-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTY0NjItb1FMejkxY2hwcU1CeEp0eGs4QXEiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2NDYyLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOm51bGwsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImxvZ3Byb2JzIjpudWxsLCJmaW5pc2hfcmVhc29uIjoic3RvcCIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoic3RvcCIsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJ7XCJuYW1lXCI6XCJKYW5lXCIsXCJhZGRyZXNzXCI6e1wic3RyZWV0XCI6XCI0MiBLaW5nIFN0XCIsXCJjaXR5XCI6XCJWYW5jb3V2ZXJcIixcInBvc3RhbF9jb2RlXCI6bnVsbCxcImNvdW50cnlcIjpudWxsfX0iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOiJUaGUgdGFzazogZXh0cmFjdCBpbmZvIGZyb20gXCJKYW5lIHdvcmtzIGF0IDQyIEtpbmcgU3QgaW4gVmFuY291dmVyLiBObyBvdGhlciBkZXRhaWxzIGFyZSBrbm93bi4gUmV0dXJuIG51bGwgZm9yIGFueSB1bmtub3duIGZpZWxkcy5cIlxuXG5TY2hlbWE6IG9iamVjdCB3aXRoIG5hbWUgKHN0cmluZyksIGFkZHJlc3MgKG9iamVjdCB3aXRoIHN0cmVldCwgY2l0eSwgcG9zdGFsX2NvZGUsIGNvdW50cnk7IHJlcXVpcmVkIHN0cmVldCBhbmQgY2l0eTsgYWRkaXRpb25hbFByb3BlcnRpZXMgZmFsc2UpLlxuXG5XYWl0IOKAlCBhZGRyZXNzIGlzIHJlcXVpcmVkIHN0cmVldCBhbmQgY2l0eS4gQnV0IHdlIG5lZWQgdG8gcmV0dXJuIG51bGwgZm9yIHVua25vd24gZmllbGRzLiBQb3N0YWxfY29kZSBhbmQgY291bnRyeSBhcmUgdW5rbm93biDigJQgd2UgY2FuIGluY2x1ZGUgdGhlbSBhcyBudWxsLiBTdHJlZXQ6IFwiNDIgS2luZyBTdFwiLCBjaXR5OiBcIlZhbmNvdXZlclwiLiBOYW1lOiBcIkphbmVcIi5cblxuVGhlIHJlcXVpcmVkIGZpZWxkcyBzdHJlZXQgYW5kIGNpdHkgYXJlIHByZXNlbnQuIHBvc3RhbF9jb2RlIGFuZCBjb3VudHJ5IGFyZSBvcHRpb25hbCBidXQgY2FuIGJlIGluY2x1ZGVkIGFzIG51bGwuIFNpbmNlIGluc3RydWN0aW9uIHNheXMgcmV0dXJuIG51bGwgZm9yIHVua25vd24gZmllbGRzLCBJJ2xsIGluY2x1ZGUgcG9zdGFsX2NvZGU6IG51bGwsIGNvdW50cnk6IG51bGwuXG5cbkpTT046IHtcIm5hbWVcIjpcIkphbmVcIixcImFkZHJlc3NcIjp7XCJzdHJlZXRcIjpcIjQyIEtpbmcgU3RcIixcImNpdHlcIjpcIlZhbmNvdXZlclwiLFwicG9zdGFsX2NvZGVcIjpudWxsLFwiY291bnRyeVwiOm51bGx9fVxuXG5Ob3RlOiBzdHJlZXQgdHlwZSBzdHJpbmcg4oCUIFwiNDIgS2luZyBTdFwiIGlzIGZpbmUuIENpdHkgXCJWYW5jb3V2ZXJcIi4gU2hvdWxkIGNpdHkgaW5jbHVkZSBcIkJDXCI/IE5vLCBvbmx5IGNpdHkga25vd24uIENvdW50cnkgdW5rbm93biDigJQgVmFuY291dmVyIGNvdWxkIGJlIENhbmFkYSwgYnV0IFwibm8gb3RoZXIgZGV0YWlscyBhcmUga25vd25cIiBhbmQgVmFuY291dmVyIGlzIHR5cGljYWxseSBDYW5hZGEsIGJ1dCB0aGUgaW5zdHJ1Y3Rpb24gc2F5cyByZXR1cm4gbnVsbCBmb3IgdW5rbm93biBmaWVsZHMuIENvdW50cnkgaXNuJ3QgZXhwbGljaXRseSBzdGF0ZWQ7IHNhZmVzdCBpcyBudWxsLiBBY3R1YWxseSBcIlZhbmNvdXZlclwiIGlzIGZhbW91c2x5IGluIENhbmFkYSwgYnV0IHdlIHNob3VsZG4ndCBpbmZlci4gVGhlIHByb21wdCBzYXlzIFwiTm8gb3RoZXIgZGV0YWlscyBhcmUga25vd24uIFJldHVybiBudWxsIGZvciBhbnkgdW5rbm93biBmaWVsZHMuXCIgU28gbnVsbCBmb3IgcG9zdGFsX2NvZGUgYW5kIGNvdW50cnkuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJUaGUgdGFzazogZXh0cmFjdCBpbmZvIGZyb20gXCJKYW5lIHdvcmtzIGF0IDQyIEtpbmcgU3QgaW4gVmFuY291dmVyLiBObyBvdGhlciBkZXRhaWxzIGFyZSBrbm93bi4gUmV0dXJuIG51bGwgZm9yIGFueSB1bmtub3duIGZpZWxkcy5cIlxuXG5TY2hlbWE6IG9iamVjdCB3aXRoIG5hbWUgKHN0cmluZyksIGFkZHJlc3MgKG9iamVjdCB3aXRoIHN0cmVldCwgY2l0eSwgcG9zdGFsX2NvZGUsIGNvdW50cnk7IHJlcXVpcmVkIHN0cmVldCBhbmQgY2l0eTsgYWRkaXRpb25hbFByb3BlcnRpZXMgZmFsc2UpLlxuXG5XYWl0IOKAlCBhZGRyZXNzIGlzIHJlcXVpcmVkIHN0cmVldCBhbmQgY2l0eS4gQnV0IHdlIG5lZWQgdG8gcmV0dXJuIG51bGwgZm9yIHVua25vd24gZmllbGRzLiBQb3N0YWxfY29kZSBhbmQgY291bnRyeSBhcmUgdW5rbm93biDigJQgd2UgY2FuIGluY2x1ZGUgdGhlbSBhcyBudWxsLiBTdHJlZXQ6IFwiNDIgS2luZyBTdFwiLCBjaXR5OiBcIlZhbmNvdXZlclwiLiBOYW1lOiBcIkphbmVcIi5cblxuVGhlIHJlcXVpcmVkIGZpZWxkcyBzdHJlZXQgYW5kIGNpdHkgYXJlIHByZXNlbnQuIHBvc3RhbF9jb2RlIGFuZCBjb3VudHJ5IGFyZSBvcHRpb25hbCBidXQgY2FuIGJlIGluY2x1ZGVkIGFzIG51bGwuIFNpbmNlIGluc3RydWN0aW9uIHNheXMgcmV0dXJuIG51bGwgZm9yIHVua25vd24gZmllbGRzLCBJJ2xsIGluY2x1ZGUgcG9zdGFsX2NvZGU6IG51bGwsIGNvdW50cnk6IG51bGwuXG5cbkpTT046IHtcIm5hbWVcIjpcIkphbmVcIixcImFkZHJlc3NcIjp7XCJzdHJlZXRcIjpcIjQyIEtpbmcgU3RcIixcImNpdHlcIjpcIlZhbmNvdXZlclwiLFwicG9zdGFsX2NvZGVcIjpudWxsLFwiY291bnRyeVwiOm51bGx9fVxuXG5Ob3RlOiBzdHJlZXQgdHlwZSBzdHJpbmcg4oCUIFwiNDIgS2luZyBTdFwiIGlzIGZpbmUuIENpdHkgXCJWYW5jb3V2ZXJcIi4gU2hvdWxkIGNpdHkgaW5jbHVkZSBcIkJDXCI/IE5vLCBvbmx5IGNpdHkga25vd24uIENvdW50cnkgdW5rbm93biDigJQgVmFuY291dmVyIGNvdWxkIGJlIENhbmFkYSwgYnV0IFwibm8gb3RoZXIgZGV0YWlscyBhcmUga25vd25cIiBhbmQgVmFuY291dmVyIGlzIHR5cGljYWxseSBDYW5hZGEsIGJ1dCB0aGUgaW5zdHJ1Y3Rpb24gc2F5cyByZXR1cm4gbnVsbCBmb3IgdW5rbm93biBmaWVsZHMuIENvdW50cnkgaXNuJ3QgZXhwbGljaXRseSBzdGF0ZWQ7IHNhZmVzdCBpcyBudWxsLiBBY3R1YWxseSBcIlZhbmNvdXZlclwiIGlzIGZhbW91c2x5IGluIENhbmFkYSwgYnV0IHdlIHNob3VsZG4ndCBpbmZlci4gVGhlIHByb21wdCBzYXlzIFwiTm8gb3RoZXIgZGV0YWlscyBhcmUga25vd24uIFJldHVybiBudWxsIGZvciBhbnkgdW5rbm93biBmaWVsZHMuXCIgU28gbnVsbCBmb3IgcG9zdGFsX2NvZGUgYW5kIGNvdW50cnkuIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjIzNiwiY29tcGxldGlvbl90b2tlbnMiOjMyNiwidG90YWxfdG9rZW5zIjo1NjIsImNvc3QiOjAuMDAwMTk4NCwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDE5ODQsInVwc3RyZWFtX2luZmVyZW5jZV9wcm9tcHRfY29zdCI6MC4wMDAwMzU0LCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAxNjN9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjM0MiwiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0=
+  recorded_at: Wed, 11 Nov 2026 00:21:03 GMT
+recorded_with: VCR 6.4.0

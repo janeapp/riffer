@@ -1,0 +1,114 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Analyze
+        the sentiment of: ''I love this product, it is amazing!''"}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"sentiment":{"type":"string","description":"The
+        sentiment","enum":["positive","neutral","negative"]},"score":{"type":"number","description":"Confidence
+        between 0 and 1"}},"required":["sentiment","score"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '498'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:21:33 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356493-KzGZi7xuwC2ayq7zp0y2
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58923313b5823a3-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n\n         \n{\"id\":\"gen-1794356493-KzGZi7xuwC2ayq7zp0y2\",\"object\":\"chat.completion\",\"created\":1794356493,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Modal\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"score\\\":
+        0.95, \\\"sentiment\\\": \\\"positive\\\"}\",\"refusal\":null,\"reasoning\":\"The
+        user is asking me to analyze the sentiment of a text: \\\"I love this product,
+        it is amazing!\\\"\\n\\nThis is a straightforward sentiment analysis task.
+        Let me break it down:\\n\\nThe text: \\\"I love this product, it is amazing!\\\"\\n\\nSentiment
+        analysis components:\\n1. Overall sentiment: Positive (strongly positive)\\n2.
+        Key sentiment-bearing words:\\n   - \\\"love\\\" - very positive emotion word\\n
+        \  - \\\"amazing\\\" - strong positive adjective\\n   - The exclamation mark
+        adds emphasis/intensity\\n3. Polarity: Positive\\n4. Intensity/Strength: Strong
+        (uses superlative language)\\n5. Subjectivity: Subjective (personal opinion)\\n\\nI
+        could provide:\\n- Overall sentiment classification: Positive\\n- Confidence
+        level: High\\n- Key indicators: \\\"love\\\", \\\"amazing\\\", exclamation
+        point\\n- Sentiment score if applicable (e.g., on a scale from -1 to +1, this
+        would be very high, maybe +0.9)\\n\\nFormat considerations: This is a simple
+        request. I should give a clear, concise analysis. A brief structured response
+        would work well - maybe with the overall sentiment, key indicators, and confidence.
+        I shouldn't overcomplicate it with excessive detail, but showing the analysis
+        components would be helpful and educational. A short response with maybe a
+        few bullet points or a brief breakdown would be appropriate. Not too long
+        - this is a simple sentence.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user is asking me to analyze the sentiment of a text: \\\"I love this product,
+        it is amazing!\\\"\\n\\nThis is a straightforward sentiment analysis task.
+        Let me break it down:\\n\\nThe text: \\\"I love this product, it is amazing!\\\"\\n\\nSentiment
+        analysis components:\\n1. Overall sentiment: Positive (strongly positive)\\n2.
+        Key sentiment-bearing words:\\n   - \\\"love\\\" - very positive emotion word\\n
+        \  - \\\"amazing\\\" - strong positive adjective\\n   - The exclamation mark
+        adds emphasis/intensity\\n3. Polarity: Positive\\n4. Intensity/Strength: Strong
+        (uses superlative language)\\n5. Subjectivity: Subjective (personal opinion)\\n\\nI
+        could provide:\\n- Overall sentiment classification: Positive\\n- Confidence
+        level: High\\n- Key indicators: \\\"love\\\", \\\"amazing\\\", exclamation
+        point\\n- Sentiment score if applicable (e.g., on a scale from -1 to +1, this
+        would be very high, maybe +0.9)\\n\\nFormat considerations: This is a simple
+        request. I should give a clear, concise analysis. A brief structured response
+        would work well - maybe with the overall sentiment, key indicators, and confidence.
+        I shouldn't overcomplicate it with excessive detail, but showing the analysis
+        components would be helpful and educational. A short response with maybe a
+        few bullet points or a brief breakdown would be appropriate. Not too long
+        - this is a simple sentence.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":28,\"completion_tokens\":309,\"total_tokens\":337,\"cost\":0.0001587,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0001587,\"upstream_inference_prompt_cost\":0.0000042,\"upstream_inference_completions_cost\":0.0001545},\"completion_tokens_details\":{\"reasoning_tokens\":291,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:21:37 GMT
+recorded_with: VCR 6.4.0

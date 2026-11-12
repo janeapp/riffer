@@ -1,0 +1,180 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"What is the weather
+        in Toronto?"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '542'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:21 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356541-JhNdzFOMJfFS3ApCzFXw
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589245e69f2c415-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants to know the weather","reasoning_details":[{"type":"reasoning.text","text":" user wants to know the weather","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" in Toronto. I'll","reasoning_details":[{"type":"reasoning.text","text":" in Toronto. I'll","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" use the get_weather tool","reasoning_details":[{"type":"reasoning.text","text":" use the get_weather tool","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"9aebfd65-5193-4456-9f8e-ac388b728d21","type":"function","function":{"name":"get_weather","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"city\":\"Toronto\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356541-JhNdzFOMJfFS3ApCzFXw","object":"chat.completion.chunk","created":1794356541,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":186,"completion_tokens":30,"total_tokens":216,"cost":0.00003372,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00003372,"upstream_inference_prompt_cost":0.00002232,"upstream_inference_completions_cost":0.0000114},"completion_tokens_details":{"reasoning_tokens":19,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:22:21 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"What is the weather
+        in Toronto?"},{"role":"assistant","tool_calls":[{"id":"9aebfd65-5193-4456-9f8e-ac388b728d21","type":"function","function":{"name":"get_weather","arguments":"{\"city\":\"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know the weather in Toronto. I''ll use the get_weather tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"9aebfd65-5193-4456-9f8e-ac388b728d21","content":"It
+        is 15 degrees Celsius in Toronto."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '986'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:22 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356541-FRdtobr1tKhTYZj1XKrp
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58924628e4dc415-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJUaGUiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQzNTY1NDEtRlJkdG9icjF0S2hUWVpqMVhLcnAiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0MzU2NTQxLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiRnJpZW5kbGkiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBjdXJyZW50Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgd2VhdGhlciIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0MS1GUmR0b2JyMXRLaFRZWmoxWEtycCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDEsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGluIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgVG9yb250byIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0MS1GUmR0b2JyMXRLaFRZWmoxWEtycCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDEsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGlzIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIxNSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDM1NjU0MS1GUmR0b2JyMXRLaFRZWmoxWEtycCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQzNTY1NDEsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJGcmllbmRsaSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiwrBDIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIuIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0MzU2NTQxLUZSZHRvYnIxdEtoVFlaajFYS3JwIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDM1NjU0MSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwic2VydmljZV90aWVyIjpudWxsLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AifV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjIyOSwiY29tcGxldGlvbl90b2tlbnMiOjEyLCJ0b3RhbF90b2tlbnMiOjI0MSwiY29zdCI6MC4wMDAwNDAzNSwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDA0MDM1LCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMDM0MzUsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAwNn0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MCwiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0KCmRhdGE6IFtET05FXQoK
+  recorded_at: Wed, 11 Nov 2026 00:22:22 GMT
+recorded_with: VCR 6.4.0

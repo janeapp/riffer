@@ -1,0 +1,97 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"Extract
+        the address from: John lives at 123 Main St, Toronto"}],"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"result":{"anyOf":[{"type":"object","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"}},"required":["street","city"],"additionalProperties":false},{"type":"object","properties":{"error_code":{"type":"string","description":"Why
+        no address","enum":["no_address","multiple_addresses"]},"error_message":{"type":"string","description":"Explanation
+        of the error"}},"required":["error_code","error_message"],"additionalProperties":false}],"description":"The
+        address, or why none was found"}},"required":["result"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '865'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:20:34 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356434-cITOXLmg6vP6dWJShEb1
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58921c27d64d8d8-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356434-cITOXLmg6vP6dWJShEb1\",\"object\":\"chat.completion\",\"created\":1794356434,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"Friendli\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{
+        \\\"result\\\": { \\\"street\\\": \\\"123 Main St\\\", \\\"city\\\": \\\"Toronto\\\"
+        } }\",\"refusal\":null,\"reasoning\":\"The user wants me to extract the address
+        from the sentence: \\\"John lives at 123 Main St, Toronto\\\"\\n\\nThis is
+        a simple extraction task. The address in the sentence is \\\"123 Main St,
+        Toronto\\\".\\n\\nThe address consists of:\\n- Street number: 123\\n- Street
+        name: Main St\\n- City: Toronto\\n\\nSo the full address is: 123 Main St,
+        Toronto\\n\\nThis is a short, factual response. The user just wants the address
+        extracted. I should give a concise answer. No need for extensive explanation.
+        Just the address itself, possibly with minimal formatting.\\n\\nThe answer
+        should simply be: 123 Main St, Toronto\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants me to extract the address from the sentence: \\\"John lives at
+        123 Main St, Toronto\\\"\\n\\nThis is a simple extraction task. The address
+        in the sentence is \\\"123 Main St, Toronto\\\".\\n\\nThe address consists
+        of:\\n- Street number: 123\\n- Street name: Main St\\n- City: Toronto\\n\\nSo
+        the full address is: 123 Main St, Toronto\\n\\nThis is a short, factual response.
+        The user just wants the address extracted. I should give a concise answer.
+        No need for extensive explanation. Just the address itself, possibly with
+        minimal formatting.\\n\\nThe answer should simply be: 123 Main St, Toronto\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":26,\"completion_tokens\":154,\"total_tokens\":180,\"cost\":0.0000809,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000809,\"upstream_inference_prompt_cost\":0.0000039,\"upstream_inference_completions_cost\":0.000077},\"completion_tokens_details\":{\"reasoning_tokens\":148,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:20:35 GMT
+recorded_with: VCR 6.4.0

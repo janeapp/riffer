@@ -1,0 +1,259 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"First find the
+        city the Eiffel Tower is in, then get the weather there."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '809'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:27 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356546-4UTLxb2nG6VYhgd630d7
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589247e1a3dec58-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356546-4UTLxb2nG6VYhgd630d7\",\"object\":\"chat.completion\",\"created\":1794356546,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"DigitalOcean\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
+        user wants me to first find the city of the Eiffel Tower, then get the weather
+        there. This is a dependent call - I need the result of the first call to make
+        the second. So I must call locate_landmark first, wait for the result, then
+        call get_weather.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"call_8524e5e9f327414494761062\",\"function\":{\"name\":\"locate_landmark\",\"arguments\":\"{\\\"landmark\\\":\\\"Eiffel
+        Tower\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user wants me to first find the city of the Eiffel Tower, then get the weather
+        there. This is a dependent call - I need the result of the first call to make
+        the second. So I must call locate_landmark first, wait for the result, then
+        call get_weather.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":261,\"completion_tokens\":78,\"total_tokens\":339,\"cost\":0.0000586125,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000586125,\"upstream_inference_prompt_cost\":0.0000293625,\"upstream_inference_completions_cost\":0.00002925},\"completion_tokens_details\":{\"reasoning_tokens\":60,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:22:28 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"First find the
+        city the Eiffel Tower is in, then get the weather there."},{"role":"assistant","tool_calls":[{"id":"call_8524e5e9f327414494761062","type":"function","function":{"name":"locate_landmark","arguments":"{\"landmark\":\"Eiffel
+        Tower\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The user
+        wants me to first find the city of the Eiffel Tower, then get the weather
+        there. This is a dependent call - I need the result of the first call to make
+        the second. So I must call locate_landmark first, wait for the result, then
+        call get_weather.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_8524e5e9f327414494761062","content":"The
+        Eiffel Tower is in Paris."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1422'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:28 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356548-A39EaT7OpQGqZABCfTlK
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5892489be24ec58-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"gen-1794356548-A39EaT7OpQGqZABCfTlK","object":"chat.completion","created":1794356548,"model":"z-ai/glm-5.3-flash","provider":"Friendli","system_fingerprint":null,"service_tier":null,"choices":[{"index":0,"logprobs":null,"finish_reason":"tool_calls","native_finish_reason":"tool_calls","message":{"role":"assistant","content":null,"refusal":null,"reasoning":null,"tool_calls":[{"type":"function","index":0,"id":"call_5bMXiHrIC3pVVDrRdiuwH4h8","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Paris\"}"}}]}}],"usage":{"prompt_tokens":351,"completion_tokens":12,"total_tokens":363,"cost":0.00005865,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00005865,"upstream_inference_prompt_cost":0.00005265,"upstream_inference_completions_cost":0.000006},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}'
+  recorded_at: Wed, 11 Nov 2026 00:22:28 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Use
+        the tools to answer. Be concise."},{"role":"user","content":"First find the
+        city the Eiffel Tower is in, then get the weather there."},{"role":"assistant","tool_calls":[{"id":"call_8524e5e9f327414494761062","type":"function","function":{"name":"locate_landmark","arguments":"{\"landmark\":\"Eiffel
+        Tower\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The user
+        wants me to first find the city of the Eiffel Tower, then get the weather
+        there. This is a dependent call - I need the result of the first call to make
+        the second. So I must call locate_landmark first, wait for the result, then
+        call get_weather.","format":"unknown"}]},{"role":"tool","tool_call_id":"call_8524e5e9f327414494761062","content":"The
+        Eiffel Tower is in Paris."},{"role":"assistant","tool_calls":[{"id":"call_5bMXiHrIC3pVVDrRdiuwH4h8","type":"function","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Paris\"}"}}]},{"role":"tool","tool_call_id":"call_5bMXiHrIC3pVVDrRdiuwH4h8","content":"It
+        is 22 degrees Celsius in Paris."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"locate_landmark","description":"Find
+        the city a landmark is in","parameters":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1695'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:28 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356548-Q0Yg4vTs7FLdPSzXvZxs
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a589248c38f4ec58-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6Imdlbi0xNzk0MzU2NTQ4LVEwWWc0dlRzN0ZMZFBTelh2WnhzIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY3JlYXRlZCI6MTc5NDM1NjU0OCwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IkZyaWVuZGxpIiwic3lzdGVtX2ZpbmdlcnByaW50IjpudWxsLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjoiVGhlIEVpZmZlbCBUb3dlciBpcyBpbiAqKlBhcmlzKiosIGFuZCB0aGUgY3VycmVudCB3ZWF0aGVyIHRoZXJlIGlzICoqMjLCsEMqKi4iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOm51bGx9fV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM3NiwiY29tcGxldGlvbl90b2tlbnMiOjIzLCJ0b3RhbF90b2tlbnMiOjM5OSwiY29zdCI6MC4wMDAwNjc5LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMDY3OSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDA1NjQsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAxMTV9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjAsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Wed, 11 Nov 2026 00:22:28 GMT
+recorded_with: VCR 6.4.0

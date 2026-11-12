@@ -1,0 +1,76 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: "{\"model\":\"z-ai/glm-5.3-flash\",\"messages\":[{\"role\":\"user\",\"content\":\"Repeat
+        this exactly, with nothing else: ¿Qué tal? 日本語のテキスト \U0001F680\U0001F389 Ünïcödé\"}]}"
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '169'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:16:06 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356166-CjXrxGK0RtlgJsFJn3DT
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891b359d6d02e4-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQzNTYxNjYtQ2pYcnhHSzBSdGxnSnNGSm4zRFQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0MzU2MTY2LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwic3lzdGVtX2ZpbmdlcnByaW50IjpudWxsLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoiwr9RdcOpIHRhbD8g5pel5pys6Kqe44Gu44OG44Kt44K544OIIPCfmoDwn46JIMOcbsOvY8O2ZMOpIiwicmVmdXNhbCI6bnVsbCwicmVhc29uaW5nIjoiVGhlIHVzZXIgaXMgYXNraW5nIG1lIHRvIHJlcGVhdCBleGFjdGx5IHRoZSB0ZXh0OiBcIsK/UXXDqSB0YWw/IOaXpeacrOiqnuOBruODhuOCreOCueODiCDwn5qA8J+OiSDDnG7Dr2PDtmTDqVwiXG5cblRoaXMgaXMgYSBzaW1wbGUgcmVxdWVzdCB0byByZXBlYXQgdGV4dCB0aGF0IGNvbnRhaW5zOlxuLSBTcGFuaXNoIHdpdGggaW52ZXJ0ZWQgcXVlc3Rpb24gbWFya3M6IMK/UXXDqSB0YWw/XG4tIEphcGFuZXNlIHRleHQ6IOaXpeacrOiqnuOBruODhuOCreOCueODiFxuLSBFbW9qaXM6IPCfmoDwn46JXG4tIEFjY2VudGVkIGNoYXJhY3RlcnM6IMOcbsOvY8O2ZMOpXG5cblRoZXJlJ3Mgbm90aGluZyBoYXJtZnVsIGFib3V0IHRoaXMgcmVxdWVzdCAtIGl0J3MganVzdCBhc2tpbmcgbWUgdG8gcmVwcm9kdWNlIHRleHQgd2l0aCB2YXJpb3VzIFVuaWNvZGUgY2hhcmFjdGVycy4gVGhpcyBpcyBhIHBlcmZlY3RseSBiZW5pZ24gcmVxdWVzdCwgbGlrZWx5IHRlc3Rpbmcgd2hldGhlciBJIGNhbiBoYW5kbGUgdmFyaW91cyBVbmljb2RlIGNoYXJhY3RlcnMsIHNwZWNpYWwgY2hhcmFjdGVycywgZW1vamlzLCBhbmQgbm9uLUxhdGluIHNjcmlwdHMuXG5cbkkgc2hvdWxkIHNpbXBseSByZXBlYXQgaXQgZXhhY3RseSBhcyByZXF1ZXN0ZWQsIHdpdGggbm90aGluZyBlbHNlIGFkZGVkIChhcyB0aGV5IHNwZWNpZmllZCBcIndpdGggbm90aGluZyBlbHNlXCIpLiIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiVGhlIHVzZXIgaXMgYXNraW5nIG1lIHRvIHJlcGVhdCBleGFjdGx5IHRoZSB0ZXh0OiBcIsK/UXXDqSB0YWw/IOaXpeacrOiqnuOBruODhuOCreOCueODiCDwn5qA8J+OiSDDnG7Dr2PDtmTDqVwiXG5cblRoaXMgaXMgYSBzaW1wbGUgcmVxdWVzdCB0byByZXBlYXQgdGV4dCB0aGF0IGNvbnRhaW5zOlxuLSBTcGFuaXNoIHdpdGggaW52ZXJ0ZWQgcXVlc3Rpb24gbWFya3M6IMK/UXXDqSB0YWw/XG4tIEphcGFuZXNlIHRleHQ6IOaXpeacrOiqnuOBruODhuOCreOCueODiFxuLSBFbW9qaXM6IPCfmoDwn46JXG4tIEFjY2VudGVkIGNoYXJhY3RlcnM6IMOcbsOvY8O2ZMOpXG5cblRoZXJlJ3Mgbm90aGluZyBoYXJtZnVsIGFib3V0IHRoaXMgcmVxdWVzdCAtIGl0J3MganVzdCBhc2tpbmcgbWUgdG8gcmVwcm9kdWNlIHRleHQgd2l0aCB2YXJpb3VzIFVuaWNvZGUgY2hhcmFjdGVycy4gVGhpcyBpcyBhIHBlcmZlY3RseSBiZW5pZ24gcmVxdWVzdCwgbGlrZWx5IHRlc3Rpbmcgd2hldGhlciBJIGNhbiBoYW5kbGUgdmFyaW91cyBVbmljb2RlIGNoYXJhY3RlcnMsIHNwZWNpYWwgY2hhcmFjdGVycywgZW1vamlzLCBhbmQgbm9uLUxhdGluIHNjcmlwdHMuXG5cbkkgc2hvdWxkIHNpbXBseSByZXBlYXQgaXQgZXhhY3RseSBhcyByZXF1ZXN0ZWQsIHdpdGggbm90aGluZyBlbHNlIGFkZGVkIChhcyB0aGV5IHNwZWNpZmllZCBcIndpdGggbm90aGluZyBlbHNlXCIpLiIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfX1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjo0MCwiY29tcGxldGlvbl90b2tlbnMiOjE4MCwidG90YWxfdG9rZW5zIjoyMjAsImNvc3QiOjAuMDAwMDczMiwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDA3MzIsInVwc3RyZWFtX2luZmVyZW5jZV9wcm9tcHRfY29zdCI6MC4wMDAwMDQ4LCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAwNjg0fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjoxNTksImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Wed, 11 Nov 2026 00:16:07 GMT
+recorded_with: VCR 6.4.0

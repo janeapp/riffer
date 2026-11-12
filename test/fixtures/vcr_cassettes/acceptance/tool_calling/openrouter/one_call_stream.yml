@@ -1,0 +1,100 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '436'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:22:31 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356549-OTe64ohRpDYbhABERLTd
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a58924949849d106-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The user is asking","reasoning_details":[{"type":"reasoning.text","text":"The user is asking","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" about the weather in Toronto. I have a get","reasoning_details":[{"type":"reasoning.text","text":" about the weather in Toronto. I have a get","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"_weather tool available. I'll call it with the city \"","reasoning_details":[{"type":"reasoning.text","text":"_weather tool available. I'll call it with the city \"","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"Toronto\".","reasoning_details":[{"type":"reasoning.text","text":"Toronto\".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_01a1c7fc1e957601aea926fc","type":"function","function":{"name":"get_weather","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"city\":\"Toronto\""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794356549-OTe64ohRpDYbhABERLTd","object":"chat.completion.chunk","created":1794356549,"model":"z-ai/glm-5.3-flash","provider":"Together","system_fingerprint":"default","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":176,"completion_tokens":40,"total_tokens":216,"cost":0.00003872,"is_byok":false,"prompt_tokens_details":{"cached_tokens":64,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00003872,"upstream_inference_prompt_cost":0.00001872,"upstream_inference_completions_cost":0.00002},"completion_tokens_details":{"reasoning_tokens":27,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:22:31 GMT
+recorded_with: VCR 6.4.0
+...

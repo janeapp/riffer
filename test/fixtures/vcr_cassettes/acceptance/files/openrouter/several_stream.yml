@@ -1,0 +1,134 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":[{"type":"text","text":"Give
+        the color of the square and the invoice number, in one sentence."},{"type":"image_url","image_url":{"url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAb0lEQVR4nO3PAQkAAAyEwO9feoshgnABdLep8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3I8QUNyPEFDcjxBQ3IPanc8OLDQitxAAAAAElFTkSuQmCC"}},{"type":"file","file":{"file_data":"data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3hbMCAwIDYxMiA3OTJdL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFI+Pj4+L0NvbnRlbnRzIDQgMCBSPj4KZW5kb2JqCjQgMCBvYmoKPDwvTGVuZ3RoIDY5Pj4Kc3RyZWFtCkJUIC9GMSAxOCBUZiA3MiA3MjAgVGQgKEludm9pY2UgSU5WLTQ4MjEgaXMgZHVlIG9uIDIwMjYtMTEtMzAuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwvVHlwZS9Gb250L1N1YnR5cGUvVHlwZTEvQmFzZUZvbnQvSGVsdmV0aWNhPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU0IDAwMDAwIG4gCjAwMDAwMDAxMDUgMDAwMDAgbiAKMDAwMDAwMDIxNyAwMDAwMCBuIAowMDAwMDAwMzM0IDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSA2L1Jvb3QgMSAwIFI+PgpzdGFydHhyZWYKMzk3CiUlRU9GCg==","filename":"invoice.pdf"}}]}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1375'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:41 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794356259-RwPNBgcK8Ei0a3oFXpTo
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891d7fbdc0032e-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","annotations":[{"type":"file","file":{"hash":"d7dd1a6df5cf9fc3feeea544f97d537cfde1a2ab0460aa3259165d40a81d9b5b","name":"invoice.pdf","content":[{"type":"text","text":"<file name=\"invoice.pdf\">"},{"type":"text","text":"Invoice INV-4821 is due on 2026-11-30."},{"type":"text","text":"</file>"}]}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user is asking about a color","reasoning_details":[{"type":"reasoning.text","text":" user is asking about a color","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" of a","reasoning_details":[{"type":"reasoning.text","text":" of a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" square and an invoice number.","reasoning_details":[{"type":"reasoning.text","text":" square and an invoice number.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" There","reasoning_details":[{"type":"reasoning.text","text":" There","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"'s an image showing what","reasoning_details":[{"type":"reasoning.text","text":"'s an image showing what","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" appears to be a red square","reasoning_details":[{"type":"reasoning.text","text":" appears to be a red square","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":",","reasoning_details":[{"type":"reasoning.text","text":",","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" and a","reasoning_details":[{"type":"reasoning.text","text":" and a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" PDF file with invoice","reasoning_details":[{"type":"reasoning.text","text":" PDF file with invoice","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" information.\n\nThe image shows a","reasoning_details":[{"type":"reasoning.text","text":" information.\n\nThe image shows a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" red square (based","reasoning_details":[{"type":"reasoning.text","text":" red square (based","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" on the red color","reasoning_details":[{"type":"reasoning.text","text":" on the red color","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" visible","reasoning_details":[{"type":"reasoning.text","text":" visible","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":").","reasoning_details":[{"type":"reasoning.text","text":").","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"\n\nThe invoice number is INV","reasoning_details":[{"type":"reasoning.text","text":"\n\nThe invoice number is INV","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"-4821,","reasoning_details":[{"type":"reasoning.text","text":"-4821,","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" as stated in the invoice","reasoning_details":[{"type":"reasoning.text","text":" as stated in the invoice","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".pdf file.\n\nThe user wants","reasoning_details":[{"type":"reasoning.text","text":".pdf file.\n\nThe user wants","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" this in one sentence.","reasoning_details":[{"type":"reasoning.text","text":" this in one sentence.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"The square is red","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":",","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":" and the invoice number is INV","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"-4821.","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1794356259-RwPNBgcK8Ei0a3oFXpTo","object":"chat.completion.chunk","created":1794356259,"model":"z-ai/glm-5.3-flash","provider":"Mistral","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":71,"completion_tokens":94,"total_tokens":165,"cost":0.00205765,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00005765,"upstream_inference_prompt_cost":0.00001065,"upstream_inference_completions_cost":0.000047},"completion_tokens_details":{"reasoning_tokens":76,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 11 Nov 2026 00:17:41 GMT
+recorded_with: VCR 6.4.0
+...

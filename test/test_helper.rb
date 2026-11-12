@@ -69,6 +69,9 @@ VCR.configure do |config|
     # Azure puts the resource name in Host; the URI already carries it as a placeholder.
     interaction.request.headers.delete("Host")
     interaction.response.headers.reject! { |name, _| name.match?(ACCOUNT_RESPONSE_HEADERS) }
+    # OpenRouter error bodies name the recording account.
+    interaction.response.body = interaction.response.body.gsub(/"user_id":"user_\w+"/,
+                                                               '"user_id":"<OPENROUTER_USER_ID>"',)
 
     # Sensitive-data placeholders make the URI unparseable, so match the host as text.
     host = interaction.request.uri[%r{\Ahttps?://([^/:]+)}, 1].to_s

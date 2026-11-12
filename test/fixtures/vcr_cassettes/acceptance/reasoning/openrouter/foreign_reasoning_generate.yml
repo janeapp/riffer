@@ -1,0 +1,82 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":"My
+        name is Ada."},{"role":"assistant","content":"Nice to meet you, Ada!"},{"role":"user","content":"What
+        is my name? Reply with just the name."}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '214'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 11 Nov 2026 00:17:21 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1794356241-YnmShorU7mRHxdnd11bg
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;7f6a8122-7529-4455-aa6f-6056ada16362
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5891d0bbd4dc153-PDX
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1794356241-YnmShorU7mRHxdnd11bg\",\"object\":\"chat.completion\",\"created\":1794356241,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"DigitalOcean\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"Ada\",\"refusal\":null,\"reasoning\":\"The
+        user's name is Ada, which they told me in the first message. They're asking
+        me to reply with just the name. This is a simple memory/recall test. I should
+        just say \\\"Ada\\\" - nothing else.\",\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user's name is Ada, which they told me in the first message. They're asking
+        me to reply with just the name. This is a simple memory/recall test. I should
+        just say \\\"Ada\\\" - nothing else.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":39,\"completion_tokens\":50,\"total_tokens\":89,\"cost\":0.0000231375,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.0000231375,\"upstream_inference_prompt_cost\":0.0000043875,\"upstream_inference_completions_cost\":0.00001875},\"completion_tokens_details\":{\"reasoning_tokens\":47,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 11 Nov 2026 00:17:22 GMT
+recorded_with: VCR 6.4.0

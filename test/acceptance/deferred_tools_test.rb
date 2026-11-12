@@ -10,6 +10,7 @@ describe "Acceptance: deferred tools" do
       gemini: no_native_loading,
       google_cloud: no_native_loading,
       amazon_bedrock: no_native_loading,
+      openrouter: no_native_loading,
     },
   ).each do |provider_name|
     describe provider_name do
