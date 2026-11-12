@@ -11,8 +11,10 @@ module Riffer::Providers::DeferredToolGateway
   # : (Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart], Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
   def unwrap_parts: (Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart], Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]
 
-  # A gateway call without a string name and string arguments stays a call to the gateway, which is never one of
-  # the agent's tools, so the model gets an +:unknown_tool+ error result.
+  # A gateway call without a string name and string arguments, or naming a tool that isn't deferred, stays a call to
+  # the gateway, which is never one of the agent's tools, so the model gets an +:unknown_tool+ error result. Only a
+  # deferred tool's call is wrapped again on the way out, so unwrapping any other name would replay its arguments
+  # to the provider as they came, unparseable JSON included.
   # --
   # : (Riffer::Messages::Assistant::ToolCall, Array[singleton(Riffer::Tool)]) -> Riffer::Messages::Assistant::ToolCall
   def unwrap_tool_call: (Riffer::Messages::Assistant::ToolCall, Array[singleton(Riffer::Tool)]) -> Riffer::Messages::Assistant::ToolCall

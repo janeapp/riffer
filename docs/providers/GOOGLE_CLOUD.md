@@ -262,7 +262,7 @@ Riffer gives each tool call its own `call_id` (`gemini_call_<hex>`) and appends 
 
 ### Deferred Tools (experimental)
 
-Gemini models have no native deferred loading, so on `google_cloud` an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) needs the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), the same way as on [Gemini → Deferred Tools](GEMINI.md#deferred-tools-experimental). Claude models on `anthropic_vertex` load them natively.
+Gemini models have no native deferred loading, so on `google_cloud` an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) needs the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), the same way as on [Gemini → Deferred Tools](GEMINI.md#deferred-tools-experimental), and like there the gateway doesn't work yet: Gemini rejects the `/` in its name, which `google_cloud` sends unencoded. Claude models on `anthropic_vertex` load them natively.
 
 ### Thought Signatures
 

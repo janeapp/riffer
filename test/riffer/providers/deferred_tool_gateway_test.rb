@@ -191,6 +191,8 @@ describe Riffer::Providers::DeferredToolGateway do
       '{"name":"create_event"}',
       '{"name":"create_event","arguments":{"date":"x"}}',
       '{"name":42,"arguments":"{}"}',
+      '{"name":"missing","arguments":"{"}',
+      '{"name":"get_weather","arguments":"{}"}',
     ].each do |arguments|
       it "leaves a gateway call with arguments #{arguments.inspect} as a gateway call" do
         call = gateway_call("c_1", arguments)

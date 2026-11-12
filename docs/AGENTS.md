@@ -172,10 +172,10 @@ end
 
 With `strategy: :gateway`, the provider never loads deferred tools natively, even one that can. Every request carries one extra tool, the gateway, and the model calls a loaded tool through it, so the tool list never changes and a load keeps the prompt cache; see [Tools → The gateway strategy](TOOLS.md#the-gateway-strategy). No other tool of the agent can share the gateway's name.
 
-| Strategy            | Behavior                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------- |
-| `:native` (default) | The provider loads deferred tools itself; raises on a provider without native loading       |
-| `:gateway`          | Loaded tools are called through one extra tool, on every provider; experimental, may change |
+| Strategy            | Behavior                                                                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `:native` (default) | The provider loads deferred tools itself; raises on a provider without native loading                                                |
+| `:gateway`          | Loaded tools are called through one extra tool, on every provider except Gemini and `google_cloud` for now; experimental, may change |
 
 Riffer does not pick a strategy per provider — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a lambda: `deferred_tools ->(context) { [ListEvents] }, strategy: :gateway`.
 

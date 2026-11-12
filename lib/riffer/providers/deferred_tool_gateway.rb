@@ -31,8 +31,10 @@ module Riffer::Providers::DeferredToolGateway
     parts.map { |part| part.is_a?(Riffer::Messages::Assistant::ToolCall) ? unwrap_tool_call(part, deferred_tools) : part }
   end
 
-  # A gateway call without a string name and string arguments stays a call to the gateway, which is never one of
-  # the agent's tools, so the model gets an +:unknown_tool+ error result.
+  # A gateway call without a string name and string arguments, or naming a tool that isn't deferred, stays a call to
+  # the gateway, which is never one of the agent's tools, so the model gets an +:unknown_tool+ error result. Only a
+  # deferred tool's call is wrapped again on the way out, so unwrapping any other name would replay its arguments
+  # to the provider as they came, unparseable JSON included.
   #--
   #: (Riffer::Messages::Assistant::ToolCall, Array[singleton(Riffer::Tool)]) -> Riffer::Messages::Assistant::ToolCall
   def unwrap_tool_call(tool_call, deferred_tools)
@@ -42,12 +44,11 @@ module Riffer::Providers::DeferredToolGateway
     return tool_call unless call
 
     name, arguments = call
-    Riffer::Messages::Assistant::ToolCall.new(
-      call_id: tool_call.call_id,
-      # The model may name a loaded tool in the wire-safe form it sees on the agent's other tools.
-      name: Riffer::Wire.decode_tool_name(name, tools: deferred_tools),
-      arguments: arguments,
-    )
+    # The model may name a loaded tool in the wire-safe form it sees on the agent's other tools.
+    decoded = Riffer::Wire.decode_tool_name(name, tools: deferred_tools)
+    return tool_call unless deferred_tools.any? { |tool| tool.name == decoded }
+
+    Riffer::Messages::Assistant::ToolCall.new(call_id: tool_call.call_id, name: decoded, arguments: arguments)
   end
 
   #--
