@@ -1198,6 +1198,7 @@ describe Riffer::Providers::OpenRouter do
   describe "deferred tools" do
     let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:gateway_tool) { Riffer::Providers::DeferredToolGateway::Tool }
+    let(:gateway_wire_name) { "riffer__providers__deferred_tool_gateway__tool" }
     let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
     let(:list_events) do
       stub_tool("ListEvents") do
@@ -1225,7 +1226,7 @@ describe Riffer::Providers::OpenRouter do
             id: "call_2",
             type: :function,
             function: OpenAI::Models::Chat::ChatCompletionMessageFunctionToolCall::Function.new(
-              name: "call_loaded_tool",
+              name: gateway_wire_name,
               arguments: gateway_arguments,
             ),
           ),
@@ -1243,7 +1244,13 @@ describe Riffer::Providers::OpenRouter do
     end
 
     def generate(provider, **options)
-      provider.generate_text(model: "openai/gpt-5-mini", tools: [loader], deferred_tools: [list_events], **options)
+      provider.generate_text(
+        model: "openai/gpt-5-mini",
+        tools: [loader],
+        deferred_tools: [list_events],
+        riffer_deferred_tools_strategy: :gateway,
+        **options,
+      )
     end
 
     it "has no native loading" do
@@ -1259,7 +1266,7 @@ describe Riffer::Providers::OpenRouter do
       expect(requests.first[:tools].last).must_equal(
         type: "function",
         function: {
-          name: "call_loaded_tool",
+          name: gateway_wire_name,
           description: gateway_tool.description,
           parameters: gateway_tool.parameters_schema(strict: true),
           strict: true,
@@ -1284,7 +1291,7 @@ describe Riffer::Providers::OpenRouter do
         {
           role: "assistant",
           tool_calls: [
-            { id: "call_2", type: "function", function: { name: "call_loaded_tool", arguments: gateway_arguments } },
+            { id: "call_2", type: "function", function: { name: gateway_wire_name, arguments: gateway_arguments } },
           ],
         },
         { role: "tool", tool_call_id: "call_2", content: "3 events" },

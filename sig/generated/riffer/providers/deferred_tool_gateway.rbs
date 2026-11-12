@@ -1,10 +1,6 @@
 # Generated from lib/riffer/providers/deferred_tool_gateway.rb with RBS::Inline
 
 module Riffer::Providers::DeferredToolGateway
-  NAME: String
-
-  LOADED_TOOLS_HEADER: String
-
   # +deferred_tools+ are the ones the gateway carries for the request. With none there is no gateway, and every
   # function here returns its input.
   # --
@@ -53,4 +49,8 @@ module Riffer::Providers::DeferredToolGateway
   # --
   # : (Array[singleton(Riffer::Tool)]) -> String
   def describe_loaded_tools: (Array[singleton(Riffer::Tool)]) -> String
+
+  # --
+  # : () -> String
+  def loaded_tools_header: () -> String
 end

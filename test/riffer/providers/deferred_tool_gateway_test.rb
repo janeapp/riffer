@@ -4,6 +4,7 @@ require "test_helper"
 
 describe Riffer::Providers::DeferredToolGateway do
   let(:gateway) { Riffer::Providers::DeferredToolGateway }
+  let(:gateway_name) { Riffer::Providers::DeferredToolGateway::Tool.name }
 
   let(:list_events) do
     stub_tool("ListEvents") do
@@ -21,7 +22,7 @@ describe Riffer::Providers::DeferredToolGateway do
   end
 
   def gateway_call(id, arguments)
-    tool_call("call_loaded_tool", id, arguments)
+    tool_call(gateway_name, id, arguments)
   end
 
   def result(id, name, content: "", loaded: [], error: nil)
@@ -46,8 +47,8 @@ describe Riffer::Providers::DeferredToolGateway do
       }
     end
 
-    it "is a valid tool named call_loaded_tool" do
-      expect([tool.name, tool.validate_as_tool!]).must_equal ["call_loaded_tool", true]
+    it "is a valid tool named by its default identifier" do
+      expect([tool.name, tool.validate_as_tool!]).must_equal ["riffer/providers/deferred_tool_gateway/tool", true]
     end
 
     it "takes a string name and string arguments, both required, with no other properties" do
@@ -81,7 +82,7 @@ describe Riffer::Providers::DeferredToolGateway do
     it "renames a deferred tool's result to the gateway and keeps its tool_call_id and content" do
       wrapped = gateway.wrap_messages([result("c_1", "calendar/list_events", content: "3 events")], deferred).first
 
-      expect([wrapped.tool_call_id, wrapped.name, wrapped.content]).must_equal ["c_1", "call_loaded_tool", "3 events"]
+      expect([wrapped.tool_call_id, wrapped.name, wrapped.content]).must_equal ["c_1", gateway_name, "3 events"]
     end
 
     it "appends each loaded tool's name, description and parameters to the result that loaded it" do
@@ -91,7 +92,7 @@ describe Riffer::Providers::DeferredToolGateway do
 
       expect(wrapped.name).must_equal "connect_calendar"
       expect(wrapped.content).must_equal <<~TEXT.chomp
-        Loaded tools. Call each one through call_loaded_tool, with name set to the tool's name and arguments set to its arguments as a JSON-encoded object.
+        Loaded tools. Call each one through riffer/providers/deferred_tool_gateway/tool, with name set to the tool's name and arguments set to its arguments as a JSON-encoded object.
 
         Tool: calendar/list_events
         Description: Lists calendar events
@@ -232,7 +233,7 @@ describe Riffer::Providers::DeferredToolGateway do
     end
 
     it "drops a gateway call's deltas, including ones that don't repeat its name" do
-      sink << delta("c_1", "call_loaded_tool", '{"name":')
+      sink << delta("c_1", gateway_name, '{"name":')
       sink << delta("c_1", nil, '"create_event"}')
       sink << delta("c_2", "get_weather", "{}")
 
@@ -240,13 +241,13 @@ describe Riffer::Providers::DeferredToolGateway do
     end
 
     it "unwraps a finished gateway call" do
-      sink << done("c_1", "call_loaded_tool", '{"name":"calendar__list_events","arguments":"{\"date\":\"x\"}"}')
+      sink << done("c_1", gateway_name, '{"name":"calendar__list_events","arguments":"{\"date\":\"x\"}"}')
 
       expect(events.map(&:to_h)).must_equal [done("c_1", "calendar/list_events", '{"date":"x"}').to_h]
     end
 
     it "passes on a malformed gateway call and every other event as they are" do
-      malformed = done("c_1", "call_loaded_tool", "{}")
+      malformed = done("c_1", gateway_name, "{}")
       text = Riffer::StreamEvents::TextDelta.new("Hi")
       sink << malformed
       sink << text

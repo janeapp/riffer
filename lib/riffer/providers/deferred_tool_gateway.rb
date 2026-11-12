@@ -6,11 +6,6 @@ require "json"
 module Riffer::Providers::DeferredToolGateway
   extend self
 
-  NAME = "call_loaded_tool" #: String
-
-  LOADED_TOOLS_HEADER = "Loaded tools. Call each one through #{NAME}, with name set to the tool's name and " \
-                        "arguments set to its arguments as a JSON-encoded object.".freeze #: String
-
   # +deferred_tools+ are the ones the gateway carries for the request. With none there is no gateway, and every
   # function here returns its input.
   #--
@@ -41,7 +36,7 @@ module Riffer::Providers::DeferredToolGateway
   #--
   #: (Riffer::Messages::Assistant::ToolCall, Array[singleton(Riffer::Tool)]) -> Riffer::Messages::Assistant::ToolCall
   def unwrap_tool_call(tool_call, deferred_tools)
-    return tool_call unless tool_call.name == NAME
+    return tool_call unless tool_call.name == Tool.name
 
     call = parse_gateway_arguments(tool_call.arguments)
     return tool_call unless call
@@ -100,7 +95,7 @@ module Riffer::Providers::DeferredToolGateway
 
     Riffer::Messages::Assistant::ToolCall.new(
       call_id: tool_call.call_id,
-      name: NAME,
+      name: Tool.name,
       arguments: JSON.generate({ name: tool_call.name, arguments: tool_call.arguments }),
     )
   end
@@ -117,7 +112,7 @@ module Riffer::Providers::DeferredToolGateway
     Riffer::Messages::Tool.new(
       loaded.empty? ? message.content : [message.content, describe_loaded_tools(loaded)].reject(&:empty?).join("\n\n"),
       tool_call_id: message.tool_call_id,
-      name: deferred_call ? NAME : message.name,
+      name: deferred_call ? Tool.name : message.name,
       id: message.id,
       error: message.error,
       error_type: message.error_type,
@@ -140,6 +135,13 @@ module Riffer::Providers::DeferredToolGateway
     entries = tools.map do |tool|
       "Tool: #{tool.name}\nDescription: #{tool.description}\nParameters: #{JSON.generate(tool.parameters_schema)}"
     end
-    [LOADED_TOOLS_HEADER, *entries].join("\n\n")
+    [loaded_tools_header, *entries].join("\n\n")
+  end
+
+  #--
+  #: () -> String
+  def loaded_tools_header
+    "Loaded tools. Call each one through #{Tool.name}, with name set to the tool's name and arguments set to its " \
+      "arguments as a JSON-encoded object."
   end
 end

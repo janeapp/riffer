@@ -4402,7 +4402,7 @@ describe Riffer::Agent::Run do
       expect(tool_results(agent)).must_equal [["c_1", nil, ["list_events"]], ["c_2", :tool_not_loaded, []]]
     end
 
-    describe "through the gateway on a provider without native loading" do
+    describe "with the gateway strategy" do
       before do
         provider_class = Class.new(Riffer::Providers::Mock) { def self.supports_deferred_tools? = false }
         Riffer::Providers::Repository.register(:no_native_deferred) { provider_class }
@@ -4410,16 +4410,20 @@ describe Riffer::Agent::Run do
 
       after { Riffer::Providers::Repository.unregister(:no_native_deferred) }
 
-      def gateway_agent(uses:, deferred:)
+      def gateway_agent(uses:, deferred:, model_name: "no_native_deferred/riffer-1")
         stub_agent("GatewayAgent") do
-          model "no_native_deferred/riffer-1"
+          model model_name
           uses_tools uses
-          deferred_tools deferred
+          deferred_tools deferred, strategy: :gateway
         end.new
       end
 
       def gateway_call(name, id)
-        { name: "call_loaded_tool", arguments: JSON.generate(name: name, arguments: "{}"), call_id: id }
+        {
+          name: Riffer::Providers::DeferredToolGateway::Tool.name,
+          arguments: JSON.generate(name: name, arguments: "{}"),
+          call_id: id,
+        }
       end
 
       def stub_load_and_call(agent)
@@ -4458,6 +4462,18 @@ describe Riffer::Agent::Run do
         expect(agent.session.messages.grep(Riffer::Messages::Tool).first.content).must_equal ""
       end
 
+      it "goes through the gateway on a provider with native loading too" do
+        loader = connect_calendar(list_events)
+        agent = gateway_agent(uses: [loader], deferred: [list_events], model_name: "mock/riffer-1")
+        stub_load_and_call(agent)
+        agent.generate("What's on today?")
+
+        expect(tool_results(agent)).must_equal [["c_1", nil, ["list_events"]], ["c_2", nil, []]]
+        expect(agent.provider.calls.map { |c| c[:tools] }.uniq).
+          must_equal [[loader, Riffer::Providers::DeferredToolGateway::Tool]]
+        expect(agent.provider.calls.none? { |c| c.key?(:deferred_tools) }).must_equal true
+      end
+
       it "refuses a gateway call to a tool that hasn't been loaded" do
         agent = gateway_agent(uses: [], deferred: [list_events])
         agent.provider.stub_response("", tool_calls: [gateway_call("list_events", "c_1")])
@@ -4468,7 +4484,8 @@ describe Riffer::Agent::Run do
 
       it "returns an error result for a gateway call it can't unwrap" do
         agent = gateway_agent(uses: [], deferred: [list_events])
-        agent.provider.stub_response("", tool_calls: [{ name: "call_loaded_tool", arguments: "{}", call_id: "c_1" }])
+        malformed = { name: Riffer::Providers::DeferredToolGateway::Tool.name, arguments: "{}", call_id: "c_1" }
+        agent.provider.stub_response("", tool_calls: [malformed])
         agent.generate("hi")
 
         expect(tool_results(agent)).must_equal [["c_1", :unknown_tool, []]]

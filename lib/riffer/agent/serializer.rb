@@ -31,6 +31,7 @@ module Riffer::Agent::Serializer
       reasoning: config.reasoning,
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
       deferred_tools: agent.deferred_tools.map { |tool_class| tool_descriptor(tool_class) },
+      deferred_tools_strategy: config.deferred_tools_strategy,
     }
   end
 
@@ -85,6 +86,7 @@ module Riffer::Agent::Serializer
       reasoning: hash[:reasoning],
       tools_config: tools,
       deferred_tools_config: deferred_tools,
+      deferred_tools_strategy: (hash[:deferred_tools_strategy] || :native).to_sym,
     } #: Hash[Symbol, untyped]
     # Config#tool_runtime= rejects nil.
     config_args[:tool_runtime] = tool_runtime if tool_runtime

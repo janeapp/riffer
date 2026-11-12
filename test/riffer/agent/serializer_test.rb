@@ -101,6 +101,12 @@ describe Riffer::Agent::Serializer do
       expect(klass.new.to_h[:deferred_tools].map { |d| d[:name] }).must_equal ["serializer_forecast_tool"]
     end
 
+    it "carries the deferred tools strategy" do
+      klass = build_agent_class { deferred_tools [SerializerForecastTool], strategy: :gateway }
+
+      expect(klass.new.to_h[:deferred_tools_strategy]).must_equal :gateway
+    end
+
     it "emits an empty deferred_tools list when the agent has none" do
       expect(build_agent_class.new.to_h[:deferred_tools]).must_equal []
     end
@@ -158,6 +164,20 @@ describe Riffer::Agent::Serializer do
       agent = Riffer::Agent.from_json(JSON.generate(dict))
 
       expect([agent.tools, agent.deferred_tools.map(&:name)]).must_equal [[], ["serializer_forecast_tool"]]
+    end
+
+    it "round-trips the gateway deferred tools strategy through JSON" do
+      klass = build_agent_class { deferred_tools [SerializerForecastTool], strategy: :gateway }
+      agent = Riffer::Agent.from_json(klass.new.to_json)
+
+      expect(agent.config.deferred_tools_strategy).must_equal :gateway
+    end
+
+    it "decodes a hash without a deferred tools strategy as native" do
+      dict = build_agent_class { deferred_tools [SerializerForecastTool], strategy: :gateway }.new.to_h
+
+      expect(Riffer::Agent.from_h(dict.except(:deferred_tools_strategy)).config.deferred_tools_strategy).
+        must_equal :native
     end
 
     it "decodes a hash without deferred_tools as deferring nothing" do

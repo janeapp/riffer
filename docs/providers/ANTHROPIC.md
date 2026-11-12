@@ -257,6 +257,8 @@ Things to know:
 - A deferred tool can't carry `cache_control` (400). Riffer never sets it on a tool; the top-level `model_options cache_control: {type: "ephemeral"}` works with deferred tools.
 - Deferred loading needs Claude Haiku 4.5, Sonnet 4.5, Opus 4.5 or a later model. An older model gets the API's own error.
 
+With the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`, riffer sends the [gateway](../TOOLS.md#the-gateway-strategy) instead of loading them natively.
+
 ## Message Format
 
 The provider converts Riffer messages to Anthropic format:

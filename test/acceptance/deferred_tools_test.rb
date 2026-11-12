@@ -3,13 +3,13 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: deferred tools" do
-  no_native_loading = "Loads deferred tools through the gateway fallback (#554); no cassettes recorded yet"
+  not_recorded = "No cassettes recorded yet for the :gateway strategy (#554)"
 
   acceptance_providers(
     except: {
-      gemini: no_native_loading,
-      google_cloud: no_native_loading,
-      amazon_bedrock: no_native_loading,
+      gemini: not_recorded,
+      google_cloud: not_recorded,
+      amazon_bedrock: not_recorded,
     },
   ).each do |provider_name|
     describe provider_name do
@@ -19,6 +19,7 @@ describe "Acceptance: deferred tools" do
       let(:cassette_prefix) { "deferred_tools/#{provider_name}" }
       let(:agent_model) { acceptance_model_id(provider_name) }
       let(:cache_options) { acceptance_setting(provider_name, :cache_options) }
+      let(:deferred_tools_strategy) { acceptance_setting(provider_name, :deferred_tools_strategy) }
 
       let(:list_events) do
         stub_tool("ListEvents") do
@@ -53,12 +54,13 @@ describe "Acceptance: deferred tools" do
         model_id = agent_model
         loader = find_tools
         deferred = [list_events, send_invoice]
+        strategy = deferred_tools_strategy
         Class.new(Riffer::Agent) do
           model model_id
           instructions instructions
           model_options options
           uses_tools [loader]
-          deferred_tools deferred
+          deferred_tools deferred, strategy: strategy
         end.new(session: session)
       end
 

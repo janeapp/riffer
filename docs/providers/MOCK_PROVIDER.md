@@ -98,7 +98,7 @@ expect(provider.calls.last[:messages].last[:content]).to eq("Hi")
 
 Each message is recorded as its `to_h`, so an assistant message has `parts` rather than `content` (see [Messages — Parts](../MESSAGES.md#parts)).
 
-The Mock provider supports [deferred tools](../AGENTS.md#deferred_tools-experimental), so you can test them without a real provider. For an agent with deferred tools, each recorded call also has `deferred_tools:`, every deferred tool whether loaded or not. To test the [gateway fallback](../TOOLS.md#the-gateway-fallback) instead, register a subclass whose `supports_deferred_tools?` returns false: its recorded calls have the gateway in `tools:` and the messages as the gateway sends them, and a stubbed call to `call_loaded_tool` comes back as a call to the real tool.
+The Mock provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively, so you can test them without a real provider. For an agent with deferred tools, each recorded call also has `deferred_tools:`, every deferred tool whether loaded or not. With the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental) it doesn't load them natively: recorded calls have no `deferred_tools:`, the gateway is last in `tools:`, the messages are as the gateway sends them, and a stubbed call to the gateway (`Riffer::Providers::DeferredToolGateway::Tool.name`) comes back as a call to the real tool.
 
 ## Clearing State
 

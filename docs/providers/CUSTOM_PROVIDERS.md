@@ -235,14 +235,14 @@ end
 
 ### Deferred tools (experimental)
 
-The `supports_deferred_tools?` class method says whether your provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively. A provider that returns true receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`.
+The `supports_deferred_tools?` class method says whether your provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively. The default is false, and riffer raises `Riffer::ArgumentError` when an agent with deferred tools and the default `:native` [strategy](../AGENTS.md#deferred-tools-strategy-experimental) is built on your provider. A provider that returns true receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`.
 
-The default is false, and riffer then handles deferred tools for you through the [gateway fallback](../TOOLS.md#the-gateway-fallback), with no code in your provider. It never sees `options[:deferred_tools]`. Instead, `build_request_params` receives:
+An agent with `strategy: :gateway` works on your provider either way, through the [gateway](../TOOLS.md#the-gateway-strategy), with no code in your provider. It never sees `options[:deferred_tools]`, even if `supports_deferred_tools?` returns true. Instead, `build_request_params` receives:
 
-- `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` (`call_loaded_tool`) on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool`, so your tool conversion handles it, strict mode included.
-- Messages where each call to a deferred tool is a `call_loaded_tool` call, its result is named `call_loaded_tool`, and a result that loaded tools has their descriptions appended to its content.
+- `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool`, so your tool conversion handles it, strict mode included. Its name is its default identifier, `riffer/providers/deferred_tool_gateway/tool`: if your API rejects `/` in tool names, send names through `encode_tool_name` and read them back with `decode_tool_name(name, tools: @current_tools)`, as for any namespaced tool; `@current_tools` includes the gateway.
+- Messages where each call to a deferred tool is a call to the gateway, its result is named after the gateway, and a result that loaded tools has their descriptions appended to its content.
 
-The model's calls to `call_loaded_tool` that you return from `extract_tool_calls`, or stream as `ToolCallDone` events, are turned back into calls to the real tools before they leave the provider, and the `ToolCallDelta` events you stream for them are dropped.
+The model's calls to the gateway that you return from `extract_tool_calls`, or stream as `ToolCallDone` events, are turned back into calls to the real tools before they leave the provider, and the `ToolCallDelta` events you stream for them are dropped.
 
 This hook is experimental too: `supports_deferred_tools?` and the `options[:deferred_tools]` it gates can change or be replaced in any minor release, for example by a capability in the [model catalog](../CATALOG.md) (see [Stability](../STABILITY.md#experimental-features)).
 

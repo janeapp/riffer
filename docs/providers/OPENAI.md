@@ -204,6 +204,8 @@ Riffer rebuilds the `additional_tools` items from the `loaded_tools` on the conv
 
 OpenAI returns a call to a loaded tool with a `namespace` field, and rejects a later request that replays the call without it. That namespace is always the tool's own name as sent to OpenAI, so riffer adds it back to every replayed call to a deferred tool and never stores it. Tools, the session, callbacks and traces see an ordinary tool call.
 
+With the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`, riffer sends the [gateway](../TOOLS.md#the-gateway-strategy) instead of loading them natively.
+
 ## Web Search
 
 Web search allows the model to search the web for up-to-date information. When enabled, the provider injects the `web_search_preview` tool into the request.

@@ -21,7 +21,7 @@ class Riffer::Providers::DeferredToolGateway::Sink
     when Riffer::StreamEvents::ToolCallDelta
       # A gateway call's deltas are fragments of its own arguments, which only unwrap once the call is complete.
       # Providers may name the call on its first delta alone, so the rest are matched by item id.
-      @gateway_item_ids |= [event.item_id] if event.name == Riffer::Providers::DeferredToolGateway::NAME
+      @gateway_item_ids |= [event.item_id] if event.name == Riffer::Providers::DeferredToolGateway::Tool.name
       @sink << event unless @gateway_item_ids.include?(event.item_id)
     when Riffer::StreamEvents::ToolCallDone
       @sink << unwrap(event)

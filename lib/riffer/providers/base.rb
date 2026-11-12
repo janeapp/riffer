@@ -147,17 +147,18 @@ class Riffer::Providers::Base
     raise NotImplementedError, "Subclasses must implement #build_client"
   end
 
-  # The model calls a loaded deferred tool by its wire name too.
+  # The model calls a loaded deferred tool, and the gateway, by its wire name too.
   #--
   #: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
   def decodable_tools(options)
-    (options[:tools] || []) + (options[:deferred_tools] || [])
+    tools = (options[:tools] || []) + (options[:deferred_tools] || [])
+    gateway_deferred_tools(options).empty? ? tools : tools + [Riffer::Providers::DeferredToolGateway::Tool]
   end
 
   #--
   #: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
   def gateway_deferred_tools(options)
-    self.class.supports_deferred_tools? ? [] : options[:deferred_tools] || []
+    options[:riffer_deferred_tools_strategy] == :gateway ? options[:deferred_tools] || [] : []
   end
 
   #--
@@ -475,13 +476,12 @@ class Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def request_options(options)
-    options = options.except(:riffer_reasoning_level)
+    gateway = !gateway_deferred_tools(options).empty?
+    options = options.except(:riffer_reasoning_level, :riffer_deferred_tools_strategy)
     # Every request with deferred tools carries the gateway, before a load and after, so the tool list never changes.
-    unless gateway_deferred_tools(options).empty?
-      options = options.merge(tools: (options[:tools] || []) + [Riffer::Providers::DeferredToolGateway::Tool])
-    end
-    # Providers splat unknown options into their SDK request.
-    options = options.except(:deferred_tools) unless self.class.supports_deferred_tools?
+    options = options.merge(tools: (options[:tools] || []) + [Riffer::Providers::DeferredToolGateway::Tool]) if gateway
+    # Providers splat unknown options into their SDK request, and a gateway request must not load natively too.
+    options = options.except(:deferred_tools) if gateway || !self.class.supports_deferred_tools?
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 

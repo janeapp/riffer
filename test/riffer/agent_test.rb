@@ -465,7 +465,7 @@ describe Riffer::Agent do
     it "accounts for every field on Config" do
       known = %i[
         identifier model instructions model_options structured_output structured_output_strategy max_steps reasoning
-        tools_config deferred_tools_config mcp_configs tool_runtime skills_config guardrails
+        tools_config deferred_tools_config deferred_tools_strategy mcp_configs tool_runtime skills_config guardrails
       ]
 
       declared = Riffer::Agent::Config.instance_method(:initialize).parameters.map(&:last)
@@ -741,7 +741,7 @@ describe Riffer::Agent do
     # Anonymous, since the tool registry already holds the gateway under this identifier.
     let(:gateway_named_tool) do
       Class.new(Riffer::Tool) do
-        identifier "call_loaded_tool"
+        identifier Riffer::Providers::DeferredToolGateway::Tool.name
         description "Shares the gateway's name"
       end
     end
@@ -830,7 +830,7 @@ describe Riffer::Agent do
       expect(err.message).must_match(/must define a description/)
     end
 
-    it "allows a deferred tool with the gateway's name on a provider with native loading" do
+    it "allows a deferred tool with the gateway's name with the native strategy" do
       tool = gateway_named_tool
       klass = stub_agent("Agent") do
         model "mock/riffer-1"
@@ -838,6 +838,60 @@ describe Riffer::Agent do
       end
 
       expect(klass.new.deferred_tools).must_equal [tool]
+    end
+
+    it "defaults to the native strategy" do
+      expect(agent_class.config.deferred_tools_strategy).must_equal :native
+    end
+
+    it "stores the strategy: keyword with an Array" do
+      tool = list_events
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [tool], strategy: :gateway
+      end
+
+      expect([klass.config.deferred_tools_strategy, klass.new.deferred_tools]).must_equal [:gateway, [tool]]
+    end
+
+    it "stores the strategy: keyword with a Proc" do
+      tool = list_events
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools ->(_context) { [tool] }, strategy: :gateway
+      end
+
+      expect([klass.config.deferred_tools_strategy, klass.new.deferred_tools]).must_equal [:gateway, [tool]]
+    end
+
+    it "raises on an unknown strategy" do
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
+
+      expect { klass.deferred_tools([list_events], strategy: :prompted) }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "passes the strategy on to subclasses" do
+      tool = list_events
+      parent = stub_agent("GatewayParentAgent") do
+        model "mock/riffer-1"
+        deferred_tools [tool], strategy: :gateway
+      end
+      child = stub_agent("GatewayChildAgent", base: parent)
+
+      expect(child.config.deferred_tools_strategy).must_equal :gateway
+    end
+
+    it "raises for a tool that shares the gateway's name with the gateway strategy" do
+      deferred = list_events
+      clash = gateway_named_tool
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        uses_tools [clash]
+        deferred_tools [deferred], strategy: :gateway
+      end
+
+      err = expect { klass.new }.must_raise Riffer::ArgumentError
+      expect(err.message).must_equal "Duplicate tool names: riffer/providers/deferred_tool_gateway/tool"
     end
 
     describe "on a provider without deferred tool support" do
@@ -850,27 +904,26 @@ describe Riffer::Agent do
 
       after { Riffer::Providers::Repository.unregister(:no_deferred) }
 
-      it "builds an agent with its deferred tools, which go through the gateway" do
+      it "raises naming the provider and the gateway strategy" do
         tool = list_events
         klass = stub_agent("Agent") do
           model "no_deferred/riffer-1"
           deferred_tools [tool]
         end
 
-        expect(klass.new.deferred_tools).must_equal [tool]
+        err = expect { klass.new }.must_raise Riffer::ArgumentError
+        expect(err.message).must_equal "Provider no_deferred does not support deferred tools natively; " \
+                                       "use deferred_tools(..., strategy: :gateway) to load them through a gateway tool"
       end
 
-      it "raises for a tool that shares the gateway's name" do
-        deferred = list_events
-        clash = gateway_named_tool
+      it "builds an agent with the gateway strategy" do
+        tool = list_events
         klass = stub_agent("Agent") do
           model "no_deferred/riffer-1"
-          uses_tools [clash]
-          deferred_tools [deferred]
+          deferred_tools [tool], strategy: :gateway
         end
 
-        err = expect { klass.new }.must_raise Riffer::ArgumentError
-        expect(err.message).must_equal "Duplicate tool names: call_loaded_tool"
+        expect(klass.new.deferred_tools).must_equal [tool]
       end
 
       it "allows a tool with the gateway's name when the agent defers nothing" do
@@ -878,6 +931,7 @@ describe Riffer::Agent do
         klass = stub_agent("Agent") do
           model "no_deferred/riffer-1"
           uses_tools [tool]
+          deferred_tools [], strategy: :gateway
         end
 
         expect(klass.new.tools).must_equal [tool]

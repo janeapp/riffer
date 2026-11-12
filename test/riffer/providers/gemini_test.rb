@@ -683,11 +683,12 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "deferred tools" do
+    let(:gateway_name) { Riffer::Providers::DeferredToolGateway::Tool.name }
     let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
     let(:list_events) { stub_tool("ListEvents") { description "Lists calendar events" } }
     let(:gateway_args) { { name: "list_events", arguments: '{"date":"2026-11-06"}' } }
     let(:requests) { [] }
-    let(:function_call_part) { { functionCall: { id: "g1", name: "call_loaded_tool", args: gateway_args } } }
+    let(:function_call_part) { { functionCall: { id: "g1", name: gateway_name, args: gateway_args } } }
 
     before do
       sent = requests
@@ -705,7 +706,12 @@ describe Riffer::Providers::Gemini do
     end
 
     def request_options
-      { model: "gemini-3.5-flash-lite", tools: [loader], deferred_tools: [list_events] }
+      {
+        model: "gemini-3.5-flash-lite",
+        tools: [loader],
+        deferred_tools: [list_events],
+        riffer_deferred_tools_strategy: :gateway,
+      }
     end
 
     it "has no native loading, here or on Google Cloud" do
@@ -718,7 +724,7 @@ describe Riffer::Providers::Gemini do
       message = Riffer::Providers::Gemini.new.generate_text(prompt: "What's on?", **request_options)
 
       expect(requests.first.dig(:tools, 0, :functionDeclarations).map { |d| d[:name] }).
-        must_equal %w[connect_calendar call_loaded_tool]
+        must_equal ["connect_calendar", gateway_name]
       expect(message.tool_calls.map { |tc| [tc.name, tc.arguments] }).
         must_equal [["list_events", '{"date":"2026-11-06"}']]
     end
@@ -744,13 +750,13 @@ describe Riffer::Providers::Gemini do
       contents = requests.first[:contents]
       gateway_call = {
         id: "g1",
-        name: "call_loaded_tool",
+        name: gateway_name,
         args: { "name" => "list_events", "arguments" => '{"date":"2026-11-06"}' },
       }
 
       expect(contents[1][:parts].first[:functionCall]).must_equal gateway_call
       expect(contents[2][:parts].first[:functionResponse].slice(:id, :name)).
-        must_equal({ id: "g1", name: "call_loaded_tool" })
+        must_equal({ id: "g1", name: gateway_name })
     end
   end
 end

@@ -159,6 +159,8 @@ end
 
 [Deferred tools](../AGENTS.md#deferred_tools-experimental) load the same way as on the [OpenAI provider](OPENAI.md#deferred-tools-experimental), through `additional_tools` input items. Microsoft documents these items for the Azure OpenAI Responses API in [Use tool search with the Azure OpenAI Responses API](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/tool-search#add-tools-at-a-specific-point-in-the-input), but riffer hasn't been tested against Azure. Which deployments accept them is up to Azure, and one that doesn't returns Azure's own error.
 
+With the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`, riffer sends the [gateway](../TOOLS.md#the-gateway-strategy) instead of loading them natively.
+
 ## Direct Provider Usage
 
 ```ruby

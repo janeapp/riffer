@@ -172,6 +172,7 @@ describe Riffer::Providers::Base do
 
   describe "deferred tools gateway" do
     let(:provider) { NoDeferredToolsProvider.new }
+    let(:gateway_name) { Riffer::Providers::DeferredToolGateway::Tool.name }
     let(:gateway_tool) { Riffer::Providers::DeferredToolGateway::Tool }
     let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
     let(:list_events) do
@@ -183,7 +184,7 @@ describe Riffer::Providers::Base do
 
     let(:gateway_arguments) { '{"name":"calendar/list_events","arguments":"{\"day\":1}"}' }
     let(:question) { Riffer::Messages::User.new("What's on?") }
-    let(:gateway_call) { { name: "call_loaded_tool", arguments: gateway_arguments, call_id: "c_3" } }
+    let(:gateway_call) { { name: gateway_name, arguments: gateway_arguments, call_id: "c_3" } }
 
     def call(name, id, arguments = "{}")
       Riffer::Messages::Assistant::ToolCall.new(call_id: id, name: name, arguments: arguments)
@@ -204,7 +205,7 @@ describe Riffer::Providers::Base do
     end
 
     def request_options
-      { model: "riffer-1", tools: [loader], deferred_tools: [list_events] }
+      { model: "riffer-1", tools: [loader], deferred_tools: [list_events], riffer_deferred_tools_strategy: :gateway }
     end
 
     def generate(messages)
@@ -224,9 +225,9 @@ describe Riffer::Providers::Base do
 
       expect(sent[2][:content]).must_match(%r{\ALoaded tools\..*Tool: calendar/list_events}m)
       expect(sent[3][:parts].first.slice(:name, :arguments)).
-        must_equal({ name: "call_loaded_tool", arguments: gateway_arguments })
+        must_equal({ name: gateway_name, arguments: gateway_arguments })
       expect(sent[4].slice(:tool_call_id, :name, :content)).
-        must_equal({ tool_call_id: "c_2", name: "call_loaded_tool", content: "3 events" })
+        must_equal({ tool_call_id: "c_2", name: gateway_name, content: "3 events" })
     end
 
     it "leaves the caller's messages as they were" do
@@ -252,11 +253,29 @@ describe Riffer::Providers::Base do
         must_equal [["c_3", "calendar/list_events", '{"day":1}']]
     end
 
-    it "sends neither the gateway nor wrapped history on a provider with native loading" do
+    it "keeps the strategy out of the request params" do
+      generate([question])
+
+      refute_includes provider.calls.last.keys, :riffer_deferred_tools_strategy
+    end
+
+    it "sends the gateway instead of loading natively on a provider with native loading" do
       native = Riffer::Providers::Mock.new
-      native.generate_text(messages: loaded_history, model: "riffer-1", tools: [loader], deferred_tools: [list_events])
+      native.stub_response("", tool_calls: [gateway_call])
+      message = native.generate_text(messages: loaded_history, **request_options)
+
+      expect(native.calls.last[:tools]).must_equal [loader, gateway_tool]
+      refute_includes native.calls.last.keys, :deferred_tools
+      expect(native.calls.last[:messages][4][:name]).must_equal gateway_name
+      expect(message.tool_calls).must_equal [call("calendar/list_events", "c_3", '{"day":1}')]
+    end
+
+    it "sends neither the gateway nor wrapped history with the native strategy" do
+      native = Riffer::Providers::Mock.new
+      native.generate_text(messages: loaded_history, **request_options, riffer_deferred_tools_strategy: :native)
 
       expect(native.calls.last[:tools]).must_equal [loader]
+      expect(native.calls.last[:deferred_tools]).must_equal [list_events]
       expect(native.calls.last[:messages]).must_equal loaded_history.map(&:to_h)
     end
 

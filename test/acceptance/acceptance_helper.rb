@@ -27,7 +27,8 @@ HTTP_ERROR_CONTRACT = { class: Riffer::APIError, status: :status.to_proc, detail
 # tests can't derive: riffer passes model options and web_search options
 # through as-is, so their names are the provider's own. wire_tags is what
 # ACCEPTANCE_TAGS adds to the request body, and error_contract the error class
-# a failed request raises and how to read its HTTP status and text.
+# a failed request raises and how to read its HTTP status and text, and
+# deferred_tools_strategy is :native only where the provider loads them natively.
 ACCEPTANCE_PROVIDERS = {
   gemini: {
     model: "gemini-3.5-flash-lite",
@@ -41,6 +42,7 @@ ACCEPTANCE_PROVIDERS = {
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     # The Developer API has no request field for tags, so none are sent.
     wire_tags: {},
+    deferred_tools_strategy: :gateway,
     error_contract: HTTP_ERROR_CONTRACT,
     configure: -> { Riffer.config.gemini.api_key = ENV.fetch("GEMINI_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.gemini.api_key = "invalid-api-key" },
@@ -57,6 +59,7 @@ ACCEPTANCE_PROVIDERS = {
     cache_options: {},
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     wire_tags: { "labels" => { "team" => "growth", "agent" => "support_triage_agent", "user_id" => "u_1" } },
+    deferred_tools_strategy: :gateway,
     error_contract: HTTP_ERROR_CONTRACT,
     configure: lambda do
       Riffer.config.google_cloud.project_id = ENV.fetch("GOOGLE_CLOUD_PROJECT", "test-project")
@@ -83,6 +86,7 @@ ACCEPTANCE_PROVIDERS = {
     },
     cache_options: { cache_control: true },
     wire_tags: { "requestMetadata" => ACCEPTANCE_TAGS },
+    deferred_tools_strategy: :gateway,
     error_contract: {
       class: Aws::BedrockRuntime::Errors::ServiceError,
       status: ->(error) { error.context.http_response.status_code },
@@ -113,6 +117,7 @@ ACCEPTANCE_PROVIDERS = {
     web_search_options: { max_uses: 2, allowed_domains: ["ruby-lang.org"] },
     # The Messages API keeps only user_id, as metadata.user_id.
     wire_tags: { "metadata" => { "user_id" => "u_1" } },
+    deferred_tools_strategy: :native,
     error_contract: HTTP_ERROR_CONTRACT,
     configure: -> { Riffer.config.anthropic.api_key = ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.anthropic.api_key = "invalid-api-key" },
@@ -129,6 +134,7 @@ ACCEPTANCE_PROVIDERS = {
     cache_options: {},
     web_search_options: { search_context_size: "low" },
     wire_tags: { "metadata" => ACCEPTANCE_TAGS, "safety_identifier" => "u_1" },
+    deferred_tools_strategy: :native,
     error_contract: { class: OpenAI::Errors::APIStatusError, status: :status.to_proc, detail: :message.to_proc },
     configure: -> { Riffer.config.openai.api_key = ENV.fetch("OPENAI_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.openai.api_key = "invalid-api-key" },
@@ -146,6 +152,7 @@ ACCEPTANCE_PROVIDERS = {
     # upstreams and they share no cache, so one is pinned.
     cache_options: { provider: { order: ["coreweave"], allow_fallbacks: false } },
     wire_tags: { "metadata" => ACCEPTANCE_TAGS, "user" => "u_1" },
+    deferred_tools_strategy: :gateway,
     error_contract: { class: OpenAI::Errors::APIStatusError, status: :status.to_proc, detail: :message.to_proc },
     configure: -> { Riffer.config.openrouter.api_key = ENV.fetch("OPENROUTER_API_KEY", "test_api_key") },
     break_credentials: -> { Riffer.config.openrouter.api_key = "invalid-api-key" },
