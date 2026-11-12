@@ -650,6 +650,31 @@ describe Riffer::Providers::Anthropic do
           must_equal generated.session.messages.last.parts.map(&:to_h)
       end
     end
+
+    # The API pauses after 10 server tool iterations, so twelve searches run one
+    # at a time force a pause_turn and a continuation.
+    it "finishes a turn the API paused, with every search answered" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/pause_turn/finishes_a_paused_turn") do
+        result = provider.generate_text(
+          prompt: "Look up the latest released version of each of these Ruby gems, one gem at a time: " \
+                  "rails, rack, puma, sidekiq, nokogiri, devise, rspec, rubocop, faraday, pg, redis, sinatra. " \
+                  "Run exactly one web search per step and read its result before you run the next one. " \
+                  "Never run two searches in the same step. When you have all twelve, list each gem with its version.",
+          model: "claude-haiku-5-5",
+          web_search: { max_uses: 20 },
+          thinking: { type: "disabled" },
+          max_tokens: 8192,
+        )
+        server_tool_parts = result.parts.grep(Riffer::Messages::Assistant::ServerToolPart)
+        call_ids = server_tool_parts.select { |part| part.kind == :call }.map(&:id)
+        result_ids = server_tool_parts.select { |part| part.kind == :result }.map(&:id)
+
+        assert_requested :post, "https://api.anthropic.com/v1/messages", at_least_times: 2
+        expect([result.finish_reason, result.finish_reason_raw]).must_equal [:stop, "end_turn"]
+        expect(call_ids.size).must_be :>, 10
+        expect(result_ids).must_equal call_ids
+      end
+    end
   end
 
   describe "tool schema strict mode" do

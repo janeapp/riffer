@@ -49,8 +49,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> Hash[Symbol, untyped]
   def stream_message: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> Hash[Symbol, untyped]
 
-  # The API resumes a paused turn when its content comes back as the last
-  # assistant message, unchanged.
+  # To resume a paused turn, resend the same request with the paused response's
+  # content array appended as an assistant message, copied as-is and with nothing after it.
   # --
   # : (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
   def continue_paused_turn: (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
