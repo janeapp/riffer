@@ -164,7 +164,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       fc = part[:functionCall]
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: tool_call_id(part),
-        name: fc[:name],
+        name: decode_tool_name(fc[:name], tools: @current_tools),
         arguments: encode_tool_arguments(fc[:args]),
       )
     end
@@ -300,7 +300,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           yielder << Riffer::StreamEvents::ToolCallDone.new(
             item_id: call_id,
             call_id: call_id,
-            name: fc[:name],
+            name: decode_tool_name(fc[:name], tools: @current_tools),
             arguments: arguments,
           )
         elsif part[:toolCall]
@@ -394,7 +394,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     part = {
       functionResponse: {
         id: gemini_call_id(message.tool_call_id),
-        name: message.name,
+        name: encode_tool_name(message.name),
         response: { result: message.content },
       }.compact,
     }
@@ -426,7 +426,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       parts << {
         functionCall: {
           id: gemini_call_id(tc.call_id),
-          name: tc.name,
+          name: encode_tool_name(tc.name),
           args: parse_tool_arguments(tc.arguments),
         }.compact,
         thoughtSignature: signature,
@@ -446,7 +446,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_gemini_format(tool)
     {
-      name: tool.name,
+      name: encode_tool_name(tool.name),
       description: tool.description,
       parametersJsonSchema: tool.parameters_schema,
     }
