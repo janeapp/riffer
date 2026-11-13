@@ -9,7 +9,7 @@ http_interactions:
         on 2026-11-06?"}]}],"systemInstruction":{"parts":[{"text":"If you need a tool
         you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
         loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
@@ -43,7 +43,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Fri, 13 Nov 2026 21:48:07 GMT
+      - Fri, 13 Nov 2026 22:31:19 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -53,42 +53,42 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=722
+      - gfet4t7; dur=1125
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
-        {\"name\": \"find_tools\",\"args\": {\"query\": \"calendar view events appointments
-        date\"},\"id\": \"call_5709405215080874493\"},\"thoughtSignature\": \"EmAKXgFpFH0TFeytRnSu1kP7/p2UujqOyoKecb4a0DZhUTfaPJmkRqpw0BiisyctmttA5j+dAYD43uvTdIPF4xGaZ8FKohmna3k+AKftC6HLn15qqtEmWLCWGcSls+r5PYQ=\"}],\"role\":
-        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 259,\"candidatesTokenCount\":
-        20,\"totalTokenCount\": 279,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        259}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"loX3asa6I-C-odAPlNCi0Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 259,\"candidatesTokenCount\":
-        20,\"totalTokenCount\": 279,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        259}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"loX3asa6I-C-odAPlNCi0Ag\"}\r\n\r\n"
-  recorded_at: Fri, 13 Nov 2026 21:48:07 GMT
+        {\"name\": \"find_tools\",\"args\": {\"query\": \"calendar events list check\"},\"id\":
+        \"call_14144912190715983941\"},\"thoughtSignature\": \"EmAKXgFpFH0TlzoTuMTtn3g6oInBfMRkA/VoOBiV7EUO8PjoP2l1vwT31vDnPWUfMccikq5jVWhYR2G28bbwKa4DnyCWs9xHNWRLLS+SrM4kFQ3l43sYsys8hhLkgtqxqJM=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 251,\"candidatesTokenCount\":
+        19,\"totalTokenCount\": 270,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        251}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"to_3avXRI_6Q8L0Pgtl5\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 251,\"candidatesTokenCount\":
+        19,\"totalTokenCount\": 270,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        251}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"to_3avXRI_6Q8L0Pgtl5\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:19 GMT
 - request:
     method: post
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
-        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_5709405215080874493","name":"find_tools","args":{"query":"calendar
-        view events appointments date"}},"thoughtSignature":"EmAKXgFpFH0TFeytRnSu1kP7/p2UujqOyoKecb4a0DZhUTfaPJmkRqpw0BiisyctmttA5j+dAYD43uvTdIPF4xGaZ8FKohmna3k+AKftC6HLn15qqtEmWLCWGcSls+r5PYQ="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_5709405215080874493","name":"find_tools","response":{"result":"These
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_14144912190715983941","name":"find_tools","args":{"query":"calendar
+        events list check"}},"thoughtSignature":"EmAKXgFpFH0TlzoTuMTtn3g6oInBfMRkA/VoOBiV7EUO8PjoP2l1vwT31vDnPWUfMccikq5jVWhYR2G28bbwKa4DnyCWs9xHNWRLLS+SrM4kFQ3l43sYsys8hhLkgtqxqJM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_14144912190715983941","name":"find_tools","response":{"result":"These
         tools are now loaded. They are not in your tool list, so calling one by its
-        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
-        tool: set name to the tool''s name exactly as written below, and set arguments
-        to a string holding its arguments as a JSON object that matches its parameters.
-        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
         the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
         date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]}],"systemInstruction":{"parts":[{"text":"If
         you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
         loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
@@ -122,7 +122,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Fri, 13 Nov 2026 21:48:07 GMT
+      - Fri, 13 Nov 2026 22:31:20 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -132,44 +132,44 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=740
+      - gfet4t7; dur=778
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
-        {\"name\": \"riffer__providers__deferred_tool_gateway__tool\",\"args\": {\"arguments\":
-        \"{\\\"date\\\":\\\"2026-11-06\\\"}\",\"name\": \"calendar/list_events\"},\"id\":
-        \"call_3444426743495351265\"},\"thoughtSignature\": \"EmAKXgFpFH0TI/Noj2HfAPF7pSbEcqrSuaLDT3xDydyRb3wyTLSvojf3JIL32teqoqO4+UZRMWkM6j7uGeYRdZMHlbE+e6wgI0o8STnrhC2JgGaDGA2pPk5ZbmMWym/evZM=\"}],\"role\":
-        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 439,\"candidatesTokenCount\":
-        48,\"totalTokenCount\": 487,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        439}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"l4X3ataQF-_JodAP2Kqd0Ak\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"name\": \"riffer_gateway\",\"args\": {\"arguments\": \"{\\\"date\\\":\\\"2026-11-06\\\"}\",\"name\":
+        \"calendar/list_events\"},\"id\": \"call_6150604403218205609\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0T6LY2UMyuq3GBkBu/WEiMaSEiCT2ulDBNwEuaeLjP7eapsblESRozeX2epnGj9EvZNoQAn8sWYsYQ86aOqw5rDC1tX5veaDrhErRzBSYW8KfNpJcxOjjcjSA=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 422,\"candidatesTokenCount\":
+        40,\"totalTokenCount\": 462,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        422}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"t4_3asiWLLOR8L0P9pmX0Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 439,\"candidatesTokenCount\":
-        48,\"totalTokenCount\": 487,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        439}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"l4X3ataQF-_JodAP2Kqd0Ak\"}\r\n\r\n"
-  recorded_at: Fri, 13 Nov 2026 21:48:07 GMT
+        0}],\"usageMetadata\": {\"promptTokenCount\": 422,\"candidatesTokenCount\":
+        40,\"totalTokenCount\": 462,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        422}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"t4_3asiWLLOR8L0P9pmX0Ag\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:20 GMT
 - request:
     method: post
     uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
-        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_5709405215080874493","name":"find_tools","args":{"query":"calendar
-        view events appointments date"}},"thoughtSignature":"EmAKXgFpFH0TFeytRnSu1kP7/p2UujqOyoKecb4a0DZhUTfaPJmkRqpw0BiisyctmttA5j+dAYD43uvTdIPF4xGaZ8FKohmna3k+AKftC6HLn15qqtEmWLCWGcSls+r5PYQ="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_5709405215080874493","name":"find_tools","response":{"result":"These
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_14144912190715983941","name":"find_tools","args":{"query":"calendar
+        events list check"}},"thoughtSignature":"EmAKXgFpFH0TlzoTuMTtn3g6oInBfMRkA/VoOBiV7EUO8PjoP2l1vwT31vDnPWUfMccikq5jVWhYR2G28bbwKa4DnyCWs9xHNWRLLS+SrM4kFQ3l43sYsys8hhLkgtqxqJM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_14144912190715983941","name":"find_tools","response":{"result":"These
         tools are now loaded. They are not in your tool list, so calling one by its
-        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
-        tool: set name to the tool''s name exactly as written below, and set arguments
-        to a string holding its arguments as a JSON object that matches its parameters.
-        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
         the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_3444426743495351265","name":"riffer__providers__deferred_tool_gateway__tool","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TI/Noj2HfAPF7pSbEcqrSuaLDT3xDydyRb3wyTLSvojf3JIL32teqoqO4+UZRMWkM6j7uGeYRdZMHlbE+e6wgI0o8STnrhC2JgGaDGA2pPk5ZbmMWym/evZM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3444426743495351265","name":"riffer__providers__deferred_tool_gateway__tool","response":{"result":"On
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_6150604403218205609","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0T6LY2UMyuq3GBkBu/WEiMaSEiCT2ulDBNwEuaeLjP7eapsblESRozeX2epnGj9EvZNoQAn8sWYsYQ86aOqw5rDC1tX5veaDrhErRzBSYW8KfNpJcxOjjcjSA="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_6150604403218205609","name":"riffer_gateway","response":{"result":"On
         2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"If
         you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
         more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
         lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
         loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
@@ -203,7 +203,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Fri, 13 Nov 2026 21:48:08 GMT
+      - Fri, 13 Nov 2026 22:31:20 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -213,31 +213,31 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=787
+      - gfet4t7; dur=685
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
-      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"On
-        November\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        541,\"candidatesTokenCount\": 2,\"totalTokenCount\": 543,\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 541}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"mIX3at2JDIzBodAP7KmfoAk\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" 6, 2026, you have
-        the following events on your calendar:\\n\\n*\"}],\"role\": \"model\"},\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 541,\"candidatesTokenCount\":
-        22,\"totalTokenCount\": 563,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        541}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"mIX3at2JDIzBodAP7KmfoAk\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"On\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 508,\"candidatesTokenCount\":
+        1,\"totalTokenCount\": 509,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        508}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"uI_3aoySI7yC6tkP0tvn6Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" November 6, 2026, you have the following events
+        on your calendar:\\n\\n*\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 508,\"candidatesTokenCount\": 22,\"totalTokenCount\":
+        530,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 508}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"uI_3aoySI7yC6tkP0tvn6Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
         {\"parts\": [{\"text\": \" **Dentist** at 09:00\\n* **Team lunch** at 12:30\"}],\"role\":
-        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 541,\"candidatesTokenCount\":
-        46,\"totalTokenCount\": 587,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        541}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
-        \"mIX3at2JDIzBodAP7KmfoAk\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
-        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0TCEK5/QA6plpodii4wbMIX1e/xH9spAWU4ycshkPxHUU6G9QmEUFKspTXKy7VtDZRhJRGHmHWis3CwLvJqq3Tn/MmgoTi9eDe+cut5iMy1QHcCCHh57tuGUI=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 508,\"candidatesTokenCount\":
+        46,\"totalTokenCount\": 554,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        508}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"uI_3aoySI7yC6tkP0tvn6Ag\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Tueo5maEKGiN689FRntGjmPNpII9DhB+kxnTiHTam6VrdRfURc1sWQHmVaj5DYQaxUm6WR770JYPGzT1o3+//J+rCSKQYlVUoNWOFmKdyfG76v1Vbsc3rEFk=\"}],\"role\":
         \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        541,\"candidatesTokenCount\": 46,\"totalTokenCount\": 587,\"promptTokensDetails\":
-        [{\"modality\": \"TEXT\",\"tokenCount\": 541}],\"serviceTier\": \"standard\"},\"modelVersion\":
-        \"gemini-3.5-flash-lite\",\"responseId\": \"mIX3at2JDIzBodAP7KmfoAk\"}\r\n\r\n"
-  recorded_at: Fri, 13 Nov 2026 21:48:08 GMT
+        508,\"candidatesTokenCount\": 46,\"totalTokenCount\": 554,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 508}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"uI_3aoySI7yC6tkP0tvn6Ag\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:21 GMT
 recorded_with: VCR 6.4.0

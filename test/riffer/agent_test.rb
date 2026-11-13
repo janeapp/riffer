@@ -891,7 +891,7 @@ describe Riffer::Agent do
       end
 
       err = expect { klass.new }.must_raise Riffer::ArgumentError
-      expect(err.message).must_equal "Duplicate tool names: riffer/providers/deferred_tool_gateway/tool"
+      expect(err.message).must_equal "Duplicate tool names: riffer_gateway"
     end
 
     describe "on a provider without deferred tool support" do

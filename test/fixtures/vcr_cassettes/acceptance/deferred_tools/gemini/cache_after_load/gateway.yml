@@ -2,69 +2,70 @@
 http_interactions:
 - request:
     method: post
-    uri: https://openrouter.ai/api/v1/chat/completions
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Rule
-        1: product PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size
-        2.\nRule 3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships
-        in box size 4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product
-        PX-6 ships in box size 6.\nRule 7: product PX-7 ships in box size 0.\nRule
-        8: product PX-8 ships in box size 1.\nRule 9: product PX-9 ships in box size
-        2.\nRule 10: product PX-10 ships in box size 3.\nRule 11: product PX-11 ships
-        in box size 4.\nRule 12: product PX-12 ships in box size 5.\nRule 13: product
-        PX-13 ships in box size 6.\nRule 14: product PX-14 ships in box size 0.\nRule
-        15: product PX-15 ships in box size 1.\nRule 16: product PX-16 ships in box
-        size 2.\nRule 17: product PX-17 ships in box size 3.\nRule 18: product PX-18
-        ships in box size 4.\nRule 19: product PX-19 ships in box size 5.\nRule 20:
-        product PX-20 ships in box size 6.\nRule 21: product PX-21 ships in box size
-        0.\nRule 22: product PX-22 ships in box size 1.\nRule 23: product PX-23 ships
-        in box size 2.\nRule 24: product PX-24 ships in box size 3.\nRule 25: product
-        PX-25 ships in box size 4.\nRule 26: product PX-26 ships in box size 5.\nRule
-        27: product PX-27 ships in box size 6.\nRule 28: product PX-28 ships in box
-        size 0.\nRule 29: product PX-29 ships in box size 1.\nRule 30: product PX-30
-        ships in box size 2.\nRule 31: product PX-31 ships in box size 3.\nRule 32:
-        product PX-32 ships in box size 4.\nRule 33: product PX-33 ships in box size
-        5.\nRule 34: product PX-34 ships in box size 6.\nRule 35: product PX-35 ships
-        in box size 0.\nRule 36: product PX-36 ships in box size 1.\nRule 37: product
-        PX-37 ships in box size 2.\nRule 38: product PX-38 ships in box size 3.\nRule
-        39: product PX-39 ships in box size 4.\nRule 40: product PX-40 ships in box
-        size 5.\nRule 41: product PX-41 ships in box size 6.\nRule 42: product PX-42
-        ships in box size 0.\nRule 43: product PX-43 ships in box size 1.\nRule 44:
-        product PX-44 ships in box size 2.\nRule 45: product PX-45 ships in box size
-        3.\nRule 46: product PX-46 ships in box size 4.\nRule 47: product PX-47 ships
-        in box size 5.\nRule 48: product PX-48 ships in box size 6.\nRule 49: product
-        PX-49 ships in box size 0.\nRule 50: product PX-50 ships in box size 1.\nRule
-        51: product PX-51 ships in box size 2.\nRule 52: product PX-52 ships in box
-        size 3.\nRule 53: product PX-53 ships in box size 4.\nRule 54: product PX-54
-        ships in box size 5.\nRule 55: product PX-55 ships in box size 6.\nRule 56:
-        product PX-56 ships in box size 0.\nRule 57: product PX-57 ships in box size
-        1.\nRule 58: product PX-58 ships in box size 2.\nRule 59: product PX-59 ships
-        in box size 3.\nRule 60: product PX-60 ships in box size 4.\nRule 61: product
-        PX-61 ships in box size 5.\nRule 62: product PX-62 ships in box size 6.\nRule
-        63: product PX-63 ships in box size 0.\nRule 64: product PX-64 ships in box
-        size 1.\nRule 65: product PX-65 ships in box size 2.\nRule 66: product PX-66
-        ships in box size 3.\nRule 67: product PX-67 ships in box size 4.\nRule 68:
-        product PX-68 ships in box size 5.\nRule 69: product PX-69 ships in box size
-        6.\nRule 70: product PX-70 ships in box size 0.\nRule 71: product PX-71 ships
-        in box size 1.\nRule 72: product PX-72 ships in box size 2.\nRule 73: product
-        PX-73 ships in box size 3.\nRule 74: product PX-74 ships in box size 4.\nRule
-        75: product PX-75 ships in box size 5.\nRule 76: product PX-76 ships in box
-        size 6.\nRule 77: product PX-77 ships in box size 0.\nRule 78: product PX-78
-        ships in box size 1.\nRule 79: product PX-79 ships in box size 2.\nRule 80:
-        product PX-80 ships in box size 3.\nRule 81: product PX-81 ships in box size
-        4.\nRule 82: product PX-82 ships in box size 5.\nRule 83: product PX-83 ships
-        in box size 6.\nRule 84: product PX-84 ships in box size 0.\nRule 85: product
-        PX-85 ships in box size 1.\nRule 86: product PX-86 ships in box size 2.\nRule
-        87: product PX-87 ships in box size 3.\nRule 88: product PX-88 ships in box
-        size 4.\nRule 89: product PX-89 ships in box size 5.\nRule 90: product PX-90
-        ships in box size 6.\nRule 91: product PX-91 ships in box size 0.\nRule 92:
-        product PX-92 ships in box size 1.\nRule 93: product PX-93 ships in box size
-        2.\nRule 94: product PX-94 ships in box size 3.\nRule 95: product PX-95 ships
-        in box size 4.\nRule 96: product PX-96 ships in box size 5.\nRule 97: product
-        PX-97 ships in box size 6.\nRule 98: product PX-98 ships in box size 0.\nRule
-        99: product PX-99 ships in box size 1.\nRule 100: product PX-100 ships in
-        box size 2.\nRule 101: product PX-101 ships in box size 3.\nRule 102: product
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]}],"systemInstruction":{"parts":[{"text":"Rule 1: product
+        PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size 2.\nRule
+        3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships in box size
+        4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product PX-6 ships
+        in box size 6.\nRule 7: product PX-7 ships in box size 0.\nRule 8: product
+        PX-8 ships in box size 1.\nRule 9: product PX-9 ships in box size 2.\nRule
+        10: product PX-10 ships in box size 3.\nRule 11: product PX-11 ships in box
+        size 4.\nRule 12: product PX-12 ships in box size 5.\nRule 13: product PX-13
+        ships in box size 6.\nRule 14: product PX-14 ships in box size 0.\nRule 15:
+        product PX-15 ships in box size 1.\nRule 16: product PX-16 ships in box size
+        2.\nRule 17: product PX-17 ships in box size 3.\nRule 18: product PX-18 ships
+        in box size 4.\nRule 19: product PX-19 ships in box size 5.\nRule 20: product
+        PX-20 ships in box size 6.\nRule 21: product PX-21 ships in box size 0.\nRule
+        22: product PX-22 ships in box size 1.\nRule 23: product PX-23 ships in box
+        size 2.\nRule 24: product PX-24 ships in box size 3.\nRule 25: product PX-25
+        ships in box size 4.\nRule 26: product PX-26 ships in box size 5.\nRule 27:
+        product PX-27 ships in box size 6.\nRule 28: product PX-28 ships in box size
+        0.\nRule 29: product PX-29 ships in box size 1.\nRule 30: product PX-30 ships
+        in box size 2.\nRule 31: product PX-31 ships in box size 3.\nRule 32: product
+        PX-32 ships in box size 4.\nRule 33: product PX-33 ships in box size 5.\nRule
+        34: product PX-34 ships in box size 6.\nRule 35: product PX-35 ships in box
+        size 0.\nRule 36: product PX-36 ships in box size 1.\nRule 37: product PX-37
+        ships in box size 2.\nRule 38: product PX-38 ships in box size 3.\nRule 39:
+        product PX-39 ships in box size 4.\nRule 40: product PX-40 ships in box size
+        5.\nRule 41: product PX-41 ships in box size 6.\nRule 42: product PX-42 ships
+        in box size 0.\nRule 43: product PX-43 ships in box size 1.\nRule 44: product
+        PX-44 ships in box size 2.\nRule 45: product PX-45 ships in box size 3.\nRule
+        46: product PX-46 ships in box size 4.\nRule 47: product PX-47 ships in box
+        size 5.\nRule 48: product PX-48 ships in box size 6.\nRule 49: product PX-49
+        ships in box size 0.\nRule 50: product PX-50 ships in box size 1.\nRule 51:
+        product PX-51 ships in box size 2.\nRule 52: product PX-52 ships in box size
+        3.\nRule 53: product PX-53 ships in box size 4.\nRule 54: product PX-54 ships
+        in box size 5.\nRule 55: product PX-55 ships in box size 6.\nRule 56: product
+        PX-56 ships in box size 0.\nRule 57: product PX-57 ships in box size 1.\nRule
+        58: product PX-58 ships in box size 2.\nRule 59: product PX-59 ships in box
+        size 3.\nRule 60: product PX-60 ships in box size 4.\nRule 61: product PX-61
+        ships in box size 5.\nRule 62: product PX-62 ships in box size 6.\nRule 63:
+        product PX-63 ships in box size 0.\nRule 64: product PX-64 ships in box size
+        1.\nRule 65: product PX-65 ships in box size 2.\nRule 66: product PX-66 ships
+        in box size 3.\nRule 67: product PX-67 ships in box size 4.\nRule 68: product
+        PX-68 ships in box size 5.\nRule 69: product PX-69 ships in box size 6.\nRule
+        70: product PX-70 ships in box size 0.\nRule 71: product PX-71 ships in box
+        size 1.\nRule 72: product PX-72 ships in box size 2.\nRule 73: product PX-73
+        ships in box size 3.\nRule 74: product PX-74 ships in box size 4.\nRule 75:
+        product PX-75 ships in box size 5.\nRule 76: product PX-76 ships in box size
+        6.\nRule 77: product PX-77 ships in box size 0.\nRule 78: product PX-78 ships
+        in box size 1.\nRule 79: product PX-79 ships in box size 2.\nRule 80: product
+        PX-80 ships in box size 3.\nRule 81: product PX-81 ships in box size 4.\nRule
+        82: product PX-82 ships in box size 5.\nRule 83: product PX-83 ships in box
+        size 6.\nRule 84: product PX-84 ships in box size 0.\nRule 85: product PX-85
+        ships in box size 1.\nRule 86: product PX-86 ships in box size 2.\nRule 87:
+        product PX-87 ships in box size 3.\nRule 88: product PX-88 ships in box size
+        4.\nRule 89: product PX-89 ships in box size 5.\nRule 90: product PX-90 ships
+        in box size 6.\nRule 91: product PX-91 ships in box size 0.\nRule 92: product
+        PX-92 ships in box size 1.\nRule 93: product PX-93 ships in box size 2.\nRule
+        94: product PX-94 ships in box size 3.\nRule 95: product PX-95 ships in box
+        size 4.\nRule 96: product PX-96 ships in box size 5.\nRule 97: product PX-97
+        ships in box size 6.\nRule 98: product PX-98 ships in box size 0.\nRule 99:
+        product PX-99 ships in box size 1.\nRule 100: product PX-100 ships in box
+        size 2.\nRule 101: product PX-101 ships in box size 3.\nRule 102: product
         PX-102 ships in box size 4.\nRule 103: product PX-103 ships in box size 5.\nRule
         104: product PX-104 ships in box size 6.\nRule 105: product PX-105 ships in
         box size 0.\nRule 106: product PX-106 ships in box size 1.\nRule 107: product
@@ -244,92 +245,111 @@ http_interactions:
         box size 3.\nRule 396: product PX-396 ships in box size 4.\nRule 397: product
         PX-397 ships in box size 5.\nRule 398: product PX-398 ships in box size 6.\nRule
         399: product PX-399 ships in box size 0.\nRule 400: product PX-400 ships in
-        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"}],"provider":{"order":["coreweave"],"allow_fallbacks":false},"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
-        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
-        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
         loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
         loaded tool''s arguments as a JSON-encoded object string matching its parameters,
         such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
-        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
-      - application/json
-      User-Agent:
-      - OpenAI::Client/Ruby 0.97.0
-      X-Stainless-Arch:
-      - arm64
-      X-Stainless-Lang:
-      - ruby
-      X-Stainless-Os:
-      - MacOS
-      X-Stainless-Package-Version:
-      - 0.97.0
-      X-Stainless-Runtime:
-      - ruby
-      X-Stainless-Runtime-Version:
-      - 4.0.9
-      Content-Type:
-      - application/json
-      X-Stainless-Retry-Count:
-      - '0'
-      X-Stainless-Timeout:
-      - '600.0'
-      Content-Length:
-      - '19938'
+      - "*/*"
   response:
     status:
       code: 200
       message: OK
     headers:
-      Date:
-      - Thu, 12 Nov 2026 21:15:26 GMT
+      X-Gemini-Service-Tier:
+      - standard
       Content-Type:
-      - application/json
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Origin:
-      - "*"
-      X-Generation-Id:
-      - gen-1794518126-twAnXiCUa3LxX5PHUwgl
-      Access-Control-Expose-Headers:
-      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
-      X-Openrouter-Release:
-      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
-      Permissions-Policy:
-      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
-        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
-      Referrer-Policy:
-      - no-referrer, strict-origin-when-cross-origin
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:22 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
       X-Content-Type-Options:
       - nosniff
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - a5988d4fc9bceb7b-SEA
+      Server-Timing:
+      - gfet4t7; dur=895
       Alt-Svc:
-      - h3=":443"; ma=86400
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
     body:
       encoding: ASCII-8BIT
-      string: "\n         \n{\"id\":\"gen-1794518126-twAnXiCUa3LxX5PHUwgl\",\"object\":\"chat.completion\",\"created\":1794518126,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"CoreWeave\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
-        user asks what's on their calendar on 2026-11-06. I need a calendar tool.
-        I should use find_tools to find a calendar tool.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"1420ab8d-1e5d-41fb-8005-4fdde5bae070\",\"function\":{\"name\":\"find_tools\",\"arguments\":\"{\\\"query\\\":\\\"view
-        calendar events for a date\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
-        user asks what's on their calendar on 2026-11-06. I need a calendar tool.
-        I should use find_tools to find a calendar tool.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":6682,\"completion_tokens\":51,\"total_tokens\":6733,\"cost\":0.00082122,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00082122,\"upstream_inference_prompt_cost\":0.00080184,\"upstream_inference_completions_cost\":0.00001938},\"completion_tokens_details\":{\"reasoning_tokens\":35,\"image_tokens\":0,\"audio_tokens\":0}}}"
-  recorded_at: Thu, 12 Nov 2026 21:15:26 GMT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "find_tools",
+                      "args": {
+                        "query": "calendar"
+                      },
+                      "id": "call_6913421780633844879"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0T/rJV9vEUAxTQiHnU3Ant5aK7TeqAVDGm33wNJpk/ezML1piqflPER8cVlvSju4xFdnp/BlnialagM/rz20bS211UIMru81uOypTa++BWi4LFSCnzt8pMxOE="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8035,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 8051,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8035
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "uY_3aobNGLW6odAP6uL9sAI"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:22 GMT
 - request:
     method: post
-    uri: https://openrouter.ai/api/v1/chat/completions
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Rule
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_6913421780633844879","name":"find_tools","args":{"query":"calendar"}},"thoughtSignature":"EmAKXgFpFH0T/rJV9vEUAxTQiHnU3Ant5aK7TeqAVDGm33wNJpk/ezML1piqflPER8cVlvSju4xFdnp/BlnialagM/rz20bS211UIMru81uOypTa++BWi4LFSCnzt8pMxOE="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_6913421780633844879","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]}],"systemInstruction":{"parts":[{"text":"Rule
         1: product PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size
         2.\nRule 3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships
         in box size 4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product
@@ -568,100 +588,120 @@ http_interactions:
         box size 3.\nRule 396: product PX-396 ships in box size 4.\nRule 397: product
         PX-397 ships in box size 5.\nRule 398: product PX-398 ships in box size 6.\nRule
         399: product PX-399 ships in box size 0.\nRule 400: product PX-400 ships in
-        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"1420ab8d-1e5d-41fb-8005-4fdde5bae070","type":"function","function":{"name":"find_tools","arguments":"{\"query\":\"view
-        calendar events for a date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user asks what''s on their calendar on 2026-11-06. I need a calendar tool.
-        I should use find_tools to find a calendar tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"1420ab8d-1e5d-41fb-8005-4fdde5bae070","content":"These
-        tools are now loaded. They are not in your tool list, so calling one by its
-        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
-        tool: set name to the tool''s name exactly as written below, and set arguments
-        to a string holding its arguments as a JSON object that matches its parameters.
-        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
-        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"provider":{"order":["coreweave"],"allow_fallbacks":false},"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
-        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
-        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
         loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
         loaded tool''s arguments as a JSON-encoded object string matching its parameters,
         such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
-        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
-      - application/json
-      User-Agent:
-      - OpenAI::Client/Ruby 0.97.0
-      X-Stainless-Arch:
-      - arm64
-      X-Stainless-Lang:
-      - ruby
-      X-Stainless-Os:
-      - MacOS
-      X-Stainless-Package-Version:
-      - 0.97.0
-      X-Stainless-Runtime:
-      - ruby
-      X-Stainless-Runtime-Version:
-      - 4.0.9
-      Content-Type:
-      - application/json
-      X-Stainless-Retry-Count:
-      - '0'
-      X-Stainless-Timeout:
-      - '600.0'
-      Content-Length:
-      - '21089'
+      - "*/*"
   response:
     status:
       code: 200
       message: OK
     headers:
-      Date:
-      - Thu, 12 Nov 2026 21:15:27 GMT
+      X-Gemini-Service-Tier:
+      - standard
       Content-Type:
-      - application/json
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Origin:
-      - "*"
-      X-Generation-Id:
-      - gen-1794518126-mavJU7CHbToiASqptUCJ
-      Access-Control-Expose-Headers:
-      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
-      X-Openrouter-Release:
-      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
-      Permissions-Policy:
-      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
-        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
-      Referrer-Policy:
-      - no-referrer, strict-origin-when-cross-origin
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:23 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
       X-Content-Type-Options:
       - nosniff
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - a5988d542d0feb7b-SEA
+      Server-Timing:
+      - gfet4t7; dur=986
       Alt-Svc:
-      - h3=":443"; ma=86400
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
     body:
       encoding: ASCII-8BIT
-      string: "\n         \n{\"id\":\"gen-1794518126-mavJU7CHbToiASqptUCJ\",\"object\":\"chat.completion\",\"created\":1794518126,\"model\":\"z-ai/glm-5.3-flash\",\"provider\":\"CoreWeave\",\"system_fingerprint\":null,\"service_tier\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_calls\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"Call
-        calendar/list_events with date 2026-11-06.\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"d0143723-0589-4925-9588-558b9f8bb94a\",\"function\":{\"name\":\"riffer__providers__deferred_tool_gateway__tool\",\"arguments\":\"{\\\"arguments\\\":\\\"{\\\\\\\"date\\\\\\\":
-        \\\\\\\"2026-11-06\\\\\\\"}\\\",\\\"name\\\":\\\"calendar/list_events\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"Call
-        calendar/list_events with date 2026-11-06.\",\"format\":\"unknown\",\"index\":0}]}}],\"usage\":{\"prompt_tokens\":6874,\"completion_tokens\":53,\"total_tokens\":6927,\"cost\":0.00017942,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":6656,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00017942,\"upstream_inference_prompt_cost\":0.00015928,\"upstream_inference_completions_cost\":0.00002014},\"completion_tokens_details\":{\"reasoning_tokens\":15,\"image_tokens\":0,\"audio_tokens\":0}}}"
-  recorded_at: Thu, 12 Nov 2026 21:15:27 GMT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "riffer_gateway",
+                      "args": {
+                        "arguments": "{\"date\":\"2026-11-06\"}",
+                        "name": "calendar/list_events"
+                      },
+                      "id": "call_16807027370481293165"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TuNHx90FupqRRhq01ejOEjqlhHLF4HjVwu/HxZ3Hrw6badJ6fYk8yWkec59zylqZvQEjNKCoxT6A0mhBZ9G4hiF8supkvZ105v1eYOziQQZv3jDZDIifcKNI="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8203,
+            "candidatesTokenCount": 40,
+            "totalTokenCount": 8243,
+            "cachedContentTokenCount": 6103,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8203
+              }
+            ],
+            "cacheTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 6103
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "uo_3avOJFpqyvMcPxO6a2Ag"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:23 GMT
 - request:
     method: post
-    uri: https://openrouter.ai/api/v1/chat/completions
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
     body:
       encoding: UTF-8
-      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"Rule
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_6913421780633844879","name":"find_tools","args":{"query":"calendar"}},"thoughtSignature":"EmAKXgFpFH0T/rJV9vEUAxTQiHnU3Ant5aK7TeqAVDGm33wNJpk/ezML1piqflPER8cVlvSju4xFdnp/BlnialagM/rz20bS211UIMru81uOypTa++BWi4LFSCnzt8pMxOE="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_6913421780633844879","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_16807027370481293165","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TuNHx90FupqRRhq01ejOEjqlhHLF4HjVwu/HxZ3Hrw6badJ6fYk8yWkec59zylqZvQEjNKCoxT6A0mhBZ9G4hiF8supkvZ105v1eYOziQQZv3jDZDIifcKNI="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_16807027370481293165","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"Rule
         1: product PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size
         2.\nRule 3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships
         in box size 4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product
@@ -900,93 +940,95 @@ http_interactions:
         box size 3.\nRule 396: product PX-396 ships in box size 4.\nRule 397: product
         PX-397 ships in box size 5.\nRule 398: product PX-398 ships in box size 6.\nRule
         399: product PX-399 ships in box size 0.\nRule 400: product PX-400 ships in
-        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
-        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"1420ab8d-1e5d-41fb-8005-4fdde5bae070","type":"function","function":{"name":"find_tools","arguments":"{\"query\":\"view
-        calendar events for a date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
-        user asks what''s on their calendar on 2026-11-06. I need a calendar tool.
-        I should use find_tools to find a calendar tool.","format":"unknown"}]},{"role":"tool","tool_call_id":"1420ab8d-1e5d-41fb-8005-4fdde5bae070","content":"These
-        tools are now loaded. They are not in your tool list, so calling one by its
-        own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool
-        tool: set name to the tool''s name exactly as written below, and set arguments
-        to a string holding its arguments as a JSON object that matches its parameters.
-        Use \"{}\" as arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
-        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
-        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"d0143723-0589-4925-9588-558b9f8bb94a","type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
-        \\\"2026-11-06\\\"}\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"Call
-        calendar/list_events with date 2026-11-06.","format":"unknown"}]},{"role":"tool","tool_call_id":"d0143723-0589-4925-9588-558b9f8bb94a","content":"On
-        2026-11-06: dentist at 09:00, team lunch at 12:30."}],"provider":{"order":["coreweave"],"allow_fallbacks":false},"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
-        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
-        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer__providers__deferred_tool_gateway__tool","description":"Calls
+        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
         a tool that another tool has loaded. The result of the tool that loaded it
-        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
         loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
         loaded tool''s arguments as a JSON-encoded object string matching its parameters,
         such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
-        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}]}'
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
     headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
-      - application/json
-      User-Agent:
-      - OpenAI::Client/Ruby 0.97.0
-      X-Stainless-Arch:
-      - arm64
-      X-Stainless-Lang:
-      - ruby
-      X-Stainless-Os:
-      - MacOS
-      X-Stainless-Package-Version:
-      - 0.97.0
-      X-Stainless-Runtime:
-      - ruby
-      X-Stainless-Runtime-Version:
-      - 4.0.9
-      Content-Type:
-      - application/json
-      X-Stainless-Retry-Count:
-      - '0'
-      X-Stainless-Timeout:
-      - '600.0'
-      Content-Length:
-      - '21621'
+      - "*/*"
   response:
     status:
       code: 200
       message: OK
     headers:
-      Date:
-      - Thu, 12 Nov 2026 21:15:27 GMT
+      X-Gemini-Service-Tier:
+      - standard
       Content-Type:
-      - application/json
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Origin:
-      - "*"
-      X-Generation-Id:
-      - gen-1794518127-gXUSmmZxjjXB1rxaNko7
-      Access-Control-Expose-Headers:
-      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
-      X-Openrouter-Release:
-      - api;02ed3a66-ff60-4a6d-adaf-2ee1b96e1614
-      Permissions-Policy:
-      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
-        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
-      Referrer-Policy:
-      - no-referrer, strict-origin-when-cross-origin
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:24 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
       X-Content-Type-Options:
       - nosniff
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - a5988d589955eb7b-SEA
+      Server-Timing:
+      - gfet4t7; dur=960
       Alt-Svc:
-      - h3=":443"; ma=86400
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTQ1MTgxMjctZ1hVU21tWnhqalhCMXJ4YU5rbzciLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk0NTE4MTI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiQ29yZVdlYXZlIiwic3lzdGVtX2ZpbmdlcnByaW50IjpudWxsLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjoiT24gKioyMDI2LTExLTA2KiogeW91IGhhdmU6XG5cbi0gKipEZW50aXN0Kiog4oCUIDA5OjAwXG4tICoqVGVhbSBsdW5jaCoqIOKAlCAxMjozMCIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6bnVsbH19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6Njk1NSwiY29tcGxldGlvbl90b2tlbnMiOjM2LCJ0b3RhbF90b2tlbnMiOjY5OTEsImNvc3QiOjAuMDAwMTU3MDgsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6NjkxMiwiY2FjaGVfd3JpdGVfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjAsInZpZGVvX3Rva2VucyI6MH0sImNvc3RfZGV0YWlscyI6eyJ1cHN0cmVhbV9pbmZlcmVuY2VfY29zdCI6MC4wMDAxNTcwOCwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDE0MzQsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAxMzY4fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjoxLCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQ==
-  recorded_at: Thu, 12 Nov 2026 21:15:28 GMT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "On November 6, 2026, you have:\n- **Dentist** at 09:00\n- **Team lunch** at 12:30",
+                    "thoughtSignature": "EmAKXgFpFH0TrvqMbr/0bkw4cElPu230KpTrRu+X1DnhyznJdAvFc1q7Vy+pgR2mCq5BX4IxA0X6avbsU0RWYLl6+yAvre1zblXKTkUUMvqa6g8Q7z8PXz20r+tzak6wnpE="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8289,
+            "candidatesTokenCount": 40,
+            "totalTokenCount": 8329,
+            "cachedContentTokenCount": 6096,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8289
+              }
+            ],
+            "cacheTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 6096
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "u4_3apuCFv22ur8PnI21yAU"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:24 GMT
 recorded_with: VCR 6.4.0

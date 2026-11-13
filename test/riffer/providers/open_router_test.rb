@@ -1198,7 +1198,7 @@ describe Riffer::Providers::OpenRouter do
   describe "deferred tools" do
     let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:gateway_tool) { Riffer::Providers::DeferredToolGateway::Tool }
-    let(:gateway_wire_name) { "riffer__providers__deferred_tool_gateway__tool" }
+    let(:gateway_wire_name) { "riffer_gateway" }
     let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
     let(:list_events) do
       stub_tool("ListEvents") do

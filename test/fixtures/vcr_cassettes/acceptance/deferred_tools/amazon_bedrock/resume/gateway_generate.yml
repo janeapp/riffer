@@ -1,0 +1,317 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]}],"system":[{"text":"If you need a tool you don''t have,
+        use find_tools. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","inputSchema":{"json":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}}}},{"toolSpec":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - eabfa4f8-b9d0-4e56-bd3f-b54a9ac567a0
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261113T223209Z
+      X-Amz-Content-Sha256:
+      - a4575341ffca25e44f94647193dfbf5856b5e62416b5de8f48298833f6ef0974
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '1213'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:32:10 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '459'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - '0788ab0f-96f5-4680-b67c-3ea0d9d5d6b1'
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":774},"output":{"message":{"content":[{"toolUse":{"input":{"query":"get
+        calendar events for a specific date"},"name":"find_tools","toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":700,"outputTokens":57,"serverToolUsage":{},"totalTokens":757}}'
+  recorded_at: Fri, 13 Nov 2026 22:32:10 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","name":"find_tools","input":{"query":"get
+        calendar events for a specific date"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","content":[{"text":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]}}]}],"system":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","inputSchema":{"json":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}}}},{"toolSpec":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 75ea9bf1-5dd0-4b6f-83dd-3a25a82145f5
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261113T223210Z
+      X-Amz-Content-Sha256:
+      - 52cb67bffec51d0c5a2ac1109f5dd7694ab40e574760ef9513388fd72a01e5dc
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '2137'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:32:11 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '485'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 86e46795-e660-4f08-8175-455d997d8cf9
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":905},"output":{"message":{"content":[{"toolUse":{"input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"},"name":"riffer_gateway","toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":963,"outputTokens":92,"serverToolUsage":{},"totalTokens":1055}}'
+  recorded_at: Fri, 13 Nov 2026 22:32:11 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","name":"find_tools","input":{"query":"get
+        calendar events for a specific date"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","content":[{"text":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]}}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","content":[{"text":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}}]}],"system":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","inputSchema":{"json":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}}}},{"toolSpec":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 326ba379-a9cf-45b1-a20f-28370f254e96
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261113T223211Z
+      X-Amz-Content-Sha256:
+      - 3403f9394a68331e4c153642257f6862a51795d5dcb20f65ed27426a1db34501
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '2501'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:32:12 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '410'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - e85e4122-b79c-4a40-bb5e-365f17708d95
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6ODAzfSwib3V0cHV0Ijp7Im1lc3NhZ2UiOnsiY29udGVudCI6W3sidGV4dCI6IllvdSBoYXZlIHR3byBldmVudHMgb24gTm92ZW1iZXIgNiwgMjAyNjpcblxuLSAqKjk6MDAqKiDigJMgRGVudGlzdFxuLSAqKjEyOjMwKiog4oCTIFRlYW0gbHVuY2gifV0sInJvbGUiOiJhc3Npc3RhbnQifX0sInN0b3BSZWFzb24iOiJlbmRfdHVybiIsInVzYWdlIjp7ImNhY2hlUmVhZElucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVSZWFkSW5wdXRUb2tlbnMiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VucyI6MCwiaW5wdXRUb2tlbnMiOjEwODgsIm91dHB1dFRva2VucyI6NDAsInNlcnZlclRvb2xVc2FnZSI6e30sInRvdGFsVG9rZW5zIjoxMTI4fX0=
+  recorded_at: Fri, 13 Nov 2026 22:32:12 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","name":"find_tools","input":{"query":"get
+        calendar events for a specific date"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","content":[{"text":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]}}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","content":[{"text":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}}]},{"role":"assistant","content":[{"text":"You
+        have two events on November 6, 2026:\n\n- **9:00** – Dentist\n- **12:30**
+        – Team lunch"}]},{"role":"user","content":[{"text":"And on 2026-11-07?"}]}],"system":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","inputSchema":{"json":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}}}},{"toolSpec":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 98e5f35c-b861-4a24-894b-d87d89ac6bcd
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261113T223212Z
+      X-Amz-Content-Sha256:
+      - 3e58139b88da96914b3d92c18b39b3bb1962b12a2f5d0dcbca2b8dd4c256c0e3
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '2698'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:32:13 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '486'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5bca27c8-6324-46b0-a4d5-b31001b7ca75
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":850},"output":{"message":{"content":[{"toolUse":{"input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-07\"}"},"name":"riffer_gateway","toolUseId":"tooluse_89iUlWe0UYoJZl4PrCSIgb","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":1142,"outputTokens":92,"serverToolUsage":{},"totalTokens":1234}}'
+  recorded_at: Fri, 13 Nov 2026 22:32:13 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","name":"find_tools","input":{"query":"get
+        calendar events for a specific date"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_0pwDYPHimj6fUOIAtxQBY3","content":[{"text":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]}}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_m9sA8NAG67mb8CKvfXraNd","content":[{"text":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}}]},{"role":"assistant","content":[{"text":"You
+        have two events on November 6, 2026:\n\n- **9:00** – Dentist\n- **12:30**
+        – Team lunch"}]},{"role":"user","content":[{"text":"And on 2026-11-07?"}]},{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_89iUlWe0UYoJZl4PrCSIgb","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-07\"}"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_89iUlWe0UYoJZl4PrCSIgb","content":[{"text":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}]}}]}],"system":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"toolConfig":{"tools":[{"toolSpec":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","inputSchema":{"json":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}}}},{"toolSpec":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}}}]},"requestMetadata":{"kind":"agent","agent":""}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 0e7ea346-80fe-401f-9d38-3fc72954b181
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261113T223213Z
+      X-Amz-Content-Sha256:
+      - 78680a1b33ba80070c75ceba0abf649b076e1cb203665dfe367521342a8b2547
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.9 md/4.0.9 m/Z,b,D,g
+      Content-Length:
+      - '3062'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:32:14 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '420'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 28abbf43-3aa2-47a6-b073-27fe13171711
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6ODYzfSwib3V0cHV0Ijp7Im1lc3NhZ2UiOnsiY29udGVudCI6W3sidGV4dCI6Ik9uIE5vdmVtYmVyIDcsIDIwMjYsIHlvdSBoYXZlIHRoZSBzYW1lIHR3byBldmVudHM6XG5cbi0gKio5OjAwKiog4oCTIERlbnRpc3Rcbi0gKioxMjozMCoqIOKAkyBUZWFtIGx1bmNoIn1dLCJyb2xlIjoiYXNzaXN0YW50In19LCJzdG9wUmVhc29uIjoiZW5kX3R1cm4iLCJ1c2FnZSI6eyJjYWNoZVJlYWRJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlUmVhZElucHV0VG9rZW5zIjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbkNvdW50IjowLCJjYWNoZVdyaXRlSW5wdXRUb2tlbnMiOjAsImlucHV0VG9rZW5zIjoxMjY3LCJvdXRwdXRUb2tlbnMiOjQzLCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MTMxMH19
+  recorded_at: Fri, 13 Nov 2026 22:32:14 GMT
+recorded_with: VCR 6.4.0

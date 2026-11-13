@@ -52,7 +52,6 @@ module Riffer::Providers::DeferredToolGateway
   # : (Array[singleton(Riffer::Tool)]) -> String
   def describe_loaded_tools: (Array[singleton(Riffer::Tool)]) -> String
 
-  # Names the gateway as the model sees it in its tool list; models copy a raw namespaced name into calls verbatim.
   # --
   # : () -> String
   def loaded_tools_header: () -> String

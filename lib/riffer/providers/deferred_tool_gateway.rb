@@ -139,13 +139,12 @@ module Riffer::Providers::DeferredToolGateway
     [loaded_tools_header, JSON.generate(entries)].join("\n\n")
   end
 
-  # Names the gateway as the model sees it in its tool list; models copy a raw namespaced name into calls verbatim.
   #--
   #: () -> String
   def loaded_tools_header
     "These tools are now loaded. They are not in your tool list, so calling one by its own name fails. Call each " \
-      "one through the #{Riffer::Wire.encode_tool_name(Tool.name)} tool: set name to the tool's name exactly as " \
-      "written below, and set arguments to a string holding its arguments as a JSON object that matches its " \
-      "parameters. Use \"{}\" as arguments for a tool without parameters."
+      "one through the #{Tool.name} tool: set name to the tool's name exactly as written below, and set arguments " \
+      "to a string holding its arguments as a JSON object that matches its parameters. Use \"{}\" as arguments for " \
+      "a tool without parameters."
   end
 end

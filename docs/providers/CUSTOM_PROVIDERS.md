@@ -239,7 +239,7 @@ The `supports_deferred_tools?` class method says whether your provider loads [de
 
 An agent with `strategy: :gateway` works on your provider either way, through the [gateway](../TOOLS.md#the-gateway-strategy), with no code in your provider. It never sees `options[:deferred_tools]`, even if `supports_deferred_tools?` returns true. Instead, `build_request_params` receives:
 
-- `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool`, so your tool conversion handles it, strict mode included. Its name is its default identifier, `riffer/providers/deferred_tool_gateway/tool`: if your API rejects `/` in tool names, send names through `encode_tool_name` and read them back with `decode_tool_name(name, tools: @current_tools)`, as for any namespaced tool; `@current_tools` includes the gateway.
+- `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool` named `riffer_gateway`, so your tool conversion handles it, strict mode included.
 - Messages where each call to a deferred tool is a call to the gateway, its result is named after the gateway, and a result that loaded tools has their descriptions appended to its content.
 
 The model's calls to the gateway that you return from `extract_tool_calls`, or stream as `ToolCallDone` events, are turned back into calls to the real tools before they leave the provider, and the `ToolCallDelta` events you stream for them are dropped.

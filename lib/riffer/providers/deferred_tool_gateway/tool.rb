@@ -2,6 +2,7 @@
 # rbs_inline: enabled
 
 class Riffer::Providers::DeferredToolGateway::Tool < Riffer::Tool
+  identifier "riffer_gateway"
   description "Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name " \
               "and parameters."
 

@@ -49,8 +49,8 @@ describe Riffer::Providers::DeferredToolGateway do
       }
     end
 
-    it "is a valid tool named by its default identifier" do
-      expect([tool.name, tool.validate_as_tool!]).must_equal ["riffer/providers/deferred_tool_gateway/tool", true]
+    it "is a valid tool named riffer_gateway" do
+      expect([tool.name, tool.validate_as_tool!]).must_equal ["riffer_gateway", true]
     end
 
     it "takes a string name and string arguments, both required, with no other properties" do
@@ -94,7 +94,7 @@ describe Riffer::Providers::DeferredToolGateway do
 
       expect(wrapped.name).must_equal "connect_calendar"
       expect(wrapped.content).must_equal <<~TEXT.chomp
-        These tools are now loaded. They are not in your tool list, so calling one by its own name fails. Call each one through the riffer__providers__deferred_tool_gateway__tool tool: set name to the tool's name exactly as written below, and set arguments to a string holding its arguments as a JSON object that matches its parameters. Use "{}" as arguments for a tool without parameters.
+        These tools are now loaded. They are not in your tool list, so calling one by its own name fails. Call each one through the riffer_gateway tool: set name to the tool's name exactly as written below, and set arguments to a string holding its arguments as a JSON object that matches its parameters. Use "{}" as arguments for a tool without parameters.
 
         [{"name":"calendar/list_events","description":"Lists calendar events","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false}},{"name":"create_event","description":"Creates a calendar event","parameters":{"type":"object","properties":{},"required":[],"additionalProperties":false}}]
       TEXT
