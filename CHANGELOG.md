@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.57.0](https://github.com/janeapp/riffer/compare/riffer/v0.56.0...riffer/v0.57.0) (2026-11-13)
+
+
+### Features
+
+* accept symbol param types and deprecate Ruby class types ([#572](https://github.com/janeapp/riffer/issues/572)) ([3aa722c](https://github.com/janeapp/riffer/commit/3aa722c170162c6f53b8374044806be20673dcb5))
+* **agent:** add deferred tools that a tool can load partway through a run ([#557](https://github.com/janeapp/riffer/issues/557)) ([6ee3acb](https://github.com/janeapp/riffer/commit/6ee3acb4e38cae58eac5615ff0f77b876a4305b2))
+* **anthropic:** continue pause_turn turns automatically ([#539](https://github.com/janeapp/riffer/issues/539)) ([b6fbedc](https://github.com/janeapp/riffer/commit/b6fbedce30475d1013e9c33bb5bad89dd4790d4b))
+* **anthropic:** load deferred tools natively on anthropic and anthropic_vertex ([#575](https://github.com/janeapp/riffer/issues/575)) ([bba6541](https://github.com/janeapp/riffer/commit/bba65419f01163e9688b0dae75c863afd97bb5da))
+* deprecate MCP client support ([#571](https://github.com/janeapp/riffer/issues/571)) ([0b031a4](https://github.com/janeapp/riffer/commit/0b031a4ecaf730a70d6fcfbb4dc1e2bca2014b0d))
+* **evals:** deprecate Riffer::Evals and config.evals ([#573](https://github.com/janeapp/riffer/issues/573)) ([c66a0ba](https://github.com/janeapp/riffer/commit/c66a0bad842812521d9351f0257ab9cd1b701e20))
+* **openai:** load deferred tools natively through additional_tools ([#576](https://github.com/janeapp/riffer/issues/576)) ([d57837f](https://github.com/janeapp/riffer/commit/d57837f9eb2d96c3f735b18bdf9ed9a198a3f2d9))
+* **providers:** load deferred tools on any provider through a gateway tool ([#578](https://github.com/janeapp/riffer/issues/578)) ([92444fc](https://github.com/janeapp/riffer/commit/92444fc0ed35e0c3909f731628b686b2323ed8d8))
+
+
+### Bug Fixes
+
+* **gemini:** encode namespaced tool names on the wire ([#582](https://github.com/janeapp/riffer/issues/582)) ([d78e911](https://github.com/janeapp/riffer/commit/d78e91120e7dcd1e197b6f3a7d0c57ba25d48cbd))
+
 ## [0.56.0](https://github.com/janeapp/riffer/compare/riffer/v0.55.0...riffer/v0.56.0) (2026-11-09)
 
 
