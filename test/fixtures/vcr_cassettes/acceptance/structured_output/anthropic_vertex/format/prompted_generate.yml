@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Book
+        a visit starting 2026-10-26T09:30:00-04:00 at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '1573'
+      Content-Type:
+      - application/json
+      Internal-Context-Length:
+      - '100000'
+      Pinnacle-Error-Category:
+      - no_error
+      Stream-Reported-Http-Code:
+      - '200'
+      Request-Id:
+      - req_vrtx_011Ch1jpNw8He7zabU79x36m
+      Internal-Input-Tokens:
+      - '378'
+      Date:
+      - Fri, 13 Nov 2026 22:45:51 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '239'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jpNxcwZiWKnQ29Yq9R","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS+AYKEggTEAIYAjgBQgh0aGlua2luZxIMVajbRlmkSRsyxYehGgwlPOs7oQ2gVWOejgkiME62nUio6Z48dokyyCgkchITiSriBypTBmGi3g7aEQ0nbiuCOfoSfGxCc/hjNTcpzyqTBobyLFCxDKWZQT8tyVJAE7AJ9XXqxt4Eb2xH+SKLgi6V5pwvPpIFgWbNK9agYhrY5M9ZtVvVFd00GERtHLrVOuB65tbflLdf7SKOUl7SYsHk+BcfGIb2ANXNV8ZLcR1KkBOJ9TQywx9z6epoqq3wRunl15iyjzeaNL0EIbHm8/BpSQfizGUCH0g/uzJOuowH6en94W5/v3OXcMtz9hsKUyb6o2n3sRpibjX08vaGoUwJmzrp0iW0y3m8h/UXi3A1O4C0R/chTbOOJuMnGS2r74K3X2OZl57+LOjvwhyeEWk5Wm5xHMBLyqfyBGujGQfXY88OrEE8MHZiWOtTWZQesyYPx1bayLTWf3iiWAdiTJl68s+QfkLVY6Hhfw8b70IFHMlejxEJow2nRkeQq928ZWhIVD0wKWorpnU2q9liOUqnBUPtDKvIpxY0yiBdZhE4emEU1hBLWgmz0Ga1vPeqbgO+c0jKDpVxW2302rgD3mXF4PgJ7NUwcPNO8XhRZWOGbnDr3fCmkA2GrHTGHkQvRwLP9sUgxkJosjHZMcXMW72VFAs0gjxoh0rakUTmxCPSdVDyAPawrDFe/kfqWoqcQWUKyVuHgyhUOvDZEZOWba5nji5UaBiyQ83Iatc9jEAi9Jn2TTd8Kf6LElJg2BqR51S0Mu4hUwOrIFUWio4jqMRw0i2u1crIbIWGBo3oFQOSUVcGAwtHVTQCPQqMvlVXjZ1QBG5ZBCBenSTUp57yuxVVcgHhy4grpiLgQ48yPDh+FVuvHJgN98wEh1TFXUJCQbg05UJrtKD38wutZEJ10EyGF5ku93OvMNi2rW9vQ9vbWHgu7p22wvzuyo3R4Ds8zYOF/C0yX6HHUvJ5yvBMG253jpXAmMj6nNrCPJceneA/yC7RHMrkqOimWDtB+LQ5YzeESTlDvypeFAChrCiB1IKvV4EcQceQfAr12TtTd0JbC7kDClA7flxbVwIDYRREjK4u9ncRNjgq7s61E1UzvZ5/Gqfiz+MGumRGQJv8wguS6k/d2TAMaDX/jrU/Ek8ZPqaHta0YAQ=="},{"type":"text","text":"{\"visit_on\":\"2026-10-26\",\"starts_at\":\"2026-10-26T09:30:00-04:00\",\"clinic_ids\":[\"550e8400-e29b-41d4-a716-446655440000\"]}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":378,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":239,"output_tokens_details":{"thinking_tokens":168},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:51 GMT
+recorded_with: VCR 6.4.0

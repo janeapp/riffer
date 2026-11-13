@@ -1,0 +1,116 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Extract
+        info from: Jane works at 42 King St in Vancouver. No other details are known.
+        Return null for any unknown fields.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Date:
+      - Fri, 13 Nov 2026 22:45:42 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - 8be42750-0150-4ca4-b61e-9e1501413091
+      X-Accel-Buffering:
+      - 'no'
+      Request-Id:
+      - req_vrtx_011Ch1joqnPD9Ehna87Qquwq
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1joqo7wrQfUUog46dy7","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":351,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":7,"speed":"standard"}}         }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS2AYKEggTEAIYAjgBQgh0aGlua2luZxIMW5LBzR+firMUZ3S+GgyD/tjjaZuEnUEuxz8iMMSRIKZJz+q69/zWZ1YWnFp/soX6CFe4wrcC13noX4pPPcCCSVULSxHKYqmWSft7TSrzBchQ23lLRzh2x/Uq9Xu5aoL66VckXkLF21+y7mpxXx8K+1KZSVhVtYGY+Fyzav1Mlvy9TrXYVwlc2SewlISFoaRYNWkEF7RWN6doKMAkXCyOwedIc6HhXm/9jgYHf/kQeOHFl+dX8OjXDmGD7C9ZotVJCF9ViRJqtIBd9x7Twwvobx045yb2W4WYm1tidRxKrjCzx/hv39MhyBQjXH6Ae+M1K9UeR37b8Q2BuCWfqSfeDPn1BuN3TwOyqmtp9IOSe/VybrKS9yI07cUizJqPkPsNvWCeIajUeirLEhbHeXwOT5O+0vHg91yVbQalh1LkG5zxKIkFYDRwx81mxfjMSf4x7ZYyxtXFWxxzYG7ddGscVeFaenraodqk321w/F4aBDsHYdKA0jYFNsqO0OqN6kH5RfEUN81EZHw3i7ZuiDFRseOaMBWadXZ+TiLPaXEb0VwmlL22A/dMUze7h84hAitjaN0NsgT/x6CyzflaItbTfQttLlhFkoS1XGIy4miwtuAR3nP2AUxkX/w9e7rkMcx2Ynb45JvkvrjuG5DMP2QjF5GCyXuvEy5Ju3tkC9sYZUlYmVNTs9ryLGJSElSFR6NdDaEGhldrZTiMro1IZc729RN9JuKq7CodDovW37WBeJTRP6cFyZ7/SMcDDXZHhzcppvBNAXwqA5ZW/00SdTn05H194NmJ4v4ikHHuWfJLvtelRmyZb4arXil8JcyRp0YZZpc9GE7amCfM5PL7GuesL+0nZz73MnSsxEmJt7TOhqVEIGFw3X6M1nW3IasvpAl3UXEaalXmyTovNZL79vRYsI5WoshrgzF7i1CEDLplkai+6xLDYL+CleRhxjB/lXfrtOhBXuxfZhDBnB1ey8p6Ore0FbwO86YuhwWebCd0mrQXj1a3aG0qz8iIQKW+MRePxFIkJ3/OIH0pX63aYs7HA3rIwAnmUtFmFGMjsas+llvUNttEqwTBJIqC9k/yaA/g8y5EHr1ba3GAjFztZIdf7+2VGAE="}   }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0       }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\"name\":\"J"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ane\",\"address\":{\"street\":"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"42 King St\",\"city\":"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"Vancouver\",\"post"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"al_code\":null,\"country"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\":null}}"} }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1       }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":351,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":173,"output_tokens_details":{"thinking_tokens":128}}               }
+
+        event: message_stop
+        data: {"type":"message_stop" }
+
+  recorded_at: Fri, 13 Nov 2026 22:45:43 GMT
+recorded_with: VCR 6.4.0
+...

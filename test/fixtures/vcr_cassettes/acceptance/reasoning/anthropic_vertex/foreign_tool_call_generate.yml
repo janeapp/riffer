@@ -1,0 +1,68 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_01A","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01A","content":"It
+        is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Output-Tokens:
+      - '163'
+      Internal-Context-Length:
+      - '100000'
+      Date:
+      - Fri, 13 Nov 2026 22:45:11 GMT
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Request-Id:
+      - req_vrtx_011Ch1jmTJUYgoDZBeenNXcM
+      Internal-Weighted-Total-Tokens:
+      - '1296'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Input-Tokens:
+      - '481'
+      Pinnacle-Error-Category:
+      - no_error
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ192cnR4XzAxMUNoMWptVEtEVVJ0cjdhSzRrd3NlcSIsInR5cGUiOiJtZXNzYWdlIiwicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOlt7InR5cGUiOiJ0aGlua2luZyIsInRoaW5raW5nIjoiIiwic2lnbmF0dXJlIjoiQ0FRU3hnVUtFZ2dURUFJWUFqZ0JRZ2gwYUdsdWEybHVaeElNZFA1MjZHNEpOR3JnNVA2a0dnd29iN0U0U1FGWUtDUEJnQ2tpTUpwbFRsZ1ZpNW9IejdnRkphbkZySGZ4MklqMGpEVDEzZ1NySzJleU9MdlNXZWRQdHFXZHJPNE1mSW1qWTV6YnZpcmhCTnZ3VFpPRERLNmJSOGwwbUoza1padGhuR3ptbzZRaGNiS0hyTmh5RjErb3Z5OEZTRnFsVkg0VjU1S2MrOVZDVGNmR01CZ1NHc3BtZS9FSVlYU0MycHdkVkhUZG5jcG9ZNnkrQVJiUzNlclBtdUVEV0haOGRsVGdrMU5tb1h2bFRnYVZRQ0hmWVM1aTZoSVhQTERvZi83aGFkQlZIZm1YK3BjRmUwUklURGloRXJleVhRSS9iMDRvUVB5MTRtYVdoY1BaUkt2T3BraFlHb25Dc05kSVdtbTRGOWtnRUV3N0tDd1QrRkoramhKd3pTTE5lKzNpTzkySWFEQXJuTkJJS2dRY01STENJODlQSDVqTDNnUzdzTExTUnkxV3ptbUowRVFHWFFMVkJyNXZhWmdBWjR2c0pETDE4SWxMNnJvclV0eDBhVXZYdGVRbFpEQWdJaXVEUG9hUUVqdmdRWGpUWDNJYnJGR0NrSUE4YTZrV1RCQzdyMncwZHA0dENkZEkySzYxWGtwcFRnVjVwRnlUWURNMnVoaHEyRXoxSjlYRFhiVXI4Vkd6cTZRSk1tL3czRnZaNmkrMk1yczFFY0lhcmpWL2RuN3JsS2pycHhZT0JrM0hlUnBNQzV4WFJpN00wcXlKVHVhRlJ2NVF0amkzZWJQZVF3NFpVOU1qSmdja3V5L1l0S3E2TEx1LzloUkZZdklQS2hQdEtuNFhJZExRdzBXTVIyTnJINDQwUXBQVjZ5L3k3YU1pamsyTHVwK3I3RW43dlhzVzVKZ0Zwd2lWVzRnclo5M0lRNy9IckRLUXo1akZhTkR4NTYxUk9QQ25HVWs2dDdKanNxS0FJWHBDaGhFU1RPaFI2VjNFZXl0T0dGeG0zNkl3WUZJVytwNTNRRzF5WmRuaUcyUXg3QmZrWmJEMzRJUXJXb1ZnZFEySk5iVmtBdzFzVS9OYlEwOEZGVUxnTmtFVDNQV09QbmhoN1ZQV2pWK1JnTXIrM0MzUTFLc1pJaitBajYwYnBRQ1QzcnpmK2RUNWhSN0tDTG13S090Um91QkQxLzl3NmJScW5FeG1pcTIwL0dLMEtCZ0IifSx7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IlRoZSBsYXJnZXN0IENhbmFkaWFuIHByb3ZpbmNpYWwgY2FwaXRhbCBieSBwb3B1bGF0aW9uIGlzICoqVG9yb250byoqLCB0aGUgY2FwaXRhbCBvZiBPbnRhcmlvLCB3aXRoIGFib3V0IDIuOCBtaWxsaW9uIHJlc2lkZW50cyBpbiB0aGUgY2l0eSBwcm9wZXIuXG5cbkl0J3MgY3VycmVudGx5ICoqMTXCsEMqKiBpbiBUb3JvbnRvLiJ9XSwiY29udGFpbmVyIjpudWxsLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjQ4MSwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE2Mywib3V0cHV0X3Rva2Vuc19kZXRhaWxzIjp7InRoaW5raW5nX3Rva2VucyI6OTh9LCJzcGVlZCI6InN0YW5kYXJkIn19
+  recorded_at: Fri, 13 Nov 2026 22:45:11 GMT
+recorded_with: VCR 6.4.0

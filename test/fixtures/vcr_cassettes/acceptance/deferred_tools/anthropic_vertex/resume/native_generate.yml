@@ -1,0 +1,360 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Input-Tokens:
+      - '530'
+      Request-Id:
+      - req_vrtx_011Ch1jgwzVmH612nMBwFYv1
+      Stream-Reported-Http-Code:
+      - '200'
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Content-Type:
+      - application/json
+      Internal-Output-Tokens:
+      - '57'
+      Date:
+      - Fri, 13 Nov 2026 22:44:09 GMT
+      Internal-Weighted-Total-Tokens:
+      - '815'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jgx2Dy6g3tRjLjYTxt","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":530,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":57,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:09 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","content":[{"type":"tool_reference","tool_name":"calendar__list_events"}]}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:44:10 GMT
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '708'
+      Internal-Weighted-Total-Tokens:
+      - '988'
+      Internal-Output-Tokens:
+      - '56'
+      Request-Id:
+      - req_vrtx_011Ch1jh153EQEUHtC12Cxrc
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jh1632QvniteGK5mpJ","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","name":"calendar__list_events","input":{"date":"2026-11-06"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":708,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":56,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:10 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","content":[{"type":"tool_reference","tool_name":"calendar__list_events"}]}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","name":"calendar__list_events","input":{"date":"2026-11-06"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Output-Tokens:
+      - '46'
+      Internal-Weighted-Total-Tokens:
+      - '1027'
+      Internal-Context-Length:
+      - '100000'
+      Content-Type:
+      - application/json
+      Request-Id:
+      - req_vrtx_011Ch1jh4om9wLSdtC35GeVz
+      Stream-Reported-Http-Code:
+      - '200'
+      Pinnacle-Error-Category:
+      - no_error
+      Date:
+      - Fri, 13 Nov 2026 22:44:11 GMT
+      Internal-Input-Tokens:
+      - '797'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jh4pGc1ogBvVPe5AG1","type":"message","role":"assistant","content":[{"type":"text","text":"You
+        have two events on November 6, 2026:\n- **9:00 AM:** Dentist\n- **12:30 PM:**
+        Team lunch"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":797,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":46,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:11 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","content":[{"type":"tool_reference","tool_name":"calendar__list_events"}]}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","name":"calendar__list_events","input":{"date":"2026-11-06"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]},{"role":"assistant","content":[{"type":"text","text":"You
+        have two events on November 6, 2026:\n- **9:00 AM:** Dentist\n- **12:30 PM:**
+        Team lunch"}]},{"role":"user","content":"And on 2026-11-07?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '857'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 13 Nov 2026 22:44:12 GMT
+      Internal-Weighted-Total-Tokens:
+      - '1137'
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Request-Id:
+      - req_vrtx_011Ch1jh9KsjtaoYAmmCx5zq
+      Internal-Output-Tokens:
+      - '56'
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jh9LsJTaNYC7XS8G89","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01QL34nABfzgCWGCfpJxWPTG","name":"calendar__list_events","input":{"date":"2026-11-07"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":857,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":56,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:12 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01FWwwgnQqU8ptxmziYfQibM","content":[{"type":"tool_reference","tool_name":"calendar__list_events"}]}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","name":"calendar__list_events","input":{"date":"2026-11-06"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01UUkKPVF3FMRZgqx8VuBTnv","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]},{"role":"assistant","content":[{"type":"text","text":"You
+        have two events on November 6, 2026:\n- **9:00 AM:** Dentist\n- **12:30 PM:**
+        Team lunch"}]},{"role":"user","content":"And on 2026-11-07?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01QL34nABfzgCWGCfpJxWPTG","name":"calendar__list_events","input":{"date":"2026-11-07"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01QL34nABfzgCWGCfpJxWPTG","content":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Output-Tokens:
+      - '49'
+      Internal-Context-Length:
+      - '100000'
+      Request-Id:
+      - req_vrtx_011Ch1jhCWN81YYs3wDgW6ak
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Input-Tokens:
+      - '946'
+      Content-Type:
+      - application/json
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Weighted-Total-Tokens:
+      - '1191'
+      Date:
+      - Fri, 13 Nov 2026 22:44:12 GMT
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jhCXcFb13Q1PEmFmqP","type":"message","role":"assistant","content":[{"type":"text","text":"On
+        November 7, 2026, you have the same two events:\n- **9:00 AM:** Dentist\n-
+        **12:30 PM:** Team lunch"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":946,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":49,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:12 GMT
+recorded_with: VCR 6.4.0

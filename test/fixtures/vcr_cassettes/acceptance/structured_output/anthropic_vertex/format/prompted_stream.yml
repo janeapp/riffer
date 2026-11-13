@@ -1,0 +1,129 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Book
+        a visit starting 2026-10-26T09:30:00-04:00 at clinic 550e8400-e29b-41d4-a716-446655440000.
+        The patient gave no email.\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"visit_on\":{\"type\":\"string\",\"description\":\"Visit
+        date\",\"format\":\"date\"},\"starts_at\":{\"type\":\"string\",\"description\":\"Visit
+        start, with its UTC offset\",\"format\":\"date-time\"},\"email\":{\"type\":\"string\",\"description\":\"Patient
+        email, if given\",\"format\":\"email\"},\"clinic_ids\":{\"type\":\"array\",\"description\":\"Clinic
+        IDs\",\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}},\"required\":[\"visit_on\",\"starts_at\",\"clinic_ids\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"visit_on\":\"<string>\",\"starts_at\":\"<string>\",\"email\":\"<string>\",\"clinic_ids\":[\"<string>\"]}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Request-Id:
+      - req_vrtx_011Ch1jpVr6xK4rvEtW8uXSr
+      X-Accel-Buffering:
+      - 'no'
+      Cache-Control:
+      - no-cache
+      Date:
+      - Fri, 13 Nov 2026 22:45:51 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - ce0d6e2c-37ba-4fad-bf99-8f8a192b5ef6
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jpVs6JsFx2UMRF4sE6","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":378,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":4,"speed":"standard"}} }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSxwUKEggTEAIYAjgBQgh0aGlua2luZxIMqV/jPntoKqYiliVEGgyUU9vSXeFdm7VofggiMNiXQJq6t2D/+ngn+G9+KCSNgDpSubMySiCjwyU5nx3T8mOqqNDN/KK4ie6PW3pBMCriBMzRtarGtsaxOCRgXmjmesZ3GYauBkn0hmFSsNN2+wa4WKfVAX5IDEuzDclPh+wAn/2LElyLqDrgBtOeAnze9NELoKt+ER4vq42/Mp9cWeBD25h6gQDuCMTl0CCXydARVoYMT9KpvjS8TDOKHQFjnW0m4/4ePTQuW5yi40GrplsS+gRoYAeAR9cBMnyX3UcH4MVZli7PpdLuFDUpfVz638GXe53H/TM0huVUURJtfUi+7vYtiU8JzOs+AtdA9XwTcBXzpnMOR+Q47f6RuYcHyLh+oBXu/t5P+LUlB2fHc7bznjL1jurwoYs38Su2wpHetCfHGCRjTOVghBqzIK5A4ma2jGBsJfF3koUKRP1cYl3c2DHuvUcYgDnF2zxEIeNfqSn0xmqlGra6tcNhzpbat2dsAEcpmA2Nc6gaFoFv68tqaqQCx5Wscm7jQH0gGjJodHNZcSc+F3/vy06DytNplrdMnZp5SVUqBvmt2azO+tgbQJKaqfINq43l8qedUimsZ1kFJ+v5S93Qy+5F9RZSdD7Z7lLuuZrfN1pM61q9pGoyZlHxJHQd/0Lm5NoOEcSslXslumlzXMLMOJD4Q5jVSyE5oTYaqugpMTIze6tfsAfuE7Fz64aZjMrAHWNJj47e63aLnQLFcwwRu6GZOrHBc0ijAvijlDygl+brLJevJoRsKjniXBOxuutw9hjjrl2qM1VqDCK4JlF6pdGavH7jxUQyr4KdJdKUk8l4r4iJtawui0vpdMLXujnzUtydijsgSRdQb7+F5dMRgvYoAnMU4TqyAyjHwa62kedZT+Hi8Yhs0WUYAQ=="}    }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0 }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\"visit"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"_on\":\"2026-10"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"-26\",\"starts_at\":"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"2026-10-26T"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"09:30:00-04:"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"00\",\"clinic_ids"}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\":[\"550e8400-e"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"29b-41d4-a"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"716-446655440000\"]"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}"}     }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1             }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":378,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":182,"output_tokens_details":{"thinking_tokens":111}}       }
+
+        event: message_stop
+        data: {"type":"message_stop"        }
+
+  recorded_at: Fri, 13 Nov 2026 22:45:52 GMT
+recorded_with: VCR 6.4.0
+...

@@ -1,0 +1,146 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is the weather in Toronto?\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096,"system":[{"type":"text","text":"Answer
+        weather questions. Always look the weather up with the tool."}],"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Input-Tokens:
+      - '604'
+      Internal-Context-Length:
+      - '100000'
+      Internal-Weighted-Total-Tokens:
+      - '859'
+      Date:
+      - Fri, 13 Nov 2026 22:46:22 GMT
+      Internal-Output-Tokens:
+      - '51'
+      Request-Id:
+      - req_vrtx_011Ch1jrjpndryyjbt7VsuZo
+      Stream-Reported-Http-Code:
+      - '200'
+      Content-Type:
+      - application/json
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jrjrX5jfNidPeNtFV4","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FZTfMuiaNn3x7nfCxyjtdT","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":604,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":51,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:22 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is the weather in Toronto?\n\nWhen you give your final answer, respond with
+        only a JSON object that conforms to the following JSON Schema, with no other
+        text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"The
+        city\"},\"celsius\":{\"type\":\"integer\",\"description\":\"The temperature
+        in degrees Celsius\"}},\"required\":[\"city\",\"celsius\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"city\":\"<string>\",\"celsius\":\"<integer>\"}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01FZTfMuiaNn3x7nfCxyjtdT","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01FZTfMuiaNn3x7nfCxyjtdT","content":"It
+        is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"system":[{"type":"text","text":"Answer
+        weather questions. Always look the weather up with the tool."}],"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Output-Tokens:
+      - '18'
+      Request-Id:
+      - req_vrtx_011Ch1jrpwcLSgapzyQUb58G
+      Date:
+      - Fri, 13 Nov 2026 22:46:23 GMT
+      Content-Type:
+      - application/json
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Weighted-Total-Tokens:
+      - '768'
+      Internal-Input-Tokens:
+      - '678'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Context-Length:
+      - '100000'
+      Pinnacle-Error-Category:
+      - no_error
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jrpy6k4So3W48N2QA3","type":"message","role":"assistant","content":[{"type":"text","text":"{\"city\":\"Toronto\",\"celsius\":15}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":678,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":18,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:23 GMT
+recorded_with: VCR 6.4.0

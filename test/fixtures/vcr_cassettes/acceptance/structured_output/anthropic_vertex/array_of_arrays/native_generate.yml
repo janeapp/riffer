@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Row
+        1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board
+        rows are: x o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x."}],"max_tokens":4096,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"rows":{"type":"array","description":"Seat
+        numbers, one array per row","items":{"type":"array","items":{"type":"integer"}}},"boards":{"type":["array","null"],"description":"Tic-tac-toe
+        boards","items":{"type":"array","items":{"type":"array","items":{"type":"string","enum":["x","o"]}}}}},"required":["rows","boards"],"additionalProperties":false}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '952'
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Date:
+      - Fri, 13 Nov 2026 22:46:10 GMT
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '99'
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Input-Tokens:
+      - '457'
+      Request-Id:
+      - req_vrtx_011Ch1jqrgGNwPEDJZwoWx3z
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jqrikVJDSLD7Genx9u","type":"message","role":"assistant","content":[{"type":"text","text":"{\"rows\":
+        [[1, 2, 3], [4, 5]], \"boards\": [[[\"x\", \"o\", \"x\"], [\"o\", \"x\", \"o\"],
+        [\"o\", \"x\", \"x\"]], [[\"o\", \"o\", \"x\"], [\"x\", \"x\", \"o\"], [\"o\",
+        \"x\", \"x\"]]]}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":457,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":99,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:11 GMT
+recorded_with: VCR 6.4.0

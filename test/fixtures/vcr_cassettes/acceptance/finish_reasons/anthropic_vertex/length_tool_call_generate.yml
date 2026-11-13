@@ -1,0 +1,66 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Save
+        a note with the full text of a 300-word story about a lighthouse keeper."}],"max_tokens":20,"tools":[{"name":"save_note","description":"Save
+        a note","input_schema":{"type":"object","properties":{"body":{"type":"string","description":"The
+        full note text"}},"required":["body"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '504'
+      Internal-Output-Tokens:
+      - '20'
+      Internal-Input-Tokens:
+      - '404'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Content-Type:
+      - application/json
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Context-Length:
+      - '100000'
+      Date:
+      - Fri, 13 Nov 2026 22:44:54 GMT
+      Request-Id:
+      - req_vrtx_011Ch1jkJ8njrhfZoeX4LYmh
+      Stream-Reported-Http-Code:
+      - '200'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jkJA2qz2tyySGUUkGy","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS8gMKEggTEAIYAjgBQgh0aGlua2luZxIMRPwKBTfAQ/qM25BuGgwi2YAh98CwPfXr//ciMNF/FApwv+V+pVPj4ViQ2RJSSEKiiw618QsUDT1ax0ZIUm3AfpsmM67W8eNtMPL9QyqNA95m/LjOtx/VFhZg0+mKQDn+cuR5NyoYQzCYxTievXY2e4MO3BJzeGmswoEE6FyGIXR6U/YZukYhzmiU1jwGWYe2QiWU24HO3qdVKU2IAoUIXeLlWJykOTbw1oimVzuyWu6RHT7Ivs95F1THGcMUnjhmZ4fa4Q+CYZajvkw2YD2UNWgvcDp0M8kAbdqkmOh3X1g7cyktGl77YgtZvI+nkHFOzQSpY+yWFbiMDTVVPPSJht3xNyPb1EtO+X15o9ziOl8SBYcvusAboQm+tCKZUNCvQ41d4KrFVVWDVvLgl+DYOU5YNInzebSBPsX/DvR2fhUGnTu5avFj7eJkvRX/Re5QNRq6qv28ZTE/tqtumoSauG9rhcfNBQB+i8/17A6D+Dc54skWBuLiF0aGQQUJybwztwsJKS1Osvg4IPN+M83E/zjaAIDIv1pELhjzvv9HpJ1FPk40kDQMz9bfUtgHJO3PkDN9ylRoJxRzAesq5UI69D1WU7KkXM2Bp9BfeqNCY9TjRuTed8ZTuW264/sYAQ=="}],"container":null,"stop_reason":"max_tokens","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":404,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":20,"output_tokens_details":{"thinking_tokens":20},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:55 GMT
+recorded_with: VCR 6.4.0

@@ -220,6 +220,22 @@ describe Riffer::Providers::AnthropicVertex do
       expect(body.key?(:deferred_tools)).must_equal false
     end
 
+    it "downloads a URL file and sends it inline as base64" do
+      Riffer.config.files.allow_downloads = true
+      Riffer.config.files.downloader = ->(_url, **) { "png-bytes" }
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/red.png")
+      transport.response = message_body
+      provider.generate_text(messages: [Riffer::Messages::User.new("Describe this", files: [file])], model: model)
+      body = transport.requests.first.last
+
+      source = { type: "base64", media_type: "image/png", data: Base64.strict_encode64("png-bytes") }
+
+      expect(body[:messages].first[:content].last).must_equal({ type: "image", source: source })
+    ensure
+      Riffer.config.files.allow_downloads = false
+      Riffer.config.files.downloader = Riffer::Files::Downloader.new
+    end
+
     it "streams from streamRawPredict and emits finish reason then usage after the text" do
       body = sse(
         message_start(input_tokens: 10, output_tokens: 1),

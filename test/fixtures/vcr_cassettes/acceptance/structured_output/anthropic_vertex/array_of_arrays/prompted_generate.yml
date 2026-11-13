@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Row
+        1 has seats 1, 2 and 3. Row 2 has seats 4 and 5. Game 1''s tic-tac-toe board
+        rows are: x o x, o x o, o x x. Game 2''s rows are: o o x, x x o, o x x.\n\nWhen
+        you give your final answer, respond with only a JSON object that conforms
+        to the following JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"description\":\"Seat
+        numbers, one array per row\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"boards\":{\"type\":\"array\",\"description\":\"Tic-tac-toe
+        boards\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"x\",\"o\"]}}}}},\"required\":[\"rows\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"rows\":[[\"<integer>\"]],\"boards\":[[[\"x
+        | o\"]]]}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Input-Tokens:
+      - '354'
+      Internal-Context-Length:
+      - '100000'
+      Content-Type:
+      - application/json
+      Internal-Output-Tokens:
+      - '218'
+      Internal-Weighted-Total-Tokens:
+      - '1444'
+      Date:
+      - Fri, 13 Nov 2026 22:46:12 GMT
+      Request-Id:
+      - req_vrtx_011Ch1jqz2nGvfHrBm2NAGa5
+      Stream-Reported-Http-Code:
+      - '200'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jqzChPqkkj49BPkmiV","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSwQUKEggTEAIYAjgBQgh0aGlua2luZxIMMOiNFLPnAJ/mIZfgGgwUA/AG2cmMuSBmcYAiMNT9qOt6leXbfxQwNc5uD2hRKoehUX3Emfwv7mexMvwL77K5+sLoAFFdnc+cD5JmeCrcBO/P8BPOhio5IYQcqMuL8tMHYjeGsC/hJ1tq5QTY4WCtMHR/eipitFNio9cN8s7IlRB8Vc0r1+RIASFnHDQPNmVEw5+3ZLG3tILRZtnJwMo02M/gsMiv6MlcoRFwxKPC3myf69Uec2EjUtssPgiYBJJX//D6CzIVD1+TTZ9zxVxYD0gXMvF3lVoPhP674kdgTj7qM+UVR0hJPfiqXIZmHh1OLhaEVRRBhuofBQcLulNUWuaTBFxX69p62ikkgTvUBBH76qQQtd6XLaZLKzhwYB0QnEQ/NplM/xKhNrjod9hXX7MAskTNVBB0GeHQO1bE9IgE28L5jcSydIH7Wn6FRtwFPqmG9XmqEMMsK1Lop1zkUpZEDn1+czVwv/e7EoQwLiKeR78/MNq4Eqv1IgX1NJFEF7CXOHBpG6osVdJFxYzIxuy/a1IumhnjkaTJlLsVuVpx1I3fXvLNpZxboebh0vJSZlSwX+x7836r+POBrV9/AvspEjgHGUxpmwo+N29XHMp4CDuxUDc7yhwX8RgqGGIHOXVSh8xf2OlGAlW0PiLsORm0kGWMJ9Rz6Ouq793XVEK4MOikdCkgUcBZTFa7jHLb4Ij62QJ32swpsMB51kUhVpH62ydp2fmECGEmOJHN6SG/uZCKm41vsRm1b5WPRrEsggVqGl5Mg/0a9hbe9nhdugsAJg8zV41X88IMUbY8tnhPIy7Tt4g1QQAjhP4WorFf6oqgQXtcQTPbgqhdimuv+GRwWt3Sl9RN7zLkswNUKsz1CkfKRfTF1tc0+/IYs2DtyJ6URhCZzziK6cYYAQ=="},{"type":"text","text":"{\"rows\":[[1,2,3],[4,5]],\"boards\":[[[\"x\",\"o\",\"x\"],[\"o\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]],[[\"o\",\"o\",\"x\"],[\"x\",\"x\",\"o\"],[\"o\",\"x\",\"x\"]]]}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":354,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":218,"output_tokens_details":{"thinking_tokens":138},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:12 GMT
+recorded_with: VCR 6.4.0

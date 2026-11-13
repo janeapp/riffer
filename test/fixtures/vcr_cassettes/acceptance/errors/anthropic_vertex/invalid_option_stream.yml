@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Say
+        hello"}],"max_tokens":4096,"temperature":5,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Pinnacle-Error-Category:
+      - user
+      Stream-Reported-Http-Code:
+      - '400'
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Fri, 13 Nov 2026 22:44:41 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: '{"type":"error","error":{"type":"invalid_request_error","message":"temperature:
+        Extra inputs are not permitted"},"request_id":"req_vrtx_011Ch1jjJ9GCmPmQdMRGaGrM"}'
+  recorded_at: Fri, 13 Nov 2026 22:44:41 GMT
+recorded_with: VCR 6.4.0

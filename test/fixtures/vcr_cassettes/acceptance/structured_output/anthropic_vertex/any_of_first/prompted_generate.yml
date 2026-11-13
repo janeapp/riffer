@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Extract
+        the address from: John lives at 123 Main St, Toronto\n\nWhen you give your
+        final answer, respond with only a JSON object that conforms to the following
+        JSON Schema, with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"result\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"error_code\":{\"type\":\"string\",\"description\":\"Why
+        no address\",\"enum\":[\"no_address\",\"multiple_addresses\"]},\"error_message\":{\"type\":\"string\",\"description\":\"Explanation
+        of the error\"}},\"required\":[\"error_code\",\"error_message\"],\"additionalProperties\":false}],\"description\":\"The
+        address, or why none was found\"}},\"required\":[\"result\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"result\":{\"street\":\"<string>\",\"city\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Internal-Output-Tokens:
+      - '27'
+      Request-Id:
+      - req_vrtx_011Ch1js1mja5mQhDCifRoxA
+      Internal-Input-Tokens:
+      - '358'
+      Pinnacle-Error-Category:
+      - no_error
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Context-Length:
+      - '100000'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Weighted-Total-Tokens:
+      - '493'
+      Date:
+      - Fri, 13 Nov 2026 22:46:26 GMT
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1js1oDueARqzGRgiCzu","type":"message","role":"assistant","content":[{"type":"text","text":"{\"result\":{\"street\":\"123
+        Main St\",\"city\":\"Toronto\"}}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":358,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":27,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:26 GMT
+recorded_with: VCR 6.4.0

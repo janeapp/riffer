@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Classify
+        the session: yoga class, in-person format."}],"max_tokens":4096,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false}}},"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Cache-Control:
+      - no-cache
+      X-Accel-Buffering:
+      - 'no'
+      Request-Id:
+      - req_vrtx_011Ch1jsPsXJwwbwbNQmo1sg
+      X-Vertex-Ai-Received-Request-Id:
+      - c94b607f-d4b1-49f2-8fa0-b4485304245d
+      Date:
+      - Fri, 13 Nov 2026 22:46:31 GMT
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jsPtWCeV9MUwZsBwUe","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":316,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"speed":"standard"}}              }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"{\"name\": \""}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Yoga class\", \"session_"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"type\": \"in_person\"}"} }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0         }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":316,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":24,"output_tokens_details":{"thinking_tokens":0}}     }
+
+        event: message_stop
+        data: {"type":"message_stop"  }
+
+  recorded_at: Fri, 13 Nov 2026 22:46:31 GMT
+recorded_with: VCR 6.4.0
+...

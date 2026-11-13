@@ -1,0 +1,85 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Save
+        a note with the full text of a 300-word story about a lighthouse keeper."}],"max_tokens":20,"tools":[{"name":"save_note","description":"Save
+        a note","input_schema":{"type":"object","properties":{"body":{"type":"string","description":"The
+        full note text"}},"required":["body"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Request-Id:
+      - req_vrtx_011Ch1jk7anh8qpMLDHKtzF2
+      Date:
+      - Fri, 13 Nov 2026 22:44:52 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - 673de902-8e40-47c8-8607-289346f9171c
+      X-Accel-Buffering:
+      - 'no'
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jk7cXPuG55r5qo36TT","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":404,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":4,"speed":"standard"}}           }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS8gMKEggTEAIYAjgBQgh0aGlua2luZxIMxMpibtytC8PjlcAkGgwxfew8a/R/IKHaDVciMIEFXmfiJ6HvhaKGaIHww4qgTvxfTtOaTiIiJxJr1+lthFeF9ubTWoJssjR6Zt04EyqNA/3jkKm3E3T6qhoWNzFk0RPe5amJkSVHvP0BgTttuV1NhS+Xe5uFlqLpfGTrKBHVQ0od9yw9SR21IEqeTYbuGDM2QGuSnhUuiebA8DuliHswx+lcDw10xBqJZCjDBnsrPSiHD6eTlv3t2TbWHcEnXm51Nm1xHFjGm3RC/v8HcrlIabuc14lFf5WlUGF3jV9EP0suvvqii9BvDJZAcwobsoOxqmaQlq4fNkLFGWilW5EWOPLLEU0+e989R2U04RiN8L34ZR7+qOPQ7ftRBaosfHcA3M8VqU1sSMRFRRv9fQt+PBcgDHZu4ZDGajhg8u6SPIYEraAmK1B4wHGVmn/Vwv1Ns7Ngqc/yZDqtZ7fzYyIThbDJD0+2IH1c3HnRkZo9l0sLNis5ECJKOgz1r7FnOSq++o5XW9SMGO7hHwTk8//eUd+sd7rs4fDvTLgWUZX1O6MqwW77FLPPRJeq1k7uhYFsm362atvC7edOu6dZOlMOMgTsIpcBvU9dl4TYtBKaGIzCKhT1xSEvg6ZLlCwYAQ=="}           }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0           }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"max_tokens","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":404,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":20,"output_tokens_details":{"thinking_tokens":20}}      }
+
+        event: message_stop
+        data: {"type":"message_stop"}
+
+  recorded_at: Fri, 13 Nov 2026 22:44:52 GMT
+recorded_with: VCR 6.4.0
+...

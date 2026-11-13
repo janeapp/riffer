@@ -1,0 +1,168 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"}],"max_tokens":4096,"system":[{"type":"text","text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"tools":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Context-Length:
+      - '100000'
+      Date:
+      - Fri, 13 Nov 2026 22:45:19 GMT
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Weighted-Total-Tokens:
+      - '1029'
+      Stream-Reported-Http-Code:
+      - '200'
+      Request-Id:
+      - req_vrtx_011Ch1jn7LiGCEvtMipDo8WH
+      Internal-Output-Tokens:
+      - '79'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Input-Tokens:
+      - '634'
+      Content-Type:
+      - application/json
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jn7NCb9qxhL9eS1Aw9","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSgAQKEggTEAIYAjgBQgh0aGlua2luZxIM5U71b53O6PdRuZAKGgwwZIO86ExmW6BtT1kiMPtGbMbsppzFiQmsU9ME0vpbSbs24pnI0o38SgjmQB9RRy4UdjSDMx/AsjVndDCV0SqbA+m5rwcfC6r7cXmguY0iYFvZCMRiV27Q4NbbsJSw9LSSKQN39WZeaIDe9cccUbRuSRNye6ZTIJcvFT/PMlevLKjpqBdmiD4EeL0MYwngw4RCpP2orWuUKwLzBGSlSmTeeZzv53CccGHvvSOwJeqS0qOEgmP5zHmR2477b2z+a0OaB1Ztx41Q6Afj5iN4VQmnh+dYZQl1k1QmNOQ2vZrkayhPM1fTpSDs9LjsmcEN2O5NLh4oWF27o9ABg7UvNaXnOD6ZpH3prhUOAxmo8AYERnvgVUP3l+JzFgv1IvZlkgummZ2Z1G1s0ZHt+/fKBS2v6Z7Q/tHtutpoOygi2vbFzz0Q1F3XqB1XSAMKEyGr/0KZc/LYdt9S34d8PmHr9Gu4na5n/exenSwN8kM67d4HFGIm3OaOGriVtHYjR4/IU6w21zy7AXJHhg7wSPU2+0J+2xFdWMbXaEfe6LKvH+DK1MgbV759zPxoS1A6nS7AcSuDN0wiAOBEqB8mAoor5WOtKEtARfESrVBZz9TB2l0fhJP1ShSc5QKDoisGmhgB"},{"type":"tool_use","id":"toolu_vrtx_01G9GrTvRTn6qg7ExcKziMNM","name":"skill_activate","input":{"name":"code-review"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":634,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":79,"output_tokens_details":{"thinking_tokens":27},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:19 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Review
+        this Ruby code: def add(a, b) a + b end"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSgAQKEggTEAIYAjgBQgh0aGlua2luZxIM5U71b53O6PdRuZAKGgwwZIO86ExmW6BtT1kiMPtGbMbsppzFiQmsU9ME0vpbSbs24pnI0o38SgjmQB9RRy4UdjSDMx/AsjVndDCV0SqbA+m5rwcfC6r7cXmguY0iYFvZCMRiV27Q4NbbsJSw9LSSKQN39WZeaIDe9cccUbRuSRNye6ZTIJcvFT/PMlevLKjpqBdmiD4EeL0MYwngw4RCpP2orWuUKwLzBGSlSmTeeZzv53CccGHvvSOwJeqS0qOEgmP5zHmR2477b2z+a0OaB1Ztx41Q6Afj5iN4VQmnh+dYZQl1k1QmNOQ2vZrkayhPM1fTpSDs9LjsmcEN2O5NLh4oWF27o9ABg7UvNaXnOD6ZpH3prhUOAxmo8AYERnvgVUP3l+JzFgv1IvZlkgummZ2Z1G1s0ZHt+/fKBS2v6Z7Q/tHtutpoOygi2vbFzz0Q1F3XqB1XSAMKEyGr/0KZc/LYdt9S34d8PmHr9Gu4na5n/exenSwN8kM67d4HFGIm3OaOGriVtHYjR4/IU6w21zy7AXJHhg7wSPU2+0J+2xFdWMbXaEfe6LKvH+DK1MgbV759zPxoS1A6nS7AcSuDN0wiAOBEqB8mAoor5WOtKEtARfESrVBZz9TB2l0fhJP1ShSc5QKDoisGmhgB"},{"type":"tool_use","id":"toolu_vrtx_01G9GrTvRTn6qg7ExcKziMNM","name":"skill_activate","input":{"name":"code-review"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01G9GrTvRTn6qg7ExcKziMNM","content":"<skill_content
+        name=\"code-review\">\nYou are a code review assistant.\n\nReview the code
+        for:\n\n- Style issues\n- Potential bugs\n- Performance problems\n\n</skill_content>"}]}],"max_tokens":4096,"system":[{"type":"text","text":"You
+        are a helpful assistant.\n\nWhen a user''s request matches a skill description
+        below, call the `skill_activate` tool with the skill name. After activation,
+        follow the skill''s instructions. If a skill''s instructions already appear
+        in your context (inside <skill_content> tags), follow them instead of activating
+        the skill again.\n\n<available_skills>\n  <skill>\n    <name>code-review</name>\n    <description>Reviews
+        code for quality, style, and potential issues.</description>\n  </skill>\n  <skill>\n    <name>data-analysis</name>\n    <description>Analyzes
+        datasets and generates summary reports.</description>\n  </skill>\n</available_skills>"}],"tools":[{"name":"skill_activate","description":"Activates
+        a skill and returns its instructions. Call this when a task matches an available
+        skill''s description.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        skill name to activate"}},"required":["name"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '774'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Date:
+      - Fri, 13 Nov 2026 22:45:24 GMT
+      Internal-Weighted-Total-Tokens:
+      - '4924'
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Context-Length:
+      - '100000'
+      Request-Id:
+      - req_vrtx_011Ch1jnBBdVxi4Kpk55bpDr
+      Content-Type:
+      - application/json
+      Internal-Output-Tokens:
+      - '830'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jnBDcsNVuV3kz8zYHk","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS6ggKEggTEAIYAjgBQgh0aGlua2luZxIMAdnKRwF0yvJth7+UGgzk0CGBewSv1csuJI8iMIKIbIAeFN6cbVXffC1KaL8Ro6DzvCWRLPEqQtAcRIxJMOHLxnVQTIT3qIYycSh2ZyqFCDf1Nvy7AZ5itCpKPXbu1RGus/teoUBEJAZDjutE/exI4jcq4nccDPS7qOhBytSnAwAh7Lt5iAg2w5KP0gibkrMYDUP7ly0rQ/FbhJJDdnkAKvHIjT16EDXbK3/fVK6iJjLzqbfDth4DxztjXM6DJdTicgJkLlpNM//Jd/KCNTvY/sWkmLGPkUixYla+5X1n7XOXjDCkgSxrx2jaE9tOTSJ7PhAOaM9MWv5Hi5fAieDA3JIO6RV1xecmBbvnb30wrlw5GcEycOr/R+0YSW5DOp2NUVTZbGK0PQxPfxhwl4lcXHSMohzIkX+23BdHr0I8aiRJqfCcbRZjjI1mWise32PeADcPcMXOz8gEkVWjVgtSTD8TKCmz3tKTBJtZwNLJhJiRwU9KcwswuYX0PDZmo3E1zewTvTQtzgSIfNKD61xwT2k3n8IgpT+fXzBPOG6RIhN/vNy26GkFlW0P/w9SWqn4sBeB/1+Xj02bL8Uxxd5Yh0y0OKyo7h99IU7cxE+ykuO7VTeHfUL6YR+AmL13tQTpbeuEcQFM81W4EUKdBa7wxpE5oY91xCqTVG5xEA/pFhIjXtLo9xDImkJMUG5BIVNjbl3nQqWebpxjgO41+74XVBelXML5UjL5tta1o965/0augFBv+HQ1HBsRqfjzfhNEXNlteExZ8fqwxtDqiRXPzJZMWVCEisC0aoELeJRC20ftr+CupAdPqhcX7CPPHeEhOmpayKrWuMoJHBMo78UacUWKYGty+7z3fv5yzOcI7ysIM1+rRFeW2KKrj7Zuj3Q13x3DJUga8t0v4PvONNdLc5+LHKYjJ6viiNw61ovny5jPVh8Eg+ZnuFNQ0BJimBVzRt1j6KyyO4DTRBeIZYMJaX5xub9PYeLXK9qJGgqR4SkX+zhEOISLcxiACWPQ31CyunlnP0NR8sukSPdtILNx9nQ5IvjrXB438Z253wm7VDycwPhlGC6BKPFJOpnK+RkaUF3VGBWkrNmoCl1NThG18MpkEv13fJzKNemFsJKbXAQ7kH5cUgUbjUnuN7dsVdF9VezZKyRs6qNuVW3aG60fSFK6ZBluo0zKP2krmXMubQGu0M/mDMjf8hvJ5YhhInHhYYtJwgK8EvZneO0Y3WizzDgyCvuAVWlOc3uHDxDFuyCaxKBN1f6pQdptcsRHmym6U+jSTnA+2sqKPi4alKkaC+5r6v1du2ZdRjp8XcHjCxI1qCG4t+w/9VDmBhf6E6msA95m6hI+f84cyC8lB4LEZ49GDPZHpXpZVqfoffgagPm9jeutrcCJ/qKzNRxKXKE7/fKxknVZHx/X1NmKYGISgDE2m1sRSASG00Axv0/5qq0OIGIN5HmntMzfp0JivHDSFH2PwhgB"},{"type":"text","text":"**Overall:**
+        The method is correct and idiomatic for a simple helper. It''s valid Ruby,
+        and the one-line form works because Ruby accepts a method body after the parameter
+        list.\n\n**Style**\n- Put the body on its own line. The one-liner is hard
+        to read, and Ruby style guides expect multi-line definitions:\n  ```ruby\n  def
+        add(a, b)\n    a + b\n  end\n  ```\n- Ruby convention omits parentheses when
+        they aren''t needed, but `def add(a, b)` with parentheses is the common style,
+        so this is fine.\n\n**Potential bugs**\n- `+` is polymorphic, so `add(1, 2)`
+        returns `3`, but `add(\"a\", \"b\")` returns `\"ab\"` and `add([1], [2])`
+        returns `[1, 2]`. This may be intentional, but if the method is meant only
+        for numbers, nothing enforces that.\n- Mixed types raise an error: `add(1,
+        \"2\")` raises `TypeError` (\"String can''t be coerced into Integer\"). `add(nil,
+        1)` raises `NoMethodError`. Those errors are reasonable, but the method gives
+        no hint about the expected types.\n- If you need stricter behavior, validate
+        the inputs or document the expected types. Otherwise, duck typing is idiomatic
+        Ruby and the current code is acceptable.\n\n**Performance**\n- No concerns.
+        The method is a single operation, and the cost is dominated by the method
+        call itself.\n\n**Suggestions**\n- Add a short doc comment, for example with
+        YARD:\n  ```ruby\n  # Adds two values. Both must support the + operator\n  #
+        with each other (e.g. numbers, strings, arrays).\n  # @return [Object] the
+        sum of a and b\n  def add(a, b)\n    a + b\n  end\n  ```\n- Add a test or
+        two covering the types you intend to support."}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":774,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":830,"output_tokens_details":{"thinking_tokens":238},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:24 GMT
+recorded_with: VCR 6.4.0

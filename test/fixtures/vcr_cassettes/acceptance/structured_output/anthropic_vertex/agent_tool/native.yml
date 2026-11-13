@@ -1,0 +1,137 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"system":[{"type":"text","text":"Answer
+        weather questions. Always look the weather up with the tool."}],"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '143'
+      Content-Type:
+      - application/json
+      Pinnacle-Error-Category:
+      - no_error
+      Date:
+      - Fri, 13 Nov 2026 22:46:19 GMT
+      Internal-Weighted-Total-Tokens:
+      - '1369'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '654'
+      Internal-Context-Length:
+      - '100000'
+      Request-Id:
+      - req_vrtx_011Ch1jrRD71EHfubdBnX87U
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jrREqduUx8uNYpC8Cv","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS9wUKEggTEAIYAjgBQgh0aGlua2luZxIMIdGxchtO1Gv5W370GgyfRVuESVrRWL6BdSgiMK7GL03vkRVn25keuQ610B3LFSeuQ361noHOoPBPEpfqeEOepC+PLDiSxGduqKW2SyqSBT1jMU8jKS9QW5UjU2GdoVP1CwSGmVv8D+8aHuY1sKuMvPPmv14gokr+S0PiwOAYTY/MnW11SmOMXtr/LZ/FnI3tsIGHIRvwshv/cia20dcSEPaay2f/Hexg4wSkKGLt5XeezWDuU3EvYuQ+LNrRZTxQXD0DqTClFFt5iiR8vKwgcsbPlOcmobpM3ysxRqV77qLL2uBMGKQmQN/7jJaRgol3z49HD3RkS8cw298gyQT3AZ9IONa09rPAhN4vZK4dw2daBSkATRFMshwlw+1jrNQhS6HwVAVG5wDLTl8EE1ru2kKk+QKw0wIliqomwphm+s8vT1QxSKhtZ3R5Xjx0fHCeGQwRGX8xvdOORUr1d1IyBi89MweVj1yz3FIA3Tr2yf8ljsavKMYGTAjnJLz5uW/qhXrf9CbGRua28LeQjaqH6/l+obCjuzEt46N3P3jwhJc2mee5pjIaPTmV7W5t1hvsNbOkLfgF3ZnVj44t+skZ/zdDvBwNaNEHK/0Qvgvph6IAki/sK0277O7vv+9ZuPV3rWrsx15xL0Kq9z3Q8W7b2aHevCNQ9uJKcsWvTn+GBjEz0cicUKOz6HHwgp1CTVkiiSmHFDT+FCjhTvCEx+l6h///PGFh+xF8FLeENKOme7lTQgbT7TKCryAZwcXzmZuZk2rST3ri8aHlRzlVA79JwFlcV/xyoWvV6qAx3bBnFun6PaVgWS/hDCDnvO/CV8wp9bMBcBggNOB82VcFulYKiz2iMhhJ9wT6I8Z3bJT3qPySRwfKPqztmGdZ+wEyQfI2Xz4GM11WLymtgSki4oeGWZlAt/iGlMxRwUIVJLrTiaNbRgg5Rk4qz44gRBD9p1ER4Y7JYC7IJbOophIMYtQVwWEYAQ=="},{"type":"tool_use","id":"toolu_vrtx_01CU5S73vELCHFSZF4Ejs9Nu","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":654,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":143,"output_tokens_details":{"thinking_tokens":91},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:19 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS9wUKEggTEAIYAjgBQgh0aGlua2luZxIMIdGxchtO1Gv5W370GgyfRVuESVrRWL6BdSgiMK7GL03vkRVn25keuQ610B3LFSeuQ361noHOoPBPEpfqeEOepC+PLDiSxGduqKW2SyqSBT1jMU8jKS9QW5UjU2GdoVP1CwSGmVv8D+8aHuY1sKuMvPPmv14gokr+S0PiwOAYTY/MnW11SmOMXtr/LZ/FnI3tsIGHIRvwshv/cia20dcSEPaay2f/Hexg4wSkKGLt5XeezWDuU3EvYuQ+LNrRZTxQXD0DqTClFFt5iiR8vKwgcsbPlOcmobpM3ysxRqV77qLL2uBMGKQmQN/7jJaRgol3z49HD3RkS8cw298gyQT3AZ9IONa09rPAhN4vZK4dw2daBSkATRFMshwlw+1jrNQhS6HwVAVG5wDLTl8EE1ru2kKk+QKw0wIliqomwphm+s8vT1QxSKhtZ3R5Xjx0fHCeGQwRGX8xvdOORUr1d1IyBi89MweVj1yz3FIA3Tr2yf8ljsavKMYGTAjnJLz5uW/qhXrf9CbGRua28LeQjaqH6/l+obCjuzEt46N3P3jwhJc2mee5pjIaPTmV7W5t1hvsNbOkLfgF3ZnVj44t+skZ/zdDvBwNaNEHK/0Qvgvph6IAki/sK0277O7vv+9ZuPV3rWrsx15xL0Kq9z3Q8W7b2aHevCNQ9uJKcsWvTn+GBjEz0cicUKOz6HHwgp1CTVkiiSmHFDT+FCjhTvCEx+l6h///PGFh+xF8FLeENKOme7lTQgbT7TKCryAZwcXzmZuZk2rST3ri8aHlRzlVA79JwFlcV/xyoWvV6qAx3bBnFun6PaVgWS/hDCDnvO/CV8wp9bMBcBggNOB82VcFulYKiz2iMhhJ9wT6I8Z3bJT3qPySRwfKPqztmGdZ+wEyQfI2Xz4GM11WLymtgSki4oeGWZlAt/iGlMxRwUIVJLrTiaNbRgg5Rk4qz44gRBD9p1ER4Y7JYC7IJbOophIMYtQVwWEYAQ=="},{"type":"tool_use","id":"toolu_vrtx_01CU5S73vELCHFSZF4Ejs9Nu","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01CU5S73vELCHFSZF4Ejs9Nu","content":"It
+        is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"system":[{"type":"text","text":"Answer
+        weather questions. Always look the weather up with the tool."}],"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city"},"celsius":{"type":"integer","description":"The temperature in degrees
+        Celsius"}},"required":["city","celsius"],"additionalProperties":false}}},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '920'
+      Internal-Output-Tokens:
+      - '20'
+      Internal-Context-Length:
+      - '100000'
+      Request-Id:
+      - req_vrtx_011Ch1jrbtoKPibZ42YGpyu7
+      Date:
+      - Fri, 13 Nov 2026 22:46:21 GMT
+      Content-Type:
+      - application/json
+      Internal-Input-Tokens:
+      - '820'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Pinnacle-Error-Category:
+      - no_error
+      Stream-Reported-Http-Code:
+      - '200'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jrbunFJVVD4wwy6eUG","type":"message","role":"assistant","content":[{"type":"text","text":"{\"city\":
+        \"Toronto\", \"celsius\": 15}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":820,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":20,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:21 GMT
+recorded_with: VCR 6.4.0

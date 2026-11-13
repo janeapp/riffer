@@ -1,0 +1,131 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Stream-Reported-Http-Code:
+      - '200'
+      Request-Id:
+      - req_vrtx_011Ch1jkqiLE6z9GobfHSg8s
+      Internal-Weighted-Total-Tokens:
+      - '3052'
+      Date:
+      - Fri, 13 Nov 2026 22:45:04 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '529'
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Internal-Input-Tokens:
+      - '407'
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jkqkJzV45gd6C9hE3B","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"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"},{"type":"tool_use","id":"toolu_vrtx_01Ua7JRjSUtFj2FAdoJ1VFsJ","name":"get_weather","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":407,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":529,"output_tokens_details":{"thinking_tokens":477},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:04 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Which
+        Canadian provincial capital has the largest population? Get the weather there."},{"role":"assistant","content":[{"type":"thinking","thinking":"","signature":"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"},{"type":"tool_use","id":"toolu_vrtx_01Ua7JRjSUtFj2FAdoJ1VFsJ","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Ua7JRjSUtFj2FAdoJ1VFsJ","content":"It
+        is 15 degrees Celsius in Toronto."}]}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '266'
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Weighted-Total-Tokens:
+      - '2289'
+      Request-Id:
+      - req_vrtx_011Ch1jm5zpDBm4SFwAuXdVy
+      Stream-Reported-Http-Code:
+      - '200'
+      Date:
+      - Fri, 13 Nov 2026 22:45:06 GMT
+      Internal-Input-Tokens:
+      - '959'
+      Content-Type:
+      - application/json
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ192cnR4XzAxMUNoMWptNjJKNXFZU0toOWJ5VDlraCIsInR5cGUiOiJtZXNzYWdlIiwicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOlt7InR5cGUiOiJ0aGlua2luZyIsInRoaW5raW5nIjoiIiwic2lnbmF0dXJlIjoiQ0FRU3dBZ0tFZ2dURUFJWUFqZ0JRZ2gwYUdsdWEybHVaeElNcGplT2Jyd3h5WlorY1Y2REdneDJUTlBPY1Q3SEYwOHBFNFlpTUsxOXFNek00WFRTcTY1cWdvWllYNEJFTEpTaGhTaVcvY3RuemFwY0ZkalBwSXNkMWlxTGZMeWZsTytYNGhlVHJDcmJCeGxGNmtIOGk4SXo2M1hQWEQxL3VxbmVlVytJM0dncTJ1bHRBbW9uSy83dzg4UmkxN04ydHNNYWJzeWI5cFBEUHVuYm0vY2lVZTJidlN1VnV4eVAvRU1TWml1YzNFd3l3Q09Ed3FndG1LZVVjd2tkZlBLZnNXL3lBM0gxM0llT2JTeGRtUzA1U25pNGV4VHMybFEzUzVWSXlSOUNBQkhtaDlodFNwa1FnbmJnZDltbXdzdW94MFdMM0tmSU5Da0dtK0VQeVg4T0N6azlPU1V5ZzBJVjEzZFFjOWxpUlJ4TDJoWHhpZTJMNkdpZ1N3UEJxejJJdVFzSmdYbzlMNnBORldnUVdpWDdXQmRzZ3VIRGFjNm80c2dBMGpYNThaTDlYaE1vclBYQzVoNjhnYXZtcXVuQlZwbjF1MmFyVFZDSEtqaFUrREJnZFh1ZSsvM0YxZDhvRzlJYWpjcDVFOWpnZ0U2NHBsMUdsRXMzaS8rUlJHUEVwRkg5RnE2YUJtYzA1L1JkT0ZBbEp0NnJSaGZoWThqMmRZOFE4TFJVY0xPOXBsNmR2bml2RklnNWMweE1iMkJvUHlHOG9wNDlDN2dYU0dkc0NXWlRRZUkrMWZ5a0UwQnNVaHpNZEorWHNtQ2FwWTFFZEdTTk81K2ExM0x1dExWQWtRQVBzYzNhSjRjNXNPN1A0NWluZmNrNjVoTC9qaHlFejZJZnlJVHowR0l2NGFVeFVqdDZlaVBPbEovRkJodHZaVlI0SVYxWEJrb0xRNlYvYkJhamtMYkVGYkhKSnhqRGhjOWM3M2o3UlBBTmZMQ0VnaERTMS8rVlRXV1ZxbGplaUxKcTBRaURkc3ljRk5XNWN1cEdOWkk1cFZ3Z1RyYWlHWnRpQWN3eXFOQnpKZ09QL1NDWG1QY0I4anRKWWozU1I3NS9pbC8rK0N0TU9abG1QSDErS1VIUS9IY2FLMjVYR1NncUlEVG8yOFlkZldmeW9wRFYzSFhUclNqRkRqNzlWUzlWYzBlL3hseUk0OWc5YU9NTnNQKzNkVmUwSXgrSXZUdHhmK2JoN3hNMDVyRWVVVHJrSVJrNytBaTNnN3dwdVFqbXN6aFNxRndNWlh6OWkzMGtWQzNXN2QyNDhCR1RNREJrajg1bVZpK3JLMFZnaWdNM2Ztbm9ickwyaUwxZVFmQzExNEo3andhYzVZRWZ5WStzaGU3MWtYU2ZQSkVYVU95RWF5OHd6c1NRZGxPZHZJRFRUaCtYM2x1ZmxGcVUxZXJqREhIdW5XWU4zN3BoUys3WUVDZUpLUmUzZXRXRHB2d0g5cTFmeXNwQmNxVlhOZHR2NFAwSHVMMHZwZU1sUUpGMXV2R1hCWkx0ajhXMlhEMDhITDVDeWd4dzM1YXlhYlE1bzVxUHFhWm1QamRzMFdqNWd6L2RRY2dzcy8wT2F6cmF6VERPVnNxelRjQmlRRUdNRUhCVkl4SVB6cmxKWXB1Z09DM3pGbWY1RDFHV0ltS3lrTkZITjRGMm5vUXZIbFdOYmhVU1NFMWZFSXg1U280Wlc5dHVmdE9oUHVvTFMwMnJOUTdzaC9JZVo1UmJVVXkyR0VWWWlTb0RSR2czRW16Z3IvYVI3T3ZjQjRobUZ4Tkw2RG5VdE4xMENzeStrT1RsOW8rMTJ5ZmxLVHJualFmenVOdjhaamh1NFJLdURtOUcybHgwWXZqZmNJUXZLTmpJZmJIcGd2ZzY2bzJVcndEL0diMVUyYlUwN0d3dzdoZ0IifSx7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IlRvcm9udG8sIHRoZSBjYXBpdGFsIG9mIE9udGFyaW8sIGlzIHRoZSBsYXJnZXN0IENhbmFkaWFuIHByb3ZpbmNpYWwgY2FwaXRhbCwgd2l0aCBhYm91dCAyLjggbWlsbGlvbiByZXNpZGVudHMgaW4gdGhlIGNpdHkgcHJvcGVyICgyMDIxIGNlbnN1cykuIFRoZSB3ZWF0aGVyIHRoZXJlIGlzIGN1cnJlbnRseSAxNcKwQy4ifV0sImNvbnRhaW5lciI6bnVsbCwic3RvcF9yZWFzb24iOiJlbmRfdHVybiIsInN0b3Bfc2VxdWVuY2UiOm51bGwsInN0b3BfZGV0YWlscyI6bnVsbCwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjo5NTksImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjoyNjYsIm91dHB1dF90b2tlbnNfZGV0YWlscyI6eyJ0aGlua2luZ190b2tlbnMiOjIwM30sInNwZWVkIjoic3RhbmRhcmQifX0=
+  recorded_at: Fri, 13 Nov 2026 22:45:06 GMT
+recorded_with: VCR 6.4.0

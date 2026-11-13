@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Extract
+        info from: Jane works at 42 King St in Vancouver. No other details are known.
+        Return null for any unknown fields.\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"address\":{\"street\":\"<string>\",\"city\":\"<string>\",\"postal_code\":\"<string>\",\"country\":\"<string>\"}}\n\nOnly
+        call tools when the request needs them. If you can answer directly, reply
+        with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Context-Length:
+      - '100000'
+      Pinnacle-Error-Category:
+      - no_error
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Content-Type:
+      - application/json
+      Internal-Input-Tokens:
+      - '351'
+      Date:
+      - Fri, 13 Nov 2026 22:45:41 GMT
+      Internal-Output-Tokens:
+      - '161'
+      Request-Id:
+      - req_vrtx_011Ch1joipS6N93HkFQi13Aj
+      Internal-Weighted-Total-Tokens:
+      - '1156'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1joiqAmS9aFahJmB9sP","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSogYKEggTEAIYAjgBQgh0aGlua2luZxIM/cZDOMyvMYKHlQHNGgwxoYnn19fUe8mZ7OIiMAivHnOuSsv69TF3cxkrB2vR+86n90+tlcwRTD9m+U0aRPe8AcEdb0Zj7P/FGatbNCq9BWvb94wTFXUkKO/q3Yin0114GRdflyTf7i8el6VhuHtC4Hk+HHth4ZUv1RJRihW2abcNFWFIXhcz9K6rtcNPNZdEY86ZXSw5gScfwHTo3R1eNnEABm+//9KuMCf0GDSop8fdhks5QXeMNlt+P8fHg/vprNveH4hp+DUR9P1j6esxmitR8nr2YR6vvsY42zAKCFG+8QTFBSeVLz3+H9h6ql3OPzp8zanfyEanYxgOGsIoYAeXgvWNvLIFOuak/kHii9Y+yAGFn1XjozcYdKrAH7ZC81Lm2rZW/OMLLJ7rZLgLG4p+CR/uBoAYZacx0KTGHrzkvMwB+ugn2VViS+eE8IOztfukxKWXMT56uzbibTapcfKMXVNc23OPBpFgzHIlhg4e8jayyk5pHa47cSAaAf3yTT4qW+X6bXCflkcFj9jego17aKGyHGS51Lv3So6gVhyX6dkm3tKIstlQhf8WgrpWZy3/K20uBmM2qg7np3qGkfCeqfuUTdbk11zDfHSFLxJ4OrQGGSWEJA283Ok1YFCN71g2qkEdiXsTrkvKzjm/YEJlo4kiyPnb3HVYV0hcHY5fUaABOIir/9QPm9edIEHTBgDycIuJh0go2ecGxT3GVPDvJuMRkMsidZKEY3JXAt62kvtJvdSobKyg8NpSZYGA8Iok53R4N+CjZqae8T8HCZt1Am8hmILwFuvrzL7HdsYsLBy/wlBIYB2CJulES8M+CFJsIlCgWynv6wgRSaW9Mj0/2qGwu30TN5qCkKZvnOG4K7l7GONcVvRg9FOZqUbK1Zl99nfSNSZNYMi2oqxDh8EOd6KB4JUw5uQU8Zu8FL83pDRK+sajhWzDBdq6wD8Mu+O4X6DYHi8cZTRKSmqwc7eAyw+jC/eEcjXVTwn5S/08vQ4IEOn+veDE0w6d8YJMMQgfG++nucterNAzGAE="},{"type":"text","text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42
+        King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":351,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":161,"output_tokens_details":{"thinking_tokens":116},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:42 GMT
+recorded_with: VCR 6.4.0

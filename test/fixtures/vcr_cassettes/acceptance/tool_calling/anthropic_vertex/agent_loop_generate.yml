@@ -1,0 +1,208 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"First
+        find the city the Eiffel Tower is in, then get the weather there."}],"max_tokens":4096,"system":[{"type":"text","text":"Use
+        the tools to answer. Be concise."}],"tools":[{"name":"locate_landmark","description":"Find
+        the city a landmark is in","input_schema":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}},{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Request-Id:
+      - req_vrtx_011Ch1jubsPNNtNrdreBoQrr
+      Internal-Input-Tokens:
+      - '519'
+      Internal-Context-Length:
+      - '100000'
+      Date:
+      - Fri, 13 Nov 2026 22:47:01 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '59'
+      Internal-Weighted-Total-Tokens:
+      - '814'
+      Stream-Reported-Http-Code:
+      - '200'
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1juc2KUHk6JCPxDBDtF","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01PocZ271YoEg7mRxfr5y2f1","name":"locate_landmark","input":{"landmark":"Eiffel
+        Tower"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":519,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":59,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:47:01 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"First
+        find the city the Eiffel Tower is in, then get the weather there."},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01PocZ271YoEg7mRxfr5y2f1","name":"locate_landmark","input":{"landmark":"Eiffel
+        Tower"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01PocZ271YoEg7mRxfr5y2f1","content":"The
+        Eiffel Tower is in Paris."}]}],"max_tokens":4096,"system":[{"type":"text","text":"Use
+        the tools to answer. Be concise."}],"tools":[{"name":"locate_landmark","description":"Find
+        the city a landmark is in","input_schema":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}},{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:47:01 GMT
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '50'
+      Internal-Input-Tokens:
+      - '598'
+      Request-Id:
+      - req_vrtx_011Ch1juf1euTcmrauDkwEQU
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Weighted-Total-Tokens:
+      - '848'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1juf3PBMDrqta1sTcHe","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Uhn7Sja62jsSd6UhEfbg1H","name":"get_weather","input":{"city":"Paris"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":598,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":50,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:47:01 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"First
+        find the city the Eiffel Tower is in, then get the weather there."},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01PocZ271YoEg7mRxfr5y2f1","name":"locate_landmark","input":{"landmark":"Eiffel
+        Tower"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01PocZ271YoEg7mRxfr5y2f1","content":"The
+        Eiffel Tower is in Paris."}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Uhn7Sja62jsSd6UhEfbg1H","name":"get_weather","input":{"city":"Paris"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Uhn7Sja62jsSd6UhEfbg1H","content":"It
+        is 22 degrees Celsius in Paris."}]}],"max_tokens":4096,"system":[{"type":"text","text":"Use
+        the tools to answer. Be concise."}],"tools":[{"name":"locate_landmark","description":"Find
+        the city a landmark is in","input_schema":{"type":"object","properties":{"landmark":{"type":"string","description":"The
+        landmark name"}},"required":["landmark"],"additionalProperties":false}},{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Date:
+      - Fri, 13 Nov 2026 22:47:02 GMT
+      Internal-Input-Tokens:
+      - '670'
+      Request-Id:
+      - req_vrtx_011Ch1jujSJY7TU2LqgPhqAL
+      Internal-Context-Length:
+      - '100000'
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Weighted-Total-Tokens:
+      - '805'
+      Internal-Output-Tokens:
+      - '27'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS01LTUiLCJpZCI6Im1zZ192cnR4XzAxMUNoMWp1aldIOWQ4d01mV1FDdkpZRiIsInR5cGUiOiJtZXNzYWdlIiwicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOlt7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IlRoZSBFaWZmZWwgVG93ZXIgaXMgaW4gUGFyaXMsIHdoZXJlIGl0IGlzIGN1cnJlbnRseSAyMsKwQy4ifV0sImNvbnRhaW5lciI6bnVsbCwic3RvcF9yZWFzb24iOiJlbmRfdHVybiIsInN0b3Bfc2VxdWVuY2UiOm51bGwsInN0b3BfZGV0YWlscyI6bnVsbCwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjo2NzAsImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjoyNywib3V0cHV0X3Rva2Vuc19kZXRhaWxzIjp7InRoaW5raW5nX3Rva2VucyI6MH0sInNwZWVkIjoic3RhbmRhcmQifX0=
+  recorded_at: Fri, 13 Nov 2026 22:47:02 GMT
+recorded_with: VCR 6.4.0

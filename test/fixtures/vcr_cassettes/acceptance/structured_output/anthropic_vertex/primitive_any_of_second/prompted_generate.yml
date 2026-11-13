@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Read
+        this order: several boxes, with no due date\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"quantity\":{\"anyOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}],\"description\":\"A
+        count, or a word when there is no count\"},\"due\":{\"anyOf\":[{\"type\":\"string\",\"format\":\"date\"},{\"type\":\"string\",\"enum\":[\"none\"]}],\"description\":\"The
+        due date, or none when there isn''t one\"}},\"required\":[\"quantity\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"quantity\":\"<integer> | <string>\",\"due\":\"<string>
+        | none\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Request-Id:
+      - req_vrtx_011Ch1jq5zBMqo2Tt7c3hoCa
+      Content-Type:
+      - application/json
+      Internal-Weighted-Total-Tokens:
+      - '579'
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '61'
+      Date:
+      - Fri, 13 Nov 2026 22:45:59 GMT
+      Internal-Input-Tokens:
+      - '274'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Pinnacle-Error-Category:
+      - no_error
+      Stream-Reported-Http-Code:
+      - '200'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jq5zvokhmQ35MaWaFr","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQSqQQKEggTEAIYAjgBQgh0aGlua2luZxIMDxHO0HP0EreD/LbwGgxvHgpUOS08UYagkmoiMMoVlBKXksFMchfG5nAk0lSwc+Hm2shaqE8K4Sgu1sqVbtwtzynHz0MVvv0KJf0nTyrEAzRi3a9t83AuglIoMBaHf/C6ACuX7QJ7YZkj946NAMigkErxuX/h9DNergTg5C0p1QPiJVejsPmPiBKhBMXOJsLYplTvbGDY7uHnyHyCJBxYXzE9q3Dwq52ZSxCxyeZbj3kNZLDuOV7DNjIUdxdQ1Rl1GpwURa6j0LtE/JGBKE7PS0sBxeODW8CQ4fNig99dkP+xphHx2qHmZeK6rSbJoRzSZow4i7uMH+76ST8K5Kask8oi8ItI8JgCXeCLxsE5xCRazAt8eVNhjSZXQcMbOyS2HJxRxa5N0eHy4FVSf3EU3nIjwzQrG7s9xJ3NbCTXvu6uJFTx+RRKu4LvrRKSEbqp+eQ6QqeoLQ+pcjyaNWpPbjZ6F2N8eNwzUDzVCdaO29rw2x/p6ufEj7+PriIIG8kDXBRYwPHD24GNnia4qRxMPa/ptDczSGm3ix9+XZkWl7gDgWtlcbsd6CeZJ1p1LgEwJrzckUt9/vQrBNLeS8AbCyjqrvMpi92/qQk7wDVuvYKNk+Ca5axmBTeOoSru7kea9FggvELpfQPZ3T2cd1FdmMbG5LnTxLJxaiNI/YjGUMPpl90j2zS9F8BgALi1krCNk4b0GAE="},{"type":"text","text":"{\"quantity\":\"several\",\"due\":\"none\"}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":274,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":61,"output_tokens_details":{"thinking_tokens":44},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:00 GMT
+recorded_with: VCR 6.4.0

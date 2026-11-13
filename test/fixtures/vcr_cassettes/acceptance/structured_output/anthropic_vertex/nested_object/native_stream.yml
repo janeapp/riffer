@@ -1,0 +1,101 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Extract
+        the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"max_tokens":4096,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
+        or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false}}},"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      X-Accel-Buffering:
+      - 'no'
+      X-Vertex-Ai-Received-Request-Id:
+      - f67042fd-ad02-43c5-8391-e6f0a3c01851
+      Date:
+      - Fri, 13 Nov 2026 22:45:38 GMT
+      Request-Id:
+      - req_vrtx_011Ch1joTae5X4pg542pPczp
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1joTctHbFUAQPkzKej2","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":462,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":7,"speed":"standard"}}   }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"{\"name\": \"John\","}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" \"address\": {\"street\": \""}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"123 Main St\", \"city"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\": \"Toronto\", \""}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"postal_code\": \"M5"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"V 2T6\", \"country"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\": \"Canada\"}}"}             }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0   }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":462,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":57,"output_tokens_details":{"thinking_tokens":0}}           }
+
+        event: message_stop
+        data: {"type":"message_stop"          }
+
+  recorded_at: Fri, 13 Nov 2026 22:45:38 GMT
+recorded_with: VCR 6.4.0
+...

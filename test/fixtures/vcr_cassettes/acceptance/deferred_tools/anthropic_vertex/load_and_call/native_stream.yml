@@ -1,0 +1,268 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Request-Id:
+      - req_vrtx_011Ch1jhhZMc4sWr3gpzdC9A
+      Cache-Control:
+      - no-cache
+      Date:
+      - Fri, 13 Nov 2026 22:44:19 GMT
+      X-Accel-Buffering:
+      - 'no'
+      X-Vertex-Ai-Received-Request-Id:
+      - 622c3598-b07f-475a-ae99-e0df7aa408f7
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jhhaMFhipRfRUjCCwC","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":530,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":16,"speed":"standard"}}           }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_vrtx_01Vopf3NwNL3xDEcNV7K3Xuo","name":"find_tools","input":{}} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"query"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\": \"lis"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"t calen"}              }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"dar eve"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"nts for"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" a spec"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ific da"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"te\"}"}          }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0              }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":530,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":57,"output_tokens_details":{"thinking_tokens":0}}       }
+
+        event: message_stop
+        data: {"type":"message_stop"          }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:20 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Vopf3NwNL3xDEcNV7K3Xuo","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Vopf3NwNL3xDEcNV7K3Xuo","content":[{"type":"tool_reference","tool_name":"calendar__list_events"}]}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      X-Vertex-Ai-Received-Request-Id:
+      - d04771f4-4f9a-4a0a-96c2-425a2a24fdb2
+      Cache-Control:
+      - no-cache
+      Date:
+      - Fri, 13 Nov 2026 22:44:20 GMT
+      Request-Id:
+      - req_vrtx_011Ch1jhnndMy1PkeQfjYXkw
+      X-Accel-Buffering:
+      - 'no'
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jhnod4jVTVgf9WwRFW","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":708,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":24,"speed":"standard"}}         }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_vrtx_014U8etM5UH7Xjn5shAbppgb","name":"calendar__list_events","input":{}}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"date\""}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":": \"2026"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"-11-06\"}"}            }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0  }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":708,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":56,"output_tokens_details":{"thinking_tokens":0}}               }
+
+        event: message_stop
+        data: {"type":"message_stop"}
+
+  recorded_at: Fri, 13 Nov 2026 22:44:20 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Vopf3NwNL3xDEcNV7K3Xuo","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Vopf3NwNL3xDEcNV7K3Xuo","content":[{"type":"tool_reference","tool_name":"calendar__list_events"}]}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_014U8etM5UH7Xjn5shAbppgb","name":"calendar__list_events","input":{"date":"2026-11-06"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_014U8etM5UH7Xjn5shAbppgb","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"calendar__list_events","description":"List
+        the user''s calendar events on a date","input_schema":{"type":"object","properties":{"date":{"type":"string","description":"The
+        date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false},"defer_loading":true},{"name":"send_invoice","description":"Send
+        an invoice to a customer","input_schema":{"type":"object","properties":{"customer":{"type":"string","description":"The
+        customer name"}},"required":["customer"],"additionalProperties":false},"defer_loading":true}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      X-Accel-Buffering:
+      - 'no'
+      Request-Id:
+      - req_vrtx_011Ch1jhqysQQdwdUT1w496A
+      X-Vertex-Ai-Received-Request-Id:
+      - 3d811361-0fdc-47f5-9112-58d30ebf7f3a
+      Cache-Control:
+      - no-cache
+      Date:
+      - Fri, 13 Nov 2026 22:44:21 GMT
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZXZlbnQ6IG1lc3NhZ2Vfc3RhcnQKZGF0YTogeyJ0eXBlIjoibWVzc2FnZV9zdGFydCIsIm1lc3NhZ2UiOnsibW9kZWwiOiJjbGF1ZGUtaGFpa3UtNS01IiwiaWQiOiJtc2dfdnJ0eF8wMTFDaDFqaHIycWFEaFROcXh6YjgxVmkiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbXSwiY29udGFpbmVyIjpudWxsLCJzdG9wX3JlYXNvbiI6bnVsbCwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjc5NywiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjYsInNwZWVkIjoic3RhbmRhcmQifX0gICAgICAgfQoKZXZlbnQ6IHBpbmcKZGF0YTogeyJ0eXBlIjogInBpbmcifQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfc3RhcnQKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19zdGFydCIsImluZGV4IjowLCJjb250ZW50X2Jsb2NrIjp7InR5cGUiOiJ0ZXh0IiwidGV4dCI6IiJ9ICAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjowLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiJZb3UgaGF2ZSB0d28gZXZlbnRzIG9uIE5vdmVtYmVyIn0gICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjowLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiIgNiwgMjAyNjoifSAgICAgICAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjowLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiJcblxuLSAqKjkifX0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MCwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiOjAwIEEifSAgICAgICAgfQoKZXZlbnQ6IGNvbnRlbnRfYmxvY2tfZGVsdGEKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19kZWx0YSIsImluZGV4IjowLCJkZWx0YSI6eyJ0eXBlIjoidGV4dF9kZWx0YSIsInRleHQiOiJNKiog4oCTIERlbnRpc3QifSAgICAgICAgICAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MCwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiXG4tICoqMTI6MzAgUE0ifSAgIH0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX2RlbHRhCmRhdGE6IHsidHlwZSI6ImNvbnRlbnRfYmxvY2tfZGVsdGEiLCJpbmRleCI6MCwiZGVsdGEiOnsidHlwZSI6InRleHRfZGVsdGEiLCJ0ZXh0IjoiKiog4oCTIFRlYW0gbHVuY2gifX0KCmV2ZW50OiBjb250ZW50X2Jsb2NrX3N0b3AKZGF0YTogeyJ0eXBlIjoiY29udGVudF9ibG9ja19zdG9wIiwiaW5kZXgiOjAgICAgIH0KCmV2ZW50OiBtZXNzYWdlX2RlbHRhCmRhdGE6IHsidHlwZSI6Im1lc3NhZ2VfZGVsdGEiLCJkZWx0YSI6eyJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJjb250YWluZXIiOm51bGx9LCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjc5NywiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwib3V0cHV0X3Rva2VucyI6NDYsIm91dHB1dF90b2tlbnNfZGV0YWlscyI6eyJ0aGlua2luZ190b2tlbnMiOjB9fSAgICAgICAgICAgICAgIH0KCmV2ZW50OiBtZXNzYWdlX3N0b3AKZGF0YTogeyJ0eXBlIjoibWVzc2FnZV9zdG9wIiAgICAgICAgICB9Cgo=
+  recorded_at: Fri, 13 Nov 2026 22:44:21 GMT
+recorded_with: VCR 6.4.0

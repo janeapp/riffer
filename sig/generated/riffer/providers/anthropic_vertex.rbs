@@ -14,6 +14,11 @@ class Riffer::Providers::AnthropicVertex < Riffer::Providers::AnthropicCompatibl
   # : () -> String
   def self.semconv_provider_name: () -> String
 
+  # Agent Platform rejects URL sources, so riffer downloads the file and sends it inline.
+  # --
+  # : (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::User::FilePart) -> Symbol
+
   private
 
   # --

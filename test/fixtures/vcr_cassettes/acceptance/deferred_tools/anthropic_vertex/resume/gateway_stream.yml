@@ -1,0 +1,611 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Request-Id:
+      - req_vrtx_011Ch1jhttjdew24AQiCQA51
+      X-Accel-Buffering:
+      - 'no'
+      X-Vertex-Ai-Received-Request-Id:
+      - 3ce7c5a4-37d5-4b58-ad0a-80bf3320eec4
+      Date:
+      - Fri, 13 Nov 2026 22:44:21 GMT
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jhtujjRXSPV5F7u9on","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":700,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":16,"speed":"standard"}}  }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","name":"find_tools","input":{}}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"query"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\": \"lis"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"t calen"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"dar eve"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"nts for"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" a spec"}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ific da"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"te\"}"}    }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0          }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":700,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":57,"output_tokens_details":{"thinking_tokens":0}}               }
+
+        event: message_stop
+        data: {"type":"message_stop" }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:22 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      X-Accel-Buffering:
+      - 'no'
+      Request-Id:
+      - req_vrtx_011Ch1jhxntQrc8nigb4JMBD
+      Cache-Control:
+      - no-cache
+      Date:
+      - Fri, 13 Nov 2026 22:44:22 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - 264736e3-8fa3-4c2a-9fd6-c212524ea548
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jhxoddHgNP17Fwx2py","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":963,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":24,"speed":"standard"}}     }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","name":"riffer_gateway","input":{}}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"name\""}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":": \"cale"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ndar/li"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"st_even"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ts\""}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":", \"argu"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ments\":"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" \"{\\\"da"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"te\\\": \\"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"2026-1"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"1-06\\\"}"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"}"}            }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0}
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":963,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":92,"output_tokens_details":{"thinking_tokens":0}}         }
+
+        event: message_stop
+        data: {"type":"message_stop"            }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:23 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      X-Accel-Buffering:
+      - 'no'
+      Date:
+      - Fri, 13 Nov 2026 22:44:24 GMT
+      Request-Id:
+      - req_vrtx_011Ch1ji4ukPVMReFctd1Ego
+      X-Vertex-Ai-Received-Request-Id:
+      - eaf85912-1205-4739-970c-4dbcc888205c
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1ji4wz313htB6c3vAPH","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1088,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":6,"speed":"standard"}}             }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"You have two events on November"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 6, 2026:"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **"}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"9:00 A"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"M**: Dentist"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **12:30 PM"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**: Team lunch"}    }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0  }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":1088,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":46,"output_tokens_details":{"thinking_tokens":0}}           }
+
+        event: message_stop
+        data: {"type":"message_stop"      }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:24 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]},{"role":"assistant","content":[{"type":"text","text":"You
+        have two events on November 6, 2026:\n- **9:00 AM**: Dentist\n- **12:30 PM**:
+        Team lunch"}]},{"role":"user","content":"And on 2026-11-07?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Date:
+      - Fri, 13 Nov 2026 22:44:25 GMT
+      X-Accel-Buffering:
+      - 'no'
+      X-Vertex-Ai-Received-Request-Id:
+      - 96e25788-b0a0-410e-80e2-03679a13ef56
+      Cache-Control:
+      - no-cache
+      Request-Id:
+      - req_vrtx_011Ch1ji8Up62EutLDU7s65g
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1ji8VoJ36s9YBhq6Eg5","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1148,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":24,"speed":"standard"}} }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_vrtx_0186d3vbVs7N4MXkPgKnqG1f","name":"riffer_gateway","input":{}}  }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}           }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"name\""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":": \"cale"}    }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ndar/li"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"st_even"}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ts\""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":", \"argu"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ments\":"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" \"{\\\"da"}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"te\\\": \\"}}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"2026-1"}     }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"1-07\\\"}"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"}"}       }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0          }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":1148,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":92,"output_tokens_details":{"thinking_tokens":0}}         }
+
+        event: message_stop
+        data: {"type":"message_stop"         }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:25 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","name":"find_tools","input":{"query":"list
+        calendar events for a specific date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Q4YFafqZgRaE7P6Fyueunf","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_012YtfS8TYPg375y5FPJGSuw","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]},{"role":"assistant","content":[{"type":"text","text":"You
+        have two events on November 6, 2026:\n- **9:00 AM**: Dentist\n- **12:30 PM**:
+        Team lunch"}]},{"role":"user","content":"And on 2026-11-07?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_0186d3vbVs7N4MXkPgKnqG1f","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-07\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_0186d3vbVs7N4MXkPgKnqG1f","content":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Request-Id:
+      - req_vrtx_011Ch1jiBuS2c4yRX4EY3EHG
+      Date:
+      - Fri, 13 Nov 2026 22:44:25 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - 3ff0ab0d-34f1-4c50-b55b-beae215365d1
+      X-Accel-Buffering:
+      - 'no'
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jiByA3WUNxK8bbUPX6","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1273,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":1,"speed":"standard"}}     }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"On"}        }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" November"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 7, 2026, you"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" have the"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" same two events:"} }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **9:00 A"}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"M**: Dentist"}             }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **12:30 PM"}            }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**: Team lunch"}   }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0             }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":1273,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":49,"output_tokens_details":{"thinking_tokens":0}}             }
+
+        event: message_stop
+        data: {"type":"message_stop"           }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:26 GMT
+recorded_with: VCR 6.4.0
+...
