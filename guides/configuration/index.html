@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -381,7 +381,9 @@
   <li>Transport failures are raised as Faraday’s own errors, such as <code>Faraday::TimeoutError</code> and <code>Faraday::ConnectionFailed</code> (both <code>Faraday::Error</code>s).</li>
 </ul>
 
-<h3 id="mcp-model-context-protocol">MCP (Model Context Protocol)</h3>
+<h3 id="mcp-deprecated">MCP (deprecated)</h3>
+
+<p><code>config.mcp</code> is deprecated and will be removed with MCP client support in a future release; each line that sets <code>credentials</code> or <code>discovery_runner</code> reports a <a href="#deprecations">deprecation</a>. See <a href="/guides/mcp/#moving-off-mcp">MCP → Moving off MCP</a>.</p>
 
 <p>Optional settings for <a href="/guides/mcp/">MCP server integrations</a>:</p>
 
@@ -413,7 +415,9 @@
 
 <p>See <a href="/guides/mcp/">MCP</a> for registration, tags, and agent <code>use_mcp</code>.</p>
 
-<h3 id="evals">Evals</h3>
+<h3 id="evals-deprecated">Evals (deprecated)</h3>
+
+<p><code>config.evals</code> is deprecated and will move out of riffer into the <code>riffer-evals</code> gem along with <a href="/guides/evals/">evals</a>. Reading it reports a <a href="#deprecations">deprecation</a>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">evals</span><span class="p">.</span><span class="nf">judge_model</span> <span class="o">=</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
@@ -620,7 +624,7 @@
 
 <p>A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:</p>
 
-<pre><code>riffer: config.pricing is deprecated; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
+<pre><code>riffer: config.pricing is deprecated and will be removed in a future version; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
 </code></pre>
 
 <p><code>config.deprecations</code> decides what happens:</p>

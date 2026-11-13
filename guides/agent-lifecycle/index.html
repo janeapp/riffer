@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -219,7 +219,7 @@
 
 <ul>
   <li><strong><code>session:</code></strong> — an existing <code>Riffer::Agent::Session</code>. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. A provided session is repaired at construction time so the <code>tool_use</code> ↔ <code>tool_result</code> invariant holds before the next inference call: orphaned <code>tool_use</code> exchanges (an assistant <code>tool_call</code> with no matching <code>Tool</code> result) and parentless <code>Tool</code> messages are dropped. Pending tool calls on the <strong>resume boundary</strong> — the last assistant whose tail is purely <code>Tool</code> results (or none) — are preserved so <code>generate</code>/<code>stream</code> can execute them.</li>
-  <li><strong><code>context:</code></strong> — a <code>Hash</code> carried for the lifetime of the agent. Used to evaluate Proc-based <code>instructions</code>, <code>model</code>, <code>uses_tools</code>, and skill activation at construction time, and threaded through tool execution and guardrails on every <code>generate</code>/<code>stream</code> call.</li>
+  <li><strong><code>context:</code></strong> — a <code>Hash</code> carried for the lifetime of the agent. Used to evaluate Proc-based <code>instructions</code>, <code>model</code>, <code>uses_tools</code>, <code>deferred_tools</code>, and skill activation at construction time, and threaded through tool execution and guardrails on every <code>generate</code>/<code>stream</code> call.</li>
 </ul>
 
 <p>When <code>session:</code> is omitted, the agent constructs a fresh session and seeds it with <code>[instruction_message, skills_message].compact</code> eagerly. To swap context, construct a new agent — context is fixed for the lifetime of an agent instance.</p>

@@ -24,7 +24,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -84,7 +84,7 @@
   description <span class="s">'Current weather for a city'</span>
 
   params <span class="k">do</span>
-    required :city, <span class="c">String</span>, description: <span class="s">'City name'</span>
+    required :city, :string, description: <span class="s">'City name'</span>
   <span class="k">end</span>
 
   <span class="k">def</span> call(context:, city:)

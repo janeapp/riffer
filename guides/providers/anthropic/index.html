@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -211,6 +211,7 @@
               <li><a href="#tool-calling">Tool Calling</a></li>
               <li><a href="#extended-thinking">Extended Thinking</a></li>
               <li><a href="#web-search">Web Search</a></li>
+              <li><a href="#deferred-tools">Deferred Tools</a></li>
               <li><a href="#message-format">Message Format</a></li>
               <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
             </ul>
@@ -368,8 +369,8 @@
   <span class="n">description</span> <span class="s2">"Gets the current weather for a location"</span>
 
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
-    <span class="n">optional</span> <span class="ss">:unit</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Temperature unit (celsius or fahrenheit)"</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
+    <span class="n">optional</span> <span class="ss">:unit</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Temperature unit (celsius or fahrenheit)"</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:,</span> <span class="ss">unit: </span><span class="s2">"celsius"</span><span class="p">)</span>
@@ -451,6 +452,42 @@
 <p>Anthropic emits sources with <code>title</code> and <code>url</code> on the <code>WebSearchDone</code> event.</p>
 
 <p>Each <code>server_tool_use</code> block and its result block (<code>web_search_tool_result</code>, or <code>code_execution_tool_result</code> when a newer web search version runs the search from code execution) is kept on the assistant message as a <code>ServerToolPart</code> (see <a href="/guides/messages/#parts">Messages — Parts</a>), and a streamed one also arrives as a <code>ServerToolDone</code> event. With <code>generate</code>, text blocks with citations keep their block too; a streamed turn keeps the text without its citations. Later turns send them back in place, so Claude reuses the results instead of searching again.</p>
+
+<h3 id="paused-turns">Paused turns</h3>
+
+<p>When a server tool loop reaches its iteration limit, Anthropic stops with <code>stop_reason: "pause_turn"</code>. Riffer sends the paused content back unchanged as the last message and continues the turn, up to 8 times per call, for <code>generate_text</code> and <code>stream_text</code> alike. If the response names a <code>container</code>, its id goes with the next request, so the turn keeps the same container and its files. You get one assistant message: every response’s parts in order, the summed token usage and the last response’s finish reason. A stream yields one <code>TextDone</code>, <code>FinishReasonDone</code> and <code>TokenUsageDone</code> for the whole turn.</p>
+
+<p>A turn still paused after 8 continuations ends with finish reason <code>:other</code> (<code>finish_reason_raw</code> is <code>"pause_turn"</code>). Its last server tool call may have no result, and Anthropic rejects a request that adds a user message after it. Call <code>generate</code> or <code>stream</code> with no prompt to send the turn back and let Claude carry on.</p>
+
+<p>A turn that stops on <code>max_tokens</code> is not continued.</p>
+
+<h2 id="deferred-tools">Deferred Tools</h2>
+
+<p>The provider supports <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> through the Messages API’s own deferred loading, with no beta header and no tool search tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Assistant</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-5-5'</span>
+  <span class="n">instructions</span> <span class="s2">"If you need a tool you don't have, use find_tools."</span>
+
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">FindTools</span><span class="p">]</span>
+  <span class="n">deferred_tools</span> <span class="p">[</span><span class="no">ListEvents</span><span class="p">,</span> <span class="no">CreateEvent</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Every deferred tool is sent on every request with <code>defer_loading: true</code>, after the agent’s other tools, whether it has been loaded or not. The <code>tools</code> array stays the same for the whole conversation, so a load doesn’t break the prompt cache.</li>
+  <li>A tool result that <a href="/guides/tools/#loading-deferred-tools-experimental">loads tools</a> is sent as <code>tool_reference</code> blocks only, one per loaded tool. From then on Claude sees those tools’ definitions and calls them by their own names. A load that names a tool the agent no longer defers, for example in a restored history, leaves that tool out, since the API rejects a reference to a tool that isn’t in the request.</li>
+</ul>
+
+<p>Things to know:</p>
+
+<ul>
+  <li>At least one tool in the request must not be deferred, or the API returns a 400 (<code>All tools cannot be deferred</code>). An agent needs a tool in <code>uses_tools</code> to load its deferred tools anyway.</li>
+  <li>A deferred tool can’t carry <code>cache_control</code> (400). Riffer never sets it on a tool; the top-level <code>model_options cache_control: {type: "ephemeral"}</code> works with deferred tools.</li>
+  <li>Deferred loading needs Claude Haiku 4.5, Sonnet 4.5, Opus 4.5 or a later model. An older model gets the API’s own error.</li>
+</ul>
+
+<p>With the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a>, <code>deferred_tools [...], strategy: :gateway</code>, riffer sends the <a href="/guides/tools/#the-gateway-strategy">gateway</a> instead of loading them natively.</p>
 
 <h2 id="message-format">Message Format</h2>
 

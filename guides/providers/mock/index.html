@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -308,6 +308,8 @@
 </code></pre></div></div>
 
 <p>Each message is recorded as its <code>to_h</code>, so an assistant message has <code>parts</code> rather than <code>content</code> (see <a href="/guides/messages/#parts">Messages — Parts</a>).</p>
+
+<p>The Mock provider loads <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> natively, so you can test them without a real provider. For an agent with deferred tools, each recorded call also has <code>deferred_tools:</code>, every deferred tool whether loaded or not. With the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a> it doesn’t load them natively: recorded calls have no <code>deferred_tools:</code>, the gateway is last in <code>tools:</code>, the messages are as the gateway sends them, and a stubbed call to the gateway (<code>Riffer::Providers::DeferredToolGateway::Tool.name</code>) comes back as a call to the real tool.</p>
 
 <h2 id="clearing-state">Clearing State</h2>
 

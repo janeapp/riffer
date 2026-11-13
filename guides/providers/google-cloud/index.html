@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -529,8 +529,8 @@
 <h3 id="structured-output">Structured Output</h3>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="p">.</span><span class="nf">new</span>
-<span class="n">params</span><span class="p">.</span><span class="nf">required</span><span class="p">(</span><span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span><span class="p">)</span>
-<span class="n">params</span><span class="p">.</span><span class="nf">required</span><span class="p">(</span><span class="ss">:score</span><span class="p">,</span> <span class="no">Float</span><span class="p">)</span>
+<span class="n">params</span><span class="p">.</span><span class="nf">required</span><span class="p">(</span><span class="ss">:sentiment</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+<span class="n">params</span><span class="p">.</span><span class="nf">required</span><span class="p">(</span><span class="ss">:score</span><span class="p">,</span> <span class="ss">:number</span><span class="p">)</span>
 <span class="n">structured_output</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">StructuredOutput</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
@@ -541,14 +541,14 @@
 <span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">structured_output</span>
 </code></pre></div></div>
 
-<p>The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return <code>null</code> for a value it doesn’t know instead of making one up. A <code>Hash</code> param needs a block and an <code>Array</code> param a block or <code>of:</code> (see <a href="/guides/agents/#limitations">Structured Output Limitations</a>).</p>
+<p>The schema is sent in strict form: every field is listed as required, and an optional field is nullable, so the model can return <code>null</code> for a value it doesn’t know instead of making one up. An <code>:object</code> param needs a block and an <code>:array</code> param a block or <code>of:</code> (see <a href="/guides/agents/#limitations">Structured Output Limitations</a>).</p>
 
 <h3 id="tool-calling">Tool Calling</h3>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
   <span class="n">description</span> <span class="s2">"Gets weather"</span>
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="k">end</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:)</span>
     <span class="n">text</span><span class="p">(</span><span class="s2">"Sunny in </span><span class="si">#{</span><span class="n">city</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -563,6 +563,10 @@
 </code></pre></div></div>
 
 <p>Riffer gives each tool call its own <code>call_id</code> (<code>gemini_call_&lt;hex&gt;</code>) and appends the model’s id when there is one. On later turns riffer sends that id back on the function call and its result, so the model can match results to parallel calls of the same tool.</p>
+
+<h3 id="deferred-tools-experimental">Deferred Tools (experimental)</h3>
+
+<p>Gemini models have no native deferred loading, so on <code>google_cloud</code> an agent with <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> needs the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a>, the same way as on <a href="/guides/providers/gemini/#deferred-tools-experimental">Gemini → Deferred Tools</a>. Claude models on <code>anthropic_vertex</code> load them natively.</p>
 
 <h3 id="thought-signatures">Thought Signatures</h3>
 
@@ -651,6 +655,7 @@
   <li><strong>Reasoning</strong> is captured as <a href="/guides/messages/#reasoning">reasoning parts</a> tagged <code>format: "anthropic-messages-v1"</code> and sent back on later turns, as described in <a href="/guides/providers/anthropic/#reasoning-replay">Anthropic → Reasoning Replay</a>. Thinking signatures are accepted by both APIs, so a conversation can move between <code>anthropic</code> and <code>anthropic_vertex</code>. The agent-level <a href="/guides/agents/#reasoning"><code>reasoning</code></a> setting uses the Anthropic default; <a href="/guides/catalog/#reasoning">catalog</a> entries go under <code>anthropic_vertex/...</code> keys.</li>
   <li><strong>Web search:</strong> <code>web_search: true</code> (or a hash of options) adds the <code>web_search_20250305</code> server tool and streams <code>WebSearchStatus</code> / <code>WebSearchDone</code> events.</li>
   <li><strong>Structured output</strong> is sent as a strict <code>output_config.format</code> JSON schema.</li>
+  <li><strong>Deferred tools</strong> are loaded natively, the same way as on <a href="/guides/providers/anthropic/#deferred-tools">Anthropic → Deferred Tools</a>.</li>
   <li><strong>Skills</strong> are rendered with the XML skills adapter.</li>
   <li><strong>Tags:</strong> only the reserved <code>user_id</code> tag is sent, as <code>metadata.user_id</code>.</li>
   <li><strong>Incomplete streams:</strong> a stream that ends without a <code>message_stop</code> event raises <code>Riffer::IncompleteStreamError</code>.</li>

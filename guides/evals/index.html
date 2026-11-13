@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -213,6 +213,10 @@
             </ul>
           </nav>
           
+<blockquote>
+  <p><strong>Deprecated:</strong> evals will move out of riffer into a separate <code>riffer-evals</code> gem that keeps the <code>Riffer::Evals</code> API. Until then, using <code>Riffer::Evals</code> or <code>config.evals</code> reports a <a href="/guides/stability/#deprecations">deprecation</a> warning.</p>
+</blockquote>
+
 <p>Evals let you measure the quality of agent outputs using LLM-as-judge evaluations.</p>
 
 <h2 id="when-to-use-evals">When to Use Evals</h2>

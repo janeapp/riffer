@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -209,6 +209,7 @@
               <li><a href="#looking-up-tools">Looking Up Tools</a></li>
               <li><a href="#the-call-method">The call Method</a></li>
               <li><a href="#response-objects">Response Objects</a></li>
+              <li><a href="#loading-deferred-tools-experimental">Loading deferred tools (experimental)</a></li>
             </ul>
           </nav>
           
@@ -226,8 +227,8 @@
   <span class="n">description</span> <span class="s2">"Gets the current weather for a city"</span>
 
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
-    <span class="n">optional</span> <span class="ss">:units</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"celsius"</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"celsius"</span><span class="p">,</span> <span class="s2">"fahrenheit"</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
+    <span class="n">optional</span> <span class="ss">:units</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"celsius"</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"celsius"</span><span class="p">,</span> <span class="s2">"fahrenheit"</span><span class="p">]</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:,</span> <span class="ss">units: </span><span class="kp">nil</span><span class="p">)</span>
@@ -266,10 +267,10 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateOrderTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:product_id</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The product ID"</span>
-    <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Number of items"</span>
-    <span class="n">optional</span> <span class="ss">:notes</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Order notes"</span>
-    <span class="n">optional</span> <span class="ss">:priority</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"normal"</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"low"</span><span class="p">,</span> <span class="s2">"normal"</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:product_id</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The product ID"</span>
+    <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Number of items"</span>
+    <span class="n">optional</span> <span class="ss">:notes</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Order notes"</span>
+    <span class="n">optional</span> <span class="ss">:priority</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"normal"</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"low"</span><span class="p">,</span> <span class="s2">"normal"</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">]</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -281,8 +282,8 @@
 <p>Defines a required parameter:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The user's name"</span>
-  <span class="n">required</span> <span class="ss">:age</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The user's age"</span>
+  <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The user's name"</span>
+  <span class="n">required</span> <span class="ss">:age</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The user's age"</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
@@ -290,8 +291,8 @@
 
 <ul>
   <li><code>description</code> - Human-readable description for the LLM</li>
-  <li><code>enum</code> - Array of allowed values (for the innermost items of an <code>Array</code> with <code>of:</code>)</li>
-  <li><code>format</code> - String format such as <code>"date"</code> or <code>"email"</code> (for the innermost <code>String</code> items of an <code>Array</code>; see <a href="/guides/agents/#formats">Formats</a>)</li>
+  <li><code>enum</code> - Array of allowed values (for the innermost items of an <code>:array</code> with <code>of:</code>)</li>
+  <li><code>format</code> - String format such as <code>"date"</code> or <code>"email"</code> (for the innermost <code>:string</code> items of an <code>:array</code>; see <a href="/guides/agents/#formats">Formats</a>)</li>
 </ul>
 
 <h3 id="optional">optional</h3>
@@ -299,8 +300,8 @@
 <p>Defines an optional parameter:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="k">do</span>
-  <span class="n">optional</span> <span class="ss">:limit</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">default: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Max results"</span>
-  <span class="n">optional</span> <span class="ss">:format</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"json"</span><span class="p">,</span> <span class="s2">"xml"</span><span class="p">],</span> <span class="ss">description: </span><span class="s2">"Output format"</span>
+  <span class="n">optional</span> <span class="ss">:limit</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">default: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Max results"</span>
+  <span class="n">optional</span> <span class="ss">:format</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"json"</span><span class="p">,</span> <span class="s2">"xml"</span><span class="p">],</span> <span class="ss">description: </span><span class="s2">"Output format"</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
@@ -309,8 +310,8 @@
 <ul>
   <li><code>description</code> - Human-readable description</li>
   <li><code>default</code> - Default value when not provided</li>
-  <li><code>enum</code> - Array of allowed values (for the innermost items of an <code>Array</code> with <code>of:</code>)</li>
-  <li><code>format</code> - String format such as <code>"date"</code> or <code>"email"</code> (for the innermost <code>String</code> items of an <code>Array</code>; see <a href="/guides/agents/#formats">Formats</a>)</li>
+  <li><code>enum</code> - Array of allowed values (for the innermost items of an <code>:array</code> with <code>of:</code>)</li>
+  <li><code>format</code> - String format such as <code>"date"</code> or <code>"email"</code> (for the innermost <code>:string</code> items of an <code>:array</code>; see <a href="/guides/agents/#formats">Formats</a>)</li>
 </ul>
 
 <h3 id="supported-types">Supported Types</h3>
@@ -318,67 +319,79 @@
 <table>
   <thead>
     <tr>
-      <th>Ruby Type</th>
-      <th>JSON Schema Type</th>
+      <th>Type</th>
+      <th>JSON Schema type</th>
+      <th>Validated value</th>
+      <th>Deprecated class</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><code>String</code></td>
+      <td><code>:string</code></td>
       <td><code>string</code></td>
+      <td><code>String</code></td>
+      <td><code>String</code></td>
     </tr>
     <tr>
-      <td><code>Integer</code></td>
+      <td><code>:integer</code></td>
       <td><code>integer</code></td>
+      <td><code>Integer</code></td>
+      <td><code>Integer</code></td>
     </tr>
     <tr>
-      <td><code>Float</code></td>
+      <td><code>:number</code></td>
       <td><code>number</code></td>
+      <td><code>Float</code></td>
+      <td><code>Float</code></td>
     </tr>
     <tr>
-      <td><code>Riffer::Params::Boolean</code></td>
+      <td><code>:boolean</code></td>
       <td><code>boolean</code></td>
+      <td><code>true</code> or <code>false</code></td>
+      <td><code>Riffer::Params::Boolean</code>, <code>TrueClass</code>, <code>FalseClass</code></td>
     </tr>
     <tr>
-      <td><code>TrueClass</code> / <code>FalseClass</code></td>
-      <td><code>boolean</code></td>
-    </tr>
-    <tr>
-      <td><code>Array</code></td>
+      <td><code>:array</code></td>
       <td><code>array</code></td>
+      <td><code>Array</code></td>
+      <td><code>Array</code></td>
     </tr>
     <tr>
-      <td><code>Hash</code></td>
+      <td><code>:object</code></td>
       <td><code>object</code></td>
+      <td><code>Hash</code> with symbol keys</td>
+      <td><code>Hash</code></td>
     </tr>
     <tr>
-      <td><code>Riffer::Params::AnyOf</code></td>
+      <td><code>:any_of</code></td>
       <td><code>anyOf</code> of objects or primitives</td>
+      <td>The value of the matching variant</td>
+      <td><code>Riffer::Params::AnyOf</code></td>
     </tr>
   </tbody>
 </table>
 
-<p><code>Riffer::Params::Boolean</code> is the preferred way to declare boolean parameters. <code>TrueClass</code> and <code>FalseClass</code> continue to work for backwards compatibility.</p>
+<p><code>required</code>, <code>optional</code>, <code>of:</code> and <code>variant</code> still accept the deprecated Ruby classes, and each line that uses one reports a <a href="/guides/configuration/#deprecations">deprecation</a>. They won’t be removed before 1 December 2026.</p>
 
-<p>A <code>Float</code> param accepts a whole number too, since JSON Schema’s <code>number</code> covers integers — a model returning <code>120</code> for a <code>Float</code> is valid, and the validated value is coerced to <code>120.0</code>. <code>Integer</code> stays strict: <code>1.0</code> is rejected, matching JSON Schema’s <code>integer</code>.</p>
+<p>A <code>:number</code> param accepts a whole number too, since JSON Schema’s <code>number</code> covers integers — a model returning <code>120</code> for a <code>:number</code> is valid, and the validated value is coerced to <code>120.0</code>. <code>:integer</code> stays strict: <code>1.0</code> is rejected, matching JSON Schema’s <code>integer</code>.</p>
 
 <h3 id="nested-parameters">Nested Parameters</h3>
 
-<p>Tool params support the same nested DSL as structured output — nested objects (<code>Hash</code> with block), typed arrays (<code>Array, of:</code>), arrays of arrays (<code>Array, of: [Integer]</code>), arrays of objects (<code>Array</code> with block), and either/or shapes (<code>Riffer::Params::AnyOf</code> with <code>variant</code>s). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
+<p>Tool params support the same nested DSL as structured output — nested objects (<code>:object</code> with block), typed arrays (<code>:array, of:</code>), arrays of arrays (<code>:array, of: [:integer]</code>), arrays of objects (<code>:array</code> with block), and either/or shapes (<code>:any_of</code> with <code>variant</code>s). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateOrderTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
   <span class="n">description</span> <span class="s2">"Creates an order"</span>
 
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:items</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Line items"</span> <span class="k">do</span>
-      <span class="n">required</span> <span class="ss">:product_id</span><span class="p">,</span> <span class="no">Integer</span>
-      <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Integer</span>
-      <span class="n">optional</span> <span class="ss">:notes</span><span class="p">,</span> <span class="no">String</span>
+    <span class="n">required</span> <span class="ss">:items</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Line items"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:product_id</span><span class="p">,</span> <span class="ss">:integer</span>
+      <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="ss">:integer</span>
+      <span class="n">optional</span> <span class="ss">:notes</span><span class="p">,</span> <span class="ss">:string</span>
     <span class="k">end</span>
-    <span class="n">required</span> <span class="ss">:shipping</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Shipping address"</span> <span class="k">do</span>
-      <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span>
-      <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
-      <span class="n">optional</span> <span class="ss">:zip</span><span class="p">,</span> <span class="no">String</span>
+    <span class="n">required</span> <span class="ss">:shipping</span><span class="p">,</span> <span class="ss">:object</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Shipping address"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="ss">:string</span>
+      <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span>
+      <span class="n">optional</span> <span class="ss">:zip</span><span class="p">,</span> <span class="ss">:string</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
@@ -463,12 +476,15 @@
 <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">}).</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Show my orders"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Two keys are framework-managed and exposed as typed accessors:</p>
+<p>Three keys are framework-managed and exposed as typed accessors:</p>
 
 <ul>
   <li><code>context.skills</code> — the resolved <code>Riffer::Skills::Context</code> when the agent has skills configured, otherwise <code>nil</code>.</li>
   <li><code>context.token_usage</code> — the cumulative <code>Riffer::Providers::TokenUsage</code> across every run on the agent, or <code>nil</code> before the first response.</li>
+  <li><code>context.deferred_tools</code> — the agent’s <a href="#loading-deferred-tools-experimental">deferred tools</a>, loaded or not (<code>[]</code> when it has none).</li>
 </ul>
+
+<p>Passing your own <code>:deferred_tools</code> key in <code>context:</code> is deprecated: it still works, and <code>context[:deferred_tools]</code> returns your value, but it prints a <a href="/guides/stability/#deprecations">deprecation warning</a>, and a future breaking release reserves the key. Rename it.</p>
 
 <h2 id="response-objects">Response Objects</h2>
 
@@ -533,7 +549,7 @@
 <span class="n">error</span><span class="p">(</span><span class="s2">"Rate limit exceeded"</span><span class="p">,</span> <span class="ss">type: :rate_limit</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>If no type is specified, it defaults to <code>:execution_error</code>. Riffer reserves <code>:unhandled_error</code> for unrescued exceptions — don’t set it yourself.</p>
+<p>If no type is specified, it defaults to <code>:execution_error</code>. Riffer reserves <code>:unhandled_error</code> for unrescued exceptions, and <code>:invalid_tool_load</code> and <code>:tool_not_loaded</code> for <a href="#loading-deferred-tools-experimental">deferred tools</a> — don’t set them yourself.</p>
 
 <h3 id="using-riffertoolsresponse-directly">Using Riffer::Tools::Response Directly</h3>
 
@@ -542,6 +558,7 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">text</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">)</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">json</span><span class="p">({</span><span class="ss">data: </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="s2">"Failed"</span><span class="p">,</span> <span class="ss">type: :custom_error</span><span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">load_tools</span><span class="p">([</span><span class="no">ListEvents</span><span class="p">])</span>
 </code></pre></div></div>
 
 <h3 id="response-methods">Response Methods</h3>
@@ -563,6 +580,62 @@
 </code></pre></div></div>
 
 <p><code>exception</code> holds the rescued exception on the <code>:unhandled_error</code> responses Riffer builds. It never appears in serialized output, so it is not visible to the LLM.</p>
+
+<h2 id="loading-deferred-tools-experimental">Loading deferred tools (experimental)</h2>
+
+<p>An agent can hold tools back with <a href="/guides/agents/#deferred_tools-experimental"><code>deferred_tools</code></a>. Any of its own tools loads them by returning <code>load_tools(tools)</code>, and <code>context.deferred_tools</code> lists the tools it can choose from. A search tool, a browse tool or a “connect your calendar” tool is an ordinary tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">FindTools</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Find more tools for a task. Describe what you need to do in a few words."</span>
+  <span class="n">params</span> <span class="p">{</span> <span class="n">required</span> <span class="ss">:query</span><span class="p">,</span> <span class="ss">:string</span> <span class="p">}</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">query</span><span class="p">:)</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">query</span><span class="p">.</span><span class="nf">downcase</span><span class="p">.</span><span class="nf">split</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">context</span><span class="p">.</span><span class="nf">deferred_tools</span><span class="p">.</span><span class="nf">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">tool</span><span class="o">|</span> <span class="n">words</span><span class="p">.</span><span class="nf">any?</span> <span class="p">{</span> <span class="o">|</span><span class="n">w</span><span class="o">|</span> <span class="n">tool</span><span class="p">.</span><span class="nf">description</span><span class="p">.</span><span class="nf">downcase</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="p">}</span> <span class="p">}</span>
+    <span class="n">load_tools</span><span class="p">(</span><span class="n">matches</span><span class="p">.</span><span class="nf">first</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">ConnectCalendar</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Connect the user's calendar. Calendar tools become available afterwards."</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:)</span>
+    <span class="no">Calendars</span><span class="p">.</span><span class="nf">connect!</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="ss">:user</span><span class="p">])</span>
+    <span class="n">load_tools</span><span class="p">([</span><span class="no">ListEvents</span><span class="p">,</span> <span class="no">CreateEvent</span><span class="p">])</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>How a load reaches the model depends on the agent’s <a href="/guides/agents/#deferred-tools-strategy-experimental">strategy</a>. By default <a href="/guides/providers/anthropic/#deferred-tools">Anthropic</a>, <a href="/guides/providers/openai/#deferred-tools-experimental">OpenAI</a> and <a href="/guides/providers/azure-openai/#deferred-tools-experimental">Azure OpenAI</a> load deferred tools natively; with <code>strategy: :gateway</code>, any provider goes through the <a href="#the-gateway-strategy">gateway</a>.</p>
+
+<p>A load takes effect from the model’s next turn. The model made every call in a turn before it saw any of that turn’s results, so a call to a tool loaded in the same turn is refused like any other unloaded call; the model calls it again once it has seen the load.</p>
+
+<ul>
+  <li>A load can’t carry text as well, because Anthropic rejects a tool result that mixes loaded tools with text. <code>load_tools</code> takes no text, and the response’s <code>content</code> is <code>""</code>.</li>
+  <li><code>load_tools([])</code> is a successful load of nothing.</li>
+  <li>Loading a tool that isn’t one of the agent’s deferred tools, including one in <code>uses_tools</code>, returns an <code>:invalid_tool_load</code> error to the model instead, and nothing in that load is loaded.</li>
+  <li>Loading a tool that’s already loaded succeeds and changes nothing: the tool is loaded once, and stays loaded for the rest of the conversation. Tools can’t be unloaded.</li>
+  <li>A call to a deferred tool that hasn’t been loaded isn’t run. The model gets an error result of type <code>:tool_not_loaded</code> (<code>Tool 'list_events' has not been loaded</code>). Riffer checks this itself, before the <a href="/guides/advanced-tools/#tool-runtime">tool runtime</a> sees the call, so a custom runtime can’t run an unloaded tool by mistake. That includes a call forced by a provider’s own <code>tool_choice</code> passed through <code>model_options</code>, and an unloaded call already in a restored history.</li>
+</ul>
+
+<p><code>response.loaded_tools</code> returns the tools a response loads, and is <code>[]</code> on every other response. Riffer records the loaded tools’ names on the <a href="/guides/messages/#tool">tool message</a> as <code>loaded_tools</code>.</p>
+
+<p>Loading puts the loaded tools’ full schemas into the conversation, and every load is an extra round trip to the model, so load a handful of tools at a time rather than dozens.</p>
+
+<h3 id="the-gateway-strategy">The gateway strategy</h3>
+
+<p>With <code>deferred_tools [...], strategy: :gateway</code>, riffer doesn’t use the provider’s native loading, so it works on every provider, custom ones included. Adding a loaded tool to the request’s tools partway through a conversation would break the prompt cache on every load, so riffer keeps the tool list fixed and sends one extra tool instead, <code>Riffer::Providers::DeferredToolGateway::Tool</code>, the gateway, named <code>riffer_gateway</code>:</p>
+
+<ul>
+  <li>Every request with deferred tools carries the gateway after the agent’s other tools, before any load and after it. Its name, description and schema never change, and the deferred tools themselves are never in the tool list, so the tool list is the same for the whole conversation.</li>
+  <li>The gateway takes two required string parameters and nothing else: <code>name</code>, the loaded tool’s name, and <code>arguments</code>, the loaded tool’s arguments as a JSON-encoded object (<code>"{\"query\":\"red shoes\",\"limit\":5}"</code>). Strings rather than a free-form object keep the schema valid for providers that send tools in strict mode, such as OpenRouter. Riffer still validates the arguments against the real tool’s <code>params</code> when the tool runs.</li>
+  <li>A tool result that loads tools is sent to the model with an instruction to call them through the gateway, by its wire name, appended to its content, followed by the loaded tools as one JSON array of <code>name</code>, <code>description</code> and <code>parameters</code>. The text is the same every time it is sent, so the earlier conversation doesn’t change and the cache holds. Only the request carries it: the tool message in the session keeps its own content. A load that names a tool the agent no longer defers, for example in a restored history, describes nothing for that tool.</li>
+  <li>The model’s call to the gateway comes back as a call to the real tool, named by <code>name</code> with <code>arguments</code> as its arguments, before the provider returns. The session, <a href="/guides/agent-lifecycle/#on_message"><code>on_message</code> callbacks</a>, the tool runtime, the <code>:tool_not_loaded</code> check and <a href="/guides/tracing/">traces</a> all see the real tool. A streamed gateway call yields only its <code>ToolCallDone</code>, under the real tool’s name: its <code>ToolCallDelta</code> events carry pieces of the gateway’s own arguments, so riffer drops them.</li>
+  <li>On later requests, a call to a deferred tool in the history is sent back as a gateway call, and its result under the gateway’s name, keeping its <code>tool_call_id</code>, so the provider never sees a call to a tool missing from the tool list.</li>
+  <li>A gateway call riffer can’t read, because its arguments aren’t a JSON object with a string <code>name</code> and a string <code>arguments</code> or its <code>name</code> isn’t one of the agent’s deferred tools, stays a call to the gateway, which no agent has as a tool, so the model gets an <code>:unknown_tool</code> error result and can try again.</li>
+</ul>
+
+<p>An agent with the gateway strategy can’t have a tool of its own with the gateway’s name, in <code>uses_tools</code> or <code>deferred_tools</code>: building it raises <code>Riffer::ArgumentError</code>. Like the rest of deferred tools, the gateway is experimental, and its name, description and the text it adds to a load can change in any minor release.</p>
 
         </article>
 

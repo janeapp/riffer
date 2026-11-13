@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -232,7 +232,7 @@
   <span class="n">description</span> <span class="s2">"Gets the weather for a city"</span>
 
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:)</span>
@@ -245,16 +245,16 @@
 
 <h3 id="structured-output">Structured Output</h3>
 
-<p>Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (<code>Hash</code>), typed arrays (<code>Array, of:</code>), arrays of arrays (<code>Array, of: [Integer]</code>), arrays of objects (<code>Array</code> with block), and either/or shapes (<code>Riffer::Params::AnyOf</code>):</p>
+<p>Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (<code>:object</code>), typed arrays (<code>:array, of:</code>), arrays of arrays (<code>:array, of: [:integer]</code>), arrays of objects (<code>:array</code> with block), and either/or shapes (<code>:any_of</code>):</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SentimentAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
   <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
   <span class="n">structured_output</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span>
-    <span class="n">required</span> <span class="ss">:score</span><span class="p">,</span> <span class="no">Float</span>
-    <span class="n">required</span> <span class="ss">:entities</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Named entities"</span> <span class="k">do</span>
-      <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span>
-      <span class="n">required</span> <span class="ss">:type</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"person"</span><span class="p">,</span> <span class="s2">"place"</span><span class="p">,</span> <span class="s2">"org"</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">required</span> <span class="ss">:score</span><span class="p">,</span> <span class="ss">:number</span>
+    <span class="n">required</span> <span class="ss">:entities</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Named entities"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
+      <span class="n">required</span> <span class="ss">:type</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"person"</span><span class="p">,</span> <span class="s2">"place"</span><span class="p">,</span> <span class="s2">"org"</span><span class="p">]</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>

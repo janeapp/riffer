@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -209,6 +209,7 @@
               <li><a href="#example">Example</a></li>
               <li><a href="#streaming">Streaming</a></li>
               <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#deferred-tools-experimental">Deferred Tools (experimental)</a></li>
               <li><a href="#web-search">Web Search</a></li>
               <li><a href="#message-format">Message Format</a></li>
               <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
@@ -381,9 +382,9 @@
   <span class="n">description</span> <span class="s2">"Performs basic math operations"</span>
 
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:operation</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"add"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"multiply"</span><span class="p">,</span> <span class="s2">"divide"</span><span class="p">]</span>
-    <span class="n">required</span> <span class="ss">:a</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"First number"</span>
-    <span class="n">required</span> <span class="ss">:b</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Second number"</span>
+    <span class="n">required</span> <span class="ss">:operation</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"add"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"multiply"</span><span class="p">,</span> <span class="s2">"divide"</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:a</span><span class="p">,</span> <span class="ss">:number</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"First number"</span>
+    <span class="n">required</span> <span class="ss">:b</span><span class="p">,</span> <span class="ss">:number</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Second number"</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">operation</span><span class="p">:,</span> <span class="n">a</span><span class="p">:,</span> <span class="n">b</span><span class="p">:)</span>
@@ -402,6 +403,27 @@
   <span class="n">uses_tools</span> <span class="p">[</span><span class="no">CalculatorTool</span><span class="p">]</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h2 id="deferred-tools-experimental">Deferred Tools (experimental)</h2>
+
+<p>The OpenAI provider loads <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> natively:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Assistant</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5.4-mini'</span>
+  <span class="n">instructions</span> <span class="s2">"If you need a calendar tool you don't have, call connect_calendar first."</span>
+
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">ConnectCalendar</span><span class="p">]</span>
+  <span class="n">deferred_tools</span> <span class="p">[</span><span class="no">ListEvents</span><span class="p">,</span> <span class="no">CreateEvent</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>A deferred tool is left out of the request’s <code>tools</code>. When a tool <a href="/guides/tools/#loading-deferred-tools-experimental">loads it</a>, its full definition is sent in an <code>additional_tools</code> input item placed right after that tool’s <code>function_call_output</code>, and the model can call it from its next turn. <code>tools</code> stays the same for the whole conversation and earlier input items never change, so loading a tool keeps the prompt cache. The loading tool’s own output is empty.</p>
+
+<p>Riffer rebuilds the <code>additional_tools</code> items from the <code>loaded_tools</code> on the conversation’s <a href="/guides/messages/#tool">tool messages</a> on every request, so a restored session, or one started on another provider, loads the same tools. A tool loaded again is sent again, after each result that loaded it: without fresh definitions, a model that reloads a tool it already has can keep calling the loading tool instead of the loaded one.</p>
+
+<p>OpenAI returns a call to a loaded tool with a <code>namespace</code> field, and rejects a later request that replays the call without it. That namespace is always the tool’s own name as sent to OpenAI, so riffer adds it back to every replayed call to a deferred tool and never stores it. Tools, the session, callbacks and traces see an ordinary tool call.</p>
+
+<p>With the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a>, <code>deferred_tools [...], strategy: :gateway</code>, riffer sends the <a href="/guides/tools/#the-gateway-strategy">gateway</a> instead of loading them natively.</p>
 
 <h2 id="web-search">Web Search</h2>
 

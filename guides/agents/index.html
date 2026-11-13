@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -326,9 +326,75 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<h3 id="use_mcp">use_mcp</h3>
+<h3 id="deferred_tools-experimental">deferred_tools (experimental)</h3>
 
-<p>Loads tools from registered <a href="/guides/mcp/">MCP</a> servers by tag.</p>
+<p>Holds tools back from the model until one of the agent’s own tools loads them. Every tool you pass to <code>uses_tools</code> costs tokens on every request, and models pick tools less reliably from a long list, so defer the ones most turns don’t need:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Assistant</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'mock/riffer-1'</span>
+  <span class="n">instructions</span> <span class="s2">"If you need a tool you don't have, use find_tools."</span>
+
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">GetWeather</span><span class="p">,</span> <span class="no">FindTools</span><span class="p">,</span> <span class="no">ConnectCalendar</span><span class="p">]</span>
+  <span class="n">deferred_tools</span> <span class="p">[</span><span class="no">ListEvents</span><span class="p">,</span> <span class="no">CreateEvent</span><span class="p">,</span> <span class="no">SendInvoice</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Like <code>uses_tools</code>, <code>deferred_tools</code> takes an Array or a lambda that receives the context:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">deferred_tools</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span> <span class="n">context</span><span class="p">[</span><span class="ss">:billing</span><span class="p">]</span> <span class="p">?</span> <span class="p">[</span><span class="no">ListEvents</span><span class="p">,</span> <span class="no">SendInvoice</span><span class="p">]</span> <span class="p">:</span> <span class="p">[</span><span class="no">ListEvents</span><span class="p">]</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>A tool can’t be both: one that’s in <code>uses_tools</code> (or comes from skills or MCP) and in <code>deferred_tools</code> raises <code>Riffer::ArgumentError</code> when the agent is built. The resolved list is <code>agent.deferred_tools</code>, and tools read it at call time as <code>context.deferred_tools</code>.</p>
+
+<p>Any tool loads deferred tools by returning <code>load_tools(...)</code>; see <a href="/guides/tools/#loading-deferred-tools-experimental">Tools → Loading deferred tools</a>. Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are <a href="/guides/serialization/">serialized</a> and restored. A call to a deferred tool that hasn’t been loaded is refused.</p>
+
+<p>By default deferred tools load natively, which needs provider support. <code>anthropic</code> and <code>anthropic_vertex</code> (see <a href="/guides/providers/anthropic/#deferred-tools">Anthropic → Deferred Tools</a>), <a href="/guides/providers/openai/#deferred-tools-experimental">OpenAI</a> and <a href="/guides/providers/azure-openai/#deferred-tools-experimental">Azure OpenAI</a> load them natively, and the <a href="/guides/providers/mock/">Mock provider</a> does too, for tests. Building an agent with deferred tools on any other provider raises <code>Riffer::ArgumentError</code> naming the provider, unless it uses the <a href="#deferred-tools-strategy-experimental">gateway strategy</a>. Riffer doesn’t check which models support native loading, so an unsupported model on one of those providers gets the provider’s own error.</p>
+
+<p>Nothing tells the model that more tools exist unless you do, in a tool’s description or the instructions. If no tool ever returns <code>load_tools</code>, the deferred tools can’t be reached, and riffer can’t detect that.</p>
+
+<p>Deferring a tool hides it from the model; it doesn’t restrict it. Any tool can load any deferred tool, so leave a tool out of the agent entirely if the user mustn’t reach it.</p>
+
+<p>The feature is <strong>experimental</strong>: it can change in any minor release (see <a href="/guides/stability/#experimental-features">Stability</a>).</p>
+
+<h4 id="deferred-tools-strategy-experimental">Deferred tools strategy (experimental)</h4>
+
+<p>By default the provider loads deferred tools itself. For a provider without native loading, or a model that rejects it, opt the agent into the <strong>experimental</strong> gateway strategy:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Assistant</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/my-model'</span>
+  <span class="n">instructions</span> <span class="s2">"If you need a tool you don't have, use find_tools."</span>
+
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">FindTools</span><span class="p">]</span>
+  <span class="n">deferred_tools</span> <span class="p">[</span><span class="no">ListEvents</span><span class="p">,</span> <span class="no">CreateEvent</span><span class="p">],</span> <span class="ss">strategy: :gateway</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>With <code>strategy: :gateway</code>, the provider never loads deferred tools natively, even one that can. Every request carries one extra tool, the gateway, and the model calls a loaded tool through it, so the tool list never changes and a load keeps the prompt cache; see <a href="/guides/tools/#the-gateway-strategy">Tools → The gateway strategy</a>. No other tool of the agent can share the gateway’s name.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Strategy</th>
+      <th>Behavior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:native</code> (default)</td>
+      <td>The provider loads deferred tools itself; raises on a provider without native loading</td>
+    </tr>
+    <tr>
+      <td><code>:gateway</code></td>
+      <td>Loaded tools are called through one extra tool, on every provider; experimental, may change</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Riffer does not pick a strategy per provider — the choice is always yours. The strategy is copied to subclasses and survives <a href="/guides/serialization/">serialization</a>. An unknown value raises <code>Riffer::ArgumentError</code>. <code>strategy:</code> can also be passed with a lambda: <code>deferred_tools -&gt;(context) { [ListEvents] }, strategy: :gateway</code>.</p>
+
+<h3 id="use_mcp-deprecated">use_mcp (deprecated)</h3>
+
+<p>Loads tools from registered <a href="/guides/mcp/">MCP</a> servers by tag. MCP client support is deprecated and will be removed in a future release; each <code>use_mcp</code> line reports a <a href="/guides/configuration/#deprecations">deprecation</a>. See <a href="/guides/mcp/#moving-off-mcp">MCP → Moving off MCP</a>.</p>
 
 <h3 id="model_options">model_options</h3>
 
@@ -372,9 +438,9 @@
   <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
   <span class="n">instructions</span> <span class="s1">'Analyze the sentiment of the given text.'</span>
   <span class="n">structured_output</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"positive, negative, or neutral"</span>
-    <span class="n">required</span> <span class="ss">:score</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Confidence score between 0 and 1"</span>
-    <span class="n">optional</span> <span class="ss">:explanation</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Brief explanation"</span>
+    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"positive, negative, or neutral"</span>
+    <span class="n">required</span> <span class="ss">:score</span><span class="p">,</span> <span class="ss">:number</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Confidence score between 0 and 1"</span>
+    <span class="n">optional</span> <span class="ss">:explanation</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Brief explanation"</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -403,12 +469,12 @@
   <span class="n">model</span> <span class="s1">'amazon_bedrock/my-model'</span>
   <span class="n">instructions</span> <span class="s1">'Analyze the sentiment of the given text.'</span>
   <span class="n">structured_output</span> <span class="ss">strategy: :prompted</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"positive, negative, or neutral"</span>
+    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"positive, negative, or neutral"</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>With <code>strategy: :prompted</code>, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in <code>session.messages</code>, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (<code>"&lt;string&gt;"</code>, enum values as <code>"a | b"</code>, an <code>AnyOf</code> field as its first variant, or as <code>"&lt;integer&gt; | &lt;string&gt;"</code> when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: <code>response.content</code> is the reply’s JSON text, <code>response.structured_output</code> holds the validated object, and a reply that fails parsing or validation ends with <code>:invalid_structured_output</code>. Because nothing forces the model to comply, expect more <code>:invalid_structured_output</code> outcomes than with the native strategy.</p>
+<p>With <code>strategy: :prompted</code>, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in <code>session.messages</code>, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (<code>"&lt;string&gt;"</code>, enum values as <code>"a | b"</code>, an <code>:any_of</code> field as its first variant, or as <code>"&lt;integer&gt; | &lt;string&gt;"</code> when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: <code>response.content</code> is the reply’s JSON text, <code>response.structured_output</code> holds the validated object, and a reply that fails parsing or validation ends with <code>:invalid_structured_output</code>. Because nothing forces the model to comply, expect more <code>:invalid_structured_output</code> outcomes than with the native strategy.</p>
 
 <table>
   <thead>
@@ -433,14 +499,14 @@
 
 <h4 id="nested-objects">Nested Objects</h4>
 
-<p>Use <code>Hash</code> with a block to define nested object schemas:</p>
+<p>Use <code>:object</code> with a block to define nested object schemas:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Person name"</span>
-  <span class="n">required</span> <span class="ss">:address</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Mailing address"</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Street address"</span>
-    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"City"</span>
-    <span class="n">optional</span> <span class="ss">:postal_code</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Postal or zip code"</span>
+  <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Person name"</span>
+  <span class="n">required</span> <span class="ss">:address</span><span class="p">,</span> <span class="ss">:object</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Mailing address"</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Street address"</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"City"</span>
+    <span class="n">optional</span> <span class="ss">:postal_code</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Postal or zip code"</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -449,20 +515,20 @@
 
 <h4 id="typed-arrays">Typed Arrays</h4>
 
-<p>Use <code>Array</code> with the <code>of:</code> keyword for arrays of primitive types:</p>
+<p>Use <code>:array</code> with the <code>of:</code> keyword for arrays of primitive types:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:tags</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Tags"</span>
-  <span class="n">required</span> <span class="ss">:scores</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Scores"</span>
+  <span class="n">required</span> <span class="ss">:tags</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">of: :string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Tags"</span>
+  <span class="n">required</span> <span class="ss">:scores</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">of: :number</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Scores"</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p><code>of:</code> takes a primitive type: <code>String</code>, <code>Integer</code>, <code>Float</code>, <code>Riffer::Params::Boolean</code>, <code>TrueClass</code>, <code>FalseClass</code>.</p>
+<p><code>of:</code> takes a primitive type: <code>:string</code>, <code>:integer</code>, <code>:number</code> or <code>:boolean</code>.</p>
 
 <p>Add <code>enum:</code> to limit each item to a list of values:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:tags</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="sx">%w[urgent billing technical]</span>
+  <span class="n">required</span> <span class="ss">:tags</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">of: :string</span><span class="p">,</span> <span class="ss">enum: </span><span class="sx">%w[urgent billing technical]</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
@@ -471,8 +537,8 @@
 <p>For an array of arrays, put the type in brackets. Each pair of brackets adds a level, and <code>enum:</code> and <code>format:</code> apply to the innermost items:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:rows</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="p">[</span><span class="no">Integer</span><span class="p">],</span> <span class="ss">description: </span><span class="s2">"Seat numbers, one array per row"</span>
-  <span class="n">required</span> <span class="ss">:board</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="p">[</span><span class="no">String</span><span class="p">],</span> <span class="ss">enum: </span><span class="sx">%w[x o]</span>
+  <span class="n">required</span> <span class="ss">:rows</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">of: </span><span class="p">[</span><span class="ss">:integer</span><span class="p">],</span> <span class="ss">description: </span><span class="s2">"Seat numbers, one array per row"</span>
+  <span class="n">required</span> <span class="ss">:board</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">of: </span><span class="p">[</span><span class="ss">:string</span><span class="p">],</span> <span class="ss">enum: </span><span class="sx">%w[x o]</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
@@ -480,12 +546,12 @@
 
 <h4 id="formats">Formats</h4>
 
-<p>Use <code>format:</code> on a <code>String</code>, or on an <code>Array</code> whose innermost type is <code>String</code>, to require a standard string format:</p>
+<p>Use <code>format:</code> on a <code>:string</code>, or on an <code>:array</code> whose innermost type is <code>:string</code>, to require a standard string format:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:born_on</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"date"</span>
-  <span class="n">optional</span> <span class="ss">:email</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"email"</span>
-  <span class="n">required</span> <span class="ss">:visit_ids</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"uuid"</span>
+  <span class="n">required</span> <span class="ss">:born_on</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"date"</span>
+  <span class="n">optional</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"email"</span>
+  <span class="n">required</span> <span class="ss">:visit_ids</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">of: :string</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"uuid"</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
@@ -497,13 +563,13 @@
 
 <h4 id="arrays-of-objects">Arrays of Objects</h4>
 
-<p>Use <code>Array</code> with a block to define arrays of objects:</p>
+<p>Use <code>:array</code> with a block to define arrays of objects:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:items</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Line items"</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Product name"</span>
-    <span class="n">required</span> <span class="ss">:price</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Price"</span>
-    <span class="n">optional</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Quantity"</span>
+  <span class="n">required</span> <span class="ss">:items</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Line items"</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Product name"</span>
+    <span class="n">required</span> <span class="ss">:price</span><span class="p">,</span> <span class="ss">:number</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Price"</span>
+    <span class="n">optional</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Quantity"</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -515,12 +581,12 @@
 <p>Blocks can be nested arbitrarily deep:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:orders</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Orders"</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:id</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Order ID"</span>
-    <span class="n">required</span> <span class="ss">:shipping</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Shipping info"</span> <span class="k">do</span>
-      <span class="n">required</span> <span class="ss">:address</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Address"</span> <span class="k">do</span>
-        <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span>
-        <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">required</span> <span class="ss">:orders</span><span class="p">,</span> <span class="ss">:array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Orders"</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Order ID"</span>
+    <span class="n">required</span> <span class="ss">:shipping</span><span class="p">,</span> <span class="ss">:object</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Shipping info"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:address</span><span class="p">,</span> <span class="ss">:object</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Address"</span> <span class="k">do</span>
+        <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="ss">:string</span>
+        <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
@@ -529,17 +595,17 @@
 
 <h4 id="eitheror-shapes">Either/Or Shapes</h4>
 
-<p>Use <code>Riffer::Params::AnyOf</code> when a field must be one of several object shapes. Each <code>variant</code> block defines one shape, the same way a <code>Hash</code> block does:</p>
+<p>Use <code>:any_of</code> when a field must be one of several object shapes. Each <code>variant</code> block defines one shape, the same way an <code>:object</code> block does:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:result</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="o">::</span><span class="no">AnyOf</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The address, or why none was found"</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:result</span><span class="p">,</span> <span class="ss">:any_of</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The address, or why none was found"</span> <span class="k">do</span>
     <span class="n">variant</span> <span class="k">do</span>
-      <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Street address"</span>
-      <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"City"</span>
+      <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Street address"</span>
+      <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"City"</span>
     <span class="k">end</span>
     <span class="n">variant</span> <span class="k">do</span>
-      <span class="n">required</span> <span class="ss">:error_code</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="sx">%w[no_address multiple_addresses]</span>
-      <span class="n">required</span> <span class="ss">:error_message</span><span class="p">,</span> <span class="no">String</span>
+      <span class="n">required</span> <span class="ss">:error_code</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">enum: </span><span class="sx">%w[no_address multiple_addresses]</span>
+      <span class="n">required</span> <span class="ss">:error_message</span><span class="p">,</span> <span class="ss">:string</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -547,18 +613,18 @@
 
 <p>The schema sends the field as <code>anyOf</code>, with one object per variant. An answer must match one variant completely: every required field of that variant, and no field from outside it. Variants are tried in order and the first match is returned. When none match, the error lists each variant’s problems: <code>result must match one of the variants: variant 1 (street is required, city is required), variant 2 (error_code is required, error_message is required)</code>.</p>
 
-<p>An optional <code>AnyOf</code> field can also be <code>null</code>.</p>
+<p>An optional <code>:any_of</code> field can also be <code>null</code>.</p>
 
 <p>A variant can be a primitive type instead of a block, with its own <code>description:</code>, <code>enum:</code> or <code>format:</code>, and one field can mix both kinds:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
-  <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="o">::</span><span class="no">AnyOf</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"A count, or a word like 'several'"</span> <span class="k">do</span>
-    <span class="n">variant</span> <span class="no">Integer</span>
-    <span class="n">variant</span> <span class="no">String</span>
+  <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="ss">:any_of</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"A count, or a word like 'several'"</span> <span class="k">do</span>
+    <span class="n">variant</span> <span class="ss">:integer</span>
+    <span class="n">variant</span> <span class="ss">:string</span>
   <span class="k">end</span>
-  <span class="n">optional</span> <span class="ss">:due</span><span class="p">,</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Params</span><span class="o">::</span><span class="no">AnyOf</span> <span class="k">do</span>
-    <span class="n">variant</span> <span class="no">String</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"date"</span>
-    <span class="n">variant</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"none"</span><span class="p">]</span>
+  <span class="n">optional</span> <span class="ss">:due</span><span class="p">,</span> <span class="ss">:any_of</span> <span class="k">do</span>
+    <span class="n">variant</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"date"</span>
+    <span class="n">variant</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"none"</span><span class="p">]</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -567,9 +633,9 @@
 
 <h4 id="limitations">Limitations</h4>
 
-<p>Anthropic and Bedrock reject a structured output schema with more than 16 union-type fields. Every <code>AnyOf</code> field counts, and so does every optional field, since strict mode sends it as nullable.</p>
+<p>Anthropic and Bedrock reject a structured output schema with more than 16 union-type fields. Every <code>:any_of</code> field counts, and so does every optional field, since strict mode sends it as nullable.</p>
 
-<p>A <code>Hash</code> param requires a block, and an <code>Array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code> or <code>of: [Hash]</code>), or with more than one type (<code>of: [Integer, String]</code>), also raises <code>Riffer::ArgumentError</code>. An <code>AnyOf</code> param requires a block with at least two <code>variant</code>s, and can’t be used with <code>of:</code> or <code>enum:</code>. A <code>variant</code> takes either a primitive type, with optional <code>description:</code>, <code>enum:</code> or <code>format:</code>, or a block. Anything else raises <code>Riffer::ArgumentError</code>, and so does an <code>Integer</code> variant after a <code>Float</code> variant without <code>enum:</code>, since that <code>Float</code> variant accepts every number and the first match wins. Using <code>enum:</code> on a <code>Hash</code>, or on an <code>Array</code> without <code>of:</code>, also raises <code>Riffer::ArgumentError</code>. So does <code>format:</code> with an unsupported format, on a type other than <code>String</code> or an <code>Array</code> whose innermost type is <code>String</code>, or together with <code>enum:</code>.</p>
+<p>An <code>:object</code> param requires a block, and an <code>:array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: :object</code> or <code>of: [:object]</code>), or with more than one type (<code>of: [:integer, :string]</code>), also raises <code>Riffer::ArgumentError</code>. An <code>:any_of</code> param requires a block with at least two <code>variant</code>s, and can’t be used with <code>of:</code> or <code>enum:</code>. A <code>variant</code> takes either a primitive type, with optional <code>description:</code>, <code>enum:</code> or <code>format:</code>, or a block. Anything else raises <code>Riffer::ArgumentError</code>, and so does an <code>:integer</code> variant after a <code>:number</code> variant without <code>enum:</code>, since that <code>:number</code> variant accepts every number and the first match wins. Using <code>enum:</code> on an <code>:object</code>, or on an <code>:array</code> without <code>of:</code>, also raises <code>Riffer::ArgumentError</code>. So does <code>format:</code> with an unsupported format, on a type other than <code>:string</code> or an <code>:array</code> whose innermost type is <code>:string</code>, or together with <code>enum:</code>.</p>
 
 <p>Structured output is not compatible with streaming — calling <code>stream</code> on an agent with structured output configured raises <code>Riffer::ArgumentError</code>.</p>
 

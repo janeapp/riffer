@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -656,6 +656,18 @@
 <span class="n">msg</span><span class="p">.</span><span class="nf">error?</span>      <span class="c1"># =&gt; true</span>
 <span class="n">msg</span><span class="p">.</span><span class="nf">error</span>       <span class="c1"># =&gt; "API rate limit exceeded"</span>
 <span class="n">msg</span><span class="p">.</span><span class="nf">error_type</span>  <span class="c1"># =&gt; :execution_error</span>
+</code></pre></div></div>
+
+<p>A tool result that <a href="/guides/tools/#loading-deferred-tools-experimental">loaded deferred tools</a> records their names in <code>loaded_tools</code> (<code>[]</code> otherwise). <code>to_h</code> includes the key only when it isn’t empty, and <code>from_hash</code> reads it back, so the loaded set travels with the history:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="s2">""</span><span class="p">,</span>
+  <span class="ss">tool_call_id: </span><span class="s2">"call_456"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"connect_calendar"</span><span class="p">,</span>
+  <span class="ss">loaded_tools: </span><span class="p">[</span><span class="s2">"list_events"</span><span class="p">,</span> <span class="s2">"create_event"</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">loaded_tools</span>  <span class="c1"># =&gt; ["list_events", "create_event"]</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>          <span class="c1"># =&gt; {role: :tool, content: "", tool_call_id: "call_456", name: "connect_calendar", loaded_tools: ["list_events", "create_event"]}</span>
 </code></pre></div></div>
 
 <h2 id="file-parts">File Parts</h2>

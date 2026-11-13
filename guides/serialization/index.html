@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -255,19 +255,29 @@
   <span class="ss">structured_output: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"object"</span><span class="p">,</span> <span class="err">…</span> <span class="p">},</span>   <span class="c1"># JSON Schema, or null</span>
   <span class="ss">structured_output_strategy: :native</span><span class="p">,</span>        <span class="c1"># :native or :prompted ("native"/"prompted" over JSON)</span>
   <span class="ss">reasoning:         :low</span><span class="p">,</span>                     <span class="c1"># reasoning level, or null</span>
-  <span class="ss">tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">]</span>
+  <span class="ss">tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">],</span>
+  <span class="ss">deferred_tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">],</span> <span class="c1"># [] when the agent has none</span>
+  <span class="ss">deferred_tools_strategy: :native</span>            <span class="c1"># :native or :gateway ("native"/"gateway" over JSON)</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <h3 id="resolved-snapshot">Resolved snapshot</h3>
 
-<p><code>to_h</code> reads the agent’s <strong>resolved</strong> state, not its raw configuration. By the time you call it, <code>Agent.new</code> has already evaluated any <code>Proc</code>-based <code>model</code>, <code>instructions</code>, or <code>uses_tools</code> against the agent’s own context — so the hash carries plain strings and data, never Procs. The receiver’s <code>context:</code> drives runtime behavior (tool dispatch); it does <strong>not</strong> re-evaluate baked-in fields.</p>
+<p><code>to_h</code> reads the agent’s <strong>resolved</strong> state, not its raw configuration. By the time you call it, <code>Agent.new</code> has already evaluated any <code>Proc</code>-based <code>model</code>, <code>instructions</code>, <code>uses_tools</code>, or <code>deferred_tools</code> against the agent’s own context — so the hash carries plain strings and data, never Procs. The receiver’s <code>context:</code> drives runtime behavior (tool dispatch); it does <strong>not</strong> re-evaluate baked-in fields.</p>
 
 <h3 id="structured-output">Structured output</h3>
 
 <p>Structured output crosses as <strong>provider-neutral JSON Schema</strong> (<code>Riffer::Params#to_json_schema</code>), never a provider-rendered schema. <code>from_h</code> rebuilds a validating <code>Riffer::Params</code> via <code>Riffer::Params.from_json_schema</code>, so the rebuilt agent both constrains the model and can <code>parse_and_validate</code> responses — rendering provider-correct bytes at call time, the same way an in-code agent does.</p>
 
 <p><code>structured_output_strategy</code> carries the <a href="/guides/agents/#structured-output-strategy-experimental">strategy</a> the agent was configured with, so a <code>:prompted</code> agent rebuilds as <code>:prompted</code>. A hash without the key decodes as <code>:native</code>.</p>
+
+<h3 id="deferred-tools">Deferred tools</h3>
+
+<p><code>deferred_tools</code> carries the agent’s <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> as the same descriptors as <code>tools</code>, and <code>from_h</code> resolves them through the same <code>tool_resolver:</code>. A hash without the key, such as one saved by an earlier release, decodes as deferring nothing. An earlier release ignores the key, so it rebuilds an agent that has deferred tools without them; load agents with deferred tools only on a release that supports them.</p>
+
+<p><code>deferred_tools_strategy</code> carries the <a href="/guides/agents/#deferred-tools-strategy-experimental">strategy</a> the agent was configured with, so a <code>:gateway</code> agent rebuilds as <code>:gateway</code>. A hash without the key decodes as <code>:native</code>.</p>
+
+<p>Which deferred tools are loaded isn’t part of the hash: riffer works it out from the <code>loaded_tools</code> on the conversation’s <a href="/guides/messages/#tool">tool messages</a>. Pass the restored history as <code>session:</code> and the loaded tools stay loaded. Riffer matches loads by tool name, so this works with body-less shells too.</p>
 
 <h2 id="reconstructing-tools">Reconstructing tools</h2>
 

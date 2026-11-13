@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -209,6 +209,7 @@
               <li><a href="#example">Example</a></li>
               <li><a href="#streaming">Streaming</a></li>
               <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#deferred-tools-experimental">Deferred Tools (experimental)</a></li>
               <li><a href="#reasoning-models">Reasoning Models</a></li>
               <li><a href="#routing--fallbacks">Routing &amp; Fallbacks</a></li>
               <li><a href="#message-format">Message Format</a></li>
@@ -357,9 +358,9 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CalculatorTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
   <span class="n">description</span> <span class="s1">'Performs basic math'</span>
   <span class="n">params</span> <span class="k">do</span>
-    <span class="n">required</span> <span class="ss">:operation</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'subtract'</span><span class="p">,</span> <span class="s1">'multiply'</span><span class="p">,</span> <span class="s1">'divide'</span><span class="p">]</span>
-    <span class="n">required</span> <span class="ss">:a</span><span class="p">,</span> <span class="no">Float</span>
-    <span class="n">required</span> <span class="ss">:b</span><span class="p">,</span> <span class="no">Float</span>
+    <span class="n">required</span> <span class="ss">:operation</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'subtract'</span><span class="p">,</span> <span class="s1">'multiply'</span><span class="p">,</span> <span class="s1">'divide'</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:a</span><span class="p">,</span> <span class="ss">:number</span>
+    <span class="n">required</span> <span class="ss">:b</span><span class="p">,</span> <span class="ss">:number</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">operation</span><span class="p">:,</span> <span class="n">a</span><span class="p">:,</span> <span class="n">b</span><span class="p">:)</span>
@@ -378,6 +379,14 @@
   <span class="n">uses_tools</span> <span class="p">[</span><span class="no">CalculatorTool</span><span class="p">]</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h2 id="deferred-tools-experimental">Deferred Tools (experimental)</h2>
+
+<p>OpenRouter has no native deferred loading, so an agent with <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> on OpenRouter needs the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a>, <code>deferred_tools [...], strategy: :gateway</code>; without it, building the agent raises <code>Riffer::ArgumentError</code>. Every request then has one extra function in <code>tools</code>, the <a href="/guides/tools/#the-gateway-strategy">gateway</a>, and the model calls a loaded tool through it, so <code>tools</code> stays the same and a load keeps the prompt cache. Calls come back under the real tool’s name.</p>
+
+<p>The gateway is sent with <code>strict: true</code>, like every other tool. Its parameters are two required strings, <code>name</code> and <code>arguments</code> (the loaded tool’s arguments, JSON-encoded), with no additional properties, so the schema is valid in strict mode; riffer checks the arguments against the real tool’s <code>params</code> when it runs.</p>
+
+<p>The tool list holding steady keeps the cache valid, but whether the next request reads it is up to OpenRouter’s routing. A model served by several upstreams can have its requests spread across them, and they share no cache, so the turn after a load may miss. Pin one upstream with <a href="#provider-routing-preferences"><code>provider</code></a> (<code>provider: {order: ['coreweave'], allow_fallbacks: false}</code>) when cache hits matter.</p>
 
 <h2 id="reasoning-models">Reasoning Models</h2>
 

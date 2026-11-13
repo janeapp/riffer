@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.56.0</span>
+            <span class="version">v0.57.0</span>
           </div>
         </nav>
       </div>
@@ -333,6 +333,30 @@
       <td>Any other <code>StandardError</code></td>
       <td><code>:unhandled_error</code></td>
       <td><code>Error executing tool: &lt;ExceptionClass&gt;: &lt;message&gt;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Riffer also returns two errors of its own for <a href="/guides/tools/#loading-deferred-tools-experimental">deferred tools</a>. The first replaces the loading tool’s result; the second is returned without running the call:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Failure</th>
+      <th>Error type</th>
+      <th>Response content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>A tool loads a tool that isn’t deferred</td>
+      <td><code>:invalid_tool_load</code></td>
+      <td><code>Cannot load &lt;names&gt;: only this agent's deferred tools can be loaded</code></td>
+    </tr>
+    <tr>
+      <td>A call to a deferred tool not yet loaded</td>
+      <td><code>:tool_not_loaded</code></td>
+      <td><code>Tool '&lt;name&gt;' has not been loaded</code></td>
     </tr>
   </tbody>
 </table>
