@@ -56,6 +56,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def continue_paused_turn: (Hash[Symbol, untyped]) { (Hash[Symbol, untyped]) -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
 
   # Each request is billed for its own input and output, so the counts add up.
+  # A nil count in the later response would replace the running total, so it's dropped.
   # --
   # : (Hash[Symbol, untyped]?, Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]?
   def merge_usage: (Hash[Symbol, untyped]?, Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]?
