@@ -1,0 +1,518 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1315'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:22 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609022-V00BKu2xvQQhrPJwThr0
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a13876bc109614-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        : OPENROUTER PROCESSING
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user wants to know what's","reasoning_details":[{"type":"reasoning.text","text":" user wants to know what's","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" on their calendar on 202","reasoning_details":[{"type":"reasoning.text","text":" on their calendar on 202","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"6-11-06.","reasoning_details":[{"type":"reasoning.text","text":"6-11-06.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" I need a","reasoning_details":[{"type":"reasoning.text","text":" I need a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" calendar tool. Let me find","reasoning_details":[{"type":"reasoning.text","text":" calendar tool. Let me find","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" one.","reasoning_details":[{"type":"reasoning.text","text":" one.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","type":"function","function":{"name":"find_tools","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"query\":\"read calendar events for a specific date\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794609022-V00BKu2xvQQhrPJwThr0","object":"chat.completion.chunk","created":1794609022,"model":"z-ai/glm-5.3-flash","provider":"CoreWeave","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":374,"completion_tokens":48,"total_tokens":422,"cost":0.00006312,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00006312,"upstream_inference_prompt_cost":0.00004488,"upstream_inference_completions_cost":0.00001824},"completion_tokens_details":{"reasoning_tokens":31,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Fri, 13 Nov 2026 22:30:23 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","type":"function","function":{"name":"find_tools","arguments":"{\"query\":\"read
+        calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I need a calendar
+        tool. Let me find one.","format":"unknown"}]},{"role":"tool","tool_call_id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2420'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:25 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609023-Fvfr16mcvJMKWnhpkq2H
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a1387f1a089614-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794609023-Fvfr16mcvJMKWnhpkq2H","object":"chat.completion.chunk","created":1794609023,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_e17010514d194f8990ea690e","type":"function","function":{"name":"riffer_gateway","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609023-Fvfr16mcvJMKWnhpkq2H","object":"chat.completion.chunk","created":1794609023,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"name\": \"calendar/list_events\", \"arguments\": \"{\\\"date\\\": \\\"2026-11-06\\\"}\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609023-Fvfr16mcvJMKWnhpkq2H","object":"chat.completion.chunk","created":1794609023,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794609023-Fvfr16mcvJMKWnhpkq2H","object":"chat.completion.chunk","created":1794609023,"model":"z-ai/glm-5.3-flash","provider":"Relace","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":555,"completion_tokens":31,"total_tokens":586,"cost":0.0000245749,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000245749,"upstream_inference_prompt_cost":0.0000221445,"upstream_inference_completions_cost":0.0000024304},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Fri, 13 Nov 2026 22:30:25 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","type":"function","function":{"name":"find_tools","arguments":"{\"query\":\"read
+        calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I need a calendar
+        tool. Let me find one.","format":"unknown"}]},{"role":"tool","tool_call_id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"call_e17010514d194f8990ea690e","type":"function","function":{"name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_e17010514d194f8990ea690e","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2782'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:26 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609025-0lgKCfNNZnyuKtD2qTsk
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a138884cd39614-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI1LTBsZ0tDZk5OWm55dUt0RDJxVHNrIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiSGVyZSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNS0wbGdLQ2ZOTlpueXVLdEQycVRzayIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IidzIHdoYXQncyBvbiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNS0wbGdLQ2ZOTlpueXVLdEQycVRzayIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiB5b3VyIGNhbGVuZGFyIGZvciIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNS0wbGdLQ2ZOTlpueXVLdEQycVRzayIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiAqKkZyaWRheSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNS0wbGdLQ2ZOTlpueXVLdEQycVRzayIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiwgIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI1LTBsZ0tDZk5OWm55dUt0RDJxVHNrIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiMjAyNi0xMSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNS0wbGdLQ2ZOTlpueXVLdEQycVRzayIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6Ii0wNioqOlxuXG4iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjUtMGxnS0NmTk5abnl1S3REMnFUc2siLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiItICoqMDkiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjUtMGxnS0NmTk5abnl1S3REMnFUc2siLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiI6MDAqKiDigJMiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjUtMGxnS0NmTk5abnl1S3REMnFUc2siLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgRGVudGlzdCBhcHBvaW50bWVudFxuIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI1LTBsZ0tDZk5OWm55dUt0RDJxVHNrIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiLSAqKjEyOiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNS0wbGdLQ2ZOTlpueXVLdEQycVRzayIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjUsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IjMwKiog4oCTIFRlYW0iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjUtMGxnS0NmTk5abnl1S3REMnFUc2siLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgbHVuY2giLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjUtMGxnS0NmTk5abnl1S3REMnFUc2siLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI1LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI1LTBsZ0tDZk5OWm55dUt0RDJxVHNrIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjo2MTQsImNvbXBsZXRpb25fdG9rZW5zIjo0MiwidG90YWxfdG9rZW5zIjo2NTYsImNvc3QiOjAuMDAwMDIyNzIyNiwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjo1MTIsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMDIyNzIyNiwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDAxOTQyOTgsInVwc3RyZWFtX2luZmVyZW5jZV9jb21wbGV0aW9uc19jb3N0IjowLjAwMDAwMzI5Mjh9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjAsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19CgpkYXRhOiBbRE9ORV0KCg==
+  recorded_at: Fri, 13 Nov 2026 22:30:26 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","type":"function","function":{"name":"find_tools","arguments":"{\"query\":\"read
+        calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I need a calendar
+        tool. Let me find one.","format":"unknown"}]},{"role":"tool","tool_call_id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"call_e17010514d194f8990ea690e","type":"function","function":{"name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_e17010514d194f8990ea690e","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"Here''s
+        what''s on your calendar for **Friday, 2026-11-06**:\n\n- **09:00** – Dentist
+        appointment\n- **12:30** – Team lunch"},{"role":"user","content":"And on 2026-11-07?"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2988'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:27 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609026-yz1SIYi4C1VXgZvpEg9r
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a1389049bbdf09-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794609026-yz1SIYi4C1VXgZvpEg9r","object":"chat.completion.chunk","created":1794609026,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_70fcd8bc70f24fab9778d820","type":"function","function":{"name":"riffer_gateway","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609026-yz1SIYi4C1VXgZvpEg9r","object":"chat.completion.chunk","created":1794609026,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"name\": \"calendar/list_events\", \"arguments\": \"{\\\"date\\\": \\\"2026-11-07\\\"}\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609026-yz1SIYi4C1VXgZvpEg9r","object":"chat.completion.chunk","created":1794609026,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794609026-yz1SIYi4C1VXgZvpEg9r","object":"chat.completion.chunk","created":1794609026,"model":"z-ai/glm-5.3-flash","provider":"Relace","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":668,"completion_tokens":31,"total_tokens":699,"cost":0.0000233812,"is_byok":false,"prompt_tokens_details":{"cached_tokens":576,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000233812,"upstream_inference_prompt_cost":0.0000209508,"upstream_inference_completions_cost":0.0000024304},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Fri, 13 Nov 2026 22:30:27 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","type":"function","function":{"name":"find_tools","arguments":"{\"query\":\"read
+        calendar events for a specific date\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user wants to know what''s on their calendar on 2026-11-06. I need a calendar
+        tool. Let me find one.","format":"unknown"}]},{"role":"tool","tool_call_id":"ed8a1b5a-4297-41a7-8612-26a5dab2ca02","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"call_e17010514d194f8990ea690e","type":"function","function":{"name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_e17010514d194f8990ea690e","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"Here''s
+        what''s on your calendar for **Friday, 2026-11-06**:\n\n- **09:00** – Dentist
+        appointment\n- **12:30** – Team lunch"},{"role":"user","content":"And on 2026-11-07?"},{"role":"assistant","tool_calls":[{"id":"call_70fcd8bc70f24fab9778d820","type":"function","function":{"name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-07\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_70fcd8bc70f24fab9778d820","content":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '3350'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:28 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609027-snICJIpBi4U8aA9cT1RO
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a138981e87df09-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IkludGVyZXN0aW5nIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJJbnRlcmVzdGluZyIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgLSB0aGUgc2FtZSBldmVudHMiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiAtIHRoZSBzYW1lIGV2ZW50cyIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgYXBwZWFyIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgYXBwZWFyIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiBvbiAiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiBvbiAiLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiMjAyNi0xMSIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiMjAyNi0xMSIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiItMDcuIFRoYXQiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6Ii0wNy4gVGhhdCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgbWlnaHQiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiBtaWdodCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgYmUgYSByZXBlYXRpbmciLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiBiZSBhIHJlcGVhdGluZyIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgZXZlbnQsIG9yIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgZXZlbnQsIG9yIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiB0aGUgcmVzdWx0IiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgdGhlIHJlc3VsdCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgbWlnaHQiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiBtaWdodCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgYmUgY2FjaGVkIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgYmUgY2FjaGVkIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6Ii9kIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIvZCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiJ1cGxpY2F0ZWQuIEkgc2hvdWxkIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJ1cGxpY2F0ZWQuIEkgc2hvdWxkIiwiZm9ybWF0IjoidW5rbm93biIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiByZXBvcnQiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiByZXBvcnQiLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIHdoYXQgSSIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIHdoYXQgSSIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgZ290LCIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIGdvdCwiLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIG1heWJlIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgbWF5YmUiLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIG5vdGluZyBpdCIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIG5vdGluZyBpdCIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIgbWF0Y2hlcyIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiIG1hdGNoZXMiLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIHRoZSBwcmV2aW91cyBkYXkuIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIgdGhlIHByZXZpb3VzIGRheS4iLCJmb3JtYXQiOiJ1bmtub3duIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiJIZXJlJ3Mgd2hhdCIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IidzIG9uIHlvdXIgY2FsZW5kYXIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgZm9yICoqU2F0dXJkYXksIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIDIwMjYtIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiMTEtMDcqKiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IjpcblxuLSAqKjA5Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiOjAwKiog4oCTIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIERlbnRpc3QgYXBwb2ludG1lbnRcbiIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6Ii0gKioxMjoiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIzMCoqIOKAkyBUZWFtIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGx1bmNoXG5cbkludGVyZXN0aW5nbHkiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIsIHRoZXNlIGFyZSB0aGUiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgc2FtZSBldmVudHMgYXMgb24iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgMjAyNi0iLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIxMS0wNiDigJQiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgdGhleSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBtYXkgYmUgYSIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiByZXBlYXRpbmcgZXZlbnQsIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIG9yIHBvc3NpYmx5Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIGEiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgZHVwbGljYXRlZCIsInJvbGUiOiJhc3Npc3RhbnQifSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5NDYwOTAyNy1zbklDSklwQmk0VThhQTljVDFSTyIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTQ2MDkwMjcsIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwicHJvdmlkZXIiOiJSZWxhY2UiLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiBlbnRyeS4gTGV0Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIG1lIGtub3cgaWYgeW91Iiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiJ2QgbGlrZSBoZWxwIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIHNvcnRpbmciLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTQ2MDkwMjctc25JQ0pJcEJpNFU4YUE5Y1QxUk8iLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzk0NjA5MDI3LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiUmVsYWNlIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIgdGhhdCBvdXQuIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6bnVsbH0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzk0NjA5MDI3LXNuSUNKSXBCaTRVOGFBOWNUMVJPIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5NDYwOTAyNywibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJwcm92aWRlciI6IlJlbGFjZSIsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJzdG9wIn1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjo3MjcsImNvbXBsZXRpb25fdG9rZW5zIjoxMzEsInRvdGFsX3Rva2VucyI6ODU4LCJjb3N0IjowLjAwMDAzMjk0MTcsImlzX2J5b2siOmZhbHNlLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6NjQwLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDAzMjk0MTcsInVwc3RyZWFtX2luZmVyZW5jZV9wcm9tcHRfY29zdCI6MC4wMDAwMjI2NzEzLCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAwMTAyNzA0fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjo0OSwiaW1hZ2VfdG9rZW5zIjowLCJhdWRpb190b2tlbnMiOjB9fX0KCmRhdGE6IFtET05FXQoK
+  recorded_at: Fri, 13 Nov 2026 22:30:29 GMT
+recorded_with: VCR 6.4.0

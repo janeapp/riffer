@@ -1,0 +1,420 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]}],"systemInstruction":{"parts":[{"text":"If you need a tool
+        you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 13 Nov 2026 22:31:31 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=772
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"find_tools\",\"args\": {\"query\": \"calendar events\"},\"id\":
+        \"call_3233337750901942342\"},\"thoughtSignature\": \"EmAKXgFpFH0TpXr9zBPWOMSPMh5OQIratjG0fun8TOSewaTAxsNsB6NDT7cFNpt+63LW265GQhTdhiDP2N5t/1zCXXqq2cnocKydCP3RD2lOCxPHE7A3YCbeHxcEwbmITb8=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 251,\"candidatesTokenCount\":
+        17,\"totalTokenCount\": 268,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        251}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"w4_3aqH-C_DiodAP5OaIgAk\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 251,\"candidatesTokenCount\":
+        17,\"totalTokenCount\": 268,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        251}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"w4_3aqH-C_DiodAP5OaIgAk\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:31 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3233337750901942342","name":"find_tools","args":{"query":"calendar
+        events"}},"thoughtSignature":"EmAKXgFpFH0TpXr9zBPWOMSPMh5OQIratjG0fun8TOSewaTAxsNsB6NDT7cFNpt+63LW265GQhTdhiDP2N5t/1zCXXqq2cnocKydCP3RD2lOCxPHE7A3YCbeHxcEwbmITb8="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3233337750901942342","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]}],"systemInstruction":{"parts":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 13 Nov 2026 22:31:32 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=676
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"riffer_gateway\",\"args\": {\"name\": \"calendar/list_events\",\"arguments\":
+        \"{\\\"date\\\":\\\"2026-11-06\\\"}\"},\"id\": \"call_11059952106022926567\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TaVLwBKgA8gaIKIdnO4vQu9dNhcF1pBw+gdDKic1Z+EePCXuLjag6jn37429XPSMAQqoxqDu3PGkroRGeJI1W/Cq/ficLbOb9Hd0T+civg1raKYqJkqRJZhw=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 420,\"candidatesTokenCount\":
+        40,\"totalTokenCount\": 460,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        420}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"xI_3auy6BP6Q8L0Pp895\"}\r\n\r\ndata: {\"candidates\": [{\"content\": {\"parts\":
+        [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 420,\"candidatesTokenCount\":
+        40,\"totalTokenCount\": 460,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        420}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"xI_3auy6BP6Q8L0Pp895\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:32 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3233337750901942342","name":"find_tools","args":{"query":"calendar
+        events"}},"thoughtSignature":"EmAKXgFpFH0TpXr9zBPWOMSPMh5OQIratjG0fun8TOSewaTAxsNsB6NDT7cFNpt+63LW265GQhTdhiDP2N5t/1zCXXqq2cnocKydCP3RD2lOCxPHE7A3YCbeHxcEwbmITb8="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3233337750901942342","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_11059952106022926567","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TaVLwBKgA8gaIKIdnO4vQu9dNhcF1pBw+gdDKic1Z+EePCXuLjag6jn37429XPSMAQqoxqDu3PGkroRGeJI1W/Cq/ficLbOb9Hd0T+civg1raKYqJkqRJZhw="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_11059952106022926567","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 13 Nov 2026 22:31:33 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=612
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"On
+        November\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        506,\"candidatesTokenCount\": 2,\"totalTokenCount\": 508,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 506}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"xI_3aqb6Lqm7odAPstad0A0\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" 6, 2026, you have:\\n-
+        **Dentist**\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        506,\"candidatesTokenCount\": 20,\"totalTokenCount\": 526,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 506}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"xI_3aqb6Lqm7odAPstad0A0\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" at 9:00 AM\\n-
+        **Team lunch** at 12:30 PM\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 506,\"candidatesTokenCount\": 41,\"totalTokenCount\":
+        547,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 506}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"xI_3aqb6Lqm7odAPstad0A0\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0Th4rW9ohhvO55q8laxtgyHbnEXcfJHgJb2KvF8ejTjrDQotxlpSgYNihIC/mMAAfawaBn/PWFAEB6rxPz/6pHp1PLe9vlsCdsgFrDF5vFYlrz3jVHlDCpEwY=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        506,\"candidatesTokenCount\": 41,\"totalTokenCount\": 547,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 506}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"xI_3aqb6Lqm7odAPstad0A0\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:33 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3233337750901942342","name":"find_tools","args":{"query":"calendar
+        events"}},"thoughtSignature":"EmAKXgFpFH0TpXr9zBPWOMSPMh5OQIratjG0fun8TOSewaTAxsNsB6NDT7cFNpt+63LW265GQhTdhiDP2N5t/1zCXXqq2cnocKydCP3RD2lOCxPHE7A3YCbeHxcEwbmITb8="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3233337750901942342","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_11059952106022926567","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TaVLwBKgA8gaIKIdnO4vQu9dNhcF1pBw+gdDKic1Z+EePCXuLjag6jn37429XPSMAQqoxqDu3PGkroRGeJI1W/Cq/ficLbOb9Hd0T+civg1raKYqJkqRJZhw="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_11059952106022926567","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]},{"role":"model","parts":[{"text":"On
+        November 6, 2026, you have:\n- **Dentist** at 9:00 AM\n- **Team lunch** at
+        12:30 PM","thoughtSignature":"EmAKXgFpFH0Th4rW9ohhvO55q8laxtgyHbnEXcfJHgJb2KvF8ejTjrDQotxlpSgYNihIC/mMAAfawaBn/PWFAEB6rxPz/6pHp1PLe9vlsCdsgFrDF5vFYlrz3jVHlDCpEwY="}]},{"role":"user","parts":[{"text":"And
+        on 2026-11-07?"}]}],"systemInstruction":{"parts":[{"text":"If you need a tool
+        you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 13 Nov 2026 22:31:34 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=830
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"functionCall\":
+        {\"name\": \"riffer_gateway\",\"args\": {\"name\": \"calendar/list_events\",\"arguments\":
+        \"{\\\"date\\\":\\\"2026-11-07\\\"}\"},\"id\": \"call_3772592314081294897\"},\"thoughtSignature\":
+        \"EmAKXgFpFH0TaSss4M8anAvX0KFVBDvRxUsSSwXi9TwoLoeoyIC3dw66ZlJ1dljTdvJfhsucQwNxuwwmc72zx/K16sQAa9dPeLfYF4VlO/V2+/uquTTAG/+1N/LGSzT6FZQ=\"}],\"role\":
+        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 563,\"candidatesTokenCount\":
+        40,\"totalTokenCount\": 603,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        563}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"xY_3aoqAIKe3vMcPxM6poQY\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
+        0}],\"usageMetadata\": {\"promptTokenCount\": 563,\"candidatesTokenCount\":
+        40,\"totalTokenCount\": 603,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        563}],\"serviceTier\": \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"xY_3aoqAIKe3vMcPxM6poQY\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:34 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3233337750901942342","name":"find_tools","args":{"query":"calendar
+        events"}},"thoughtSignature":"EmAKXgFpFH0TpXr9zBPWOMSPMh5OQIratjG0fun8TOSewaTAxsNsB6NDT7cFNpt+63LW265GQhTdhiDP2N5t/1zCXXqq2cnocKydCP3RD2lOCxPHE7A3YCbeHxcEwbmITb8="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3233337750901942342","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_11059952106022926567","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TaVLwBKgA8gaIKIdnO4vQu9dNhcF1pBw+gdDKic1Z+EePCXuLjag6jn37429XPSMAQqoxqDu3PGkroRGeJI1W/Cq/ficLbOb9Hd0T+civg1raKYqJkqRJZhw="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_11059952106022926567","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]},{"role":"model","parts":[{"text":"On
+        November 6, 2026, you have:\n- **Dentist** at 9:00 AM\n- **Team lunch** at
+        12:30 PM","thoughtSignature":"EmAKXgFpFH0Th4rW9ohhvO55q8laxtgyHbnEXcfJHgJb2KvF8ejTjrDQotxlpSgYNihIC/mMAAfawaBn/PWFAEB6rxPz/6pHp1PLe9vlsCdsgFrDF5vFYlrz3jVHlDCpEwY="}]},{"role":"user","parts":[{"text":"And
+        on 2026-11-07?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_3772592314081294897","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-07\"}"}},"thoughtSignature":"EmAKXgFpFH0TaSss4M8anAvX0KFVBDvRxUsSSwXi9TwoLoeoyIC3dw66ZlJ1dljTdvJfhsucQwNxuwwmc72zx/K16sQAa9dPeLfYF4VlO/V2+/uquTTAG/+1N/LGSzT6FZQ="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3772592314081294897","name":"riffer_gateway","response":{"result":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 13 Nov 2026 22:31:34 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=538
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"On
+        November\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        649,\"candidatesTokenCount\": 2,\"totalTokenCount\": 651,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 649}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"xo_3apjeF5K5ur8PrpmWoAc\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" 7, 2026, you have:\\n-
+        **Dentist**\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        649,\"candidatesTokenCount\": 20,\"totalTokenCount\": 669,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 649}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"xo_3apjeF5K5ur8PrpmWoAc\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" at 9:00 AM\\n-
+        **Team lunch** at 12:30 PM\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
+        {\"promptTokenCount\": 649,\"candidatesTokenCount\": 41,\"totalTokenCount\":
+        690,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 649}],\"serviceTier\":
+        \"standard\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"responseId\":
+        \"xo_3apjeF5K5ur8PrpmWoAc\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \"\",\"thoughtSignature\": \"EmAKXgFpFH0T0GY2z4jpz/dqDZG+GqX7r8b80pHRWM+a/JZRva9hbmqTL6ZOkOLwzRsFBN7SJ1KnZkEkaSRw19se1dBFzzZa0FmtjT5q08Ag7lF/jfRC1o5WrTWSCtHEDt0=\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        649,\"candidatesTokenCount\": 41,\"totalTokenCount\": 690,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 649}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"xo_3apjeF5K5ur8PrpmWoAc\"}\r\n\r\n"
+  recorded_at: Fri, 13 Nov 2026 22:31:34 GMT
+recorded_with: VCR 6.4.0

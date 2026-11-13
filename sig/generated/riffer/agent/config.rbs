@@ -5,6 +5,8 @@ class Riffer::Agent::Config
 
   STRUCTURED_OUTPUT_STRATEGIES: Array[Symbol]
 
+  DEFERRED_TOOLS_STRATEGIES: Array[Symbol]
+
   REASONING_LEVELS: Array[Symbol]
 
   @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
@@ -29,6 +31,8 @@ class Riffer::Agent::Config
 
   attr_accessor deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?
 
+  attr_reader deferred_tools_strategy: Symbol
+
   attr_reader mcp_configs: Array[Hash[Symbol, untyped]]
 
   attr_accessor skills_config: Riffer::Skills::Config?
@@ -47,12 +51,13 @@ class Riffer::Agent::Config
   #     ?reasoning: (Symbol | String)?,
   #     ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #     ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
+  #     ?deferred_tools_strategy: Symbol,
   #     ?mcp_configs: Array[Hash[Symbol, untyped]],
   #     ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #     ?skills_config: Riffer::Skills::Config?,
   #     ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
   #   ) -> void
-  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?reasoning: (Symbol | String)?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?reasoning: (Symbol | String)?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_strategy: Symbol, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
 
   # --
   # : (untyped) -> String?
@@ -65,6 +70,10 @@ class Riffer::Agent::Config
   # --
   # : (Symbol) -> Symbol
   def structured_output_strategy=: (Symbol) -> Symbol
+
+  # --
+  # : (Symbol) -> Symbol
+  def deferred_tools_strategy=: (Symbol) -> Symbol
 
   # --
   # : ((Symbol | String)?) -> Symbol?

@@ -1,0 +1,523 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]}],"systemInstruction":{"parts":[{"text":"If you need a tool
+        you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:27 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=782
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "find_tools",
+                      "args": {
+                        "query": "calendar check events schedule"
+                      },
+                      "id": "call_1453186383780880072"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TFWocKvKJaTXDJ/TM+XAVI6q2iyvwLadsmOLlu70cvkEr32myAwjeoaEBOjG76Q/B5PPF20Nz2NnFEejQKO4w9mUTjUd2d5dspTryBxST6204BooXqlq5UUY="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 251,
+            "candidatesTokenCount": 19,
+            "totalTokenCount": 270,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 251
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "v4_3auedBPCdkPIP59-W4Q8"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:27 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1453186383780880072","name":"find_tools","args":{"query":"calendar
+        check events schedule"}},"thoughtSignature":"EmAKXgFpFH0TFWocKvKJaTXDJ/TM+XAVI6q2iyvwLadsmOLlu70cvkEr32myAwjeoaEBOjG76Q/B5PPF20Nz2NnFEejQKO4w9mUTjUd2d5dspTryBxST6204BooXqlq5UUY="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1453186383780880072","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]}],"systemInstruction":{"parts":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:28 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=857
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "riffer_gateway",
+                      "args": {
+                        "name": "calendar/list_events",
+                        "arguments": "{\"date\":\"2026-11-06\"}"
+                      },
+                      "id": "call_3208422630294005954"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0TRpo95aTUElZZEojLMc0RtTrC4Ep/A+s0H+Dg/zaiJ38zIMPqqfGdAHAOV7Q+FU0MSvUN78rYfOA8foJTXN89xdSogKGm14ixaLAOBaW1Wkq1OVuaQmZ9YBM="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 422,
+            "candidatesTokenCount": 40,
+            "totalTokenCount": 462,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 422
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "v4_3auTVNvSMkPIP9tuY0Ao"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:28 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1453186383780880072","name":"find_tools","args":{"query":"calendar
+        check events schedule"}},"thoughtSignature":"EmAKXgFpFH0TFWocKvKJaTXDJ/TM+XAVI6q2iyvwLadsmOLlu70cvkEr32myAwjeoaEBOjG76Q/B5PPF20Nz2NnFEejQKO4w9mUTjUd2d5dspTryBxST6204BooXqlq5UUY="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1453186383780880072","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_3208422630294005954","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TRpo95aTUElZZEojLMc0RtTrC4Ep/A+s0H+Dg/zaiJ38zIMPqqfGdAHAOV7Q+FU0MSvUN78rYfOA8foJTXN89xdSogKGm14ixaLAOBaW1Wkq1OVuaQmZ9YBM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3208422630294005954","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:29 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=697
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "You have the following events on your calendar on November 6, 2026:\n\n* **Dentist** at 09:00\n* **Team lunch** at 12:30",
+                    "thoughtSignature": "EmAKXgFpFH0TSkurCY02HzYTAphJJOJ9GQSiEr1PDRknU1E6pSHrdaJS7mRjBZo0JLhsUV9/6no6FsvK/w81f7ub6uJvchaWbtGtzh17Z8eLPM40HVXRSDzTLYWPSL+lTts="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 508,
+            "candidatesTokenCount": 45,
+            "totalTokenCount": 553,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 508
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "wI_3ar-oJ7rZur8Ppd2liQs"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:29 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1453186383780880072","name":"find_tools","args":{"query":"calendar
+        check events schedule"}},"thoughtSignature":"EmAKXgFpFH0TFWocKvKJaTXDJ/TM+XAVI6q2iyvwLadsmOLlu70cvkEr32myAwjeoaEBOjG76Q/B5PPF20Nz2NnFEejQKO4w9mUTjUd2d5dspTryBxST6204BooXqlq5UUY="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1453186383780880072","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_3208422630294005954","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TRpo95aTUElZZEojLMc0RtTrC4Ep/A+s0H+Dg/zaiJ38zIMPqqfGdAHAOV7Q+FU0MSvUN78rYfOA8foJTXN89xdSogKGm14ixaLAOBaW1Wkq1OVuaQmZ9YBM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3208422630294005954","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]},{"role":"model","parts":[{"text":"You
+        have the following events on your calendar on November 6, 2026:\n\n* **Dentist**
+        at 09:00\n* **Team lunch** at 12:30","thoughtSignature":"EmAKXgFpFH0TSkurCY02HzYTAphJJOJ9GQSiEr1PDRknU1E6pSHrdaJS7mRjBZo0JLhsUV9/6no6FsvK/w81f7ub6uJvchaWbtGtzh17Z8eLPM40HVXRSDzTLYWPSL+lTts="}]},{"role":"user","parts":[{"text":"And
+        on 2026-11-07?"}]}],"systemInstruction":{"parts":[{"text":"If you need a tool
+        you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:29 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=738
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "riffer_gateway",
+                      "args": {
+                        "name": "calendar/list_events",
+                        "arguments": "{\"date\":\"2026-11-07\"}"
+                      },
+                      "id": "call_14666769245007110817"
+                    },
+                    "thoughtSignature": "EmAKXgFpFH0Twf3+56N3tfW+CSByZk7R6bdwooa/rURWe+Ke3XN6GREist1nCpJNorREMYFtUY2UxS6DIxjqD5jVlxXuAPOZui6xxcf4Pc1eFYU3gDyfe6LnsPNjwRKSRKQ="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 569,
+            "candidatesTokenCount": 40,
+            "totalTokenCount": 609,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 569
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "wY_3aqORGpq9odAPh6eQuQE"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:29 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_1453186383780880072","name":"find_tools","args":{"query":"calendar
+        check events schedule"}},"thoughtSignature":"EmAKXgFpFH0TFWocKvKJaTXDJ/TM+XAVI6q2iyvwLadsmOLlu70cvkEr32myAwjeoaEBOjG76Q/B5PPF20Nz2NnFEejQKO4w9mUTjUd2d5dspTryBxST6204BooXqlq5UUY="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_1453186383780880072","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_3208422630294005954","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"EmAKXgFpFH0TRpo95aTUElZZEojLMc0RtTrC4Ep/A+s0H+Dg/zaiJ38zIMPqqfGdAHAOV7Q+FU0MSvUN78rYfOA8foJTXN89xdSogKGm14ixaLAOBaW1Wkq1OVuaQmZ9YBM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_3208422630294005954","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]},{"role":"model","parts":[{"text":"You
+        have the following events on your calendar on November 6, 2026:\n\n* **Dentist**
+        at 09:00\n* **Team lunch** at 12:30","thoughtSignature":"EmAKXgFpFH0TSkurCY02HzYTAphJJOJ9GQSiEr1PDRknU1E6pSHrdaJS7mRjBZo0JLhsUV9/6no6FsvK/w81f7ub6uJvchaWbtGtzh17Z8eLPM40HVXRSDzTLYWPSL+lTts="}]},{"role":"user","parts":[{"text":"And
+        on 2026-11-07?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_14666769245007110817","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-07\"}"}},"thoughtSignature":"EmAKXgFpFH0Twf3+56N3tfW+CSByZk7R6bdwooa/rURWe+Ke3XN6GREist1nCpJNorREMYFtUY2UxS6DIxjqD5jVlxXuAPOZui6xxcf4Pc1eFYU3gDyfe6LnsPNjwRKSRKQ="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_14666769245007110817","name":"riffer_gateway","response":{"result":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:31:30 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=904
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "You have the following events on your calendar on November 7, 2026:\n\n* **Dentist** at 09:00\n* **Team lunch** at 12:30",
+                    "thoughtSignature": "EmAKXgFpFH0TfggLCd2JpFQZJxM8Dmzpb+oLlvDtp9175Zss8B1YIAcF0dgSyYQwfdyk3PIfzE52gxEARLtBXlG7UnBTvC9KGVWQfzW7cp7IT5wgjzAf9AHP5T5Q3uNR/LQ="
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 655,
+            "candidatesTokenCount": 45,
+            "totalTokenCount": 700,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 655
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "responseId": "wo_3aq-rD-Tcur8P8aiU4Qk"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:31:30 GMT
+recorded_with: VCR 6.4.0

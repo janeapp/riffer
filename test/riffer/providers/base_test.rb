@@ -170,6 +170,157 @@ describe Riffer::Providers::Base do
     end
   end
 
+  describe "deferred tools gateway" do
+    let(:provider) { NoDeferredToolsProvider.new }
+    let(:gateway_name) { Riffer::Providers::DeferredToolGateway::Tool.name }
+    let(:gateway_tool) { Riffer::Providers::DeferredToolGateway::Tool }
+    let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
+    let(:list_events) do
+      stub_tool("ListEvents") do
+        identifier "calendar/list_events"
+        description "Lists calendar events"
+      end
+    end
+
+    let(:gateway_arguments) { '{"name":"calendar/list_events","arguments":"{\"day\":1}"}' }
+    let(:question) { Riffer::Messages::User.new("What's on?") }
+    let(:gateway_call) { { name: gateway_name, arguments: gateway_arguments, call_id: "c_3" } }
+
+    def call(name, id, arguments = "{}")
+      Riffer::Messages::Assistant::ToolCall.new(call_id: id, name: name, arguments: arguments)
+    end
+
+    def result(id, name, content, loaded: [])
+      Riffer::Messages::Tool.new(content, tool_call_id: id, name: name, loaded_tools: loaded)
+    end
+
+    def loaded_history
+      [
+        question,
+        Riffer::Messages::Assistant.new("", tool_calls: [call("connect_calendar", "c_1")]),
+        result("c_1", "connect_calendar", "", loaded: ["calendar/list_events"]),
+        Riffer::Messages::Assistant.new("", tool_calls: [call("calendar/list_events", "c_2", '{"day":1}')]),
+        result("c_2", "calendar/list_events", "3 events"),
+      ]
+    end
+
+    def request_options
+      { model: "riffer-1", tools: [loader], deferred_tools: [list_events], riffer_deferred_tools_strategy: :gateway }
+    end
+
+    def generate(messages)
+      provider.generate_text(messages: messages, **request_options)
+    end
+
+    it "adds the gateway to the tools, the same before and after a load" do
+      generate([question])
+      generate(loaded_history)
+
+      expect(provider.calls.map { |c| c[:tools] }).must_equal [[loader, gateway_tool], [loader, gateway_tool]]
+    end
+
+    it "sends the history with deferred calls wrapped and the loaded tools described" do
+      generate(loaded_history)
+      sent = provider.calls.last[:messages]
+
+      expect(sent[2][:content]).must_match(%r{\AThese tools are now loaded\..*"name":"calendar/list_events"}m)
+      expect(sent[3][:parts].first.slice(:name, :arguments)).
+        must_equal({ name: gateway_name, arguments: gateway_arguments })
+      expect(sent[4].slice(:tool_call_id, :name, :content)).
+        must_equal({ tool_call_id: "c_2", name: gateway_name, content: "3 events" })
+    end
+
+    it "leaves the caller's messages as they were" do
+      history = loaded_history
+      before = history.map(&:to_h)
+      generate(history)
+
+      expect(history.map(&:to_h)).must_equal before
+    end
+
+    it "returns a gateway call as a call to the real tool" do
+      provider.stub_response("", tool_calls: [gateway_call])
+
+      expect(generate([question]).tool_calls).must_equal [call("calendar/list_events", "c_3", '{"day":1}')]
+    end
+
+    it "streams a gateway call as the real tool's ToolCallDone and none of its deltas" do
+      provider.stub_response("", tool_calls: [gateway_call])
+      events = provider.stream_text(messages: [question], **request_options).to_a
+
+      expect(events.grep(Riffer::StreamEvents::ToolCallDelta)).must_be_empty
+      expect(events.grep(Riffer::StreamEvents::ToolCallDone).map { |e| [e.call_id, e.name, e.arguments] }).
+        must_equal [["c_3", "calendar/list_events", '{"day":1}']]
+    end
+
+    it "keeps the strategy out of the request params" do
+      generate([question])
+
+      refute_includes provider.calls.last.keys, :riffer_deferred_tools_strategy
+    end
+
+    it "sends the gateway instead of loading natively on a provider with native loading" do
+      native = Riffer::Providers::Mock.new
+      native.stub_response("", tool_calls: [gateway_call])
+      message = native.generate_text(messages: loaded_history, **request_options)
+
+      expect(native.calls.last[:tools]).must_equal [loader, gateway_tool]
+      refute_includes native.calls.last.keys, :deferred_tools
+      expect(native.calls.last[:messages][4][:name]).must_equal gateway_name
+      expect(message.tool_calls).must_equal [call("calendar/list_events", "c_3", '{"day":1}')]
+    end
+
+    it "sends neither the gateway nor wrapped history with the native strategy" do
+      native = Riffer::Providers::Mock.new
+      native.generate_text(messages: loaded_history, **request_options, riffer_deferred_tools_strategy: :native)
+
+      expect(native.calls.last[:tools]).must_equal [loader]
+      expect(native.calls.last[:deferred_tools]).must_equal [list_events]
+      expect(native.calls.last[:messages]).must_equal loaded_history.map(&:to_h)
+    end
+
+    it "sends no gateway without deferred tools" do
+      provider.generate_text(prompt: "Hi", model: "riffer-1", tools: [loader])
+
+      expect(provider.calls.last[:tools]).must_equal [loader]
+    end
+
+    describe "tracing" do
+      before do
+        skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+        Riffer.config.tracing.enabled = true
+        Riffer.config.tracing.capture_messages = true
+        @exporter = install_in_memory_tracer_provider
+      end
+
+      after do
+        Riffer.config.tracing.capture_messages = false
+        Riffer.config.tracing.backend = nil
+      end
+
+      def captured(attribute)
+        span = @exporter.finished_spans.find { |s| s.name.start_with?("chat") }
+        parts = JSON.parse(span.attributes[attribute]).flat_map { |message| message["parts"] }
+        parts.select { |part| part["type"] == "tool_call" }.map { |part| part["name"] }
+      end
+
+      it "records the history and a generated call under the real tool's name" do
+        provider.stub_response("", tool_calls: [gateway_call])
+        generate(loaded_history)
+
+        expect(captured("gen_ai.input.messages")).must_equal %w[connect_calendar calendar/list_events]
+        expect(captured("gen_ai.output.messages")).must_equal ["calendar/list_events"]
+      end
+
+      it "records a streamed call under the real tool's name" do
+        provider.stub_response("", tool_calls: [gateway_call])
+        provider.stream_text(messages: [question], **request_options).each { |_| }
+
+        expect(captured("gen_ai.output.messages")).must_equal ["calendar/list_events"]
+      end
+    end
+  end
+
   describe "prompted structured output" do
     let(:provider) { Riffer::Providers::Mock.new }
     let(:structured_output) do

@@ -30,6 +30,10 @@ describe Riffer::Agent::Config do
       expect(config.structured_output_strategy).must_equal :native
     end
 
+    it "starts with deferred_tools_strategy :native" do
+      expect(config.deferred_tools_strategy).must_equal :native
+    end
+
     it "starts with max_steps == Riffer::Agent::Config::DEFAULT_MAX_STEPS" do
       expect(config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
     end
@@ -122,6 +126,33 @@ describe Riffer::Agent::Config do
       config = Riffer::Agent::Config.new
 
       expect { config.structured_output_strategy = "prompted" }.must_raise(Riffer::ArgumentError)
+    end
+  end
+
+  describe "#deferred_tools_strategy=" do
+    it "accepts :gateway" do
+      config = Riffer::Agent::Config.new
+      config.deferred_tools_strategy = :gateway
+
+      expect(config.deferred_tools_strategy).must_equal :gateway
+    end
+
+    it "is carried by a copy" do
+      config = Riffer::Agent::Config.new(deferred_tools_strategy: :gateway)
+
+      expect(config.dup.deferred_tools_strategy).must_equal :gateway
+    end
+
+    it "raises on an unknown strategy" do
+      config = Riffer::Agent::Config.new
+      error = expect { config.deferred_tools_strategy = :prompted }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal "deferred_tools_strategy must be one of [:native, :gateway], got :prompted"
+    end
+
+    it "raises on a String strategy" do
+      config = Riffer::Agent::Config.new
+
+      expect { config.deferred_tools_strategy = "gateway" }.must_raise(Riffer::ArgumentError)
     end
   end
 
@@ -394,6 +425,7 @@ describe Riffer::Agent::Config do
         max_steps: 4,
         tools_config: [Riffer::Tool],
         deferred_tools_config: [Riffer::Tool],
+        deferred_tools_strategy: :gateway,
         tool_runtime: Riffer::Tools::Runtime::Inline,
       )
       config.add_mcp(:a_tag)

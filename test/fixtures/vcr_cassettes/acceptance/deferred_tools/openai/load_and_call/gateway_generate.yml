@@ -1,0 +1,703 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1227'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:44 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a138f16f40ca33-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '1819'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_d0677b21f07142edb963fb91e56bad2f
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_09f6767ebe0339e8006af78f92402087d0af71785fbd972a91",
+          "object": "response",
+          "created_at": 1794609042,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1794609043,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "input_transformations": [],
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_09f6767ebe0339e8006af78f933d7887d0961be101959a4c19",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABq94-UheMvZHobHZJBxxt7P_mDPB7nZ1D5XEaKDxU8zvmS0q4kaNSwjJ1QL0WjQb8XqVZMtR3QYjXJmlYhUTvOqk2m-ZLc69I-lY4Z7NgmSHGrpCEvR19eahMIIR268JXnxp8v6yvomx7JvFm6UtZFc1gnkt6Iw17OxF309s-EwHDSd3ThsM8lYkNsb9BnB6Hxns5k322BpIPwCj_DTkqCeDOevoEajhFqiuEbOO_yxHThXWNZUyPU7vCwUn3QGRrM9LjMAcz01m5RvfUiMa6-TGtnDfwvLdXfMLRget-3bUYyFEHZoLyvxgNlDigSc36qSMdPoU7GSJxMvRM-u8e_JSFEl_cdYEnckBnybswrFzA_lkQCxDHsnokv9FYVUgzxUGx0NEYmmMs3shdYXxvNfC_cbv-fGmOH_BuMBI_pxsxsjfcc2su60lH7zZKqGNJ9WFvH0L11x-O3uoMY9-QllcTctA7yoBVaybhaujj3qbkF-9a9FY6ZpH_V11OdO9lqepkSLHUzJyZ6y_S2KzEVK8FVeo-ttBjlsz9x_-EmI5DclPvHF7HzyWkCxRbzC_o6W6nvhy-wctAoKcptW_19gLT9FNapFKHxRJio6mJosvHaQsoBX4lBXaQrcxg6RjcD3tkU5xrloSl2dQxBnJiHWX4_98kwawOIXd0Rp_aq-icVqgiNEXxCgOt5zISDVTyKIJqi0wPwG79yD7SmSpbF_kBkmObTGA28zLNQzd74lobHLm3mpZsSdhUjP3Bg5MF12n64IUmqZ_3qTD9STdkM4iJFW9Dm0xDBzAYUjbsGV4qcJCigQAMZBfADrVrhg4gVKNM9dOHrYcMb2f18DMKPbM-FvPkKM-QAMYDhh4VcVbYBnuvMiEqACmIFJxQa-90oNzFBE_INGZ2hYBJ2VeMh-9xtkIvIK3lJcwySX6koLN68A1uKnh8TkHy3LGv6u7j0Y1m2Q4RuBnY7pWvUEjtMW0kKQd3OuMsKz_fqM7aaQ02qwrJkJkvM5-DHOmhCRORkxk3k3MUVq0kPh1BosyRGiGRRyC2goCc7QRb5e1jyNlKOjyTdKdJIln62GnW3qbTDt_YyijpOibxJzNv6cCDJvnmoxph9teY0nhaAnnxsvmJYOKA1n9r664gK9Mpr0weOmE5GTfNs1GV9HIblYXjH0Lt86uyEDAT1ueulJ4a-8M7leWKcRnTDG6znWIYDYbuITjPy1fFtQP4xt1ivY8E6dpgE8HheEHwF18UC26gWuNv47mlMVIq9iHNG4czZ42L4Ieyy7i1FovSmKfFNJQ2Yqu7y6SEKUmXT8Ef2Bcn9Nw5-kL9SpPbUQ5Sob7PxQr1gIm1h28tp26pC3qSNDMgq1MnNt5whws1fJT2SoT__0PLNKlSBM3jPOjji4bfcT6sPf1BmIWs8E3snPXhq0-Cyyk8P4yjnOU28Krq9HrqeA2UIpgiPOdnyEKdrgNXw71OEHE0b0wsMNd3y-WyYTB0X2wIHrCP2iMgOPZzz_R1HXfqCBo7A4O7wnboDlThJ_tzbjHFzTzRDq_MDSi1Lmp3efaPkUn6u45JFuYzmPYFkMqEvaKm4vSCv2lvqPMZSYPGlIHWZKSHyAky79LiNbKSnEVXsCdt5UuEvFZV6n_xz3kAOpB2VRMzsDf38xWVmeY1BlTwUjVrWfov0xp9QE2HM6KxHyl7aPc-L5lz5i3bcesen0dFMmn23-pj_UQdi6JuMFrKAX8C4GeAUOYwEATtwnLLJQAAj3UV3eRTX26-oLkbhIZk=",
+              "summary": []
+            },
+            {
+              "id": "fc_09f6767ebe0339e8006af78f9378fc87d0acc0b5ff0379e599",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{\"query\":\"Find calendar events on a specified date for the user's calendar.\"}",
+              "call_id": "call_1DrtPd4eSIc4hkkfuOzZRQ21",
+              "name": "find_tools"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Find more tools for a task. Describe what you need to do in a few words.",
+              "name": "find_tools",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "What you need to do"
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            {
+              "type": "function",
+              "description": "Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.",
+              "name": "riffer_gateway",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The loaded tool's exact name, copied from the result that loaded it"
+                  },
+                  "arguments": {
+                    "type": "string",
+                    "description": "The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."
+                  }
+                },
+                "required": [
+                  "name",
+                  "arguments"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 200,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 43,
+            "output_tokens_details": {
+              "reasoning_tokens": 12
+            },
+            "total_tokens": 243
+          },
+          "user": null,
+          "metadata": {
+            "kind": "agent",
+            "agent": ""
+          }
+        }
+  recorded_at: Fri, 13 Nov 2026 22:30:44 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"reasoning","id":"rs_09f6767ebe0339e8006af78f933d7887d0961be101959a4c19","summary":[],"encrypted_content":"gAAAAABq94-UheMvZHobHZJBxxt7P_mDPB7nZ1D5XEaKDxU8zvmS0q4kaNSwjJ1QL0WjQb8XqVZMtR3QYjXJmlYhUTvOqk2m-ZLc69I-lY4Z7NgmSHGrpCEvR19eahMIIR268JXnxp8v6yvomx7JvFm6UtZFc1gnkt6Iw17OxF309s-EwHDSd3ThsM8lYkNsb9BnB6Hxns5k322BpIPwCj_DTkqCeDOevoEajhFqiuEbOO_yxHThXWNZUyPU7vCwUn3QGRrM9LjMAcz01m5RvfUiMa6-TGtnDfwvLdXfMLRget-3bUYyFEHZoLyvxgNlDigSc36qSMdPoU7GSJxMvRM-u8e_JSFEl_cdYEnckBnybswrFzA_lkQCxDHsnokv9FYVUgzxUGx0NEYmmMs3shdYXxvNfC_cbv-fGmOH_BuMBI_pxsxsjfcc2su60lH7zZKqGNJ9WFvH0L11x-O3uoMY9-QllcTctA7yoBVaybhaujj3qbkF-9a9FY6ZpH_V11OdO9lqepkSLHUzJyZ6y_S2KzEVK8FVeo-ttBjlsz9x_-EmI5DclPvHF7HzyWkCxRbzC_o6W6nvhy-wctAoKcptW_19gLT9FNapFKHxRJio6mJosvHaQsoBX4lBXaQrcxg6RjcD3tkU5xrloSl2dQxBnJiHWX4_98kwawOIXd0Rp_aq-icVqgiNEXxCgOt5zISDVTyKIJqi0wPwG79yD7SmSpbF_kBkmObTGA28zLNQzd74lobHLm3mpZsSdhUjP3Bg5MF12n64IUmqZ_3qTD9STdkM4iJFW9Dm0xDBzAYUjbsGV4qcJCigQAMZBfADrVrhg4gVKNM9dOHrYcMb2f18DMKPbM-FvPkKM-QAMYDhh4VcVbYBnuvMiEqACmIFJxQa-90oNzFBE_INGZ2hYBJ2VeMh-9xtkIvIK3lJcwySX6koLN68A1uKnh8TkHy3LGv6u7j0Y1m2Q4RuBnY7pWvUEjtMW0kKQd3OuMsKz_fqM7aaQ02qwrJkJkvM5-DHOmhCRORkxk3k3MUVq0kPh1BosyRGiGRRyC2goCc7QRb5e1jyNlKOjyTdKdJIln62GnW3qbTDt_YyijpOibxJzNv6cCDJvnmoxph9teY0nhaAnnxsvmJYOKA1n9r664gK9Mpr0weOmE5GTfNs1GV9HIblYXjH0Lt86uyEDAT1ueulJ4a-8M7leWKcRnTDG6znWIYDYbuITjPy1fFtQP4xt1ivY8E6dpgE8HheEHwF18UC26gWuNv47mlMVIq9iHNG4czZ42L4Ieyy7i1FovSmKfFNJQ2Yqu7y6SEKUmXT8Ef2Bcn9Nw5-kL9SpPbUQ5Sob7PxQr1gIm1h28tp26pC3qSNDMgq1MnNt5whws1fJT2SoT__0PLNKlSBM3jPOjji4bfcT6sPf1BmIWs8E3snPXhq0-Cyyk8P4yjnOU28Krq9HrqeA2UIpgiPOdnyEKdrgNXw71OEHE0b0wsMNd3y-WyYTB0X2wIHrCP2iMgOPZzz_R1HXfqCBo7A4O7wnboDlThJ_tzbjHFzTzRDq_MDSi1Lmp3efaPkUn6u45JFuYzmPYFkMqEvaKm4vSCv2lvqPMZSYPGlIHWZKSHyAky79LiNbKSnEVXsCdt5UuEvFZV6n_xz3kAOpB2VRMzsDf38xWVmeY1BlTwUjVrWfov0xp9QE2HM6KxHyl7aPc-L5lz5i3bcesen0dFMmn23-pj_UQdi6JuMFrKAX8C4GeAUOYwEATtwnLLJQAAj3UV3eRTX26-oLkbhIZk="},{"type":"function_call","call_id":"call_1DrtPd4eSIc4hkkfuOzZRQ21","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specified date for the user''s calendar.\"}"},{"type":"function_call_output","call_id":"call_1DrtPd4eSIc4hkkfuOzZRQ21","output":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '4036'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:45 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a138fd9a1eca33-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '1216'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_e7bac28622994106b3050b628f494e6e
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_09f6767ebe0339e8006af78f942a0887d0b00a562dfd4d26e0",
+          "object": "response",
+          "created_at": 1794609044,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1794609045,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "input_transformations": [],
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "fc_09f6767ebe0339e8006af78f94cac487d0894d0262351fafcc",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}",
+              "call_id": "call_DjYtADVnFXIEZolNuIkgGUBx",
+              "name": "riffer_gateway"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Find more tools for a task. Describe what you need to do in a few words.",
+              "name": "find_tools",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "What you need to do"
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            {
+              "type": "function",
+              "description": "Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.",
+              "name": "riffer_gateway",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The loaded tool's exact name, copied from the result that loaded it"
+                  },
+                  "arguments": {
+                    "type": "string",
+                    "description": "The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."
+                  }
+                },
+                "required": [
+                  "name",
+                  "arguments"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 383,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 35,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 418
+          },
+          "user": null,
+          "metadata": {
+            "kind": "agent",
+            "agent": ""
+          }
+        }
+  recorded_at: Fri, 13 Nov 2026 22:30:45 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"reasoning","id":"rs_09f6767ebe0339e8006af78f933d7887d0961be101959a4c19","summary":[],"encrypted_content":"gAAAAABq94-UheMvZHobHZJBxxt7P_mDPB7nZ1D5XEaKDxU8zvmS0q4kaNSwjJ1QL0WjQb8XqVZMtR3QYjXJmlYhUTvOqk2m-ZLc69I-lY4Z7NgmSHGrpCEvR19eahMIIR268JXnxp8v6yvomx7JvFm6UtZFc1gnkt6Iw17OxF309s-EwHDSd3ThsM8lYkNsb9BnB6Hxns5k322BpIPwCj_DTkqCeDOevoEajhFqiuEbOO_yxHThXWNZUyPU7vCwUn3QGRrM9LjMAcz01m5RvfUiMa6-TGtnDfwvLdXfMLRget-3bUYyFEHZoLyvxgNlDigSc36qSMdPoU7GSJxMvRM-u8e_JSFEl_cdYEnckBnybswrFzA_lkQCxDHsnokv9FYVUgzxUGx0NEYmmMs3shdYXxvNfC_cbv-fGmOH_BuMBI_pxsxsjfcc2su60lH7zZKqGNJ9WFvH0L11x-O3uoMY9-QllcTctA7yoBVaybhaujj3qbkF-9a9FY6ZpH_V11OdO9lqepkSLHUzJyZ6y_S2KzEVK8FVeo-ttBjlsz9x_-EmI5DclPvHF7HzyWkCxRbzC_o6W6nvhy-wctAoKcptW_19gLT9FNapFKHxRJio6mJosvHaQsoBX4lBXaQrcxg6RjcD3tkU5xrloSl2dQxBnJiHWX4_98kwawOIXd0Rp_aq-icVqgiNEXxCgOt5zISDVTyKIJqi0wPwG79yD7SmSpbF_kBkmObTGA28zLNQzd74lobHLm3mpZsSdhUjP3Bg5MF12n64IUmqZ_3qTD9STdkM4iJFW9Dm0xDBzAYUjbsGV4qcJCigQAMZBfADrVrhg4gVKNM9dOHrYcMb2f18DMKPbM-FvPkKM-QAMYDhh4VcVbYBnuvMiEqACmIFJxQa-90oNzFBE_INGZ2hYBJ2VeMh-9xtkIvIK3lJcwySX6koLN68A1uKnh8TkHy3LGv6u7j0Y1m2Q4RuBnY7pWvUEjtMW0kKQd3OuMsKz_fqM7aaQ02qwrJkJkvM5-DHOmhCRORkxk3k3MUVq0kPh1BosyRGiGRRyC2goCc7QRb5e1jyNlKOjyTdKdJIln62GnW3qbTDt_YyijpOibxJzNv6cCDJvnmoxph9teY0nhaAnnxsvmJYOKA1n9r664gK9Mpr0weOmE5GTfNs1GV9HIblYXjH0Lt86uyEDAT1ueulJ4a-8M7leWKcRnTDG6znWIYDYbuITjPy1fFtQP4xt1ivY8E6dpgE8HheEHwF18UC26gWuNv47mlMVIq9iHNG4czZ42L4Ieyy7i1FovSmKfFNJQ2Yqu7y6SEKUmXT8Ef2Bcn9Nw5-kL9SpPbUQ5Sob7PxQr1gIm1h28tp26pC3qSNDMgq1MnNt5whws1fJT2SoT__0PLNKlSBM3jPOjji4bfcT6sPf1BmIWs8E3snPXhq0-Cyyk8P4yjnOU28Krq9HrqeA2UIpgiPOdnyEKdrgNXw71OEHE0b0wsMNd3y-WyYTB0X2wIHrCP2iMgOPZzz_R1HXfqCBo7A4O7wnboDlThJ_tzbjHFzTzRDq_MDSi1Lmp3efaPkUn6u45JFuYzmPYFkMqEvaKm4vSCv2lvqPMZSYPGlIHWZKSHyAky79LiNbKSnEVXsCdt5UuEvFZV6n_xz3kAOpB2VRMzsDf38xWVmeY1BlTwUjVrWfov0xp9QE2HM6KxHyl7aPc-L5lz5i3bcesen0dFMmn23-pj_UQdi6JuMFrKAX8C4GeAUOYwEATtwnLLJQAAj3UV3eRTX26-oLkbhIZk="},{"type":"function_call","call_id":"call_1DrtPd4eSIc4hkkfuOzZRQ21","name":"find_tools","arguments":"{\"query\":\"Find
+        calendar events on a specified date for the user''s calendar.\"}"},{"type":"function_call_output","call_id":"call_1DrtPd4eSIc4hkkfuOzZRQ21","output":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"type":"function_call","call_id":"call_DjYtADVnFXIEZolNuIkgGUBx","name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}"},{"type":"function_call_output","call_id":"call_DjYtADVnFXIEZolNuIkgGUBx","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '4368'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:46 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a13905d95fca33-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '1206'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_e54390c8fdfd44f2a758a4426196f083
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_09f6767ebe0339e8006af78f95800487d0a25858039e86937c",
+          "object": "response",
+          "created_at": 1794609045,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1794609046,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "input_transformations": [],
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "msg_09f6767ebe0339e8006af78f96141487d0863d0371f02be301",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "You have **dentist at 9:00 AM** and **team lunch at 12:30 PM** on November 6, 2026."
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [
+            {
+              "type": "function",
+              "description": "Find more tools for a task. Describe what you need to do in a few words.",
+              "name": "find_tools",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "What you need to do"
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            {
+              "type": "function",
+              "description": "Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.",
+              "name": "riffer_gateway",
+              "output_schema": null,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The loaded tool's exact name, copied from the result that loaded it"
+                  },
+                  "arguments": {
+                    "type": "string",
+                    "description": "The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."
+                  }
+                },
+                "required": [
+                  "name",
+                  "arguments"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 454,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 36,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 490
+          },
+          "user": null,
+          "metadata": {
+            "kind": "agent",
+            "agent": ""
+          }
+        }
+  recorded_at: Fri, 13 Nov 2026 22:30:46 GMT
+recorded_with: VCR 6.4.0

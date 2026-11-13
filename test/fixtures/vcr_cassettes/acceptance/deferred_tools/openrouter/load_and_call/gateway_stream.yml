@@ -1,0 +1,327 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1315'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:05 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609004-xMr8pCbnRdKjvJb9stMh
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a138073b76e00c-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794609004-xMr8pCbnRdKjvJb9stMh","object":"chat.completion.chunk","created":1794609004,"model":"z-ai/glm-5.3-flash","provider":"Modal","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_a5434d23e72b41c69a3e3e67","type":"function","function":{"name":"find_tools","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609004-xMr8pCbnRdKjvJb9stMh","object":"chat.completion.chunk","created":1794609004,"model":"z-ai/glm-5.3-flash","provider":"Modal","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609004-xMr8pCbnRdKjvJb9stMh","object":"chat.completion.chunk","created":1794609004,"model":"z-ai/glm-5.3-flash","provider":"Modal","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"query\": \"Check calendar events for a date\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609004-xMr8pCbnRdKjvJb9stMh","object":"chat.completion.chunk","created":1794609004,"model":"z-ai/glm-5.3-flash","provider":"Modal","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794609004-xMr8pCbnRdKjvJb9stMh","object":"chat.completion.chunk","created":1794609004,"model":"z-ai/glm-5.3-flash","provider":"Modal","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":374,"completion_tokens":17,"total_tokens":391,"cost":0.0000646,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000646,"upstream_inference_prompt_cost":0.0000561,"upstream_inference_completions_cost":0.0000085},"completion_tokens_details":{"reasoning_tokens":1,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Fri, 13 Nov 2026 22:30:05 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_a5434d23e72b41c69a3e3e67","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"Check calendar events for a date\"}"}}]},{"role":"tool","tool_call_id":"call_a5434d23e72b41c69a3e3e67","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2219'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:06 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609005-VaA9YdDyBga1MnTPxSOe
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a1380ccaade00c-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794609005-VaA9YdDyBga1MnTPxSOe","object":"chat.completion.chunk","created":1794609005,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"id":"call_3671f35e4989480b9709e890","type":"function","function":{"name":"riffer_gateway","arguments":""}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609005-VaA9YdDyBga1MnTPxSOe","object":"chat.completion.chunk","created":1794609005,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":null,"role":"assistant","tool_calls":[{"index":0,"function":{"arguments":"{\"name\": \"calendar/list_events\", \"arguments\": \"{\\\"date\\\": \\\"2026-11-06\\\"}\"}"}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609005-VaA9YdDyBga1MnTPxSOe","object":"chat.completion.chunk","created":1794609005,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}]}
+
+        data: {"id":"gen-1794609005-VaA9YdDyBga1MnTPxSOe","object":"chat.completion.chunk","created":1794609005,"model":"z-ai/glm-5.3-flash","provider":"Relace","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"tool_calls","native_finish_reason":"tool_calls"}],"usage":{"prompt_tokens":524,"completion_tokens":31,"total_tokens":555,"cost":0.000023338,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.000023338,"upstream_inference_prompt_cost":0.0000209076,"upstream_inference_completions_cost":0.0000024304},"completion_tokens_details":{"reasoning_tokens":0,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Fri, 13 Nov 2026 22:30:06 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"system","content":"If
+        you need a tool you don''t have, use find_tools. Be concise."},{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","tool_calls":[{"id":"call_a5434d23e72b41c69a3e3e67","type":"function","function":{"name":"find_tools","arguments":"{\"query\":
+        \"Check calendar events for a date\"}"}}]},{"role":"tool","tool_call_id":"call_a5434d23e72b41c69a3e3e67","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"role":"assistant","tool_calls":[{"id":"call_3671f35e4989480b9709e890","type":"function","function":{"name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":
+        \\\"2026-11-06\\\"}\"}"}}]},{"role":"tool","tool_call_id":"call_3671f35e4989480b9709e890","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}],"metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","function":{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true}},{"type":"function","function":{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2581'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:07 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1794609006-IZLgwtDMey0K5q7oMpht
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,cf-ray
+      X-Openrouter-Release:
+      - api;73f88763-6ac6-4696-aa6d-c876f5fa7ea2
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5a138130b4ae00c-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"Simple","reasoning_details":[{"type":"reasoning.text","text":"Simple","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" answer.","reasoning_details":[{"type":"reasoning.text","text":" answer.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"On","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":" 2026-","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"11-06 you","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":" have two","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":" events:\n","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"- **Dent","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"ist** at ","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"9","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":":00 AM","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"\n- **Team","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":" lunch** at ","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"12:30 PM","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1794609006-IZLgwtDMey0K5q7oMpht","object":"chat.completion.chunk","created":1794609006,"model":"z-ai/glm-5.3-flash","provider":"Relace","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":583,"completion_tokens":42,"total_tokens":625,"cost":0.0000214857,"is_byok":false,"prompt_tokens_details":{"cached_tokens":512,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000214857,"upstream_inference_prompt_cost":0.0000181929,"upstream_inference_completions_cost":0.0000032928},"completion_tokens_details":{"reasoning_tokens":4,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Fri, 13 Nov 2026 22:30:07 GMT
+recorded_with: VCR 6.4.0
+...

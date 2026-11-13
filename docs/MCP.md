@@ -6,7 +6,7 @@ Riffer can consume third-party [Model Context Protocol](https://modelcontextprot
 
 ## Moving off MCP
 
-To hold tools back from the model until it asks for them, the way progressive discovery does, use [deferred tools](AGENTS.md#deferred_tools-experimental). `anthropic` and `anthropic_vertex` support them now, and the other providers follow ([#550](https://github.com/janeapp/riffer/issues/550)).
+To hold tools back from the model until it asks for them, the way progressive discovery does, use [deferred tools](AGENTS.md#deferred_tools-experimental).
 
 To keep calling an MCP server, wrap the [`mcp`](https://github.com/modelcontextprotocol/ruby-sdk) gem in your own [`Riffer::Tool`](TOOLS.md) and list it with `uses_tools`. Headers you build from `context` take the place of the `config.mcp.credentials` callback:
 

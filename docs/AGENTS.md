@@ -148,13 +148,36 @@ A tool can't be both: one that's in `uses_tools` (or comes from skills or MCP) a
 
 Any tool loads deferred tools by returning `load_tools(...)`; see [Tools → Loading deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are [serialized](SERIALIZATION.md) and restored. A call to a deferred tool that hasn't been loaded is refused.
 
-Deferring needs provider support, and building an agent with deferred tools on a provider without it raises `Riffer::ArgumentError` naming the provider. `anthropic` and `anthropic_vertex` (see [Anthropic → Deferred Tools](providers/ANTHROPIC.md#deferred-tools)), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load deferred tools natively, and the [Mock provider](providers/MOCK_PROVIDER.md) supports them for tests; a fallback for the other providers is coming. Riffer doesn't check which models support it, so an unsupported model on a supported provider gets the provider's own error.
+By default deferred tools load natively, which needs provider support. `anthropic` and `anthropic_vertex` (see [Anthropic → Deferred Tools](providers/ANTHROPIC.md#deferred-tools)), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load them natively, and the [Mock provider](providers/MOCK_PROVIDER.md) does too, for tests. Building an agent with deferred tools on any other provider raises `Riffer::ArgumentError` naming the provider, unless it uses the [gateway strategy](#deferred-tools-strategy-experimental). Riffer doesn't check which models support native loading, so an unsupported model on one of those providers gets the provider's own error.
 
 Nothing tells the model that more tools exist unless you do, in a tool's description or the instructions. If no tool ever returns `load_tools`, the deferred tools can't be reached, and riffer can't detect that.
 
 Deferring a tool hides it from the model; it doesn't restrict it. Any tool can load any deferred tool, so leave a tool out of the agent entirely if the user mustn't reach it.
 
 The feature is **experimental**: it can change in any minor release (see [Stability](STABILITY.md#experimental-features)).
+
+#### Deferred tools strategy (experimental)
+
+By default the provider loads deferred tools itself. For a provider without native loading, or a model that rejects it, opt the agent into the **experimental** gateway strategy:
+
+```ruby
+class Assistant < Riffer::Agent
+  model 'amazon_bedrock/my-model'
+  instructions "If you need a tool you don't have, use find_tools."
+
+  uses_tools [FindTools]
+  deferred_tools [ListEvents, CreateEvent], strategy: :gateway
+end
+```
+
+With `strategy: :gateway`, the provider never loads deferred tools natively, even one that can. Every request carries one extra tool, the gateway, and the model calls a loaded tool through it, so the tool list never changes and a load keeps the prompt cache; see [Tools → The gateway strategy](TOOLS.md#the-gateway-strategy). No other tool of the agent can share the gateway's name.
+
+| Strategy            | Behavior                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| `:native` (default) | The provider loads deferred tools itself; raises on a provider without native loading       |
+| `:gateway`          | Loaded tools are called through one extra tool, on every provider; experimental, may change |
+
+Riffer does not pick a strategy per provider — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a lambda: `deferred_tools ->(context) { [ListEvents] }, strategy: :gateway`.
 
 ### use_mcp (deprecated)
 

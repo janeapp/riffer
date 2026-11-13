@@ -173,6 +173,14 @@ class MathAgent < Riffer::Agent
 end
 ```
 
+## Deferred Tools (experimental)
+
+OpenRouter has no native deferred loading, so an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) on OpenRouter needs the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`; without it, building the agent raises `Riffer::ArgumentError`. Every request then has one extra function in `tools`, the [gateway](../TOOLS.md#the-gateway-strategy), and the model calls a loaded tool through it, so `tools` stays the same and a load keeps the prompt cache. Calls come back under the real tool's name.
+
+The gateway is sent with `strict: true`, like every other tool. Its parameters are two required strings, `name` and `arguments` (the loaded tool's arguments, JSON-encoded), with no additional properties, so the schema is valid in strict mode; riffer checks the arguments against the real tool's `params` when it runs.
+
+The tool list holding steady keeps the cache valid, but whether the next request reads it is up to OpenRouter's routing. A model served by several upstreams can have its requests spread across them, and they share no cache, so the turn after a load may miss. Pin one upstream with [`provider`](#provider-routing-preferences) (`provider: {order: ['coreweave'], allow_fallbacks: false}`) when cache hits matter.
+
 ## Reasoning Models
 
 Reasoning models surface their thought process via OpenRouter's normalised `reasoning_details` field. Enable it with the `reasoning` option:

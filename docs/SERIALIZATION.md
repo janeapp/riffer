@@ -48,7 +48,8 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
   structured_output_strategy: :native,        # :native or :prompted ("native"/"prompted" over JSON)
   reasoning:         :low,                     # reasoning level, or null
   tools: [ { name:, description:, parameters_schema:, timeout: }, … ],
-  deferred_tools: [ { name:, description:, parameters_schema:, timeout: }, … ] # [] when the agent has none
+  deferred_tools: [ { name:, description:, parameters_schema:, timeout: }, … ], # [] when the agent has none
+  deferred_tools_strategy: :native            # :native or :gateway ("native"/"gateway" over JSON)
 }
 ```
 
@@ -65,6 +66,8 @@ Structured output crosses as **provider-neutral JSON Schema** (`Riffer::Params#t
 ### Deferred tools
 
 `deferred_tools` carries the agent's [deferred tools](AGENTS.md#deferred_tools-experimental) as the same descriptors as `tools`, and `from_h` resolves them through the same `tool_resolver:`. A hash without the key, such as one saved by an earlier release, decodes as deferring nothing. An earlier release ignores the key, so it rebuilds an agent that has deferred tools without them; load agents with deferred tools only on a release that supports them.
+
+`deferred_tools_strategy` carries the [strategy](AGENTS.md#deferred-tools-strategy-experimental) the agent was configured with, so a `:gateway` agent rebuilds as `:gateway`. A hash without the key decodes as `:native`.
 
 Which deferred tools are loaded isn't part of the hash: riffer works it out from the `loaded_tools` on the conversation's [tool messages](MESSAGES.md#tool). Pass the restored history as `session:` and the loaded tools stay loaded. Riffer matches loads by tool name, so this works with body-less shells too.
 

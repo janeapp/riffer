@@ -1,0 +1,898 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1241'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:53 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a139398eb8595c-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '199'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_e24040bdb1c3430fa12b8a8fe3c29ec9
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0eb9ebf9fe63c530006af78f9dbe4887d0aa6d54001017f55f","object":"response","created_at":1794609053,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0eb9ebf9fe63c530006af78f9dbe4887d0aa6d54001017f55f","object":"response","created_at":1794609053,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","type":"function_call","status":"in_progress","arguments":"","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"rby9oXRM1i9IjE","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"query","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"jHayHgIyIYf","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"h27F1bnlRbhxf","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"look","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"flniapAXtjrI","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" up","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"V1WKcNn5Efsjs","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" calendar","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"BAiyjzZ","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" events","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"0IpJQNpcu","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" on","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"l6pNb5FVAZoWI","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" a","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"CVz8WM9sXRwstu","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" particular","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"B8Qex","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" date","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"KwHmMbgpTXc","output_index":0,"sequence_number":13}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" for","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"QbTSPwTQr6ip","output_index":0,"sequence_number":14}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" the","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"gFHZIKuihKYC","output_index":0,"sequence_number":15}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" user's","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"Qnz7JtpOh","output_index":0,"sequence_number":16}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":" calendar","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"0vYZqYj","output_index":0,"sequence_number":17}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","obfuscation":"1Qp9ZE2jZeH3BI","output_index":0,"sequence_number":18}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"query\":\"look up calendar events on a particular date for the user's calendar\"}","item_id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","output_index":0,"sequence_number":19}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","type":"function_call","status":"completed","arguments":"{\"query\":\"look up calendar events on a particular date for the user's calendar\"}","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools"},"output_index":0,"sequence_number":20}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0eb9ebf9fe63c530006af78f9dbe4887d0aa6d54001017f55f","object":"response","created_at":1794609053,"status":"completed","access_programs":null,"background":false,"completed_at":1794609054,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_0eb9ebf9fe63c530006af78f9e522c87d08913f0aaa6709e02","type":"function_call","status":"completed","arguments":"{\"query\":\"look up calendar events on a particular date for the user's calendar\"}","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":200,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":29,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":229},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":21}
+
+  recorded_at: Fri, 13 Nov 2026 22:30:54 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools","arguments":"{\"query\":\"look
+        up calendar events on a particular date for the user''s calendar\"}"},{"type":"function_call_output","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","output":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2151'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:55 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a1393fc98a595c-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '297'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_5d844bf1826946ca8227e777f36ee3d9
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_01dd37e3392b06f3006af78f9ec26087d08ed9f8b1a654bcf3","object":"response","created_at":1794609054,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_01dd37e3392b06f3006af78f9ec26087d08ed9f8b1a654bcf3","object":"response","created_at":1794609054,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","type":"function_call","status":"in_progress","arguments":"","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","name":"riffer_gateway"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"OEWxreFOjZta38","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"KO4UaHJCr4C0","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"Z10vwVCSgkqpe","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"calendar","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"p2C4dey0","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"/list","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"bteHrvzLHwa","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"_events","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"8gg3HnCqA","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"fxT8aj4xj3wiJ","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"arguments","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"hX2ByVU","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"2epVUmaBDQ5lV","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\\\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"cI9XXjS9qLglk","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"date","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"5TpWZzmkiGy2","output_index":0,"sequence_number":13}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\\\":\\\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"gqRlgZ1S49l","output_index":0,"sequence_number":14}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"TncKIMaBP6uqw","output_index":0,"sequence_number":15}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"Ve4hEwo8klNWO2h","output_index":0,"sequence_number":16}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"3HibEA5XdX1w6Wg","output_index":0,"sequence_number":17}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"ScfEbtAZ4q6bUW","output_index":0,"sequence_number":18}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"1il3oiIuUGHr9xY","output_index":0,"sequence_number":19}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"06","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"7Uo2QTPRUabudl","output_index":0,"sequence_number":20}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\\\"","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"mRV6FxT6QP042a","output_index":0,"sequence_number":21}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"}","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"JBFbPIVEMEV3Dqf","output_index":0,"sequence_number":22}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","obfuscation":"TB4lSxM2GbzuxD","output_index":0,"sequence_number":23}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}","item_id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","output_index":0,"sequence_number":24}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","type":"function_call","status":"completed","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","name":"riffer_gateway"},"output_index":0,"sequence_number":25}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_01dd37e3392b06f3006af78f9ec26087d08ed9f8b1a654bcf3","object":"response","created_at":1794609054,"status":"completed","access_programs":null,"background":false,"completed_at":1794609055,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_01dd37e3392b06f3006af78f9f8e5087d08486cb4b5840aafc","type":"function_call","status":"completed","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","name":"riffer_gateway"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":369,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":35,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":404},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":26}
+
+  recorded_at: Fri, 13 Nov 2026 22:30:56 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools","arguments":"{\"query\":\"look
+        up calendar events on a particular date for the user''s calendar\"}"},{"type":"function_call_output","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","output":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"type":"function_call","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}"},{"type":"function_call_output","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2483'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:56 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a139485a00595c-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '288'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_269d81fd19bf49b3b06550f1ebdbd847
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0eac22ac11ddcd11006af78fa0256087d0a501c87ef90c3365","object":"response","created_at":1794609056,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0eac22ac11ddcd11006af78fa0256087d0a501c87ef90c3365","object":"response","created_at":1794609056,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":2}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":3}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"You","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"RtAGSaLEUYpel","output_index":0,"sequence_number":4}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" have","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"UCdU9leoYVo","output_index":0,"sequence_number":5}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"LM6ovIsXC4WE1o","output_index":0,"sequence_number":6}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" dentist","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"j2tk1usb","output_index":0,"sequence_number":7}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" appointment","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"aGCO","output_index":0,"sequence_number":8}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"XUBwx7xwkvx3Y","output_index":0,"sequence_number":9}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"HS5lc50Johgoh83","output_index":0,"sequence_number":10}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"9","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"4hmwmCpwvH6Wmx6","output_index":0,"sequence_number":11}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"RhsWjpHTCWW72Xr","output_index":0,"sequence_number":12}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"00","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"0SJe8VOixqN3a2","output_index":0,"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" and","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"YkZG3z8Mb1cd","output_index":0,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"OZ8PYQtVb409FT","output_index":0,"sequence_number":15}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" team","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"b9SWMLCeUTD","output_index":0,"sequence_number":16}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" lunch","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"BRs5fuFe6Y","output_index":0,"sequence_number":17}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"W94HT8d9FrSeQ","output_index":0,"sequence_number":18}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"DldEs8SxgIDUlWt","output_index":0,"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"12","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"PQGoRt2NmrbNaa","output_index":0,"sequence_number":20}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"wHfTfIGgcYJKcaQ","output_index":0,"sequence_number":21}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"30","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"nBONYVUd7cls4z","output_index":0,"sequence_number":22}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" on","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"4IdT6Ay6DMIUa","output_index":0,"sequence_number":23}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" November","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"kHXWf6O","output_index":0,"sequence_number":24}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"8RV27q7lUExajpX","output_index":0,"sequence_number":25}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"d8330TKiHZHe6NA","output_index":0,"sequence_number":26}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"XGMd05EVEYQZ0jX","output_index":0,"sequence_number":27}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"7fTgwlAXBpHW38B","output_index":0,"sequence_number":28}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"vo1MZombiJDmT","output_index":0,"sequence_number":29}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"WZc6o0Eg80Yvxaq","output_index":0,"sequence_number":30}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"obfuscation":"HsMFqwwJZGgMsiz","output_index":0,"sequence_number":31}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","logprobs":[],"output_index":0,"sequence_number":32,"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 6, 2026."}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 6, 2026."},"sequence_number":33}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 6, 2026."}],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":34}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0eac22ac11ddcd11006af78fa0256087d0a501c87ef90c3365","object":"response","created_at":1794609056,"status":"completed","access_programs":null,"background":false,"completed_at":1794609056,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"msg_0eac22ac11ddcd11006af78fa0b2b087d08e7c93432bc61512","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 6, 2026."}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":440,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":32,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":472},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":35}
+
+  recorded_at: Fri, 13 Nov 2026 22:30:57 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools","arguments":"{\"query\":\"look
+        up calendar events on a particular date for the user''s calendar\"}"},{"type":"function_call_output","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","output":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"type":"function_call","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}"},{"type":"function_call_output","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"You
+        have a dentist appointment at 9:00 and a team lunch at 12:30 on November 6,
+        2026."},{"role":"user","content":"And on 2026-11-07?"}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2649'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:57 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a1394f3f73b455-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '294'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_1d91251ec6494edbb3cde1d9d68ef007
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_01436ce37bb1e773006af78fa13c6c87d096eaf2a3f4123dd8","object":"response","created_at":1794609057,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_01436ce37bb1e773006af78fa13c6c87d096eaf2a3f4123dd8","object":"response","created_at":1794609057,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","type":"function_call","status":"in_progress","arguments":"","call_id":"call_Nxl2QRqlVnASPCEDaQll6sDo","name":"riffer_gateway"},"output_index":0,"sequence_number":2}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"CyO3NtV1bF3Pa1","output_index":0,"sequence_number":3}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"name","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"wlPQ0rotYkAC","output_index":0,"sequence_number":4}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"vdeOIdQhu1xBD","output_index":0,"sequence_number":5}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"calendar","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"OWkixrbW","output_index":0,"sequence_number":6}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"/list","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"4rbu211vqOA","output_index":0,"sequence_number":7}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"_events","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"ce98kaJed","output_index":0,"sequence_number":8}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"Ht4fMYn6WqMdZ","output_index":0,"sequence_number":9}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"arguments","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"Hgzithq","output_index":0,"sequence_number":10}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"wtdGm0q30PrEY","output_index":0,"sequence_number":11}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"{\\\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"O7xSl3RW8urPa","output_index":0,"sequence_number":12}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"date","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"GLlt2zzMfFmr","output_index":0,"sequence_number":13}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\\\":\\\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"5TPUmygleni","output_index":0,"sequence_number":14}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"202","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"T8KHE7xmflKuH","output_index":0,"sequence_number":15}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"6","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"brSbo6Vsrf1Zun9","output_index":0,"sequence_number":16}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"cyVudC5YZv5E53L","output_index":0,"sequence_number":17}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"11","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"c74NDnrN92AUGA","output_index":0,"sequence_number":18}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"-","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"P27dklgsEH0iYZy","output_index":0,"sequence_number":19}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"07","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"kkUhR4DVeTwHJ5","output_index":0,"sequence_number":20}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\\\"","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"mq6gshcC57rVrP","output_index":0,"sequence_number":21}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"}","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"3GWWRdanLqLn4h8","output_index":0,"sequence_number":22}
+
+        event: response.function_call_arguments.delta
+        data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","obfuscation":"ZnPZvjX65Dc2GQ","output_index":0,"sequence_number":23}
+
+        event: response.function_call_arguments.done
+        data: {"type":"response.function_call_arguments.done","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-07\\\"}\"}","item_id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","output_index":0,"sequence_number":24}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","type":"function_call","status":"completed","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-07\\\"}\"}","call_id":"call_Nxl2QRqlVnASPCEDaQll6sDo","name":"riffer_gateway"},"output_index":0,"sequence_number":25}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_01436ce37bb1e773006af78fa13c6c87d096eaf2a3f4123dd8","object":"response","created_at":1794609057,"status":"completed","access_programs":null,"background":false,"completed_at":1794609058,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"fc_01436ce37bb1e773006af78fa1e0fc87d0a4d676d7a21b955e","type":"function_call","status":"completed","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-07\\\"}\"}","call_id":"call_Nxl2QRqlVnASPCEDaQll6sDo","name":"riffer_gateway"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":488,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":35,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":523},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":26}
+
+  recorded_at: Fri, 13 Nov 2026 22:30:58 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"developer","content":"If you need a tool you don''t
+        have, use find_tools. Be concise."},{"role":"user","content":"What''s on my
+        calendar on 2026-11-06?"},{"type":"function_call","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","name":"find_tools","arguments":"{\"query\":\"look
+        up calendar events on a particular date for the user''s calendar\"}"},{"type":"function_call_output","call_id":"call_1Fo6WOFseZCS5ggCsWTS53Cd","output":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"},{"type":"function_call","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-06\\\"}\"}"},{"type":"function_call_output","call_id":"call_L9BKLx83cf3O7JNI4QSmlw53","output":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."},{"role":"assistant","content":"You
+        have a dentist appointment at 9:00 and a team lunch at 12:30 on November 6,
+        2026."},{"role":"user","content":"And on 2026-11-07?"},{"type":"function_call","call_id":"call_Nxl2QRqlVnASPCEDaQll6sDo","name":"riffer_gateway","arguments":"{\"name\":\"calendar/list_events\",\"arguments\":\"{\\\"date\\\":\\\"2026-11-07\\\"}\"}"},{"type":"function_call_output","call_id":"call_Nxl2QRqlVnASPCEDaQll6sDo","output":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}],"model":"gpt-6-luna","metadata":{"kind":"agent","agent":""},"tools":[{"type":"function","name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.9
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2981'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:30:58 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a5a139569d0db455-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '223'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_4396db24f5534a44a3a4f189cf97e5d0
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_0a9635ebf16f2c16006af78fa2683487d0aaaaf42e2dbfd674","object":"response","created_at":1794609058,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_0a9635ebf16f2c16006af78fa2683487d0aaaaf42e2dbfd674","object":"response","created_at":1794609058,"status":"in_progress","access_programs":null,"background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":2}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":3}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"You","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"zpsSiI6KBIO1p","output_index":0,"sequence_number":4}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" have","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"cxQ5p4VVx21","output_index":0,"sequence_number":5}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"wxKBoJh8ESxbcD","output_index":0,"sequence_number":6}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" dentist","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"MafQomXu","output_index":0,"sequence_number":7}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" appointment","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"ZLls","output_index":0,"sequence_number":8}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"jQTS7f4MKiH0X","output_index":0,"sequence_number":9}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"7hzbnjSNCBvk4hK","output_index":0,"sequence_number":10}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"9","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"1dvykyn6LTXhZOu","output_index":0,"sequence_number":11}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"UnYca59IpwC99aL","output_index":0,"sequence_number":12}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"00","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"ru36nHsz1JQeBY","output_index":0,"sequence_number":13}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" and","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"f0XkTLgFC0my","output_index":0,"sequence_number":14}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"pXQz1OtpwGFRQf","output_index":0,"sequence_number":15}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" team","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"kbaQlcs4IjW","output_index":0,"sequence_number":16}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" lunch","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"Vy55EW5fMK","output_index":0,"sequence_number":17}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" at","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"zTnTYe5QeeVpk","output_index":0,"sequence_number":18}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"wOxLiqnDY05O72k","output_index":0,"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"12","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"VUHwklWcetVOtU","output_index":0,"sequence_number":20}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"G14DoapcNhvLxzT","output_index":0,"sequence_number":21}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"30","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"nGO8io1pKWfgFy","output_index":0,"sequence_number":22}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" on","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"YhcGVVlAb5AA1","output_index":0,"sequence_number":23}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" November","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"ANe5eGp","output_index":0,"sequence_number":24}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"kjjM4dLyT6NJbZF","output_index":0,"sequence_number":25}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"7","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"y5ca7adbvznCCcd","output_index":0,"sequence_number":26}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"n8Ekc1UWnMLRP9b","output_index":0,"sequence_number":27}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"Q3bNWMoQROyfBo2","output_index":0,"sequence_number":28}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"VmdcDTvmiXwUF","output_index":0,"sequence_number":29}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"FknBwbr83Ldv8jY","output_index":0,"sequence_number":30}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"obfuscation":"NLVoMpJBWWVx5FJ","output_index":0,"sequence_number":31}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","logprobs":[],"output_index":0,"sequence_number":32,"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 7, 2026."}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 7, 2026."},"sequence_number":33}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 7, 2026."}],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":34}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_0a9635ebf16f2c16006af78fa2683487d0aaaaf42e2dbfd674","object":"response","created_at":1794609058,"status":"completed","access_programs":null,"background":false,"completed_at":1794609059,"error":null,"frequency_penalty":0.0,"image":{"context_compression":"disabled"},"incomplete_details":null,"input_transformations":[],"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-6-luna","moderation":null,"output":[{"id":"msg_0a9635ebf16f2c16006af78fa2f20487d09df1f2df2b817a7c","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"You have a dentist appointment at 9:00 and a team lunch at 12:30 on November 7, 2026."}],"phase":"final_answer","role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"24h","reasoning":{"context":"all_turns","effort":"medium","mode":"standard","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Find more tools for a task. Describe what you need to do in a few words.","name":"find_tools","output_schema":null,"parameters":{"type":"object","properties":{"query":{"type":"string","description":"What you need to do"}},"required":["query"],"additionalProperties":false},"strict":true},{"type":"function","description":"Calls a tool that another tool has loaded. The result of the tool that loaded it lists its name and parameters.","name":"riffer_gateway","output_schema":null,"parameters":{"type":"object","properties":{"name":{"type":"string","description":"The loaded tool's exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The loaded tool's arguments as a JSON-encoded object string matching its parameters, such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":559,"input_tokens_details":{"cache_write_tokens":0,"cached_tokens":0},"output_tokens":32,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":591},"user":null,"metadata":{"kind":"agent","agent":""}},"sequence_number":35}
+
+  recorded_at: Fri, 13 Nov 2026 22:30:59 GMT
+recorded_with: VCR 6.4.0
+...

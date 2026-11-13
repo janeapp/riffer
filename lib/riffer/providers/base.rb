@@ -46,12 +46,17 @@ class Riffer::Providers::Base
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = with_structured_output_prompt(merge_consecutive_messages(messages), options[:structured_output])
     options = apply_reasoning(model, options)
-    params = build_request_params(messages, model, request_options(options))
+    gateway_tools = gateway_deferred_tools(options)
+    params = build_request_params(
+      Riffer::Providers::DeferredToolGateway.wrap_messages(messages, gateway_tools),
+      model,
+      request_options(options),
+    )
 
     in_chat_span(model, messages, options) do |span|
       response = execute_generate(params)
 
-      parts = extract_parts(response)
+      parts = Riffer::Providers::DeferredToolGateway.unwrap_parts(extract_parts(response), gateway_tools)
       content = parts.filter_map { |part| part.text if part.is_a?(Riffer::Messages::Assistant::TextPart) }.join
       tool_calls = parts.grep(Riffer::Messages::Assistant::ToolCall) #: Array[Riffer::Messages::Assistant::ToolCall]
       token_usage = extract_token_usage(response)
@@ -83,7 +88,12 @@ class Riffer::Providers::Base
     Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = with_structured_output_prompt(merge_consecutive_messages(messages), options[:structured_output])
     options = apply_reasoning(model, options)
-    params = build_request_params(messages, model, request_options(options))
+    gateway_tools = gateway_deferred_tools(options)
+    params = build_request_params(
+      Riffer::Providers::DeferredToolGateway.wrap_messages(messages, gateway_tools),
+      model,
+      request_options(options),
+    )
 
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
     # context is empty — capture here so the chat span parents to the caller's
@@ -93,7 +103,8 @@ class Riffer::Providers::Base
       Riffer::Tracing.with_context(trace_context) do
         in_chat_span(model, messages, options) do |span|
           sink = span.recording? ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
-          execute_stream(params, sink)
+          # Outside the recorder, so traces record the unwrapped calls too.
+          execute_stream(params, Riffer::Providers::DeferredToolGateway.unwrapping_sink(sink, gateway_tools))
           record_stream_outcome(span, sink) if sink.is_a?(Riffer::Tracing::StreamRecorder)
         end
       end
@@ -136,11 +147,18 @@ class Riffer::Providers::Base
     raise NotImplementedError, "Subclasses must implement #build_client"
   end
 
-  # The model calls a loaded deferred tool by its wire name too.
+  # The model calls a loaded deferred tool, and the gateway, by its wire name too.
   #--
   #: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
   def decodable_tools(options)
-    (options[:tools] || []) + (options[:deferred_tools] || [])
+    tools = (options[:tools] || []) + (options[:deferred_tools] || [])
+    gateway_deferred_tools(options).empty? ? tools : tools + [Riffer::Providers::DeferredToolGateway::Tool]
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  def gateway_deferred_tools(options)
+    options[:riffer_deferred_tools_strategy] == :gateway ? options[:deferred_tools] || [] : []
   end
 
   #--
@@ -458,9 +476,12 @@ class Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def request_options(options)
-    options = options.except(:riffer_reasoning_level)
-    # Providers splat unknown options into their SDK request.
-    options = options.except(:deferred_tools) unless self.class.supports_deferred_tools?
+    gateway = !gateway_deferred_tools(options).empty?
+    options = options.except(:riffer_reasoning_level, :riffer_deferred_tools_strategy)
+    # Every request with deferred tools carries the gateway, before a load and after, so the tool list never changes.
+    options = options.merge(tools: (options[:tools] || []) + [Riffer::Providers::DeferredToolGateway::Tool]) if gateway
+    # Providers splat unknown options into their SDK request, and a gateway request must not load natively too.
+    options = options.except(:deferred_tools) if gateway || !self.class.supports_deferred_tools?
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 

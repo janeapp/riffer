@@ -1,0 +1,23 @@
+# Generated from lib/riffer/providers/deferred_tool_gateway/sink.rb with RBS::Inline
+
+class Riffer::Providers::DeferredToolGateway::Sink
+  @sink: Riffer::Providers::_EventSink
+
+  @deferred_tools: Array[singleton(Riffer::Tool)]
+
+  @gateway_item_ids: Array[String]
+
+  # --
+  # : (Riffer::Providers::_EventSink, deferred_tools: Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (Riffer::Providers::_EventSink, deferred_tools: Array[singleton(Riffer::Tool)]) -> void
+
+  # --
+  # : (Riffer::StreamEvents::Base) -> self
+  def <<: (Riffer::StreamEvents::Base) -> self
+
+  private
+
+  # --
+  # : (Riffer::StreamEvents::ToolCallDone) -> Riffer::StreamEvents::ToolCallDone
+  def unwrap: (Riffer::StreamEvents::ToolCallDone) -> Riffer::StreamEvents::ToolCallDone
+end

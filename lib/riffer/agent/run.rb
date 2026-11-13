@@ -413,7 +413,10 @@ module Riffer::Agent::Run
     opts[:structured_output] = agent.structured_output if agent.structured_output
     reasoning = agent.config.reasoning
     opts[:riffer_reasoning_level] = reasoning if reasoning
-    opts[:deferred_tools] = agent.deferred_tools unless agent.deferred_tools.empty?
+    unless agent.deferred_tools.empty?
+      opts[:deferred_tools] = agent.deferred_tools
+      opts[:riffer_deferred_tools_strategy] = agent.config.deferred_tools_strategy
+    end
     # Providers extract :tags for native request metadata; it never reaches an
     # SDK call verbatim.
     opts[:tags] = tags unless tags.empty?

@@ -1,0 +1,4 @@
+# Generated from lib/riffer/providers/deferred_tool_gateway/tool.rb with RBS::Inline
+
+class Riffer::Providers::DeferredToolGateway::Tool < Riffer::Tool
+end
