@@ -519,6 +519,16 @@ describe Riffer::Providers::Anthropic do
         expect([result.finish_reason, result.finish_reason_raw]).must_equal [:stop, "end_turn"]
       end
 
+      it "keeps a summed count when a later segment reports it as null" do
+        cached = paused.merge(usage: { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 100 })
+        uncached = finished.merge(usage: { input_tokens: 30, output_tokens: 7, cache_read_input_tokens: nil })
+        stub_messages([cached.to_json, uncached.to_json])
+
+        result = provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(result.token_usage.cache_read_tokens).must_equal 100
+      end
+
       it "sends the paused response's container id with the continuation" do
         requests = stub_messages([paused.merge(container: container).to_json, finished.to_json])
 

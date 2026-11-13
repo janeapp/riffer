@@ -121,12 +121,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   end
 
   # Each request is billed for its own input and output, so the counts add up.
+  # A nil count in the later response would replace the running total, so it's dropped.
   #--
   #: (Hash[Symbol, untyped]?, Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]?
   def merge_usage(first, second)
     return first || second unless first && second
 
-    first.merge(second) { |_key, a, b| a.is_a?(Integer) && b.is_a?(Integer) ? a + b : b }
+    first.merge(second.compact) { |_key, a, b| a.is_a?(Integer) && b.is_a?(Integer) ? a + b : b }
   end
 
   # Claude signs each thinking block over every block before it in the turn, so
