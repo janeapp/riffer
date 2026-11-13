@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.57.1](https://github.com/janeapp/riffer/compare/riffer/v0.57.0...riffer/v0.57.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* **anthropic_vertex:** download URL files and add anthropic_vertex to the acceptance suite ([#585](https://github.com/janeapp/riffer/issues/585)) ([1aef911](https://github.com/janeapp/riffer/commit/1aef9115a8c68b5ab1a4e9c670c65590f5e75238))
+
 ## [0.57.0](https://github.com/janeapp/riffer/compare/riffer/v0.56.0...riffer/v0.57.0) (2026-11-13)
 
 
