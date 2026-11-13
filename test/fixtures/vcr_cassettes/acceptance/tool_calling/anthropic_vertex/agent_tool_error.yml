@@ -1,0 +1,134 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is tomorrow''s forecast for Toronto? If the tool fails, say so."}],"max_tokens":4096,"system":[{"type":"text","text":"Use
+        the tools to answer. Be concise."}],"tools":[{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Output-Tokens:
+      - '52'
+      Stream-Reported-Http-Code:
+      - '200'
+      Content-Type:
+      - application/json
+      Request-Id:
+      - req_vrtx_011Ch1juT6nX8BsJENKJ2fSw
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Weighted-Total-Tokens:
+      - '691'
+      Internal-Input-Tokens:
+      - '431'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Date:
+      - Fri, 13 Nov 2026 22:46:59 GMT
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1juT7HR2xmCywVpuGg7","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01ME9c456oMFQ96Zqju8cSVx","name":"get_forecast","input":{"city":"Toronto"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":431,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":52,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:59 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is tomorrow''s forecast for Toronto? If the tool fails, say so."},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01ME9c456oMFQ96Zqju8cSVx","name":"get_forecast","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01ME9c456oMFQ96Zqju8cSVx","content":"The
+        forecast service for Toronto is down"}]}],"max_tokens":4096,"system":[{"type":"text","text":"Use
+        the tools to answer. Be concise."}],"tools":[{"name":"get_forecast","description":"Get
+        tomorrow''s forecast for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Weighted-Total-Tokens:
+      - '685'
+      Internal-Context-Length:
+      - '100000'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '500'
+      Date:
+      - Fri, 13 Nov 2026 22:46:59 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Content-Type:
+      - application/json
+      Internal-Output-Tokens:
+      - '37'
+      Request-Id:
+      - req_vrtx_011Ch1juWE4LScZNZ3DHFELw
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1juWFYwjR3LqxqN73AA","type":"message","role":"assistant","content":[{"type":"text","text":"I
+        couldn''t get tomorrow''s forecast for Toronto because the forecast service
+        is down. Please try again later."}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":500,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":37,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:59 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,1040 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]}],"systemInstruction":{"parts":[{"text":"Rule 1: product
+        PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size 2.\nRule
+        3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships in box size
+        4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product PX-6 ships
+        in box size 6.\nRule 7: product PX-7 ships in box size 0.\nRule 8: product
+        PX-8 ships in box size 1.\nRule 9: product PX-9 ships in box size 2.\nRule
+        10: product PX-10 ships in box size 3.\nRule 11: product PX-11 ships in box
+        size 4.\nRule 12: product PX-12 ships in box size 5.\nRule 13: product PX-13
+        ships in box size 6.\nRule 14: product PX-14 ships in box size 0.\nRule 15:
+        product PX-15 ships in box size 1.\nRule 16: product PX-16 ships in box size
+        2.\nRule 17: product PX-17 ships in box size 3.\nRule 18: product PX-18 ships
+        in box size 4.\nRule 19: product PX-19 ships in box size 5.\nRule 20: product
+        PX-20 ships in box size 6.\nRule 21: product PX-21 ships in box size 0.\nRule
+        22: product PX-22 ships in box size 1.\nRule 23: product PX-23 ships in box
+        size 2.\nRule 24: product PX-24 ships in box size 3.\nRule 25: product PX-25
+        ships in box size 4.\nRule 26: product PX-26 ships in box size 5.\nRule 27:
+        product PX-27 ships in box size 6.\nRule 28: product PX-28 ships in box size
+        0.\nRule 29: product PX-29 ships in box size 1.\nRule 30: product PX-30 ships
+        in box size 2.\nRule 31: product PX-31 ships in box size 3.\nRule 32: product
+        PX-32 ships in box size 4.\nRule 33: product PX-33 ships in box size 5.\nRule
+        34: product PX-34 ships in box size 6.\nRule 35: product PX-35 ships in box
+        size 0.\nRule 36: product PX-36 ships in box size 1.\nRule 37: product PX-37
+        ships in box size 2.\nRule 38: product PX-38 ships in box size 3.\nRule 39:
+        product PX-39 ships in box size 4.\nRule 40: product PX-40 ships in box size
+        5.\nRule 41: product PX-41 ships in box size 6.\nRule 42: product PX-42 ships
+        in box size 0.\nRule 43: product PX-43 ships in box size 1.\nRule 44: product
+        PX-44 ships in box size 2.\nRule 45: product PX-45 ships in box size 3.\nRule
+        46: product PX-46 ships in box size 4.\nRule 47: product PX-47 ships in box
+        size 5.\nRule 48: product PX-48 ships in box size 6.\nRule 49: product PX-49
+        ships in box size 0.\nRule 50: product PX-50 ships in box size 1.\nRule 51:
+        product PX-51 ships in box size 2.\nRule 52: product PX-52 ships in box size
+        3.\nRule 53: product PX-53 ships in box size 4.\nRule 54: product PX-54 ships
+        in box size 5.\nRule 55: product PX-55 ships in box size 6.\nRule 56: product
+        PX-56 ships in box size 0.\nRule 57: product PX-57 ships in box size 1.\nRule
+        58: product PX-58 ships in box size 2.\nRule 59: product PX-59 ships in box
+        size 3.\nRule 60: product PX-60 ships in box size 4.\nRule 61: product PX-61
+        ships in box size 5.\nRule 62: product PX-62 ships in box size 6.\nRule 63:
+        product PX-63 ships in box size 0.\nRule 64: product PX-64 ships in box size
+        1.\nRule 65: product PX-65 ships in box size 2.\nRule 66: product PX-66 ships
+        in box size 3.\nRule 67: product PX-67 ships in box size 4.\nRule 68: product
+        PX-68 ships in box size 5.\nRule 69: product PX-69 ships in box size 6.\nRule
+        70: product PX-70 ships in box size 0.\nRule 71: product PX-71 ships in box
+        size 1.\nRule 72: product PX-72 ships in box size 2.\nRule 73: product PX-73
+        ships in box size 3.\nRule 74: product PX-74 ships in box size 4.\nRule 75:
+        product PX-75 ships in box size 5.\nRule 76: product PX-76 ships in box size
+        6.\nRule 77: product PX-77 ships in box size 0.\nRule 78: product PX-78 ships
+        in box size 1.\nRule 79: product PX-79 ships in box size 2.\nRule 80: product
+        PX-80 ships in box size 3.\nRule 81: product PX-81 ships in box size 4.\nRule
+        82: product PX-82 ships in box size 5.\nRule 83: product PX-83 ships in box
+        size 6.\nRule 84: product PX-84 ships in box size 0.\nRule 85: product PX-85
+        ships in box size 1.\nRule 86: product PX-86 ships in box size 2.\nRule 87:
+        product PX-87 ships in box size 3.\nRule 88: product PX-88 ships in box size
+        4.\nRule 89: product PX-89 ships in box size 5.\nRule 90: product PX-90 ships
+        in box size 6.\nRule 91: product PX-91 ships in box size 0.\nRule 92: product
+        PX-92 ships in box size 1.\nRule 93: product PX-93 ships in box size 2.\nRule
+        94: product PX-94 ships in box size 3.\nRule 95: product PX-95 ships in box
+        size 4.\nRule 96: product PX-96 ships in box size 5.\nRule 97: product PX-97
+        ships in box size 6.\nRule 98: product PX-98 ships in box size 0.\nRule 99:
+        product PX-99 ships in box size 1.\nRule 100: product PX-100 ships in box
+        size 2.\nRule 101: product PX-101 ships in box size 3.\nRule 102: product
+        PX-102 ships in box size 4.\nRule 103: product PX-103 ships in box size 5.\nRule
+        104: product PX-104 ships in box size 6.\nRule 105: product PX-105 ships in
+        box size 0.\nRule 106: product PX-106 ships in box size 1.\nRule 107: product
+        PX-107 ships in box size 2.\nRule 108: product PX-108 ships in box size 3.\nRule
+        109: product PX-109 ships in box size 4.\nRule 110: product PX-110 ships in
+        box size 5.\nRule 111: product PX-111 ships in box size 6.\nRule 112: product
+        PX-112 ships in box size 0.\nRule 113: product PX-113 ships in box size 1.\nRule
+        114: product PX-114 ships in box size 2.\nRule 115: product PX-115 ships in
+        box size 3.\nRule 116: product PX-116 ships in box size 4.\nRule 117: product
+        PX-117 ships in box size 5.\nRule 118: product PX-118 ships in box size 6.\nRule
+        119: product PX-119 ships in box size 0.\nRule 120: product PX-120 ships in
+        box size 1.\nRule 121: product PX-121 ships in box size 2.\nRule 122: product
+        PX-122 ships in box size 3.\nRule 123: product PX-123 ships in box size 4.\nRule
+        124: product PX-124 ships in box size 5.\nRule 125: product PX-125 ships in
+        box size 6.\nRule 126: product PX-126 ships in box size 0.\nRule 127: product
+        PX-127 ships in box size 1.\nRule 128: product PX-128 ships in box size 2.\nRule
+        129: product PX-129 ships in box size 3.\nRule 130: product PX-130 ships in
+        box size 4.\nRule 131: product PX-131 ships in box size 5.\nRule 132: product
+        PX-132 ships in box size 6.\nRule 133: product PX-133 ships in box size 0.\nRule
+        134: product PX-134 ships in box size 1.\nRule 135: product PX-135 ships in
+        box size 2.\nRule 136: product PX-136 ships in box size 3.\nRule 137: product
+        PX-137 ships in box size 4.\nRule 138: product PX-138 ships in box size 5.\nRule
+        139: product PX-139 ships in box size 6.\nRule 140: product PX-140 ships in
+        box size 0.\nRule 141: product PX-141 ships in box size 1.\nRule 142: product
+        PX-142 ships in box size 2.\nRule 143: product PX-143 ships in box size 3.\nRule
+        144: product PX-144 ships in box size 4.\nRule 145: product PX-145 ships in
+        box size 5.\nRule 146: product PX-146 ships in box size 6.\nRule 147: product
+        PX-147 ships in box size 0.\nRule 148: product PX-148 ships in box size 1.\nRule
+        149: product PX-149 ships in box size 2.\nRule 150: product PX-150 ships in
+        box size 3.\nRule 151: product PX-151 ships in box size 4.\nRule 152: product
+        PX-152 ships in box size 5.\nRule 153: product PX-153 ships in box size 6.\nRule
+        154: product PX-154 ships in box size 0.\nRule 155: product PX-155 ships in
+        box size 1.\nRule 156: product PX-156 ships in box size 2.\nRule 157: product
+        PX-157 ships in box size 3.\nRule 158: product PX-158 ships in box size 4.\nRule
+        159: product PX-159 ships in box size 5.\nRule 160: product PX-160 ships in
+        box size 6.\nRule 161: product PX-161 ships in box size 0.\nRule 162: product
+        PX-162 ships in box size 1.\nRule 163: product PX-163 ships in box size 2.\nRule
+        164: product PX-164 ships in box size 3.\nRule 165: product PX-165 ships in
+        box size 4.\nRule 166: product PX-166 ships in box size 5.\nRule 167: product
+        PX-167 ships in box size 6.\nRule 168: product PX-168 ships in box size 0.\nRule
+        169: product PX-169 ships in box size 1.\nRule 170: product PX-170 ships in
+        box size 2.\nRule 171: product PX-171 ships in box size 3.\nRule 172: product
+        PX-172 ships in box size 4.\nRule 173: product PX-173 ships in box size 5.\nRule
+        174: product PX-174 ships in box size 6.\nRule 175: product PX-175 ships in
+        box size 0.\nRule 176: product PX-176 ships in box size 1.\nRule 177: product
+        PX-177 ships in box size 2.\nRule 178: product PX-178 ships in box size 3.\nRule
+        179: product PX-179 ships in box size 4.\nRule 180: product PX-180 ships in
+        box size 5.\nRule 181: product PX-181 ships in box size 6.\nRule 182: product
+        PX-182 ships in box size 0.\nRule 183: product PX-183 ships in box size 1.\nRule
+        184: product PX-184 ships in box size 2.\nRule 185: product PX-185 ships in
+        box size 3.\nRule 186: product PX-186 ships in box size 4.\nRule 187: product
+        PX-187 ships in box size 5.\nRule 188: product PX-188 ships in box size 6.\nRule
+        189: product PX-189 ships in box size 0.\nRule 190: product PX-190 ships in
+        box size 1.\nRule 191: product PX-191 ships in box size 2.\nRule 192: product
+        PX-192 ships in box size 3.\nRule 193: product PX-193 ships in box size 4.\nRule
+        194: product PX-194 ships in box size 5.\nRule 195: product PX-195 ships in
+        box size 6.\nRule 196: product PX-196 ships in box size 0.\nRule 197: product
+        PX-197 ships in box size 1.\nRule 198: product PX-198 ships in box size 2.\nRule
+        199: product PX-199 ships in box size 3.\nRule 200: product PX-200 ships in
+        box size 4.\nRule 201: product PX-201 ships in box size 5.\nRule 202: product
+        PX-202 ships in box size 6.\nRule 203: product PX-203 ships in box size 0.\nRule
+        204: product PX-204 ships in box size 1.\nRule 205: product PX-205 ships in
+        box size 2.\nRule 206: product PX-206 ships in box size 3.\nRule 207: product
+        PX-207 ships in box size 4.\nRule 208: product PX-208 ships in box size 5.\nRule
+        209: product PX-209 ships in box size 6.\nRule 210: product PX-210 ships in
+        box size 0.\nRule 211: product PX-211 ships in box size 1.\nRule 212: product
+        PX-212 ships in box size 2.\nRule 213: product PX-213 ships in box size 3.\nRule
+        214: product PX-214 ships in box size 4.\nRule 215: product PX-215 ships in
+        box size 5.\nRule 216: product PX-216 ships in box size 6.\nRule 217: product
+        PX-217 ships in box size 0.\nRule 218: product PX-218 ships in box size 1.\nRule
+        219: product PX-219 ships in box size 2.\nRule 220: product PX-220 ships in
+        box size 3.\nRule 221: product PX-221 ships in box size 4.\nRule 222: product
+        PX-222 ships in box size 5.\nRule 223: product PX-223 ships in box size 6.\nRule
+        224: product PX-224 ships in box size 0.\nRule 225: product PX-225 ships in
+        box size 1.\nRule 226: product PX-226 ships in box size 2.\nRule 227: product
+        PX-227 ships in box size 3.\nRule 228: product PX-228 ships in box size 4.\nRule
+        229: product PX-229 ships in box size 5.\nRule 230: product PX-230 ships in
+        box size 6.\nRule 231: product PX-231 ships in box size 0.\nRule 232: product
+        PX-232 ships in box size 1.\nRule 233: product PX-233 ships in box size 2.\nRule
+        234: product PX-234 ships in box size 3.\nRule 235: product PX-235 ships in
+        box size 4.\nRule 236: product PX-236 ships in box size 5.\nRule 237: product
+        PX-237 ships in box size 6.\nRule 238: product PX-238 ships in box size 0.\nRule
+        239: product PX-239 ships in box size 1.\nRule 240: product PX-240 ships in
+        box size 2.\nRule 241: product PX-241 ships in box size 3.\nRule 242: product
+        PX-242 ships in box size 4.\nRule 243: product PX-243 ships in box size 5.\nRule
+        244: product PX-244 ships in box size 6.\nRule 245: product PX-245 ships in
+        box size 0.\nRule 246: product PX-246 ships in box size 1.\nRule 247: product
+        PX-247 ships in box size 2.\nRule 248: product PX-248 ships in box size 3.\nRule
+        249: product PX-249 ships in box size 4.\nRule 250: product PX-250 ships in
+        box size 5.\nRule 251: product PX-251 ships in box size 6.\nRule 252: product
+        PX-252 ships in box size 0.\nRule 253: product PX-253 ships in box size 1.\nRule
+        254: product PX-254 ships in box size 2.\nRule 255: product PX-255 ships in
+        box size 3.\nRule 256: product PX-256 ships in box size 4.\nRule 257: product
+        PX-257 ships in box size 5.\nRule 258: product PX-258 ships in box size 6.\nRule
+        259: product PX-259 ships in box size 0.\nRule 260: product PX-260 ships in
+        box size 1.\nRule 261: product PX-261 ships in box size 2.\nRule 262: product
+        PX-262 ships in box size 3.\nRule 263: product PX-263 ships in box size 4.\nRule
+        264: product PX-264 ships in box size 5.\nRule 265: product PX-265 ships in
+        box size 6.\nRule 266: product PX-266 ships in box size 0.\nRule 267: product
+        PX-267 ships in box size 1.\nRule 268: product PX-268 ships in box size 2.\nRule
+        269: product PX-269 ships in box size 3.\nRule 270: product PX-270 ships in
+        box size 4.\nRule 271: product PX-271 ships in box size 5.\nRule 272: product
+        PX-272 ships in box size 6.\nRule 273: product PX-273 ships in box size 0.\nRule
+        274: product PX-274 ships in box size 1.\nRule 275: product PX-275 ships in
+        box size 2.\nRule 276: product PX-276 ships in box size 3.\nRule 277: product
+        PX-277 ships in box size 4.\nRule 278: product PX-278 ships in box size 5.\nRule
+        279: product PX-279 ships in box size 6.\nRule 280: product PX-280 ships in
+        box size 0.\nRule 281: product PX-281 ships in box size 1.\nRule 282: product
+        PX-282 ships in box size 2.\nRule 283: product PX-283 ships in box size 3.\nRule
+        284: product PX-284 ships in box size 4.\nRule 285: product PX-285 ships in
+        box size 5.\nRule 286: product PX-286 ships in box size 6.\nRule 287: product
+        PX-287 ships in box size 0.\nRule 288: product PX-288 ships in box size 1.\nRule
+        289: product PX-289 ships in box size 2.\nRule 290: product PX-290 ships in
+        box size 3.\nRule 291: product PX-291 ships in box size 4.\nRule 292: product
+        PX-292 ships in box size 5.\nRule 293: product PX-293 ships in box size 6.\nRule
+        294: product PX-294 ships in box size 0.\nRule 295: product PX-295 ships in
+        box size 1.\nRule 296: product PX-296 ships in box size 2.\nRule 297: product
+        PX-297 ships in box size 3.\nRule 298: product PX-298 ships in box size 4.\nRule
+        299: product PX-299 ships in box size 5.\nRule 300: product PX-300 ships in
+        box size 6.\nRule 301: product PX-301 ships in box size 0.\nRule 302: product
+        PX-302 ships in box size 1.\nRule 303: product PX-303 ships in box size 2.\nRule
+        304: product PX-304 ships in box size 3.\nRule 305: product PX-305 ships in
+        box size 4.\nRule 306: product PX-306 ships in box size 5.\nRule 307: product
+        PX-307 ships in box size 6.\nRule 308: product PX-308 ships in box size 0.\nRule
+        309: product PX-309 ships in box size 1.\nRule 310: product PX-310 ships in
+        box size 2.\nRule 311: product PX-311 ships in box size 3.\nRule 312: product
+        PX-312 ships in box size 4.\nRule 313: product PX-313 ships in box size 5.\nRule
+        314: product PX-314 ships in box size 6.\nRule 315: product PX-315 ships in
+        box size 0.\nRule 316: product PX-316 ships in box size 1.\nRule 317: product
+        PX-317 ships in box size 2.\nRule 318: product PX-318 ships in box size 3.\nRule
+        319: product PX-319 ships in box size 4.\nRule 320: product PX-320 ships in
+        box size 5.\nRule 321: product PX-321 ships in box size 6.\nRule 322: product
+        PX-322 ships in box size 0.\nRule 323: product PX-323 ships in box size 1.\nRule
+        324: product PX-324 ships in box size 2.\nRule 325: product PX-325 ships in
+        box size 3.\nRule 326: product PX-326 ships in box size 4.\nRule 327: product
+        PX-327 ships in box size 5.\nRule 328: product PX-328 ships in box size 6.\nRule
+        329: product PX-329 ships in box size 0.\nRule 330: product PX-330 ships in
+        box size 1.\nRule 331: product PX-331 ships in box size 2.\nRule 332: product
+        PX-332 ships in box size 3.\nRule 333: product PX-333 ships in box size 4.\nRule
+        334: product PX-334 ships in box size 5.\nRule 335: product PX-335 ships in
+        box size 6.\nRule 336: product PX-336 ships in box size 0.\nRule 337: product
+        PX-337 ships in box size 1.\nRule 338: product PX-338 ships in box size 2.\nRule
+        339: product PX-339 ships in box size 3.\nRule 340: product PX-340 ships in
+        box size 4.\nRule 341: product PX-341 ships in box size 5.\nRule 342: product
+        PX-342 ships in box size 6.\nRule 343: product PX-343 ships in box size 0.\nRule
+        344: product PX-344 ships in box size 1.\nRule 345: product PX-345 ships in
+        box size 2.\nRule 346: product PX-346 ships in box size 3.\nRule 347: product
+        PX-347 ships in box size 4.\nRule 348: product PX-348 ships in box size 5.\nRule
+        349: product PX-349 ships in box size 6.\nRule 350: product PX-350 ships in
+        box size 0.\nRule 351: product PX-351 ships in box size 1.\nRule 352: product
+        PX-352 ships in box size 2.\nRule 353: product PX-353 ships in box size 3.\nRule
+        354: product PX-354 ships in box size 4.\nRule 355: product PX-355 ships in
+        box size 5.\nRule 356: product PX-356 ships in box size 6.\nRule 357: product
+        PX-357 ships in box size 0.\nRule 358: product PX-358 ships in box size 1.\nRule
+        359: product PX-359 ships in box size 2.\nRule 360: product PX-360 ships in
+        box size 3.\nRule 361: product PX-361 ships in box size 4.\nRule 362: product
+        PX-362 ships in box size 5.\nRule 363: product PX-363 ships in box size 6.\nRule
+        364: product PX-364 ships in box size 0.\nRule 365: product PX-365 ships in
+        box size 1.\nRule 366: product PX-366 ships in box size 2.\nRule 367: product
+        PX-367 ships in box size 3.\nRule 368: product PX-368 ships in box size 4.\nRule
+        369: product PX-369 ships in box size 5.\nRule 370: product PX-370 ships in
+        box size 6.\nRule 371: product PX-371 ships in box size 0.\nRule 372: product
+        PX-372 ships in box size 1.\nRule 373: product PX-373 ships in box size 2.\nRule
+        374: product PX-374 ships in box size 3.\nRule 375: product PX-375 ships in
+        box size 4.\nRule 376: product PX-376 ships in box size 5.\nRule 377: product
+        PX-377 ships in box size 6.\nRule 378: product PX-378 ships in box size 0.\nRule
+        379: product PX-379 ships in box size 1.\nRule 380: product PX-380 ships in
+        box size 2.\nRule 381: product PX-381 ships in box size 3.\nRule 382: product
+        PX-382 ships in box size 4.\nRule 383: product PX-383 ships in box size 5.\nRule
+        384: product PX-384 ships in box size 6.\nRule 385: product PX-385 ships in
+        box size 0.\nRule 386: product PX-386 ships in box size 1.\nRule 387: product
+        PX-387 ships in box size 2.\nRule 388: product PX-388 ships in box size 3.\nRule
+        389: product PX-389 ships in box size 4.\nRule 390: product PX-390 ships in
+        box size 5.\nRule 391: product PX-391 ships in box size 6.\nRule 392: product
+        PX-392 ships in box size 0.\nRule 393: product PX-393 ships in box size 1.\nRule
+        394: product PX-394 ships in box size 2.\nRule 395: product PX-395 ships in
+        box size 3.\nRule 396: product PX-396 ships in box size 4.\nRule 397: product
+        PX-397 ships in box size 5.\nRule 398: product PX-398 ships in box size 6.\nRule
+        399: product PX-399 ships in box size 0.\nRule 400: product PX-400 ships in
+        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Goog-Request-Id:
+      - OZL3aqrcJ9Kjq8YPiYznmA0
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:42:02 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "find_tools",
+                      "args": {
+                        "query": "calendar events"
+                      },
+                      "id": "call_14877782673081392242"
+                    },
+                    "thoughtSignature": "AY89a18w+nHoShz1E2gro2am1XHOukbBYWSrvMzO3uo47f1qfQ+wTLwb+AfnEq/05Dd4y4sgliFfJzlLMIOmksza9oY2lF6DtcVfASAfI6I3xNguxJGHPbGkWxc="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 7974,
+            "candidatesTokenCount": 17,
+            "totalTokenCount": 7991,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 7974
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 17
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-11-13T22:42:01.650794Z",
+          "responseId": "OZL3aqrcJ9Kjq8YPiYznmA0"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:42:02 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_14877782673081392242","name":"find_tools","args":{"query":"calendar
+        events"}},"thoughtSignature":"AY89a18w+nHoShz1E2gro2am1XHOukbBYWSrvMzO3uo47f1qfQ+wTLwb+AfnEq/05Dd4y4sgliFfJzlLMIOmksza9oY2lF6DtcVfASAfI6I3xNguxJGHPbGkWxc="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_14877782673081392242","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]}],"systemInstruction":{"parts":[{"text":"Rule
+        1: product PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size
+        2.\nRule 3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships
+        in box size 4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product
+        PX-6 ships in box size 6.\nRule 7: product PX-7 ships in box size 0.\nRule
+        8: product PX-8 ships in box size 1.\nRule 9: product PX-9 ships in box size
+        2.\nRule 10: product PX-10 ships in box size 3.\nRule 11: product PX-11 ships
+        in box size 4.\nRule 12: product PX-12 ships in box size 5.\nRule 13: product
+        PX-13 ships in box size 6.\nRule 14: product PX-14 ships in box size 0.\nRule
+        15: product PX-15 ships in box size 1.\nRule 16: product PX-16 ships in box
+        size 2.\nRule 17: product PX-17 ships in box size 3.\nRule 18: product PX-18
+        ships in box size 4.\nRule 19: product PX-19 ships in box size 5.\nRule 20:
+        product PX-20 ships in box size 6.\nRule 21: product PX-21 ships in box size
+        0.\nRule 22: product PX-22 ships in box size 1.\nRule 23: product PX-23 ships
+        in box size 2.\nRule 24: product PX-24 ships in box size 3.\nRule 25: product
+        PX-25 ships in box size 4.\nRule 26: product PX-26 ships in box size 5.\nRule
+        27: product PX-27 ships in box size 6.\nRule 28: product PX-28 ships in box
+        size 0.\nRule 29: product PX-29 ships in box size 1.\nRule 30: product PX-30
+        ships in box size 2.\nRule 31: product PX-31 ships in box size 3.\nRule 32:
+        product PX-32 ships in box size 4.\nRule 33: product PX-33 ships in box size
+        5.\nRule 34: product PX-34 ships in box size 6.\nRule 35: product PX-35 ships
+        in box size 0.\nRule 36: product PX-36 ships in box size 1.\nRule 37: product
+        PX-37 ships in box size 2.\nRule 38: product PX-38 ships in box size 3.\nRule
+        39: product PX-39 ships in box size 4.\nRule 40: product PX-40 ships in box
+        size 5.\nRule 41: product PX-41 ships in box size 6.\nRule 42: product PX-42
+        ships in box size 0.\nRule 43: product PX-43 ships in box size 1.\nRule 44:
+        product PX-44 ships in box size 2.\nRule 45: product PX-45 ships in box size
+        3.\nRule 46: product PX-46 ships in box size 4.\nRule 47: product PX-47 ships
+        in box size 5.\nRule 48: product PX-48 ships in box size 6.\nRule 49: product
+        PX-49 ships in box size 0.\nRule 50: product PX-50 ships in box size 1.\nRule
+        51: product PX-51 ships in box size 2.\nRule 52: product PX-52 ships in box
+        size 3.\nRule 53: product PX-53 ships in box size 4.\nRule 54: product PX-54
+        ships in box size 5.\nRule 55: product PX-55 ships in box size 6.\nRule 56:
+        product PX-56 ships in box size 0.\nRule 57: product PX-57 ships in box size
+        1.\nRule 58: product PX-58 ships in box size 2.\nRule 59: product PX-59 ships
+        in box size 3.\nRule 60: product PX-60 ships in box size 4.\nRule 61: product
+        PX-61 ships in box size 5.\nRule 62: product PX-62 ships in box size 6.\nRule
+        63: product PX-63 ships in box size 0.\nRule 64: product PX-64 ships in box
+        size 1.\nRule 65: product PX-65 ships in box size 2.\nRule 66: product PX-66
+        ships in box size 3.\nRule 67: product PX-67 ships in box size 4.\nRule 68:
+        product PX-68 ships in box size 5.\nRule 69: product PX-69 ships in box size
+        6.\nRule 70: product PX-70 ships in box size 0.\nRule 71: product PX-71 ships
+        in box size 1.\nRule 72: product PX-72 ships in box size 2.\nRule 73: product
+        PX-73 ships in box size 3.\nRule 74: product PX-74 ships in box size 4.\nRule
+        75: product PX-75 ships in box size 5.\nRule 76: product PX-76 ships in box
+        size 6.\nRule 77: product PX-77 ships in box size 0.\nRule 78: product PX-78
+        ships in box size 1.\nRule 79: product PX-79 ships in box size 2.\nRule 80:
+        product PX-80 ships in box size 3.\nRule 81: product PX-81 ships in box size
+        4.\nRule 82: product PX-82 ships in box size 5.\nRule 83: product PX-83 ships
+        in box size 6.\nRule 84: product PX-84 ships in box size 0.\nRule 85: product
+        PX-85 ships in box size 1.\nRule 86: product PX-86 ships in box size 2.\nRule
+        87: product PX-87 ships in box size 3.\nRule 88: product PX-88 ships in box
+        size 4.\nRule 89: product PX-89 ships in box size 5.\nRule 90: product PX-90
+        ships in box size 6.\nRule 91: product PX-91 ships in box size 0.\nRule 92:
+        product PX-92 ships in box size 1.\nRule 93: product PX-93 ships in box size
+        2.\nRule 94: product PX-94 ships in box size 3.\nRule 95: product PX-95 ships
+        in box size 4.\nRule 96: product PX-96 ships in box size 5.\nRule 97: product
+        PX-97 ships in box size 6.\nRule 98: product PX-98 ships in box size 0.\nRule
+        99: product PX-99 ships in box size 1.\nRule 100: product PX-100 ships in
+        box size 2.\nRule 101: product PX-101 ships in box size 3.\nRule 102: product
+        PX-102 ships in box size 4.\nRule 103: product PX-103 ships in box size 5.\nRule
+        104: product PX-104 ships in box size 6.\nRule 105: product PX-105 ships in
+        box size 0.\nRule 106: product PX-106 ships in box size 1.\nRule 107: product
+        PX-107 ships in box size 2.\nRule 108: product PX-108 ships in box size 3.\nRule
+        109: product PX-109 ships in box size 4.\nRule 110: product PX-110 ships in
+        box size 5.\nRule 111: product PX-111 ships in box size 6.\nRule 112: product
+        PX-112 ships in box size 0.\nRule 113: product PX-113 ships in box size 1.\nRule
+        114: product PX-114 ships in box size 2.\nRule 115: product PX-115 ships in
+        box size 3.\nRule 116: product PX-116 ships in box size 4.\nRule 117: product
+        PX-117 ships in box size 5.\nRule 118: product PX-118 ships in box size 6.\nRule
+        119: product PX-119 ships in box size 0.\nRule 120: product PX-120 ships in
+        box size 1.\nRule 121: product PX-121 ships in box size 2.\nRule 122: product
+        PX-122 ships in box size 3.\nRule 123: product PX-123 ships in box size 4.\nRule
+        124: product PX-124 ships in box size 5.\nRule 125: product PX-125 ships in
+        box size 6.\nRule 126: product PX-126 ships in box size 0.\nRule 127: product
+        PX-127 ships in box size 1.\nRule 128: product PX-128 ships in box size 2.\nRule
+        129: product PX-129 ships in box size 3.\nRule 130: product PX-130 ships in
+        box size 4.\nRule 131: product PX-131 ships in box size 5.\nRule 132: product
+        PX-132 ships in box size 6.\nRule 133: product PX-133 ships in box size 0.\nRule
+        134: product PX-134 ships in box size 1.\nRule 135: product PX-135 ships in
+        box size 2.\nRule 136: product PX-136 ships in box size 3.\nRule 137: product
+        PX-137 ships in box size 4.\nRule 138: product PX-138 ships in box size 5.\nRule
+        139: product PX-139 ships in box size 6.\nRule 140: product PX-140 ships in
+        box size 0.\nRule 141: product PX-141 ships in box size 1.\nRule 142: product
+        PX-142 ships in box size 2.\nRule 143: product PX-143 ships in box size 3.\nRule
+        144: product PX-144 ships in box size 4.\nRule 145: product PX-145 ships in
+        box size 5.\nRule 146: product PX-146 ships in box size 6.\nRule 147: product
+        PX-147 ships in box size 0.\nRule 148: product PX-148 ships in box size 1.\nRule
+        149: product PX-149 ships in box size 2.\nRule 150: product PX-150 ships in
+        box size 3.\nRule 151: product PX-151 ships in box size 4.\nRule 152: product
+        PX-152 ships in box size 5.\nRule 153: product PX-153 ships in box size 6.\nRule
+        154: product PX-154 ships in box size 0.\nRule 155: product PX-155 ships in
+        box size 1.\nRule 156: product PX-156 ships in box size 2.\nRule 157: product
+        PX-157 ships in box size 3.\nRule 158: product PX-158 ships in box size 4.\nRule
+        159: product PX-159 ships in box size 5.\nRule 160: product PX-160 ships in
+        box size 6.\nRule 161: product PX-161 ships in box size 0.\nRule 162: product
+        PX-162 ships in box size 1.\nRule 163: product PX-163 ships in box size 2.\nRule
+        164: product PX-164 ships in box size 3.\nRule 165: product PX-165 ships in
+        box size 4.\nRule 166: product PX-166 ships in box size 5.\nRule 167: product
+        PX-167 ships in box size 6.\nRule 168: product PX-168 ships in box size 0.\nRule
+        169: product PX-169 ships in box size 1.\nRule 170: product PX-170 ships in
+        box size 2.\nRule 171: product PX-171 ships in box size 3.\nRule 172: product
+        PX-172 ships in box size 4.\nRule 173: product PX-173 ships in box size 5.\nRule
+        174: product PX-174 ships in box size 6.\nRule 175: product PX-175 ships in
+        box size 0.\nRule 176: product PX-176 ships in box size 1.\nRule 177: product
+        PX-177 ships in box size 2.\nRule 178: product PX-178 ships in box size 3.\nRule
+        179: product PX-179 ships in box size 4.\nRule 180: product PX-180 ships in
+        box size 5.\nRule 181: product PX-181 ships in box size 6.\nRule 182: product
+        PX-182 ships in box size 0.\nRule 183: product PX-183 ships in box size 1.\nRule
+        184: product PX-184 ships in box size 2.\nRule 185: product PX-185 ships in
+        box size 3.\nRule 186: product PX-186 ships in box size 4.\nRule 187: product
+        PX-187 ships in box size 5.\nRule 188: product PX-188 ships in box size 6.\nRule
+        189: product PX-189 ships in box size 0.\nRule 190: product PX-190 ships in
+        box size 1.\nRule 191: product PX-191 ships in box size 2.\nRule 192: product
+        PX-192 ships in box size 3.\nRule 193: product PX-193 ships in box size 4.\nRule
+        194: product PX-194 ships in box size 5.\nRule 195: product PX-195 ships in
+        box size 6.\nRule 196: product PX-196 ships in box size 0.\nRule 197: product
+        PX-197 ships in box size 1.\nRule 198: product PX-198 ships in box size 2.\nRule
+        199: product PX-199 ships in box size 3.\nRule 200: product PX-200 ships in
+        box size 4.\nRule 201: product PX-201 ships in box size 5.\nRule 202: product
+        PX-202 ships in box size 6.\nRule 203: product PX-203 ships in box size 0.\nRule
+        204: product PX-204 ships in box size 1.\nRule 205: product PX-205 ships in
+        box size 2.\nRule 206: product PX-206 ships in box size 3.\nRule 207: product
+        PX-207 ships in box size 4.\nRule 208: product PX-208 ships in box size 5.\nRule
+        209: product PX-209 ships in box size 6.\nRule 210: product PX-210 ships in
+        box size 0.\nRule 211: product PX-211 ships in box size 1.\nRule 212: product
+        PX-212 ships in box size 2.\nRule 213: product PX-213 ships in box size 3.\nRule
+        214: product PX-214 ships in box size 4.\nRule 215: product PX-215 ships in
+        box size 5.\nRule 216: product PX-216 ships in box size 6.\nRule 217: product
+        PX-217 ships in box size 0.\nRule 218: product PX-218 ships in box size 1.\nRule
+        219: product PX-219 ships in box size 2.\nRule 220: product PX-220 ships in
+        box size 3.\nRule 221: product PX-221 ships in box size 4.\nRule 222: product
+        PX-222 ships in box size 5.\nRule 223: product PX-223 ships in box size 6.\nRule
+        224: product PX-224 ships in box size 0.\nRule 225: product PX-225 ships in
+        box size 1.\nRule 226: product PX-226 ships in box size 2.\nRule 227: product
+        PX-227 ships in box size 3.\nRule 228: product PX-228 ships in box size 4.\nRule
+        229: product PX-229 ships in box size 5.\nRule 230: product PX-230 ships in
+        box size 6.\nRule 231: product PX-231 ships in box size 0.\nRule 232: product
+        PX-232 ships in box size 1.\nRule 233: product PX-233 ships in box size 2.\nRule
+        234: product PX-234 ships in box size 3.\nRule 235: product PX-235 ships in
+        box size 4.\nRule 236: product PX-236 ships in box size 5.\nRule 237: product
+        PX-237 ships in box size 6.\nRule 238: product PX-238 ships in box size 0.\nRule
+        239: product PX-239 ships in box size 1.\nRule 240: product PX-240 ships in
+        box size 2.\nRule 241: product PX-241 ships in box size 3.\nRule 242: product
+        PX-242 ships in box size 4.\nRule 243: product PX-243 ships in box size 5.\nRule
+        244: product PX-244 ships in box size 6.\nRule 245: product PX-245 ships in
+        box size 0.\nRule 246: product PX-246 ships in box size 1.\nRule 247: product
+        PX-247 ships in box size 2.\nRule 248: product PX-248 ships in box size 3.\nRule
+        249: product PX-249 ships in box size 4.\nRule 250: product PX-250 ships in
+        box size 5.\nRule 251: product PX-251 ships in box size 6.\nRule 252: product
+        PX-252 ships in box size 0.\nRule 253: product PX-253 ships in box size 1.\nRule
+        254: product PX-254 ships in box size 2.\nRule 255: product PX-255 ships in
+        box size 3.\nRule 256: product PX-256 ships in box size 4.\nRule 257: product
+        PX-257 ships in box size 5.\nRule 258: product PX-258 ships in box size 6.\nRule
+        259: product PX-259 ships in box size 0.\nRule 260: product PX-260 ships in
+        box size 1.\nRule 261: product PX-261 ships in box size 2.\nRule 262: product
+        PX-262 ships in box size 3.\nRule 263: product PX-263 ships in box size 4.\nRule
+        264: product PX-264 ships in box size 5.\nRule 265: product PX-265 ships in
+        box size 6.\nRule 266: product PX-266 ships in box size 0.\nRule 267: product
+        PX-267 ships in box size 1.\nRule 268: product PX-268 ships in box size 2.\nRule
+        269: product PX-269 ships in box size 3.\nRule 270: product PX-270 ships in
+        box size 4.\nRule 271: product PX-271 ships in box size 5.\nRule 272: product
+        PX-272 ships in box size 6.\nRule 273: product PX-273 ships in box size 0.\nRule
+        274: product PX-274 ships in box size 1.\nRule 275: product PX-275 ships in
+        box size 2.\nRule 276: product PX-276 ships in box size 3.\nRule 277: product
+        PX-277 ships in box size 4.\nRule 278: product PX-278 ships in box size 5.\nRule
+        279: product PX-279 ships in box size 6.\nRule 280: product PX-280 ships in
+        box size 0.\nRule 281: product PX-281 ships in box size 1.\nRule 282: product
+        PX-282 ships in box size 2.\nRule 283: product PX-283 ships in box size 3.\nRule
+        284: product PX-284 ships in box size 4.\nRule 285: product PX-285 ships in
+        box size 5.\nRule 286: product PX-286 ships in box size 6.\nRule 287: product
+        PX-287 ships in box size 0.\nRule 288: product PX-288 ships in box size 1.\nRule
+        289: product PX-289 ships in box size 2.\nRule 290: product PX-290 ships in
+        box size 3.\nRule 291: product PX-291 ships in box size 4.\nRule 292: product
+        PX-292 ships in box size 5.\nRule 293: product PX-293 ships in box size 6.\nRule
+        294: product PX-294 ships in box size 0.\nRule 295: product PX-295 ships in
+        box size 1.\nRule 296: product PX-296 ships in box size 2.\nRule 297: product
+        PX-297 ships in box size 3.\nRule 298: product PX-298 ships in box size 4.\nRule
+        299: product PX-299 ships in box size 5.\nRule 300: product PX-300 ships in
+        box size 6.\nRule 301: product PX-301 ships in box size 0.\nRule 302: product
+        PX-302 ships in box size 1.\nRule 303: product PX-303 ships in box size 2.\nRule
+        304: product PX-304 ships in box size 3.\nRule 305: product PX-305 ships in
+        box size 4.\nRule 306: product PX-306 ships in box size 5.\nRule 307: product
+        PX-307 ships in box size 6.\nRule 308: product PX-308 ships in box size 0.\nRule
+        309: product PX-309 ships in box size 1.\nRule 310: product PX-310 ships in
+        box size 2.\nRule 311: product PX-311 ships in box size 3.\nRule 312: product
+        PX-312 ships in box size 4.\nRule 313: product PX-313 ships in box size 5.\nRule
+        314: product PX-314 ships in box size 6.\nRule 315: product PX-315 ships in
+        box size 0.\nRule 316: product PX-316 ships in box size 1.\nRule 317: product
+        PX-317 ships in box size 2.\nRule 318: product PX-318 ships in box size 3.\nRule
+        319: product PX-319 ships in box size 4.\nRule 320: product PX-320 ships in
+        box size 5.\nRule 321: product PX-321 ships in box size 6.\nRule 322: product
+        PX-322 ships in box size 0.\nRule 323: product PX-323 ships in box size 1.\nRule
+        324: product PX-324 ships in box size 2.\nRule 325: product PX-325 ships in
+        box size 3.\nRule 326: product PX-326 ships in box size 4.\nRule 327: product
+        PX-327 ships in box size 5.\nRule 328: product PX-328 ships in box size 6.\nRule
+        329: product PX-329 ships in box size 0.\nRule 330: product PX-330 ships in
+        box size 1.\nRule 331: product PX-331 ships in box size 2.\nRule 332: product
+        PX-332 ships in box size 3.\nRule 333: product PX-333 ships in box size 4.\nRule
+        334: product PX-334 ships in box size 5.\nRule 335: product PX-335 ships in
+        box size 6.\nRule 336: product PX-336 ships in box size 0.\nRule 337: product
+        PX-337 ships in box size 1.\nRule 338: product PX-338 ships in box size 2.\nRule
+        339: product PX-339 ships in box size 3.\nRule 340: product PX-340 ships in
+        box size 4.\nRule 341: product PX-341 ships in box size 5.\nRule 342: product
+        PX-342 ships in box size 6.\nRule 343: product PX-343 ships in box size 0.\nRule
+        344: product PX-344 ships in box size 1.\nRule 345: product PX-345 ships in
+        box size 2.\nRule 346: product PX-346 ships in box size 3.\nRule 347: product
+        PX-347 ships in box size 4.\nRule 348: product PX-348 ships in box size 5.\nRule
+        349: product PX-349 ships in box size 6.\nRule 350: product PX-350 ships in
+        box size 0.\nRule 351: product PX-351 ships in box size 1.\nRule 352: product
+        PX-352 ships in box size 2.\nRule 353: product PX-353 ships in box size 3.\nRule
+        354: product PX-354 ships in box size 4.\nRule 355: product PX-355 ships in
+        box size 5.\nRule 356: product PX-356 ships in box size 6.\nRule 357: product
+        PX-357 ships in box size 0.\nRule 358: product PX-358 ships in box size 1.\nRule
+        359: product PX-359 ships in box size 2.\nRule 360: product PX-360 ships in
+        box size 3.\nRule 361: product PX-361 ships in box size 4.\nRule 362: product
+        PX-362 ships in box size 5.\nRule 363: product PX-363 ships in box size 6.\nRule
+        364: product PX-364 ships in box size 0.\nRule 365: product PX-365 ships in
+        box size 1.\nRule 366: product PX-366 ships in box size 2.\nRule 367: product
+        PX-367 ships in box size 3.\nRule 368: product PX-368 ships in box size 4.\nRule
+        369: product PX-369 ships in box size 5.\nRule 370: product PX-370 ships in
+        box size 6.\nRule 371: product PX-371 ships in box size 0.\nRule 372: product
+        PX-372 ships in box size 1.\nRule 373: product PX-373 ships in box size 2.\nRule
+        374: product PX-374 ships in box size 3.\nRule 375: product PX-375 ships in
+        box size 4.\nRule 376: product PX-376 ships in box size 5.\nRule 377: product
+        PX-377 ships in box size 6.\nRule 378: product PX-378 ships in box size 0.\nRule
+        379: product PX-379 ships in box size 1.\nRule 380: product PX-380 ships in
+        box size 2.\nRule 381: product PX-381 ships in box size 3.\nRule 382: product
+        PX-382 ships in box size 4.\nRule 383: product PX-383 ships in box size 5.\nRule
+        384: product PX-384 ships in box size 6.\nRule 385: product PX-385 ships in
+        box size 0.\nRule 386: product PX-386 ships in box size 1.\nRule 387: product
+        PX-387 ships in box size 2.\nRule 388: product PX-388 ships in box size 3.\nRule
+        389: product PX-389 ships in box size 4.\nRule 390: product PX-390 ships in
+        box size 5.\nRule 391: product PX-391 ships in box size 6.\nRule 392: product
+        PX-392 ships in box size 0.\nRule 393: product PX-393 ships in box size 1.\nRule
+        394: product PX-394 ships in box size 2.\nRule 395: product PX-395 ships in
+        box size 3.\nRule 396: product PX-396 ships in box size 4.\nRule 397: product
+        PX-397 ships in box size 5.\nRule 398: product PX-398 ships in box size 6.\nRule
+        399: product PX-399 ships in box size 0.\nRule 400: product PX-400 ships in
+        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Goog-Request-Id:
+      - OpL3aqu2G8Spq8YP7J_emQo
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:42:03 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "riffer_gateway",
+                      "args": {
+                        "name": "calendar/list_events",
+                        "arguments": "{\"date\":\"2026-11-06\"}"
+                      },
+                      "id": "call_15925079718521610176"
+                    },
+                    "thoughtSignature": "AY89a1+MWnHAOKt0A00Hg0CZkwZPBLRwCa/+Mkwa6tUh/0sgGCEDyDoAaS4ofWKoLKfYWGnkHCUl3e/G0igytcFjNzVcsllYoQfiKgcttqPGLNe6CIWddLczhvM="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8131,
+            "candidatesTokenCount": 40,
+            "totalTokenCount": 8171,
+            "cachedContentTokenCount": 6048,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8131
+              }
+            ],
+            "cacheTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 6048
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 40
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-11-13T22:42:02.449323Z",
+          "responseId": "OpL3aqu2G8Spq8YP7J_emQo"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:42:03 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What''s on my calendar
+        on 2026-11-06?"}]},{"role":"model","parts":[{"functionCall":{"id":"call_14877782673081392242","name":"find_tools","args":{"query":"calendar
+        events"}},"thoughtSignature":"AY89a18w+nHoShz1E2gro2am1XHOukbBYWSrvMzO3uo47f1qfQ+wTLwb+AfnEq/05Dd4y4sgliFfJzlLMIOmksza9oY2lF6DtcVfASAfI6I3xNguxJGHPbGkWxc="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_14877782673081392242","name":"find_tools","response":{"result":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}}}]},{"role":"model","parts":[{"functionCall":{"id":"call_15925079718521610176","name":"riffer_gateway","args":{"name":"calendar/list_events","arguments":"{\"date\":\"2026-11-06\"}"}},"thoughtSignature":"AY89a1+MWnHAOKt0A00Hg0CZkwZPBLRwCa/+Mkwa6tUh/0sgGCEDyDoAaS4ofWKoLKfYWGnkHCUl3e/G0igytcFjNzVcsllYoQfiKgcttqPGLNe6CIWddLczhvM="}]},{"role":"user","parts":[{"functionResponse":{"id":"call_15925079718521610176","name":"riffer_gateway","response":{"result":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}}}]}],"systemInstruction":{"parts":[{"text":"Rule
+        1: product PX-1 ships in box size 1.\nRule 2: product PX-2 ships in box size
+        2.\nRule 3: product PX-3 ships in box size 3.\nRule 4: product PX-4 ships
+        in box size 4.\nRule 5: product PX-5 ships in box size 5.\nRule 6: product
+        PX-6 ships in box size 6.\nRule 7: product PX-7 ships in box size 0.\nRule
+        8: product PX-8 ships in box size 1.\nRule 9: product PX-9 ships in box size
+        2.\nRule 10: product PX-10 ships in box size 3.\nRule 11: product PX-11 ships
+        in box size 4.\nRule 12: product PX-12 ships in box size 5.\nRule 13: product
+        PX-13 ships in box size 6.\nRule 14: product PX-14 ships in box size 0.\nRule
+        15: product PX-15 ships in box size 1.\nRule 16: product PX-16 ships in box
+        size 2.\nRule 17: product PX-17 ships in box size 3.\nRule 18: product PX-18
+        ships in box size 4.\nRule 19: product PX-19 ships in box size 5.\nRule 20:
+        product PX-20 ships in box size 6.\nRule 21: product PX-21 ships in box size
+        0.\nRule 22: product PX-22 ships in box size 1.\nRule 23: product PX-23 ships
+        in box size 2.\nRule 24: product PX-24 ships in box size 3.\nRule 25: product
+        PX-25 ships in box size 4.\nRule 26: product PX-26 ships in box size 5.\nRule
+        27: product PX-27 ships in box size 6.\nRule 28: product PX-28 ships in box
+        size 0.\nRule 29: product PX-29 ships in box size 1.\nRule 30: product PX-30
+        ships in box size 2.\nRule 31: product PX-31 ships in box size 3.\nRule 32:
+        product PX-32 ships in box size 4.\nRule 33: product PX-33 ships in box size
+        5.\nRule 34: product PX-34 ships in box size 6.\nRule 35: product PX-35 ships
+        in box size 0.\nRule 36: product PX-36 ships in box size 1.\nRule 37: product
+        PX-37 ships in box size 2.\nRule 38: product PX-38 ships in box size 3.\nRule
+        39: product PX-39 ships in box size 4.\nRule 40: product PX-40 ships in box
+        size 5.\nRule 41: product PX-41 ships in box size 6.\nRule 42: product PX-42
+        ships in box size 0.\nRule 43: product PX-43 ships in box size 1.\nRule 44:
+        product PX-44 ships in box size 2.\nRule 45: product PX-45 ships in box size
+        3.\nRule 46: product PX-46 ships in box size 4.\nRule 47: product PX-47 ships
+        in box size 5.\nRule 48: product PX-48 ships in box size 6.\nRule 49: product
+        PX-49 ships in box size 0.\nRule 50: product PX-50 ships in box size 1.\nRule
+        51: product PX-51 ships in box size 2.\nRule 52: product PX-52 ships in box
+        size 3.\nRule 53: product PX-53 ships in box size 4.\nRule 54: product PX-54
+        ships in box size 5.\nRule 55: product PX-55 ships in box size 6.\nRule 56:
+        product PX-56 ships in box size 0.\nRule 57: product PX-57 ships in box size
+        1.\nRule 58: product PX-58 ships in box size 2.\nRule 59: product PX-59 ships
+        in box size 3.\nRule 60: product PX-60 ships in box size 4.\nRule 61: product
+        PX-61 ships in box size 5.\nRule 62: product PX-62 ships in box size 6.\nRule
+        63: product PX-63 ships in box size 0.\nRule 64: product PX-64 ships in box
+        size 1.\nRule 65: product PX-65 ships in box size 2.\nRule 66: product PX-66
+        ships in box size 3.\nRule 67: product PX-67 ships in box size 4.\nRule 68:
+        product PX-68 ships in box size 5.\nRule 69: product PX-69 ships in box size
+        6.\nRule 70: product PX-70 ships in box size 0.\nRule 71: product PX-71 ships
+        in box size 1.\nRule 72: product PX-72 ships in box size 2.\nRule 73: product
+        PX-73 ships in box size 3.\nRule 74: product PX-74 ships in box size 4.\nRule
+        75: product PX-75 ships in box size 5.\nRule 76: product PX-76 ships in box
+        size 6.\nRule 77: product PX-77 ships in box size 0.\nRule 78: product PX-78
+        ships in box size 1.\nRule 79: product PX-79 ships in box size 2.\nRule 80:
+        product PX-80 ships in box size 3.\nRule 81: product PX-81 ships in box size
+        4.\nRule 82: product PX-82 ships in box size 5.\nRule 83: product PX-83 ships
+        in box size 6.\nRule 84: product PX-84 ships in box size 0.\nRule 85: product
+        PX-85 ships in box size 1.\nRule 86: product PX-86 ships in box size 2.\nRule
+        87: product PX-87 ships in box size 3.\nRule 88: product PX-88 ships in box
+        size 4.\nRule 89: product PX-89 ships in box size 5.\nRule 90: product PX-90
+        ships in box size 6.\nRule 91: product PX-91 ships in box size 0.\nRule 92:
+        product PX-92 ships in box size 1.\nRule 93: product PX-93 ships in box size
+        2.\nRule 94: product PX-94 ships in box size 3.\nRule 95: product PX-95 ships
+        in box size 4.\nRule 96: product PX-96 ships in box size 5.\nRule 97: product
+        PX-97 ships in box size 6.\nRule 98: product PX-98 ships in box size 0.\nRule
+        99: product PX-99 ships in box size 1.\nRule 100: product PX-100 ships in
+        box size 2.\nRule 101: product PX-101 ships in box size 3.\nRule 102: product
+        PX-102 ships in box size 4.\nRule 103: product PX-103 ships in box size 5.\nRule
+        104: product PX-104 ships in box size 6.\nRule 105: product PX-105 ships in
+        box size 0.\nRule 106: product PX-106 ships in box size 1.\nRule 107: product
+        PX-107 ships in box size 2.\nRule 108: product PX-108 ships in box size 3.\nRule
+        109: product PX-109 ships in box size 4.\nRule 110: product PX-110 ships in
+        box size 5.\nRule 111: product PX-111 ships in box size 6.\nRule 112: product
+        PX-112 ships in box size 0.\nRule 113: product PX-113 ships in box size 1.\nRule
+        114: product PX-114 ships in box size 2.\nRule 115: product PX-115 ships in
+        box size 3.\nRule 116: product PX-116 ships in box size 4.\nRule 117: product
+        PX-117 ships in box size 5.\nRule 118: product PX-118 ships in box size 6.\nRule
+        119: product PX-119 ships in box size 0.\nRule 120: product PX-120 ships in
+        box size 1.\nRule 121: product PX-121 ships in box size 2.\nRule 122: product
+        PX-122 ships in box size 3.\nRule 123: product PX-123 ships in box size 4.\nRule
+        124: product PX-124 ships in box size 5.\nRule 125: product PX-125 ships in
+        box size 6.\nRule 126: product PX-126 ships in box size 0.\nRule 127: product
+        PX-127 ships in box size 1.\nRule 128: product PX-128 ships in box size 2.\nRule
+        129: product PX-129 ships in box size 3.\nRule 130: product PX-130 ships in
+        box size 4.\nRule 131: product PX-131 ships in box size 5.\nRule 132: product
+        PX-132 ships in box size 6.\nRule 133: product PX-133 ships in box size 0.\nRule
+        134: product PX-134 ships in box size 1.\nRule 135: product PX-135 ships in
+        box size 2.\nRule 136: product PX-136 ships in box size 3.\nRule 137: product
+        PX-137 ships in box size 4.\nRule 138: product PX-138 ships in box size 5.\nRule
+        139: product PX-139 ships in box size 6.\nRule 140: product PX-140 ships in
+        box size 0.\nRule 141: product PX-141 ships in box size 1.\nRule 142: product
+        PX-142 ships in box size 2.\nRule 143: product PX-143 ships in box size 3.\nRule
+        144: product PX-144 ships in box size 4.\nRule 145: product PX-145 ships in
+        box size 5.\nRule 146: product PX-146 ships in box size 6.\nRule 147: product
+        PX-147 ships in box size 0.\nRule 148: product PX-148 ships in box size 1.\nRule
+        149: product PX-149 ships in box size 2.\nRule 150: product PX-150 ships in
+        box size 3.\nRule 151: product PX-151 ships in box size 4.\nRule 152: product
+        PX-152 ships in box size 5.\nRule 153: product PX-153 ships in box size 6.\nRule
+        154: product PX-154 ships in box size 0.\nRule 155: product PX-155 ships in
+        box size 1.\nRule 156: product PX-156 ships in box size 2.\nRule 157: product
+        PX-157 ships in box size 3.\nRule 158: product PX-158 ships in box size 4.\nRule
+        159: product PX-159 ships in box size 5.\nRule 160: product PX-160 ships in
+        box size 6.\nRule 161: product PX-161 ships in box size 0.\nRule 162: product
+        PX-162 ships in box size 1.\nRule 163: product PX-163 ships in box size 2.\nRule
+        164: product PX-164 ships in box size 3.\nRule 165: product PX-165 ships in
+        box size 4.\nRule 166: product PX-166 ships in box size 5.\nRule 167: product
+        PX-167 ships in box size 6.\nRule 168: product PX-168 ships in box size 0.\nRule
+        169: product PX-169 ships in box size 1.\nRule 170: product PX-170 ships in
+        box size 2.\nRule 171: product PX-171 ships in box size 3.\nRule 172: product
+        PX-172 ships in box size 4.\nRule 173: product PX-173 ships in box size 5.\nRule
+        174: product PX-174 ships in box size 6.\nRule 175: product PX-175 ships in
+        box size 0.\nRule 176: product PX-176 ships in box size 1.\nRule 177: product
+        PX-177 ships in box size 2.\nRule 178: product PX-178 ships in box size 3.\nRule
+        179: product PX-179 ships in box size 4.\nRule 180: product PX-180 ships in
+        box size 5.\nRule 181: product PX-181 ships in box size 6.\nRule 182: product
+        PX-182 ships in box size 0.\nRule 183: product PX-183 ships in box size 1.\nRule
+        184: product PX-184 ships in box size 2.\nRule 185: product PX-185 ships in
+        box size 3.\nRule 186: product PX-186 ships in box size 4.\nRule 187: product
+        PX-187 ships in box size 5.\nRule 188: product PX-188 ships in box size 6.\nRule
+        189: product PX-189 ships in box size 0.\nRule 190: product PX-190 ships in
+        box size 1.\nRule 191: product PX-191 ships in box size 2.\nRule 192: product
+        PX-192 ships in box size 3.\nRule 193: product PX-193 ships in box size 4.\nRule
+        194: product PX-194 ships in box size 5.\nRule 195: product PX-195 ships in
+        box size 6.\nRule 196: product PX-196 ships in box size 0.\nRule 197: product
+        PX-197 ships in box size 1.\nRule 198: product PX-198 ships in box size 2.\nRule
+        199: product PX-199 ships in box size 3.\nRule 200: product PX-200 ships in
+        box size 4.\nRule 201: product PX-201 ships in box size 5.\nRule 202: product
+        PX-202 ships in box size 6.\nRule 203: product PX-203 ships in box size 0.\nRule
+        204: product PX-204 ships in box size 1.\nRule 205: product PX-205 ships in
+        box size 2.\nRule 206: product PX-206 ships in box size 3.\nRule 207: product
+        PX-207 ships in box size 4.\nRule 208: product PX-208 ships in box size 5.\nRule
+        209: product PX-209 ships in box size 6.\nRule 210: product PX-210 ships in
+        box size 0.\nRule 211: product PX-211 ships in box size 1.\nRule 212: product
+        PX-212 ships in box size 2.\nRule 213: product PX-213 ships in box size 3.\nRule
+        214: product PX-214 ships in box size 4.\nRule 215: product PX-215 ships in
+        box size 5.\nRule 216: product PX-216 ships in box size 6.\nRule 217: product
+        PX-217 ships in box size 0.\nRule 218: product PX-218 ships in box size 1.\nRule
+        219: product PX-219 ships in box size 2.\nRule 220: product PX-220 ships in
+        box size 3.\nRule 221: product PX-221 ships in box size 4.\nRule 222: product
+        PX-222 ships in box size 5.\nRule 223: product PX-223 ships in box size 6.\nRule
+        224: product PX-224 ships in box size 0.\nRule 225: product PX-225 ships in
+        box size 1.\nRule 226: product PX-226 ships in box size 2.\nRule 227: product
+        PX-227 ships in box size 3.\nRule 228: product PX-228 ships in box size 4.\nRule
+        229: product PX-229 ships in box size 5.\nRule 230: product PX-230 ships in
+        box size 6.\nRule 231: product PX-231 ships in box size 0.\nRule 232: product
+        PX-232 ships in box size 1.\nRule 233: product PX-233 ships in box size 2.\nRule
+        234: product PX-234 ships in box size 3.\nRule 235: product PX-235 ships in
+        box size 4.\nRule 236: product PX-236 ships in box size 5.\nRule 237: product
+        PX-237 ships in box size 6.\nRule 238: product PX-238 ships in box size 0.\nRule
+        239: product PX-239 ships in box size 1.\nRule 240: product PX-240 ships in
+        box size 2.\nRule 241: product PX-241 ships in box size 3.\nRule 242: product
+        PX-242 ships in box size 4.\nRule 243: product PX-243 ships in box size 5.\nRule
+        244: product PX-244 ships in box size 6.\nRule 245: product PX-245 ships in
+        box size 0.\nRule 246: product PX-246 ships in box size 1.\nRule 247: product
+        PX-247 ships in box size 2.\nRule 248: product PX-248 ships in box size 3.\nRule
+        249: product PX-249 ships in box size 4.\nRule 250: product PX-250 ships in
+        box size 5.\nRule 251: product PX-251 ships in box size 6.\nRule 252: product
+        PX-252 ships in box size 0.\nRule 253: product PX-253 ships in box size 1.\nRule
+        254: product PX-254 ships in box size 2.\nRule 255: product PX-255 ships in
+        box size 3.\nRule 256: product PX-256 ships in box size 4.\nRule 257: product
+        PX-257 ships in box size 5.\nRule 258: product PX-258 ships in box size 6.\nRule
+        259: product PX-259 ships in box size 0.\nRule 260: product PX-260 ships in
+        box size 1.\nRule 261: product PX-261 ships in box size 2.\nRule 262: product
+        PX-262 ships in box size 3.\nRule 263: product PX-263 ships in box size 4.\nRule
+        264: product PX-264 ships in box size 5.\nRule 265: product PX-265 ships in
+        box size 6.\nRule 266: product PX-266 ships in box size 0.\nRule 267: product
+        PX-267 ships in box size 1.\nRule 268: product PX-268 ships in box size 2.\nRule
+        269: product PX-269 ships in box size 3.\nRule 270: product PX-270 ships in
+        box size 4.\nRule 271: product PX-271 ships in box size 5.\nRule 272: product
+        PX-272 ships in box size 6.\nRule 273: product PX-273 ships in box size 0.\nRule
+        274: product PX-274 ships in box size 1.\nRule 275: product PX-275 ships in
+        box size 2.\nRule 276: product PX-276 ships in box size 3.\nRule 277: product
+        PX-277 ships in box size 4.\nRule 278: product PX-278 ships in box size 5.\nRule
+        279: product PX-279 ships in box size 6.\nRule 280: product PX-280 ships in
+        box size 0.\nRule 281: product PX-281 ships in box size 1.\nRule 282: product
+        PX-282 ships in box size 2.\nRule 283: product PX-283 ships in box size 3.\nRule
+        284: product PX-284 ships in box size 4.\nRule 285: product PX-285 ships in
+        box size 5.\nRule 286: product PX-286 ships in box size 6.\nRule 287: product
+        PX-287 ships in box size 0.\nRule 288: product PX-288 ships in box size 1.\nRule
+        289: product PX-289 ships in box size 2.\nRule 290: product PX-290 ships in
+        box size 3.\nRule 291: product PX-291 ships in box size 4.\nRule 292: product
+        PX-292 ships in box size 5.\nRule 293: product PX-293 ships in box size 6.\nRule
+        294: product PX-294 ships in box size 0.\nRule 295: product PX-295 ships in
+        box size 1.\nRule 296: product PX-296 ships in box size 2.\nRule 297: product
+        PX-297 ships in box size 3.\nRule 298: product PX-298 ships in box size 4.\nRule
+        299: product PX-299 ships in box size 5.\nRule 300: product PX-300 ships in
+        box size 6.\nRule 301: product PX-301 ships in box size 0.\nRule 302: product
+        PX-302 ships in box size 1.\nRule 303: product PX-303 ships in box size 2.\nRule
+        304: product PX-304 ships in box size 3.\nRule 305: product PX-305 ships in
+        box size 4.\nRule 306: product PX-306 ships in box size 5.\nRule 307: product
+        PX-307 ships in box size 6.\nRule 308: product PX-308 ships in box size 0.\nRule
+        309: product PX-309 ships in box size 1.\nRule 310: product PX-310 ships in
+        box size 2.\nRule 311: product PX-311 ships in box size 3.\nRule 312: product
+        PX-312 ships in box size 4.\nRule 313: product PX-313 ships in box size 5.\nRule
+        314: product PX-314 ships in box size 6.\nRule 315: product PX-315 ships in
+        box size 0.\nRule 316: product PX-316 ships in box size 1.\nRule 317: product
+        PX-317 ships in box size 2.\nRule 318: product PX-318 ships in box size 3.\nRule
+        319: product PX-319 ships in box size 4.\nRule 320: product PX-320 ships in
+        box size 5.\nRule 321: product PX-321 ships in box size 6.\nRule 322: product
+        PX-322 ships in box size 0.\nRule 323: product PX-323 ships in box size 1.\nRule
+        324: product PX-324 ships in box size 2.\nRule 325: product PX-325 ships in
+        box size 3.\nRule 326: product PX-326 ships in box size 4.\nRule 327: product
+        PX-327 ships in box size 5.\nRule 328: product PX-328 ships in box size 6.\nRule
+        329: product PX-329 ships in box size 0.\nRule 330: product PX-330 ships in
+        box size 1.\nRule 331: product PX-331 ships in box size 2.\nRule 332: product
+        PX-332 ships in box size 3.\nRule 333: product PX-333 ships in box size 4.\nRule
+        334: product PX-334 ships in box size 5.\nRule 335: product PX-335 ships in
+        box size 6.\nRule 336: product PX-336 ships in box size 0.\nRule 337: product
+        PX-337 ships in box size 1.\nRule 338: product PX-338 ships in box size 2.\nRule
+        339: product PX-339 ships in box size 3.\nRule 340: product PX-340 ships in
+        box size 4.\nRule 341: product PX-341 ships in box size 5.\nRule 342: product
+        PX-342 ships in box size 6.\nRule 343: product PX-343 ships in box size 0.\nRule
+        344: product PX-344 ships in box size 1.\nRule 345: product PX-345 ships in
+        box size 2.\nRule 346: product PX-346 ships in box size 3.\nRule 347: product
+        PX-347 ships in box size 4.\nRule 348: product PX-348 ships in box size 5.\nRule
+        349: product PX-349 ships in box size 6.\nRule 350: product PX-350 ships in
+        box size 0.\nRule 351: product PX-351 ships in box size 1.\nRule 352: product
+        PX-352 ships in box size 2.\nRule 353: product PX-353 ships in box size 3.\nRule
+        354: product PX-354 ships in box size 4.\nRule 355: product PX-355 ships in
+        box size 5.\nRule 356: product PX-356 ships in box size 6.\nRule 357: product
+        PX-357 ships in box size 0.\nRule 358: product PX-358 ships in box size 1.\nRule
+        359: product PX-359 ships in box size 2.\nRule 360: product PX-360 ships in
+        box size 3.\nRule 361: product PX-361 ships in box size 4.\nRule 362: product
+        PX-362 ships in box size 5.\nRule 363: product PX-363 ships in box size 6.\nRule
+        364: product PX-364 ships in box size 0.\nRule 365: product PX-365 ships in
+        box size 1.\nRule 366: product PX-366 ships in box size 2.\nRule 367: product
+        PX-367 ships in box size 3.\nRule 368: product PX-368 ships in box size 4.\nRule
+        369: product PX-369 ships in box size 5.\nRule 370: product PX-370 ships in
+        box size 6.\nRule 371: product PX-371 ships in box size 0.\nRule 372: product
+        PX-372 ships in box size 1.\nRule 373: product PX-373 ships in box size 2.\nRule
+        374: product PX-374 ships in box size 3.\nRule 375: product PX-375 ships in
+        box size 4.\nRule 376: product PX-376 ships in box size 5.\nRule 377: product
+        PX-377 ships in box size 6.\nRule 378: product PX-378 ships in box size 0.\nRule
+        379: product PX-379 ships in box size 1.\nRule 380: product PX-380 ships in
+        box size 2.\nRule 381: product PX-381 ships in box size 3.\nRule 382: product
+        PX-382 ships in box size 4.\nRule 383: product PX-383 ships in box size 5.\nRule
+        384: product PX-384 ships in box size 6.\nRule 385: product PX-385 ships in
+        box size 0.\nRule 386: product PX-386 ships in box size 1.\nRule 387: product
+        PX-387 ships in box size 2.\nRule 388: product PX-388 ships in box size 3.\nRule
+        389: product PX-389 ships in box size 4.\nRule 390: product PX-390 ships in
+        box size 5.\nRule 391: product PX-391 ships in box size 6.\nRule 392: product
+        PX-392 ships in box size 0.\nRule 393: product PX-393 ships in box size 1.\nRule
+        394: product PX-394 ships in box size 2.\nRule 395: product PX-395 ships in
+        box size 3.\nRule 396: product PX-396 ships in box size 4.\nRule 397: product
+        PX-397 ships in box size 5.\nRule 398: product PX-398 ships in box size 6.\nRule
+        399: product PX-399 ships in box size 0.\nRule 400: product PX-400 ships in
+        box size 1.\n\nIf you need a tool you don''t have, use find_tools. Be concise."}]},"tools":[{"functionDeclarations":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","parametersJsonSchema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","parametersJsonSchema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}],"labels":{"kind":"agent","agent":""}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Goog-Request-Id:
+      - O5L3apTFEMeTq8YPn6qMqQs
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 13 Nov 2026 22:42:03 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "On 2026-11-06, your calendar has the following events:\n- **dentist** at 09:00\n- **team lunch** at 12:30",
+                    "thoughtSignature": "AY89a18ClGVcwISPfOTUHy8J/QA/jO4Y5RnY1OGEm+mgk1hFNNQZ/F/4zxxzo2aS2vgWpCTS8sIyAQKE6VhepeYWYLmoKWJPaK96UVCFjQXiEiKn2fwhMFt/uiY="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 8201,
+            "candidatesTokenCount": 46,
+            "totalTokenCount": 8247,
+            "cachedContentTokenCount": 8041,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8201
+              }
+            ],
+            "cacheTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 8041
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 46
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-11-13T22:42:03.270996Z",
+          "responseId": "O5L3apTFEMeTq8YPn6qMqQs"
+        }
+  recorded_at: Fri, 13 Nov 2026 22:42:03 GMT
+recorded_with: VCR 6.4.0

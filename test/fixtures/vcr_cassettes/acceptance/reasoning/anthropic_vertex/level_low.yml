@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"low"},"system":[{"type":"text","text":"Be
+        concise."}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Internal-Output-Tokens:
+      - '3'
+      Stream-Reported-Http-Code:
+      - '200'
+      Date:
+      - Fri, 13 Nov 2026 22:45:09 GMT
+      Request-Id:
+      - req_vrtx_011Ch1jmMYTEn6m4wL93KnkP
+      Content-Type:
+      - application/json
+      Internal-Weighted-Total-Tokens:
+      - '46'
+      Internal-Input-Tokens:
+      - '31'
+      Pinnacle-Error-Category:
+      - no_error
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jmMaBfcmSQkbK45Too","type":"message","role":"assistant","content":[{"type":"text","text":"391"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":31,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:09 GMT
+recorded_with: VCR 6.4.0

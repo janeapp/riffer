@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"I
+        love this product, it is amazing!\n\nWhen you give your final answer, respond
+        with only a JSON object that conforms to the following JSON Schema, with no
+        other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\",\"description\":\"The
+        sentiment\",\"enum\":[\"positive\",\"neutral\",\"negative\"]}},\"required\":[\"sentiment\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"sentiment\":\"positive | neutral |
+        negative\"}\n\nOnly call tools when the request needs them. If you can answer
+        directly, reply with the JSON object right away."}],"max_tokens":4096,"system":[{"type":"text","text":"Analyze
+        the sentiment of the given text."}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Request-Id:
+      - req_vrtx_011Ch1jrszR4kbZ1YBQUvWUw
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Context-Length:
+      - '100000'
+      Internal-Input-Tokens:
+      - '212'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Date:
+      - Fri, 13 Nov 2026 22:46:24 GMT
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Weighted-Total-Tokens:
+      - '282'
+      Internal-Output-Tokens:
+      - '14'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jrt1Aifdmdf6Qu6uDK","type":"message","role":"assistant","content":[{"type":"text","text":"{\"sentiment\":\"positive\"}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":212,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":14,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:46:24 GMT
+recorded_with: VCR 6.4.0

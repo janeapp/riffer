@@ -1,0 +1,83 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Write
+        a 500-word essay about the sea."}],"max_tokens":20,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Request-Id:
+      - req_vrtx_011Ch1jkSfk78hMwi4kaAsJP
+      Date:
+      - Fri, 13 Nov 2026 22:44:56 GMT
+      X-Vertex-Ai-Received-Request-Id:
+      - 8457842b-f368-42e8-a0ae-226ea2f99730
+      X-Accel-Buffering:
+      - 'no'
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jkShEcU6ReQNTmi54t","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":22,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":2,"speed":"standard"}}       }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}               }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}          }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQS5QMKEggTEAIYAjgBQgh0aGlua2luZxIMkfoBtHamZnlxWCoFGgzxmrUNUvtgfMVFRUEiMMKZ6I81UCo6SzbmTizA9r3uVTTLS26SKo4JwdtLlIVeRaE0zo3fTM2ydwArTa4ZVyqAA/V/0jv6VE+xyJCn1dPBniGShToUPwstWno0oCrz4FmQfiCSMyR+PMr/vlj34+60VuxH8ico9X3CGsXugvnZ5MCjVPgPNkH/JVL/+jETPBo5d2/ZcFq2sB+xihDmPL36h4O4gU/KxYeO/rZGwIgAp7Umnl/IKJnqvncP93H7xuJZC5uVldmWZFZ/aImtboFXysm6rbtK6n3EkT2uERvYsAs0AOBT99DYBmTdUjvKV21IaFfnv73MIlNwqvzZoJ5+3kA6TDV4hzDasOGX7fXb0yJvXKe1/mmF6Li38x316CfuaXxpPSl043pjl+eWEh8G3td9OJUUzyOtSHd4veVc2OTr85nKq0vgJh32aso5HfqeTOMb162OzhuvuUHttBOpXW3/Y7kOYc7w+aR+XscTcYvFD3kG7rhDoM2FZJaqyh+uInFW2qiOaTU+xu1SvCCR3A6NoXaMbMQOP2U9LyMFg1tpJ+OcOOV/ingitPlnB9wF7lWVzsR6DrONkf3F6ngpURgB"}            }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0              }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"max_tokens","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":22,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":20,"output_tokens_details":{"thinking_tokens":20}}  }
+
+        event: message_stop
+        data: {"type":"message_stop"               }
+
+  recorded_at: Fri, 13 Nov 2026 22:44:56 GMT
+recorded_with: VCR 6.4.0
+...

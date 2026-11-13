@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Classify
+        the session: yoga class, underwater format. The session_type enum does not
+        cover this, so return null for session_type.\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '682'
+      Request-Id:
+      - req_vrtx_011Ch1jnhbVE4pnmFGce6Ga9
+      Pinnacle-Error-Category:
+      - no_error
+      Date:
+      - Fri, 13 Nov 2026 22:45:27 GMT
+      Stream-Reported-Http-Code:
+      - '200'
+      Content-Type:
+      - application/json
+      Internal-Input-Tokens:
+      - '237'
+      Internal-Output-Tokens:
+      - '89'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jnhcifvx2r9rpZzKvj","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS8wQKEggTEAIYAjgBQgh0aGlua2luZxIMd/mIaxxioapi5OHqGgwgFQ11IuTCVmvibr8iMOjLO+fHLJb95SQxf7WjEZgcxzY61fLU1Pg7A7RXZAzQU1ypVl2pkUCAKOnRufOXtCqOBMr/ydz/Ryfax0AcRQPVVI6K9Uag5KOyHrPwaM99hfGtbBqHoDDeSjH46jSKKWb/hUm22Lx77UON3cn+nzSucvtOjdEfs76YqlXNphk1MoH/OfMVLVzCXYkwdnLc3wmkYgh9R/mlr3bGrmcZWSkFKnEGwD3D4Qb1JVeFifwDerB5ky6p77fId/9CjfAZggeB7TraroO7NaCyLJzZnHgUMe33qh6Kyq7FCDJpPQePq88mHEPblHORG5p3bKj4aB5yNXVGzUOoK+zfpD/9nPLUET6fvIvQ8Svsvnagf9MuUJEvRRE6eFLTKuLGEjk2myQOcEvew1qPiIj2ET/os/DaAFJI1ZrKgLe8CvjQnTi853BtZhlHtpgNU5pa/ioBJm6dFc5JOutffuU2DtOpENsYMw4Kil1oAFi4Qe+nTKGQAXRfPky7pfVLBh4GiqpUfz9j+dIOUIq9SHfCtO7b9GRavRB9/d6+y5wAWwSceNHeQltb08g+xGPVr2PlfQ+FGCzj/yNbG1fdTL4tVqFW7cTALt3FI4RF1Appc3/LGE/BSCNBFYrOiGgs1TVthzvMvrC5kqruN2jsHWoRhSzj+kl0aTipHCSswJ2uilpYRqa75DQAit0egkzWwPZ6XfCkMmKZ+UBWcGnO21u36W3plFKlljdfBc34hrcCpk1LDvk8TFNvv12pFIr0NPygycTi10YYAQ=="},{"type":"text","text":"{\"name\":\"Underwater
+        Yoga Class\",\"session_type\":null}"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":237,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":89,"output_tokens_details":{"thinking_tokens":65},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:45:27 GMT
+recorded_with: VCR 6.4.0

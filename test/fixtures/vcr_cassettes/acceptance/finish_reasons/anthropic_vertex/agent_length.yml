@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Write
+        a 500-word essay about the sea."}],"max_tokens":20}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Pinnacle-Error-Category:
+      - no_error
+      Request-Id:
+      - req_vrtx_011Ch1jkAZ8QALpxQq2DAwVT
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Input-Tokens:
+      - '22'
+      Internal-Output-Tokens:
+      - '20'
+      Internal-Context-Length:
+      - '100000'
+      Internal-Weighted-Total-Tokens:
+      - '122'
+      Date:
+      - Fri, 13 Nov 2026 22:44:52 GMT
+      Content-Type:
+      - application/json
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jkAaNNYsVLPmWsVbuN","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS5QMKEggTEAIYAjgBQgh0aGlua2luZxIMlSmbhigdXXUE9KnSGgzX+5P/OEwy49YSjlgiMFn8I9x1qVqEerU2ptBEQi3b0JXnQpGRLtKktPfNp1tVm79pym7r+4aJFF5IdqxmuyqAA0TL6oFrG4LMPVkK4QwW9iHyUBjRHDZDKXrY4K2fD1AuO+iE+Yb7/i5u5uDib7RXYpsrF7hMmkOog0nw3PVzjQE5WchGqtFa8inQzx5k2DDhejtNG6j2B/cwA1xoQyp4Sxaskpe1E2lZzc57gMoh/Yj9mCQbrw9hiNJhUEanN/90/pGHIbAHEuwsdXcXQCRzK3j4FwXYqai9PBtyOcu3EGWBuWS7GeEO4qiZTMbMYfQ6Vr2+/efgHRZ1JKq6cNu2opXsoGRaUPV8zioRe/Wnlgsg2GZUGBLCvEq+Y6221Z+q9T88HIqn0JU7HaPNovDweEElIXRtgpTVFLKQau9T4p55juXrp4UiqJzzcv4DTVebEnDGbzkEsg+e7+Zpd11g7vj2Zf4vGzycJ6b2Z9WTP8Freu0YxAAWQkaHyKnxovQ0jlzpVsHfgmurt635hZNZQIxt3d2EYVqBdxC+C4uXPcooGA6r0YJ1IOXPU21/tKgxMFqGlDH0M0Xzm/KEgrD3dxgB"}],"container":null,"stop_reason":"max_tokens","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":22,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":20,"output_tokens_details":{"thinking_tokens":20},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:53 GMT
+recorded_with: VCR 6.4.0

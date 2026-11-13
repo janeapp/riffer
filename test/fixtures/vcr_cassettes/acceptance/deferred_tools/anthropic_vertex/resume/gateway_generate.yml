@@ -1,0 +1,405 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Context-Length:
+      - '100000'
+      Internal-Weighted-Total-Tokens:
+      - '975'
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Internal-Output-Tokens:
+      - '55'
+      Stream-Reported-Http-Code:
+      - '200'
+      Date:
+      - Fri, 13 Nov 2026 22:44:27 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Request-Id:
+      - req_vrtx_011Ch1jiGDPjpPcMGXKTJdp4
+      Internal-Input-Tokens:
+      - '700'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jiGFNKoD4XwJsrUd3P","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","name":"find_tools","input":{"query":"get
+        calendar events for a date"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":700,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":55,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:27 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","name":"find_tools","input":{"query":"get
+        calendar events for a date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '1421'
+      Internal-Input-Tokens:
+      - '961'
+      Pinnacle-Error-Category:
+      - no_error
+      Request-Id:
+      - req_vrtx_011Ch1jiKCjNcA4yPVGtjemb
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Content-Type:
+      - application/json
+      Internal-Context-Length:
+      - '100000'
+      Date:
+      - Fri, 13 Nov 2026 22:44:28 GMT
+      Internal-Output-Tokens:
+      - '92'
+      Stream-Reported-Http-Code:
+      - '200'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jiKMQYWTZUzDUZcU9C","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":961,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":92,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:28 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","name":"find_tools","input":{"query":"get
+        calendar events for a date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2026 22:44:29 GMT
+      Request-Id:
+      - req_vrtx_011Ch1jiPB6nuEcJ5PjpgSSq
+      Internal-Context-Length:
+      - '100000'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '46'
+      Internal-Input-Tokens:
+      - '1086'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Weighted-Total-Tokens:
+      - '1316'
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jiPDL1MDLxaoHZbR5E","type":"message","role":"assistant","content":[{"type":"text","text":"You
+        have two events on 2026-11-06:\n- **9:00 AM**: Dentist\n- **12:30 PM**: Team
+        lunch"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1086,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":46,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:29 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","name":"find_tools","input":{"query":"get
+        calendar events for a date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]},{"role":"assistant","content":[{"type":"text","text":"You
+        have two events on 2026-11-06:\n- **9:00 AM**: Dentist\n- **12:30 PM**: Team
+        lunch"}]},{"role":"user","content":"And on 2026-11-07?"}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Request-Id:
+      - req_vrtx_011Ch1jiSXW5w5NNExVWptD3
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Internal-Weighted-Total-Tokens:
+      - '1606'
+      Internal-Input-Tokens:
+      - '1146'
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Context-Length:
+      - '100000'
+      Date:
+      - Fri, 13 Nov 2026 22:44:29 GMT
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Output-Tokens:
+      - '92'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jiSbUSACSNzUAuQye3","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01BCa7TwAEnpSAXsV8sg3yiA","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-07\"}"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1146,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":92,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:29 GMT
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What''s
+        on my calendar on 2026-11-06?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","name":"find_tools","input":{"query":"get
+        calendar events for a date"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01Fn4JBLYWbAWnX7VQt1nF66","content":"These
+        tools are now loaded. They are not in your tool list, so calling one by its
+        own name fails. Call each one through the riffer_gateway tool: set name to
+        the tool''s name exactly as written below, and set arguments to a string holding
+        its arguments as a JSON object that matches its parameters. Use \"{}\" as
+        arguments for a tool without parameters.\n\n[{\"name\":\"calendar/list_events\",\"description\":\"List
+        the user''s calendar events on a date\",\"parameters\":{\"type\":\"object\",\"properties\":{\"date\":{\"type\":\"string\",\"description\":\"The
+        date, as YYYY-MM-DD\"}},\"required\":[\"date\"],\"additionalProperties\":false}}]"}]},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-06\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01DXxLrv6QQwED5V1mVBdBhu","content":"On
+        2026-11-06: dentist at 09:00, team lunch at 12:30."}]},{"role":"assistant","content":[{"type":"text","text":"You
+        have two events on 2026-11-06:\n- **9:00 AM**: Dentist\n- **12:30 PM**: Team
+        lunch"}]},{"role":"user","content":"And on 2026-11-07?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_vrtx_01BCa7TwAEnpSAXsV8sg3yiA","name":"riffer_gateway","input":{"name":"calendar/list_events","arguments":"{\"date\":
+        \"2026-11-07\"}"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_vrtx_01BCa7TwAEnpSAXsV8sg3yiA","content":"On
+        2026-11-07: dentist at 09:00, team lunch at 12:30."}]}],"max_tokens":4096,"system":[{"type":"text","text":"If
+        you need a tool you don''t have, use find_tools. Be concise."}],"tools":[{"name":"find_tools","description":"Find
+        more tools for a task. Describe what you need to do in a few words.","input_schema":{"type":"object","properties":{"query":{"type":"string","description":"What
+        you need to do"}},"required":["query"],"additionalProperties":false}},{"name":"riffer_gateway","description":"Calls
+        a tool that another tool has loaded. The result of the tool that loaded it
+        lists its name and parameters.","input_schema":{"type":"object","properties":{"name":{"type":"string","description":"The
+        loaded tool''s exact name, copied from the result that loaded it"},"arguments":{"type":"string","description":"The
+        loaded tool''s arguments as a JSON-encoded object string matching its parameters,
+        such as \"{\\\"query\\\":\\\"red shoes\\\",\\\"limit\\\":5}\". Numbers and
+        booleans stay unquoted inside it. Use \"{}\" for a tool without parameters."}},"required":["name","arguments"],"additionalProperties":false}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '1971'
+      Pinnacle-Error-Category:
+      - no_error
+      Request-Id:
+      - req_vrtx_011Ch1jiVHTPKDUuYnhXq1Zc
+      Stream-Reported-Http-Code:
+      - '200'
+      Internal-Output-Tokens:
+      - '140'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Date:
+      - Fri, 13 Nov 2026 22:44:30 GMT
+      Content-Type:
+      - application/json
+      Internal-Input-Tokens:
+      - '1271'
+      Internal-Context-Length:
+      - '100000'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jiVJgokdXghju5Ntt7","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS9QQKEggTEAIYAjgBQgh0aGlua2luZxIM3MsDaN9Np4bHi9NOGgxaNX/S+QqNmeo4NlkiMK0aq3DKqwZ2ekNLz6o6Jzr0I0QyQD9kIcMQyBxelslCTfsyzGh0KcwX6qdHaAeDqyqQBIFL8l4J2f0HLbzri3tb4qOL3bRQwQwKL60dd7gqrsZjo4mbTPbkmBYg9S1jwyoY/jFwTTPn2VxyHVxppEe2jSXITgn6hW8L/ipg9Ls3rrtgq05zD6siX+ALMM0C+jAKEJcPMQj2wuy6jTOPPmYuzqYbM4fa0vcPTdJaaDhcZZ6l0ZRflcNt3hvLMLz2wEJwWjgbJag+MGvraH+dB0Z8gCGwOQU94ts/3LKoyKUe5gqpbuBTEm7YZGriSNW+AVotmqQIE4ACEhskZlcUa+5iV0woAJFuAlWFy22xqD7QJ8jaXVyiK846JGAQGfgr3AXgz16KHTAXx5xkbwbG+FnEhFb0F0qGCHQ+4p8rEL6OBE18Zltz32Dyi4ubSAFQYuzCdxualP+xTfHvrckz2mJRA1plecOu24RI/uh2AlHqtI0WbLd2NmGNyVUB0EAlJ8QDlFxQjc2QaaiNn5nMS5+wkbT8b5NV8sYZp7orp9/hD63lhigH/X3w8QX8JQwnQTZ6R6mAE8qe14bxt+P5ZbET0jYYUgERYpTAspJ6oWep5I0tGpy/FtI0AHO6R3hAdiyShRn693f0zhrhRA1cu6qVzfPoz1r7JR6I4ypKe6BFXf+NjRl7DwGZ1ng1nHFCLqYPoNQ2ESc8hXFWPpgby51qsvwUjD5TEhD2Y+UOLA4QQ1c2ka3f0sSlOBgmV/JP25BALBgB"},{"type":"text","text":"On
+        2026-11-07, you have:\n- **9:00 AM**: Dentist\n- **12:30 PM**: Team lunch\n\nThese
+        are the same as the 6th. That could be a repeating schedule, but it could
+        also be a calendar sync issue, so you may want to check it directly."}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1271,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":140,"output_tokens_details":{"thinking_tokens":49},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:30 GMT
+recorded_with: VCR 6.4.0

@@ -6,6 +6,7 @@
       "pricing": { "input": 0.1, "output": 0.4, "cache_read": 0.01 }
     },
     "anthropic/claude-haiku-5-5": {
+      "aliases": ["anthropic_vertex/claude-haiku-5-5"],
       "pricing": { "input": 0.1, "output": 0.5, "cache_read": 0.01, "cache_write": 0.125 }
     },
     "openai/gpt-6-luna": {

@@ -1,0 +1,105 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:streamRawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"Classify
+        the session: yoga class, underwater format. The session_type enum does not
+        cover this, so return null for session_type.\n\nWhen you give your final answer,
+        respond with only a JSON object that conforms to the following JSON Schema,
+        with no other text before or after it:\n\n{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"type\":\"string\",\"description\":\"Type of session\",\"enum\":[\"in_person\",\"online\",\"both\"]}},\"required\":[\"name\"],\"additionalProperties\":false}\n\nExample
+        of the shape (placeholder values):\n{\"name\":\"<string>\",\"session_type\":\"in_person
+        | online | both\"}\n\nOnly call tools when the request needs them. If you
+        can answer directly, reply with the JSON object right away."}],"max_tokens":4096,"stream":true}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Date:
+      - Fri, 13 Nov 2026 22:45:28 GMT
+      Request-Id:
+      - req_vrtx_011Ch1jnmGFByLme8v5KVmo9
+      X-Vertex-Ai-Received-Request-Id:
+      - 05353c89-f212-440e-9a26-8c27b6339a78
+      X-Accel-Buffering:
+      - 'no'
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Origin,Accept-Encoding
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Accept-Ranges:
+      - none
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jnmSfRe3Rdcp7swvNk","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":237,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":7,"speed":"standard"}}        }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSsQgKEggTEAIYAjgBQgh0aGlua2luZxIMFIY0cr3AHAGMBDR6Ggzy8vjqvtnID5ExTZYiMFBTD9pAHUTxac3PwlLJnYAD7XjCRFPkSHe7lpwvko8EbfDvomcwimoXmm+uxrqJ9SrMB44kcnwPsykrN3EN3OsyOECVEouP3v9geCw/MocJJUFy2BRBiY47Qig3C5iFHaoNdJmU7Mpx85Q1Z4KyMtqaS/175RY9O4but2LRr53Sdcb8dsic9i13CrJ9TUd0jTSy/Y4jKkLkwIGn1+r1Hg4mGm0SpUSpoAXvU4PZRMcQ9Zrs0ONbZsXd9njyHiCSyB+A3Z6JVWHC8Umbb3K12La7GxvmG9dVJXn4WArLeFps4UK5Mnj0msd1Vrv84MENLOVairhZEgQlNgaW+n8rjCD87m32D6S5OIGhzH1wsPCQousczsP88pXc2M+ErEPrA5Qjm8uwHH7Igr7yPbSp+Ay6eb/AYTquLyy99y+m1Q1EBt+M2Nkprj7KSOpDzxl9AamH4XEo5kT8K4mEOTsY4gwDNNoqJ6qoAebx9I0tcEhKS2Mhp2Go9gKtbuqILj1X2T1wltQVMZd1CvbRQez/F6/eBdveSXby8yGv4+vVmm7PqJqQxh4vkhoG85n8YmbhnCwUKvhJbx36mlJ8qPKdwOAbpH7iZ4aXzjmrIhRYOSo1cBi2xA9Q25SpsMesbcyynjNqYk+lSPoY1pQ+uj78/el6dLyX9Wdyb5GXDPfvIltwaQBESQeDpVutoHl+F7MDp17jPgligX0X+/6Mu446mO2gSKmnSUt0allkoRNCHg0pOZY1JO4LMWL4xGgH5yYoimOpC6sRoboqS9jISCfTSlmnYwAi2Aw8GAfWCHQGk30RavYDODrS0TOkLzRHoM+7KRR6u3nluaQgxcq8XZNATH3GMELYIWYCHValKbMgJ+6WhAAiaghwBWTA53bfEPIs4jiKDs/UdP89mJ020tlY7Ek3/RCzNSkpCbQPhctz/1epG7SSXDK9B6+VPla9ID1YTU3I3IFJ+9znlfQXHY8nAEoE8tkQPWfVF44c+U4HZXAzaFp7N9h5YSrRunPe+GBeuUA+VqR+B2JtleLjWUI7+C+e+ZLhUStMC2T+VDpzH3Y3JTUdHcXdgGFf4+CZ5KAeUa2wXwdCvkiL14vbwXEegBzGCRpabnFmC6/8DkgaszI10bDCPTCmx4y9xVMLbzkd5z31Z0PQpBwKlZGtaaw2qTlZU6aJhzxYUZIzkZamvQTgJw/cJEyo07Iuli94eeXvtpWrAXJPmwNp76rvW/tpEvKH4zkd+1pYqWyuknCEWa4npRT1MJjjxtmLMMN1+T20xS6ob0pMELYrUHGwWnZmAi+MG/Ahd66i/lFoiI1lvxesl6+xWN6Nubd9n3eprHaufAN0bezytkwABopNAruZcBgB"}         }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0               }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}      }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\"name\":\"Under"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"water Yoga Class"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\",\"session_type\":null}"}          }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":1            }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":237,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":224,"output_tokens_details":{"thinking_tokens":200}}          }
+
+        event: message_stop
+        data: {"type":"message_stop"    }
+
+  recorded_at: Fri, 13 Nov 2026 22:45:29 GMT
+recorded_with: VCR 6.4.0
+...

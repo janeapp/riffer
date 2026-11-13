@@ -3,9 +3,7 @@
 require "acceptance/acceptance_helper"
 
 describe "Acceptance: deferred tools" do
-  not_recorded = "Not recorded yet; needs Google Cloud credentials"
-
-  acceptance_providers(except: { google_cloud: not_recorded }).each do |provider_name|
+  acceptance_providers.each do |provider_name|
     # Every provider runs the gateway; one that loads deferred tools natively runs that too.
     native = Riffer::Providers::Repository.find(provider_name).supports_deferred_tools?
     strategies = native ? %i[native gateway] : %i[gateway]

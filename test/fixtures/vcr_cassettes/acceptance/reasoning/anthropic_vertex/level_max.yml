@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"max_tokens":4096,"thinking":{"type":"adaptive"},"output_config":{"effort":"max"},"system":[{"type":"text","text":"Be
+        concise."}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '231'
+      Request-Id:
+      - req_vrtx_011Ch1jkbvrmwknmyvF46XxS
+      Pinnacle-Error-Category:
+      - no_error
+      Content-Type:
+      - application/json
+      Stream-Reported-Http-Code:
+      - '200'
+      Date:
+      - Fri, 13 Nov 2026 22:44:59 GMT
+      Internal-Output-Tokens:
+      - '40'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Internal-Context-Length:
+      - '100000'
+      Internal-Input-Tokens:
+      - '31'
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011Ch1jkbwMEBY2oaLkScVCe","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"CAQS8gMKEggTEAIYAjgBQgh0aGlua2luZxIM1STwDSjpFQoiy5m0Ggw9gygyygkgX3MX79IiMMUl8UNO8u2G9JleovQF+oxbYw8GiRvQTNHY3g3JbqcHwbLu6jxA5RwnUC9CM5s/biqNAxIQmJxBPS8NCWoR8T88U+Q03rNDSYVTZnu1IqbgiH4Ck7tLIRB/8CpQqBO3dCTDunn4/iVFzsJEGeTqj7w4QEVGyGwSAz8pJADGmVNE7E+ewOjMs1+gM4aPhizzY+GAlhGwPPMS98WDv+EYtLX3LvpNVrgNwbvLutPa25m+xFH103bPArmcX6z2RNOKcoG6C27mhqKih7thP5EB6oDPDEOOA2JrtbBAP+clNJZCAMAnMrBa3GvOCxqnpfDkjrf1rldO1nk8b/B2926LphvOzoe/68secCIJUXxbCh8DdC+Sw4WinCsHRHzRH6tBOjqvhYs9o+hy+qsz7f0uNqaVsUuEhEMBdw7HhA1zY+mlyUnrhKKm9NnV0AlpourGvCHMDQeI9bddmAeAIeHnG6acOYS3p+8Z3vKjXMLUY6Lg00dnLrpn7exqq1cYj/dM2keBjRfkXxH0/l4F8CwzSrZa0GiVLBkl3ttlVz8YxvN7IZv/+o3MG9y9bM4JaqJqg63s3m+AWMTd6oue0MzklAcYAQ=="},{"type":"text","text":"391"}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":31,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":40,"output_tokens_details":{"thinking_tokens":37},"speed":"standard"}}'
+  recorded_at: Fri, 13 Nov 2026 22:44:59 GMT
+recorded_with: VCR 6.4.0
