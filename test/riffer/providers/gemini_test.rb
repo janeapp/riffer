@@ -344,6 +344,67 @@ describe Riffer::Providers::Gemini do
       }]
     end
 
+    describe "namespaced tools" do
+      let(:provider) { Riffer::Providers::Gemini.new }
+      let(:model) { "gemini-3.5-flash-lite" }
+      let(:list_events) do
+        stub_tool("ListEvents") do
+          identifier "calendar/list_events"
+          description "List calendar events"
+          params { required :date, :string }
+        end
+      end
+      let(:function_call) { { functionCall: { id: "call_1", name: "calendar__list_events", args: {} } } }
+      let(:client) { Object.new }
+
+      before { Riffer.config.gemini.client = client }
+
+      it "declares the tool under its wire name" do
+        messages = [Riffer::Messages::User.new("Hi")]
+
+        result = provider.send(:build_request_params, messages, model, { tools: [list_events] })
+
+        declarations = result[:tools].first[:functionDeclarations]
+
+        expect(declarations.map { |declaration| declaration[:name] }).must_equal ["calendar__list_events"]
+      end
+
+      it "sends history tool calls and their results under the wire name" do
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "toolu_1",
+          name: "calendar/list_events",
+          arguments: "{}",
+        )
+        messages = [
+          Riffer::Messages::Assistant.new("", tool_calls: [tool_call]),
+          Riffer::Messages::Tool.new("No events.", tool_call_id: "toolu_1", name: "calendar/list_events"),
+        ]
+
+        contents = provider.send(:partition_messages, messages)[:contents]
+
+        expect(contents[0][:parts].first[:functionCall][:name]).must_equal "calendar__list_events"
+        expect(contents[1][:parts].first[:functionResponse][:name]).must_equal "calendar__list_events"
+      end
+
+      it "decodes a returned call" do
+        response = { candidates: [{ content: { parts: [function_call] }, finishReason: "STOP" }] }
+        client.define_singleton_method(:post) { |_path, _body| response }
+
+        result = provider.generate_text(prompt: "What's on?", model: model, tools: [list_events])
+
+        expect(result.tool_calls.map(&:name)).must_equal ["calendar/list_events"]
+      end
+
+      it "decodes a streamed call" do
+        chunk = "data: #{{ candidates: [{ content: { parts: [function_call] }, finishReason: 'STOP' }] }.to_json}\n\n"
+        client.define_singleton_method(:post_stream) { |_path, _body, &block| block.call(chunk) }
+
+        events = provider.stream_text(prompt: "What's on?", model: model, tools: [list_events]).to_a
+
+        expect(events.grep(Riffer::StreamEvents::ToolCallDone).map(&:name)).must_equal ["calendar/list_events"]
+      end
+    end
+
     describe "thought signatures" do
       let(:provider) { Riffer::Providers::Gemini.new }
       let(:format) { Riffer::Providers::Gemini::REASONING_FORMAT }
@@ -357,6 +418,8 @@ describe Riffer::Providers::Gemini do
         ]
         { candidates: [{ content: { parts: parts } }] }
       end
+
+      before { provider.instance_variable_set(:@current_tools, []) }
 
       def tool_result(tool_call)
         Riffer::Messages::Tool.new(

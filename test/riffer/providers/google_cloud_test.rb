@@ -188,6 +188,8 @@ describe Riffer::Providers::GoogleCloud do
       { candidates: [{ content: { parts: [{ functionCall: call, thoughtSignature: "agent-platform-sig" }] } }] }
     end
 
+    before { provider.instance_variable_set(:@current_tools, []) }
+
     it "tags signatures with the Google Cloud format" do
       parts = provider.send(:extract_reasoning, response)
 
