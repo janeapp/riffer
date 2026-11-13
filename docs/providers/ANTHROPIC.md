@@ -226,6 +226,14 @@ Anthropic emits sources with `title` and `url` on the `WebSearchDone` event.
 
 Each `server_tool_use` block and its result block (`web_search_tool_result`, or `code_execution_tool_result` when a newer web search version runs the search from code execution) is kept on the assistant message as a `ServerToolPart` (see [Messages — Parts](../MESSAGES.md#parts)), and a streamed one also arrives as a `ServerToolDone` event. With `generate`, text blocks with citations keep their block too; a streamed turn keeps the text without its citations. Later turns send them back in place, so Claude reuses the results instead of searching again.
 
+### Paused turns
+
+When a server tool loop reaches its iteration limit, Anthropic stops with `stop_reason: "pause_turn"`. Riffer sends the paused content back unchanged as the last message and continues the turn, up to 8 times per call, for `generate_text` and `stream_text` alike. If the response names a `container`, its id goes with the next request, so the turn keeps the same container and its files. You get one assistant message: every response's parts in order, the summed token usage and the last response's finish reason. A stream yields one `TextDone`, `FinishReasonDone` and `TokenUsageDone` for the whole turn.
+
+A turn still paused after 8 continuations ends with finish reason `:other` (`finish_reason_raw` is `"pause_turn"`). Its last server tool call may have no result, and Anthropic rejects a request that adds a user message after it. Call `generate` or `stream` with no prompt to send the turn back and let Claude carry on.
+
+A turn that stops on `max_tokens` is not continued.
+
 ## Deferred Tools
 
 The provider supports [deferred tools](../AGENTS.md#deferred_tools-experimental) through the Messages API's own deferred loading, with no beta header and no tool search tool:

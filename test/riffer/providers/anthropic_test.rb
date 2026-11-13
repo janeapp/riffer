@@ -421,6 +421,272 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "pause_turn" do
+    let(:provider) { Riffer::Providers::Anthropic.new }
+    let(:model) { "claude-haiku-4-5-20251001" }
+
+    def text_block(text) = { type: "text", text: text }
+    def search_call_block(id) = { type: "server_tool_use", id: id, name: "web_search", input: { query: "ruby" } }
+    def search_result_block(id) = { type: "web_search_tool_result", tool_use_id: id, content: [] }
+
+    def segment(content, stop_reason, usage: { input_tokens: 10, output_tokens: 5 })
+      { content: content, stop_reason: stop_reason, usage: usage }
+    end
+
+    def sse_body(segment)
+      events = [
+        {
+          type: "message_start",
+          message: {
+            role: "assistant", content: [], usage: segment[:usage].merge(output_tokens: 1), **segment.slice(:container),
+          },
+        },
+        *segment[:content].each_with_index.flat_map { |block, index| block_events(index, block) },
+        {
+          type: "message_delta",
+          delta: { stop_reason: segment[:stop_reason], **segment.slice(:container) },
+          usage: { output_tokens: segment[:usage][:output_tokens] },
+        },
+        { type: "message_stop" },
+      ]
+      events.map { |event| "event: #{event[:type]}\ndata: #{event.to_json}\n\n" }.join
+    end
+
+    def block_events(index, block)
+      start, delta = case block[:type]
+                     when "text" then [block.merge(text: ""), { type: "text_delta", text: block[:text] }]
+                     when "server_tool_use"
+                       [block.merge(input: {}), { type: "input_json_delta", partial_json: block[:input].to_json }]
+                     else [block, nil]
+                     end
+      [
+        { type: "content_block_start", index: index, content_block: start },
+        *(delta ? [{ type: "content_block_delta", index: index, delta: delta }] : []),
+        { type: "content_block_stop", index: index },
+      ]
+    end
+
+    def stub_messages(bodies)
+      requests = []
+      stub_request(:post, "https://api.anthropic.com/v1/messages").to_return do |request|
+        requests << JSON.parse(request.body, symbolize_names: true)
+        { status: 200, body: bodies.shift }
+      end
+      requests
+    end
+
+    def parts_of(content)
+      provider.send(:extract_parts, { content: content })
+    end
+
+    let(:paused) do
+      content = [text_block("Let me search."), search_call_block("srvtoolu_1"), search_result_block("srvtoolu_1")]
+      segment(content, "pause_turn")
+    end
+    let(:finished) do
+      content = [search_call_block("srvtoolu_2"), search_result_block("srvtoolu_2"), text_block("Ruby 4.0.")]
+      segment(content, "end_turn", usage: { input_tokens: 30, output_tokens: 7 })
+    end
+    let(:resumed) { { role: "assistant", content: paused[:content] } }
+    let(:container) { { id: "container_1", expires_at: "2026-11-03T18:00:00Z" } }
+    let(:unanswered) do
+      segment([text_block("Searching."), search_call_block("srvtoolu_1")], "pause_turn")
+    end
+    let(:answered) do
+      segment([search_result_block("srvtoolu_1"), text_block("Found it.")], "end_turn")
+    end
+    let(:cut_off) { segment([text_block("Let me"), search_call_block("srvtoolu_1")], "max_tokens") }
+
+    describe "#generate_text" do
+      it "continues the turn with the paused content as the last message, otherwise unchanged" do
+        requests = stub_messages([paused.to_json, finished.to_json])
+
+        provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests.size).must_equal 2
+        expect(requests[1].except(:messages)).must_equal requests[0].except(:messages)
+        expect(requests[1][:messages]).must_equal [*requests[0][:messages], resumed]
+      end
+
+      it "returns one turn with every segment's parts, the summed usage and the final finish reason" do
+        stub_messages([paused.to_json, finished.to_json])
+
+        result = provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(result.parts.map(&:to_h)).must_equal parts_of(paused[:content] + finished[:content]).map(&:to_h)
+        expect(result.content).must_equal "Let me search.Ruby 4.0."
+        expect(result.token_usage.to_h).must_equal({ input_tokens: 40, output_tokens: 12 })
+        expect([result.finish_reason, result.finish_reason_raw]).must_equal [:stop, "end_turn"]
+      end
+
+      it "keeps a summed count when a later segment reports it as null" do
+        cached = paused.merge(usage: { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 100 })
+        uncached = finished.merge(usage: { input_tokens: 30, output_tokens: 7, cache_read_input_tokens: nil })
+        stub_messages([cached.to_json, uncached.to_json])
+
+        result = provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(result.token_usage.cache_read_tokens).must_equal 100
+      end
+
+      it "sends the paused response's container id with the continuation" do
+        requests = stub_messages([paused.merge(container: container).to_json, finished.to_json])
+
+        provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests.map { |request| request[:container] }).must_equal [nil, "container_1"]
+      end
+
+      it "sends no container when the paused response has none" do
+        requests = stub_messages([paused.to_json, finished.to_json])
+
+        provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests[1]).wont_include :container
+      end
+
+      it "resends an unanswered server_tool_use as it came" do
+        requests = stub_messages([unanswered.to_json, answered.to_json])
+
+        result = provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests[1][:messages].last).must_equal({ role: "assistant", content: unanswered[:content] })
+        expect(result.parts.grep(Riffer::Messages::Assistant::ServerToolPart).map { |part| [part.id, part.kind] }).
+          must_equal [["srvtoolu_1", :call], ["srvtoolu_1", :result]]
+      end
+
+      it "stops after 8 continuations and finishes with other" do
+        requests = stub_messages([paused.to_json] * 10)
+
+        result = provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests.size).must_equal 9
+        expect(requests.last[:messages].last[:content]).must_equal paused[:content] * 8
+        expect(result.parts.size).must_equal paused[:content].size * 9
+        expect([result.finish_reason, result.finish_reason_raw]).must_equal [:other, "pause_turn"]
+      end
+
+      it "does not continue a turn cut off by max_tokens" do
+        requests = stub_messages([cut_off.to_json])
+
+        result = provider.generate_text(prompt: "Latest Ruby?", model: model, web_search: true)
+
+        expect(requests.size).must_equal 1
+        expect(result.finish_reason).must_equal :length
+      end
+    end
+
+    describe "#stream_text" do
+      it "continues the turn with the paused content as the last message, otherwise unchanged" do
+        requests = stub_messages([sse_body(paused), sse_body(finished)])
+
+        provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests.size).must_equal 2
+        expect(requests[1].except(:messages)).must_equal requests[0].except(:messages)
+        expect(requests[1][:messages]).must_equal [*requests[0][:messages], resumed]
+      end
+
+      it "yields one TextDone, FinishReasonDone and TokenUsageDone for the whole turn" do
+        stub_messages([sse_body(paused), sse_body(finished)])
+
+        events = provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+        done_events = events.grep(Riffer::StreamEvents::TextDone) +
+                      events.grep(Riffer::StreamEvents::FinishReasonDone) +
+                      events.grep(Riffer::StreamEvents::TokenUsageDone)
+
+        expect(events.last(3)).must_equal done_events
+        expect(done_events[0].content).must_equal "Let me search.Ruby 4.0."
+        expect([done_events[1].finish_reason, done_events[1].raw_finish_reason]).must_equal [:stop, "end_turn"]
+        expect(done_events[2].token_usage.to_h).must_equal({ input_tokens: 40, output_tokens: 12 })
+      end
+
+      it "sends the paused response's container id with the continuation" do
+        requests = stub_messages([sse_body(paused.merge(container: container)), sse_body(finished)])
+
+        provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests.map { |request| request[:container] }).must_equal [nil, "container_1"]
+      end
+
+      it "sends no container when the paused response has none" do
+        requests = stub_messages([sse_body(paused), sse_body(finished)])
+
+        provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests[1]).wont_include :container
+      end
+
+      it "resends an unanswered server_tool_use as it came" do
+        requests = stub_messages([sse_body(unanswered), sse_body(answered)])
+
+        provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests[1][:messages].last).must_equal({ role: "assistant", content: unanswered[:content] })
+      end
+
+      it "stops after 8 continuations and finishes with other" do
+        requests = stub_messages([sse_body(paused)] * 10)
+
+        events = provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests.size).must_equal 9
+        expect(requests.last[:messages].last[:content]).must_equal paused[:content] * 8
+        expect(events.grep(Riffer::StreamEvents::FinishReasonDone).map(&:raw_finish_reason)).must_equal ["pause_turn"]
+      end
+
+      it "does not continue a turn cut off by max_tokens" do
+        requests = stub_messages([sse_body(cut_off)])
+
+        events = provider.stream_text(prompt: "Latest Ruby?", model: model, web_search: true).to_a
+
+        expect(requests.size).must_equal 1
+        expect(events.grep(Riffer::StreamEvents::FinishReasonDone).map(&:finish_reason)).must_equal [:length]
+      end
+
+      it "gives an agent the same parts as generate_text" do
+        stub_messages([paused.to_json, finished.to_json, sse_body(paused), sse_body(finished)])
+        agent_class = stub_agent("PauseTurnAgent") do
+          model "anthropic/claude-haiku-4-5-20251001"
+          model_options web_search: true
+        end
+        generated = agent_class.new
+        streamed = agent_class.new
+
+        generated.generate("Latest Ruby?")
+        streamed.stream("Latest Ruby?").to_a
+
+        expect(streamed.session.messages.last.parts.map(&:to_h)).
+          must_equal generated.session.messages.last.parts.map(&:to_h)
+      end
+    end
+
+    # The API pauses after 10 server tool iterations, so twelve searches run one
+    # at a time force a pause_turn and a continuation.
+    it "finishes a turn the API paused, with every search answered" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/pause_turn/finishes_a_paused_turn") do
+        result = provider.generate_text(
+          prompt: "Look up the latest released version of each of these Ruby gems, one gem at a time: " \
+                  "rails, rack, puma, sidekiq, nokogiri, devise, rspec, rubocop, faraday, pg, redis, sinatra. " \
+                  "Run exactly one web search per step and read its result before you run the next one. " \
+                  "Never run two searches in the same step. When you have all twelve, list each gem with its version.",
+          model: "claude-haiku-5-5",
+          web_search: { max_uses: 20 },
+          thinking: { type: "disabled" },
+          max_tokens: 8192,
+        )
+        server_tool_parts = result.parts.grep(Riffer::Messages::Assistant::ServerToolPart)
+        call_ids = server_tool_parts.select { |part| part.kind == :call }.map(&:id)
+        result_ids = server_tool_parts.select { |part| part.kind == :result }.map(&:id)
+
+        assert_requested :post, "https://api.anthropic.com/v1/messages", at_least_times: 2
+        expect([result.finish_reason, result.finish_reason_raw]).must_equal [:stop, "end_turn"]
+        expect(call_ids.size).must_be :>, 10
+        expect(result_ids).must_equal call_ids
+      end
+    end
+  end
+
   describe "tool schema strict mode" do
     it "applies strict_schema to tool parameters" do
       tool = stub_tool("TestTool") do
