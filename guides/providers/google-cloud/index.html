@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.57.0</span>
+            <span class="version">v0.57.1</span>
           </div>
         </nav>
       </div>
@@ -661,7 +661,7 @@
   <li><strong>Incomplete streams:</strong> a stream that ends without a <code>message_stop</code> event raises <code>Riffer::IncompleteStreamError</code>.</li>
 </ul>
 
-<p><code>anthropic_vertex</code> never reads <code>config.anthropic</code> or <code>ANTHROPIC_API_KEY</code>. Files are sent inline as base64.</p>
+<p><code>anthropic_vertex</code> never reads <code>config.anthropic</code> or <code>ANTHROPIC_API_KEY</code>. Files are sent inline as base64. Agent Platform rejects URL sources, so riffer downloads a <code>FilePart.from_url</code> source and sends it inline, subject to the <code>allow_downloads</code> policy in <a href="/guides/configuration/#file-downloads">File Downloads</a>.</p>
 
 <p>Web search and structured output are partner-model features that an organization policy can turn off. If a request fails with a <code>constraints/vertexai.allowedPartnerModelFeatures</code> violation, an organization policy administrator must allow <code>publishers/anthropic/models/MODEL:web_search</code> or <code>:structured_outputs</code> (or <code>publishers/anthropic</code> for every feature); see <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/control-model-access">Control access to Model Garden models</a>.</p>
 
