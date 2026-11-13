@@ -370,7 +370,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def convert_file_part(file)
     type = file.image? ? "image" : "document"
 
-    source = if file.url?
+    source = if file.url? && file_delivery(file) == :url
                { type: "url", url: file.url }
              else
                { type: "base64", media_type: file.media_type, data: file.data }

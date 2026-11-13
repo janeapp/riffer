@@ -17,6 +17,13 @@ class Riffer::Providers::AnthropicVertex < Riffer::Providers::AnthropicCompatibl
     "gcp.vertex_ai"
   end
 
+  # Agent Platform rejects URL sources, so riffer downloads the file and sends it inline.
+  #--
+  #: (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery(_file)
+    :base64
+  end
+
   private
 
   #--

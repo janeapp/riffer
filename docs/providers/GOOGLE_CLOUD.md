@@ -358,7 +358,7 @@ Claude models on Agent Platform behave as they do on the Anthropic provider:
 - **Tags:** only the reserved `user_id` tag is sent, as `metadata.user_id`.
 - **Incomplete streams:** a stream that ends without a `message_stop` event raises `Riffer::IncompleteStreamError`.
 
-`anthropic_vertex` never reads `config.anthropic` or `ANTHROPIC_API_KEY`. Files are sent inline as base64.
+`anthropic_vertex` never reads `config.anthropic` or `ANTHROPIC_API_KEY`. Files are sent inline as base64. Agent Platform rejects URL sources, so riffer downloads a `FilePart.from_url` source and sends it inline, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
 
 Web search and structured output are partner-model features that an organization policy can turn off. If a request fails with a `constraints/vertexai.allowedPartnerModelFeatures` violation, an organization policy administrator must allow `publishers/anthropic/models/MODEL:web_search` or `:structured_outputs` (or `publishers/anthropic` for every feature); see [Control access to Model Garden models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/control-model-access).
 
