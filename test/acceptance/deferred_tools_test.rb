@@ -7,7 +7,6 @@ describe "Acceptance: deferred tools" do
 
   acceptance_providers(
     except: {
-      gemini: not_recorded,
       google_cloud: not_recorded,
       amazon_bedrock: not_recorded,
     },

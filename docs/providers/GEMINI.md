@@ -176,8 +176,6 @@ Gemini has no native deferred loading, so an agent with [deferred tools](../AGEN
 
 Gemini sends a function's name with its result, so a deferred tool's call and its `functionResponse` both go back under the gateway's name. The call keeps its `call_id`, so its thought signature goes back on it as usual.
 
-The gateway doesn't work on Gemini yet, so don't rely on it here. Its name, `riffer/providers/deferred_tool_gateway/tool`, contains `/`, which Gemini rejects in function names, and riffer's Gemini provider sends tool names without encoding them, so an agent with `strategy: :gateway` fails on its first request. The same limit applies to any of your own tools with a namespaced name.
-
 ### Thought Signatures
 
 Gemini 3 models attach an opaque `thoughtSignature` to the first function call of each step, and to the last text part of an answer. A later request that sends a function call back without its signature is rejected with a 400.
