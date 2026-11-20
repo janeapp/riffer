@@ -4,7 +4,7 @@
 class Riffer::Agent::Context
   # @rbs @data: Hash[Symbol, untyped]
 
-  RESERVED_KEYS = %i[skills token_usage mcp_progressive_tools discovered_tools].freeze #: Array[Symbol]
+  RESERVED_KEYS = %i[skills token_usage].freeze #: Array[Symbol]
 
   # Raises Riffer::ArgumentError if +data+ contains a reserved key.
   #--
@@ -20,8 +20,6 @@ class Riffer::Agent::Context
     @data = data.dup
     @data[:skills] = nil
     @data[:token_usage] = nil
-    @data[:mcp_progressive_tools] = nil
-    @data[:discovered_tools] = nil
     @deferred_tools = nil
   end
 
@@ -64,43 +62,17 @@ class Riffer::Agent::Context
     @data[key]
   end
 
-  #--
-  #: () -> Array[singleton(Riffer::Tool)]?
-  def mcp_progressive_tools
-    @data[:mcp_progressive_tools]
-  end
-
-  #--
-  #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
-  def mcp_progressive_tools=(value)
-    @data[:mcp_progressive_tools] = validate_tool_classes(:mcp_progressive_tools, value)
-  end
-
-  #--
-  #: () -> Array[singleton(Riffer::Tool)]?
-  def discovered_tools
-    @data[:discovered_tools]
-  end
-
-  #--
-  #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
-  def discovered_tools=(value)
-    @data[:discovered_tools] = validate_tool_classes(:discovered_tools, value)
-  end
-
   attr_reader :deferred_tools #: Array[singleton(Riffer::Tool)]? # @dynamic deferred_tools
 
   #--
   #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def deferred_tools=(value)
-    @deferred_tools = validate_tool_classes(:deferred_tools, value)
-  end
-
-  #--
-  #: (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
-  def discover_tools(tools)
-    existing = @data[:discovered_tools] || []
-    @data[:discovered_tools] = (existing + tools).uniq(&:name)
+    valid = value.nil? || (value.is_a?(Array) && value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool })
+    unless valid
+      raise Riffer::ArgumentError,
+            "deferred_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
+    end
+    @deferred_tools = value
   end
 
   #--
@@ -116,18 +88,6 @@ class Riffer::Agent::Context
   end
 
   private
-
-  #--
-  #: (Symbol, Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
-  def validate_tool_classes(name, value)
-    valid = value.nil? || (value.is_a?(Array) && value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool })
-    unless valid
-      raise Riffer::ArgumentError,
-            "#{name} must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
-    end
-
-    value
-  end
 
   #--
   #: () -> void

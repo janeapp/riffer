@@ -69,10 +69,6 @@ module Riffer::Agent::Run
   def tool_not_loaded: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
   # --
-  # : (Riffer::Agent, Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
-  def inject_discovered_tools: (Riffer::Agent, Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
-
-  # --
   # : (Riffer::Agent, ?Hash[String, String]) -> void
   def execute_pending_tool_calls: (Riffer::Agent, ?Hash[String, String]) -> void
 
@@ -87,10 +83,6 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
   def structured_output_result: (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
-
-  # --
-  # : (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
-  def effective_tools: (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
 
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
