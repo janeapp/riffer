@@ -63,23 +63,37 @@ The [`mcp`](https://github.com/modelcontextprotocol/ruby-sdk) gem speaks the pro
 | `config.mcp.credentials`                        | Headers built from the tool's `context` on each call                                                                                                                                                 |
 | `use_mcp :tag`, with `mcp_search`               | [`deferred_tools`](https://riffer.ai/guides/agents/#deferred_tools-experimental) plus a search tool that returns [`load_tools`](https://riffer.ai/guides/tools/#loading-deferred-tools-experimental) |
 | `use_mcp :tag, progressive: false`              | `uses_tools`                                                                                                                                                                                         |
-| Tags                                            | Plain Ruby: give each agent the servers' tools it should have                                                                                                                                        |
+| Tags                                            | One `McpServer` per server; give each agent the servers' tools it should have, e.g. `GITHUB_MCP.tools + JIRA_MCP.tools`                                                                              |
 
-Start with a module that lists the server's tools and builds a tool class for each:
+Start with a class whose instances each stand for one server. An instance lists the server's tools once and builds a tool class for each:
 
 ```ruby
 # Gemfile: gem "mcp"
 require "mcp"
 
-module GithubMcp
-  URL = "https://mcp.github.com"
-
-  def self.tools
-    @tools ||= with_client(ENV.fetch("GITHUB_TOKEN")) { |client| client.tools.map { |tool| build(tool) } }.freeze
+class McpServer
+  def initialize(name:, url:, service_token:, user_token:)
+    @name = name
+    @url = url
+    @service_token = service_token
+    @user_token = user_token
   end
 
-  def self.with_client(token)
-    transport = MCP::Client::HTTP.new(url: URL, headers: { "Authorization" => "Bearer #{token}" })
+  def tools
+    @tools ||= with_client(@service_token) { |client| client.tools.map { |tool| build(tool) } }.freeze
+  end
+
+  def call_tool(mcp_tool, arguments, context:)
+    response = with_client(@user_token.call(context)) do |client|
+      client.call_tool(tool: mcp_tool, arguments: arguments)
+    end
+    response.fetch("result")
+  end
+
+  private
+
+  def with_client(token)
+    transport = MCP::Client::HTTP.new(url: @url, headers: { "Authorization" => "Bearer #{token}" })
     client = MCP::Client.new(transport: transport)
     client.connect
     yield client
@@ -87,17 +101,17 @@ module GithubMcp
     transport&.close
   end
 
-  def self.build(mcp_tool)
+  def build(mcp_tool)
+    server = self
+    tool_name = "#{@name}__#{mcp_tool.name.gsub(/[^a-zA-Z0-9_-]/, "_")}"
+
     Class.new(Riffer::Tool) do
-      identifier "github__#{mcp_tool.name.gsub(/[^a-zA-Z0-9_-]/, "_")}"
+      identifier tool_name
       description mcp_tool.description
       define_singleton_method(:parameters_schema) { |strict: false| mcp_tool.input_schema }
 
       define_method(:call) do |context:, **arguments|
-        response = GithubMcp.with_client(context[:github_token]) do |client|
-          client.call_tool(tool: mcp_tool, arguments: arguments)
-        end
-        result = response.fetch("result")
+        result = server.call_tool(mcp_tool, arguments, context: context)
         content = result["content"].filter_map { |item| item["text"] }.join
 
         result["isError"] ? error(content) : text(content)
@@ -105,16 +119,23 @@ module GithubMcp
     end
   end
 end
+
+GITHUB_MCP = McpServer.new(
+  name: "github",
+  url: "https://mcp.github.com",
+  service_token: ENV.fetch("GITHUB_TOKEN"),
+  user_token: ->(context) { context[:github_token] }
+)
 ```
 
-The tools have no `params`, so the server's own schema goes to the provider and the server validates the arguments. The `github__` prefix keeps tool names from different servers apart. A result with `isError` goes back to the model as a tool error. A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`, which riffer returns to the model as an `:unhandled_error`.
+The service token lists the tools, and `user_token` picks the token for each call from the agent's context, as the `credentials` callback did. The tools have no `params`, so the server's own schema goes to the provider and the server validates the arguments. The name prefix keeps tool names from different servers apart. A result with `isError` goes back to the model as a tool error. A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`, which riffer returns to the model as an `:unhandled_error`.
 
 To give an agent every tool up front, the way `progressive: false` did, list them with `uses_tools`:
 
 ```ruby
 class ResearchAgent < Riffer::Agent
   model "anthropic/claude-sonnet-4-6"
-  uses_tools ->(context) { GithubMcp.tools }
+  uses_tools ->(context) { GITHUB_MCP.tools }
 end
 ```
 
@@ -139,7 +160,7 @@ class ResearchAgent < Riffer::Agent
   instructions "For anything on GitHub, use find_github_tools to get the tools you need."
 
   uses_tools [FindGithubTools]
-  deferred_tools ->(context) { context[:github_token] ? GithubMcp.tools : [] }
+  deferred_tools ->(context) { context[:github_token] ? GITHUB_MCP.tools : [] }
 end
 ```
 
