@@ -90,6 +90,8 @@ REASONING_CATALOG_PATH = File.expand_path("fixtures/catalogs/reasoning.json", __
 def reset_riffer_config!
   config = Riffer::Config.new
   config.deprecations = :raise
+  # Keeps the once-per-process opt-in notice out of the events a test's callable collects.
+  config.future.deprecation_callable_every_report = true
   Riffer.instance_variable_set(:@config, config)
 end
 

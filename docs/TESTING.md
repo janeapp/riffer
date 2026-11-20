@@ -133,6 +133,14 @@ end
 
 `allow_deprecations` silences deprecations until the block returns or raises, and returns the block's value. It applies to the current thread or fiber and to threads and fibers started inside the block; other threads keep reporting. It is also available as `Riffer::Testing.allow_deprecations` outside an example. See [Configuration — Deprecations](CONFIGURATION.md#deprecations) for the other modes.
 
+To keep `:raise` on while exempting specific deprecations you can't move off yet, list their ids (shown in brackets in each report) in `config.silenced_deprecations`:
+
+```ruby
+# test/test_helper.rb
+Riffer.config.deprecations = :raise
+Riffer.config.silenced_deprecations = %i[param_class_types]
+```
+
 ## When a stub leaks
 
 Stubbing an identifier that is already taken raises `Riffer::DuplicateIdentifierError`:

@@ -69,6 +69,12 @@ class Riffer::Config
   # : ((Symbol | ^(Riffer::Deprecation::Event) -> void)) -> void
   def deprecations=: (Symbol | ^(Riffer::Deprecation::Event) -> void) -> void
 
+  attr_reader silenced_deprecations: Array[Symbol]
+
+  # --
+  # : (Array[Symbol]) -> void
+  def silenced_deprecations=: (Array[Symbol]) -> void
+
   # --
   # : () -> void
   def initialize: () -> void

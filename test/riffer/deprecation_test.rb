@@ -11,7 +11,7 @@ describe Riffer::Deprecation do
     before { Riffer.config.deprecations = :warn }
 
     it "names the calling line" do
-      expected = "riffer: test_api is deprecated. Called from #{__FILE__}:"
+      expected = "riffer: [test_api] test_api is deprecated. Called from #{__FILE__}:"
 
       expect { Riffer::Deprecation.warn(**details) }.must_output(nil, "#{expected}#{__LINE__}.\n")
     end
@@ -55,15 +55,79 @@ describe Riffer::Deprecation do
   end
 
   describe "a callable" do
-    it "receives the event once per calling line" do
-      events = []
-      Riffer.config.deprecations = ->(event) { events << event }
-      line = __LINE__ + 1
-      2.times { Riffer::Deprecation.warn(**details) }
+    let(:events) { [] }
 
-      fields = events.map { |event| [event.id, event.message, event.location] }
+    before { Riffer.config.deprecations = ->(event) { events << event } }
 
-      expect(fields).must_equal [[*details.values, "#{__FILE__}:#{line}"]]
+    it "skips a silenced id" do
+      Riffer.config.silenced_deprecations = [:test_api]
+      Riffer::Deprecation.warn(**details)
+      Riffer::Deprecation.warn(**details, id: :other_api)
+
+      expect(events.map(&:id)).must_equal [:other_api]
+    end
+
+    describe "with config.future.deprecation_callable_every_report" do
+      it "receives the event on every call from the same line" do
+        line = __LINE__ + 1
+        2.times { Riffer::Deprecation.warn(**details) }
+
+        fields = events.map { |event| [event.id, event.message, event.location] }
+
+        expect(fields).must_equal [[*details.values, "#{__FILE__}:#{line}"]] * 2
+      end
+    end
+
+    describe "without config.future.deprecation_callable_every_report" do
+      before do
+        Riffer.config.future.deprecation_callable_every_report = false
+        # The notice is once per process; a fresh record lets each example see it.
+        Riffer::Deprecation.instance_variable_set(:@reported, Set.new)
+      end
+
+      it "receives the event once per calling line, then the once-per-line notice once" do
+        line = __LINE__ + 1
+        2.times { Riffer::Deprecation.warn(**details) }
+        Riffer::Deprecation.warn(**details, id: :other_api)
+
+        fields = events.map { |event| [event.id, event.location] }
+
+        expect(fields).must_equal [
+          [:test_api, "#{__FILE__}:#{line}"],
+          [:deprecation_callable_once_per_line, nil],
+          [:other_api, "#{__FILE__}:#{line + 1}"],
+        ]
+        expect(events[1].message).must_include "config.future.deprecation_callable_every_report = true"
+      end
+
+      it "skips the notice when its id is silenced" do
+        Riffer.config.silenced_deprecations = [:deprecation_callable_once_per_line]
+        Riffer::Deprecation.warn(**details)
+
+        expect(events.map(&:id)).must_equal [:test_api]
+      end
+
+      it "skips the notice inside allow_deprecations" do
+        Riffer::Testing.allow_deprecations { Riffer::Deprecation.warn(**details) }
+
+        expect(events).must_be_empty
+      end
+    end
+  end
+
+  describe "silenced_deprecations" do
+    before { Riffer.config.silenced_deprecations = [:test_api] }
+
+    it "skips a silenced id in :warn mode" do
+      Riffer.config.deprecations = :warn
+
+      expect { Riffer::Deprecation.warn(**details) }.must_output(nil, "")
+    end
+
+    it "skips a silenced id in :raise mode and still raises for others" do
+      Riffer::Deprecation.warn(**details)
+
+      expect { Riffer::Deprecation.warn(**details, id: :other_api) }.must_raise Riffer::DeprecationError
     end
   end
 

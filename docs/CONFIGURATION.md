@@ -283,7 +283,7 @@ See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and valid
 A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:
 
 ```
-riffer: String as a param type is deprecated and will be removed in a future version, not before 1 December 2026; use :string. Called from app/tools/weather_tool.rb:5.
+riffer: [param_class_types] String as a param type is deprecated and will be removed in a future version, not before 1 December 2026; use :string. Called from app/tools/weather_tool.rb:5.
 ```
 
 `config.deprecations` decides what happens:
@@ -294,14 +294,25 @@ Riffer.configure do |config|
 end
 ```
 
-| Value             | Description                                                                                                                                                           |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `:warn` (default) | Prints the report to stderr with `Kernel.warn`, once per deprecation per calling line.                                                                                |
-| `:raise`          | Raises `Riffer::DeprecationError` on every call, so a test suite fails on each test that makes one. See [Testing — Deprecations](TESTING.md#deprecations).            |
-| `:silence`        | Reports nothing.                                                                                                                                                      |
-| A callable        | Called with a `Riffer::Deprecation::Event` once per deprecation per calling line. The event has `id`, `message` and `location` (`"path:line"`); `to_s` is the report. |
+| Value             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:warn` (default) | Prints the report to stderr with `Kernel.warn`, once per deprecation per calling line.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `:raise`          | Raises `Riffer::DeprecationError` on every call, so a test suite fails on each test that makes one. See [Testing — Deprecations](TESTING.md#deprecations).                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `:silence`        | Reports nothing.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| A callable        | Called with a `Riffer::Deprecation::Event`, which has `id`, `message` and `location` (`"path:line"`); `to_s` is the report. By default it is called once per deprecation per calling line, and its first call in a process is followed by a `deprecation_callable_once_per_line` event (with no `location`) asking you to opt in. With [`config.future.deprecation_callable_every_report`](#future-flags) it is called on every report, like `:raise`; a callable that wants once-per-line reporting can dedupe on `event.id` and `event.location` itself. |
 
 Any other value raises `Riffer::ArgumentError`.
+
+Each report starts with its deprecation id in brackets (`param_class_types` above), which is also `event.id`. `config.silenced_deprecations` takes a list of ids that every mode skips, callables included, so you can keep `:raise` on for everything except the deprecations you can't move off yet:
+
+```ruby
+Riffer.configure do |config|
+  config.deprecations = :raise if Rails.env.local?
+  config.silenced_deprecations = %i[evals config_evals param_class_types]
+end
+```
+
+It defaults to `[]`; anything but an Array of Symbols raises `Riffer::ArgumentError`.
 
 ### Future flags
 
@@ -321,9 +332,9 @@ A flag goes through three stages:
 2. **Default.** A [breaking release](STABILITY.md#breaking-releases) makes the new behaviour the default. The flag always reads as on, and setting it reports a [deprecation](#deprecations) saying it's no longer needed and can be removed.
 3. **Removed.** A release later the flag is gone, and setting it raises `NoMethodError`.
 
-| Flag     | Stage | Description                     |
-| -------- | ----- | ------------------------------- |
-| _(none)_ |       | Riffer has no future flags yet. |
+| Flag                                | Stage  | Description                                                                                                               |
+| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `deprecation_callable_every_report` | Opt-in | Calls a [`config.deprecations` callable](#deprecations) on every report instead of once per deprecation per calling line. |
 
 ### Message ID Strategy
 

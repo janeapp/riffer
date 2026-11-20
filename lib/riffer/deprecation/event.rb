@@ -19,7 +19,7 @@ class Riffer::Deprecation::Event
   #--
   #: () -> String
   def to_s
-    text = "riffer: #{message}"
+    text = "riffer: [#{id}] #{message}"
     location ? "#{text} Called from #{location}." : text
   end
 end
