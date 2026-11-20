@@ -686,8 +686,13 @@
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_hash</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">msg</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>)
 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">values_at</span>(<span class="ruby-value">:tool_call_id</span>, <span class="ruby-value">:name</span>).<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:nil?</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Tool message hash must include :tool_call_id and :name&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># An empty result is &quot;&quot;, which a source that drops blank strings omits.</span>
   <span class="ruby-identifier">new</span>(
-    <span class="ruby-identifier">msg</span>[<span class="ruby-value">:content</span>],
+    <span class="ruby-identifier">msg</span>[<span class="ruby-value">:content</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>,
     <span class="ruby-value">id:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:id</span>],
     <span class="ruby-value">tool_call_id:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:tool_call_id</span>],
     <span class="ruby-value">name:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:name</span>],
@@ -734,7 +739,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 29</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 34</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tool_call_id:</span>, <span class="ruby-value">name:</span>, <span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">loaded_tools:</span> [])
   <span class="ruby-keyword">super</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">id:</span> <span class="ruby-identifier">id</span>)
   <span class="ruby-ivar">@tool_call_id</span> = <span class="ruby-identifier">tool_call_id</span>
@@ -800,7 +805,7 @@
             </details>
           </div>
           <div class="method-source-code" id="error-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 40</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error?</span>
   <span class="ruby-operator">!</span><span class="ruby-ivar">@error</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -842,7 +847,7 @@
             </details>
           </div>
           <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 46</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
   <span class="ruby-value">:tool</span>
 <span class="ruby-keyword">end</span></pre>
@@ -884,7 +889,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/tool.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = { <span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">tool_call_id:</span> <span class="ruby-identifier">tool_call_id</span>, <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span> } <span class="ruby-comment">#: Hash[Symbol, untyped]</span>
   <span class="ruby-identifier">hash</span>[<span class="ruby-value">:id</span>] = <span class="ruby-identifier">id</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">id</span>

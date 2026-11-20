@@ -662,11 +662,12 @@
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_hash</span>(<span class="ruby-identifier">call</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">call</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">call</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCall</span>)
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">call</span>.<span class="ruby-identifier">values_at</span>(<span class="ruby-value">:call_id</span>, <span class="ruby-value">:name</span>, <span class="ruby-value">:arguments</span>).<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:nil?</span>)
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Tool call hash must include :call_id, :name, and :arguments&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">call</span>.<span class="ruby-identifier">values_at</span>(<span class="ruby-value">:call_id</span>, <span class="ruby-value">:name</span>).<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:nil?</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Tool call hash must include :call_id and :name&quot;</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">new</span>(<span class="ruby-value">call_id:</span> <span class="ruby-identifier">call</span>[<span class="ruby-value">:call_id</span>], <span class="ruby-value">name:</span> <span class="ruby-identifier">call</span>[<span class="ruby-value">:name</span>], <span class="ruby-value">arguments:</span> <span class="ruby-identifier">call</span>[<span class="ruby-value">:arguments</span>])
+  <span class="ruby-comment"># A call without arguments can carry &quot;&quot;, which a source that drops blank strings omits.</span>
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">call_id:</span> <span class="ruby-identifier">call</span>[<span class="ruby-value">:call_id</span>], <span class="ruby-value">name:</span> <span class="ruby-identifier">call</span>[<span class="ruby-value">:name</span>], <span class="ruby-value">arguments:</span> <span class="ruby-identifier">call</span>[<span class="ruby-value">:arguments</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -706,7 +707,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 26</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">call_id:</span>, <span class="ruby-value">name:</span>, <span class="ruby-value">arguments:</span>)
   <span class="ruby-ivar">@call_id</span> = <span class="ruby-identifier">call_id</span>
   <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>
@@ -764,7 +765,7 @@
             </details>
           </div>
           <div class="method-source-code" id="3D-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 40</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">==</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-identifier">other</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCall</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">to_h</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_h</span>
 <span class="ruby-keyword">end</span></pre>
@@ -806,7 +807,7 @@
             </details>
           </div>
           <div class="method-source-code" id="eql-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 46</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eql?</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-keyword">self</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>
 <span class="ruby-keyword">end</span></pre>
@@ -848,7 +849,7 @@
             </details>
           </div>
           <div class="method-source-code" id="hash-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hash</span>
   <span class="ruby-identifier">to_h</span>.<span class="ruby-identifier">hash</span>
 <span class="ruby-keyword">end</span></pre>
@@ -890,7 +891,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 34</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/tool_call.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   { <span class="ruby-value">call_id:</span> <span class="ruby-identifier">call_id</span>, <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">arguments:</span> <span class="ruby-identifier">arguments</span> }
 <span class="ruby-keyword">end</span></pre>

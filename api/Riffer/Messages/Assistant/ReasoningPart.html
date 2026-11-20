@@ -728,7 +728,7 @@
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">part</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">part</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningPart</span>)
 
   <span class="ruby-identifier">new</span>(
-    <span class="ruby-value">type:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:type</span>].<span class="ruby-identifier">to_sym</span>,
+    <span class="ruby-value">type:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:type</span>]&amp;.<span class="ruby-identifier">to_sym</span>,
     <span class="ruby-value">text:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:text</span>],
     <span class="ruby-value">data:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:data</span>],
     <span class="ruby-value">signature:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:signature</span>],

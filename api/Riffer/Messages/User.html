@@ -623,7 +623,8 @@
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">msg</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>)
 
   <span class="ruby-identifier">files</span> = (<span class="ruby-identifier">msg</span>[<span class="ruby-value">:files</span>] <span class="ruby-operator">||</span> []).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span><span class="ruby-operator">::</span><span class="ruby-constant">FilePart</span>.<span class="ruby-identifier">from_hash</span>(<span class="ruby-identifier">f</span>) }
-  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">msg</span>[<span class="ruby-value">:content</span>], <span class="ruby-value">id:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:id</span>], <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
+  <span class="ruby-comment"># An empty prompt is &quot;&quot;, which a source that drops blank strings omits.</span>
+  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">msg</span>[<span class="ruby-value">:content</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">id:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:id</span>], <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -663,7 +664,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 18</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> [])
   <span class="ruby-keyword">super</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">id:</span> <span class="ruby-identifier">id</span>)
   <span class="ruby-ivar">@files</span> = <span class="ruby-identifier">files</span>
@@ -725,7 +726,7 @@
             </details>
           </div>
           <div class="method-source-code" id="2B-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;#{content}\n\n#{other.content}&quot;</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -767,7 +768,7 @@
             </details>
           </div>
           <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
   <span class="ruby-value">:user</span>
 <span class="ruby-keyword">end</span></pre>
@@ -809,7 +810,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = { <span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span> } <span class="ruby-comment">#: Hash[Symbol, untyped]</span>
   <span class="ruby-identifier">hash</span>[<span class="ruby-value">:id</span>] = <span class="ruby-identifier">id</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">id</span>

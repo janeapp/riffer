@@ -711,9 +711,13 @@
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_hash</span>(<span class="ruby-identifier">part</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">part</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">part</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ServerToolPart</span>)
 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">part</span>.<span class="ruby-identifier">values_at</span>(<span class="ruby-value">:name</span>, <span class="ruby-value">:data</span>).<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:nil?</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Server tool part hash must include :name and :data&quot;</span>
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">new</span>(
     <span class="ruby-value">name:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:name</span>],
-    <span class="ruby-value">kind:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:kind</span>].<span class="ruby-identifier">to_sym</span>,
+    <span class="ruby-value">kind:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:kind</span>]&amp;.<span class="ruby-identifier">to_sym</span>,
     <span class="ruby-value">data:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:data</span>],
     <span class="ruby-value">id:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:id</span>],
     <span class="ruby-value">format:</span> <span class="ruby-identifier">part</span>[<span class="ruby-value">:format</span>],
@@ -757,7 +761,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">kind:</span>, <span class="ruby-value">data:</span>, <span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">format:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">KINDS</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">kind</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>,
@@ -822,7 +826,7 @@
             </details>
           </div>
           <div class="method-source-code" id="3D-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">==</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-identifier">other</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ServerToolPart</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">to_h</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_h</span>
 <span class="ruby-keyword">end</span></pre>
@@ -864,7 +868,7 @@
             </details>
           </div>
           <div class="method-source-code" id="eql-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 64</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eql?</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-keyword">self</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>
 <span class="ruby-keyword">end</span></pre>
@@ -906,7 +910,7 @@
             </details>
           </div>
           <div class="method-source-code" id="hash-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 70</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 74</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hash</span>
   <span class="ruby-identifier">to_h</span>.<span class="ruby-identifier">hash</span>
 <span class="ruby-keyword">end</span></pre>
@@ -948,7 +952,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant/server_tool_part.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   { <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">kind:</span> <span class="ruby-identifier">kind</span>, <span class="ruby-value">data:</span> <span class="ruby-identifier">data</span>, <span class="ruby-value">id:</span> <span class="ruby-identifier">id</span>, <span class="ruby-value">format:</span> <span class="ruby-identifier">format</span> }.<span class="ruby-identifier">compact</span>
 <span class="ruby-keyword">end</span></pre>

@@ -594,7 +594,8 @@
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_hash</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">msg</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>)
 
-  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">msg</span>[<span class="ruby-value">:content</span>], <span class="ruby-value">id:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:id</span>])
+  <span class="ruby-comment"># An empty prompt is &quot;&quot;, which a source that drops blank strings omits.</span>
+  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">msg</span>[<span class="ruby-value">:content</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">id:</span> <span class="ruby-identifier">msg</span>[<span class="ruby-value">:id</span>])
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -648,7 +649,7 @@
             </details>
           </div>
           <div class="method-source-code" id="2B-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/system.rb, line 21</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/system.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;#{content}\n\n#{other.content}&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -690,7 +691,7 @@
             </details>
           </div>
           <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/system.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/system.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
   <span class="ruby-value">:system</span>
 <span class="ruby-keyword">end</span></pre>
