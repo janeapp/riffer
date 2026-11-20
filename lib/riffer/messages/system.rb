@@ -7,7 +7,8 @@ class Riffer::Messages::System < Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::System)
 
-    new(msg[:content], id: msg[:id])
+    # An empty prompt is "", which a source that drops blank strings omits.
+    new(msg[:content] || "", id: msg[:id])
   end
 
   #--

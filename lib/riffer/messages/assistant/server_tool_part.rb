@@ -23,9 +23,13 @@ class Riffer::Messages::Assistant::ServerToolPart
   def self.from_hash(part)
     return part if part.is_a?(Riffer::Messages::Assistant::ServerToolPart)
 
+    if part.values_at(:name, :data).any?(&:nil?)
+      raise Riffer::ArgumentError, "Server tool part hash must include :name and :data"
+    end
+
     new(
       name: part[:name],
-      kind: part[:kind].to_sym,
+      kind: part[:kind]&.to_sym,
       data: part[:data],
       id: part[:id],
       format: part[:format],

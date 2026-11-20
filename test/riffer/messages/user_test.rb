@@ -35,6 +35,12 @@ describe Riffer::Messages::User do
       expect(Riffer::Messages::User.from_hash(message)).must_be_same_as message
     end
 
+    it "defaults missing content to an empty string" do
+      message = Riffer::Messages::User.from_hash({ role: "user" })
+
+      expect(message.content).must_equal ""
+    end
+
     it "round-trips through to_h" do
       file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       message = Riffer::Messages::User.new("Hello", id: "u-1", files: [file])

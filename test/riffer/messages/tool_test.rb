@@ -30,6 +30,26 @@ describe Riffer::Messages::Tool do
       expect(Riffer::Messages::Tool.from_hash(message)).must_be_same_as message
     end
 
+    it "defaults missing content to an empty string" do
+      message = Riffer::Messages::Tool.from_hash({ role: "tool", tool_call_id: "123", name: "my_tool" })
+
+      expect(message.content).must_equal ""
+    end
+
+    it "raises when the hash is missing the tool call id" do
+      error = expect { Riffer::Messages::Tool.from_hash({ role: "tool", content: "Result", name: "my_tool" }) }.
+        must_raise(Riffer::ArgumentError)
+
+      expect(error.message).must_equal "Tool message hash must include :tool_call_id and :name"
+    end
+
+    it "raises when the hash is missing the name" do
+      error = expect { Riffer::Messages::Tool.from_hash({ role: "tool", content: "Result", tool_call_id: "123" }) }.
+        must_raise(Riffer::ArgumentError)
+
+      expect(error.message).must_equal "Tool message hash must include :tool_call_id and :name"
+    end
+
     it "round-trips an errored message through to_h" do
       message = Riffer::Messages::Tool.new(
         "Error: Unknown tool 'foo'",

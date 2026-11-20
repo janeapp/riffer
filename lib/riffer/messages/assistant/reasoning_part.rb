@@ -22,7 +22,7 @@ class Riffer::Messages::Assistant::ReasoningPart
     return part if part.is_a?(Riffer::Messages::Assistant::ReasoningPart)
 
     new(
-      type: part[:type].to_sym,
+      type: part[:type]&.to_sym,
       text: part[:text],
       data: part[:data],
       signature: part[:signature],
