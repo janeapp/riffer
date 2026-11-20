@@ -402,7 +402,7 @@ The base class returns `nil`, which makes riffer raise `Riffer::ArgumentError` f
 
 ## Tags
 
-Every agent and judge call passes a `:tags` option: a flat `String => String` hash of the caller's [per-call tags](../AGENTS.md#per-call-tags) plus the [default tags](../AGENTS.md#default-tags). `kind` (`"agent"` or `"judge"`) and `agent` (the agent or evaluator identifier) tell you who the call is on behalf of:
+Every agent call, and every judge call from the riffer-evals gem, passes a `:tags` option: a flat `String => String` hash of the caller's [per-call tags](../AGENTS.md#per-call-tags) plus the [default tags](../AGENTS.md#default-tags). `kind` (`"agent"` or `"judge"`) and `agent` (the agent or evaluator identifier) tell you who the call is on behalf of:
 
 ```ruby
 def build_request_params(messages, model, options)

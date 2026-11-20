@@ -20,19 +20,6 @@ class Riffer::Config
 
   attr_reader :openrouter #: Riffer::Config::OpenRouter # @dynamic openrouter
 
-  # @rbs @evals: Riffer::Config::Evals
-
-  #--
-  #: () -> Riffer::Config::Evals
-  def evals
-    Riffer::Deprecation.warn(
-      id: :config_evals,
-      message: "config.evals is deprecated and will move out of riffer into the riffer-evals gem " \
-               "(see docs/EVALS.md).",
-    )
-    @evals
-  end
-
   attr_reader :mcp #: Riffer::Config::Mcp # @dynamic mcp
 
   attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) # @dynamic tool_runtime
@@ -121,7 +108,6 @@ class Riffer::Config
     @google_cloud = GoogleCloud.new
     @openai = OpenAI.new
     @openrouter = OpenRouter.new
-    @evals = Evals.new
     @mcp = Mcp.new
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new

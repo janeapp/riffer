@@ -19,12 +19,6 @@ class Riffer::Config
 
   attr_reader openrouter: Riffer::Config::OpenRouter
 
-  @evals: Riffer::Config::Evals
-
-  # --
-  # : () -> Riffer::Config::Evals
-  def evals: () -> Riffer::Config::Evals
-
   attr_reader mcp: Riffer::Config::Mcp
 
   attr_reader tool_runtime: singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc

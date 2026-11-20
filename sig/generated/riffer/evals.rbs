@@ -1,5 +1,0 @@
-# Generated from lib/riffer/evals.rb with RBS::Inline
-
-module Riffer::Evals
-  DEPRECATION_MESSAGE: String
-end
