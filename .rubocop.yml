@@ -87,8 +87,8 @@ Lint/EmptyBlock:
     - test/**/*
 
 # Keyword-argument names are the calling contract for riffer's block-based
-# hooks (tool `execute` blocks, evaluator lambdas, dynamic instructions) —
-# underscore-prefixing a block keyword renames the keyword and breaks callers.
+# hooks (tool `execute` blocks, dynamic instructions) — underscore-prefixing a
+# block keyword renames the keyword and breaks callers.
 Lint/UnusedBlockArgument:
   AllowUnusedKeywordArguments: true
 
@@ -108,8 +108,6 @@ Naming/PredicatePrefix:
 Performance/Sum:
   Exclude:
     - lib/riffer/providers/base.rb
-    - lib/riffer/evals/run_result.rb
-    - lib/riffer/evals/scenario_result.rb
 
 # Each accessor carries its own trailing rbs-inline `#:` type; grouping them
 # onto one line drops every type but the first.

@@ -57,7 +57,6 @@ Comprehensive guides live at [riffer.ai](https://riffer.ai):
 - [Messages](https://riffer.ai/guides/messages/) - Message types and formats
 - [Stream Events](https://riffer.ai/guides/stream-events/) - Streaming responses
 - [Configuration](https://riffer.ai/guides/configuration/) - Framework configuration
-- [Evals](https://riffer.ai/guides/evals/) - Evaluating agent quality
 - [Guardrails](https://riffer.ai/guides/guardrails/) - Input/output validation
 - [Skills](https://riffer.ai/guides/skills/) - Packaged agent capabilities
 - [MCP](https://riffer.ai/guides/mcp/) - Integrating third-party MCP servers (deprecated)

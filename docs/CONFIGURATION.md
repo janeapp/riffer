@@ -154,18 +154,6 @@ end
 
 See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
 
-### Evals (deprecated)
-
-`config.evals` is deprecated and will move out of riffer into the `riffer-evals` gem along with [evals](EVALS.md). Reading it reports a [deprecation](#deprecations).
-
-```ruby
-Riffer.configure do |config|
-  config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
-end
-```
-
-`judge_model` is the default model evaluators use as the judge when they don't set their own. It must be a `provider/model` string or `nil` (the default); anything else raises `Riffer::ArgumentError`. See [Evals](EVALS.md).
-
 ### Tool Runtime
 
 Configure the default tool runtime for all agents:

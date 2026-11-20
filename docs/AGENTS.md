@@ -578,10 +578,10 @@ Tags propagate to **two** places:
 
 Every call also carries two tags riffer adds itself, so a provider can tell who the call is on behalf of:
 
-| Tag     | Value                                                                   |
-| ------- | ----------------------------------------------------------------------- |
-| `kind`  | `"agent"` (`"judge"` for [evaluator](EVALS.md) judge calls)             |
-| `agent` | The agent's `identifier` (the evaluator's `identifier` for judge calls) |
+| Tag     | Value                    |
+| ------- | ------------------------ |
+| `kind`  | `"agent"`                |
+| `agent` | The agent's `identifier` |
 
 A tag you pass with the same key wins. The default tags count towards the provider limits below.
 
@@ -622,7 +622,6 @@ Apart from the Google Cloud rewrite above, riffer does not validate tag count, k
 | Call APIs or run functions    | Tools             | [Tools](TOOLS.md)                                                 |
 | Return structured JSON        | Structured Output | [structured_output](#structured_output)                           |
 | Validate or filter content    | Guardrails        | [Guardrails](GUARDRAILS.md)                                       |
-| Measure output quality        | Evals             | [Evals](EVALS.md)                                                 |
 | Add packaged capabilities     | Skills            | [Skills](SKILLS.md)                                               |
 | Control the tool-use loop     | Agent Loop        | [Agent Loop](AGENT_LOOP.md)                                       |
 | Human-in-the-loop approval    | Interrupts        | [Agent Lifecycle](AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
