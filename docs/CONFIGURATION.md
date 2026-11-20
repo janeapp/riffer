@@ -264,7 +264,7 @@ A file that fails resolution raises a `Riffer::FileError` subclass — `Riffer::
 
 ### Model Catalog
 
-List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, `reasoning` uses each provider's default mapping, and calls carry no cost unless the deprecated [`config.pricing`](#pricing-deprecated) prices the model.
+List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, `reasoning` uses each provider's default mapping, and calls carry no cost.
 
 ```ruby
 Riffer.configure do |config|
@@ -278,29 +278,12 @@ end
 
 See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and validation.
 
-### Pricing (deprecated)
-
-`config.pricing` is deprecated and will be removed in a future release. Move rates into a [catalog file](CATALOG.md#pricing); each line that calls `set` reports a [deprecation](#deprecations). Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.
-
-```ruby
-# before
-Riffer.configure do |config|
-  config.pricing.set("anthropic/claude-sonnet-4-6", input: 3.0, output: 15.0)
-end
-```
-
-```json
-{ "version": 1, "models": { "anthropic/claude-sonnet-4-6": { "pricing": { "input": 3.0, "output": 15.0 } } } }
-```
-
-`set` takes a `provider/model` id or an array of ids, plus `input:`, `output:`, and optional `cache_read:` and `cache_write:` rates per million tokens. The rates and cost formula are the same as [catalog pricing](CATALOG.md#pricing).
-
 ### Deprecations
 
 A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:
 
 ```
-riffer: config.pricing is deprecated and will be removed in a future version; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
+riffer: String as a param type is deprecated and will be removed in a future version, not before 1 December 2026; use :string. Called from app/tools/weather_tool.rb:5.
 ```
 
 `config.deprecations` decides what happens:

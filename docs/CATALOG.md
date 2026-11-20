@@ -5,7 +5,7 @@ The model catalog holds per-model data that riffer can't derive from the model n
 Riffer ships no catalog. Without one:
 
 - `reasoning` still works through each provider's default mapping (see [Provider defaults](#provider-defaults)).
-- Calls carry no cost (`token_usage.cost` is `nil`), unless the deprecated [`config.pricing`](CONFIGURATION.md#pricing-deprecated) prices the model.
+- Calls carry no cost (`token_usage.cost` is `nil`).
 
 ## Loading catalog files
 
@@ -166,7 +166,7 @@ cost = (input − cache_read − cache_write) × input_rate
 
 (all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing: it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
 
-A model with no catalog pricing carries no cost. The deprecated [`config.pricing`](CONFIGURATION.md#pricing-deprecated) is still read as a fallback; catalog pricing wins when both price a model.
+A model with no catalog pricing carries no cost.
 
 ## Layering files
 

@@ -226,7 +226,7 @@ class Riffer::Providers::Base
     key = catalog_key(model)
     return nil unless key
 
-    Riffer.config.catalog.rates_for(key) || Riffer.config.pricing.rates_for(key)
+    Riffer.config.catalog.rates_for(key)
   end
 
   #--

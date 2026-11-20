@@ -9,7 +9,7 @@ describe Riffer::Config do
       config = Riffer::Config.new
       sections = %i[
         amazon_bedrock anthropic azure_openai gemini google_cloud openai openrouter evals mcp skills tracing files
-        future pricing
+        future
       ]
 
       classes = allow_deprecations { sections.map { |section| config.public_send(section).class } }
@@ -28,7 +28,6 @@ describe Riffer::Config do
         Riffer::Config::Tracing,
         Riffer::Config::Files,
         Riffer::Config::Future,
-        Riffer::Config::Pricing,
       ]
     end
   end

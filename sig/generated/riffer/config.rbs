@@ -41,9 +41,6 @@ class Riffer::Config
 
   attr_reader future: Riffer::Config::Future
 
-  # @deprecated Use +catalog_files+.
-  attr_reader pricing: Riffer::Config::Pricing
-
   attr_reader catalog_files: Array[String]
 
   # --
