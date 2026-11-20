@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.58.0](https://github.com/janeapp/riffer/compare/riffer/v0.57.2...riffer/v0.58.0) (2026-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** `config.pricing` and `Riffer::Config::Pricing` are removed, and a model with no catalog pricing carries no cost. Move rates into a catalog file listed in `config.catalog_files` (see UPGRADING.md).
+
+### Features
+
+* **config:** remove config.pricing ([#589](https://github.com/janeapp/riffer/issues/589)) ([efb5889](https://github.com/janeapp/riffer/commit/efb58892c1380f411789c0422cc62b6548cf3f91))
+* **deprecations:** silence specific deprecation ids ([#597](https://github.com/janeapp/riffer/issues/597)) ([cff65e8](https://github.com/janeapp/riffer/commit/cff65e84a5aef6c1d50872250a564fa5a7639459))
+
 ## [0.57.2](https://github.com/janeapp/riffer/compare/riffer/v0.57.1...riffer/v0.57.2) (2026-11-20)
 
 
