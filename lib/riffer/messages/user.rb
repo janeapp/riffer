@@ -8,7 +8,8 @@ class Riffer::Messages::User < Riffer::Messages::Base
     return msg if msg.is_a?(Riffer::Messages::User)
 
     files = (msg[:files] || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
-    new(msg[:content], id: msg[:id], files: files)
+    # An empty prompt is "", which a source that drops blank strings omits.
+    new(msg[:content] || "", id: msg[:id], files: files)
   end
 
   attr_reader :files #: Array[Riffer::Messages::User::FilePart] # @dynamic files

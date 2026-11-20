@@ -7,8 +7,13 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Tool)
 
+    if msg.values_at(:tool_call_id, :name).any?(&:nil?)
+      raise Riffer::ArgumentError, "Tool message hash must include :tool_call_id and :name"
+    end
+
+    # An empty result is "", which a source that drops blank strings omits.
     new(
-      msg[:content],
+      msg[:content] || "",
       id: msg[:id],
       tool_call_id: msg[:tool_call_id],
       name: msg[:name],

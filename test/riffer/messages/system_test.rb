@@ -26,6 +26,12 @@ describe Riffer::Messages::System do
       expect(Riffer::Messages::System.from_hash(message)).must_be_same_as message
     end
 
+    it "defaults missing content to an empty string" do
+      message = Riffer::Messages::System.from_hash({ role: "system" })
+
+      expect(message.content).must_equal ""
+    end
+
     it "round-trips every attribute" do
       assert_round_trips Riffer::Messages::System.new("Be helpful", id: "s-1")
     end
