@@ -53,34 +53,94 @@ Riffer no longer connects to MCP servers. 0.57.0 deprecated MCP client support, 
 
 `mcp_progressive_tools` and `discovered_tools` are no longer reserved, so a `context:` hash can now pass them as ordinary keys. To find every call before you upgrade, run your suite on 0.57 with [deprecations raising](https://riffer.ai/guides/testing/#deprecations).
 
-To hold tools back from the model until it asks for them, the way progressive discovery did, use [deferred tools](https://riffer.ai/guides/agents/#deferred_tools-experimental).
+#### Calling an MCP server yourself
 
-To keep calling an MCP server, wrap the [`mcp`](https://github.com/modelcontextprotocol/ruby-sdk) gem in your own [`Riffer::Tool`](https://riffer.ai/guides/tools/) and list it with `uses_tools`. Headers you build from `context` take the place of the `config.mcp.credentials` callback:
+The [`mcp`](https://github.com/modelcontextprotocol/ruby-sdk) gem speaks the protocol, and ordinary riffer tools do the rest. Each part of the old client maps to a few lines of your own code:
+
+| Before                                          | After                                                                                                                                                                                                |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Riffer::Mcp.register` listing a server's tools | `MCP::Client#tools`, once per process, with one [`Riffer::Tool`](https://riffer.ai/guides/tools/) built per server tool                                                                              |
+| `config.mcp.credentials`                        | Headers built from the tool's `context` on each call                                                                                                                                                 |
+| `use_mcp :tag`, with `mcp_search`               | [`deferred_tools`](https://riffer.ai/guides/agents/#deferred_tools-experimental) plus a search tool that returns [`load_tools`](https://riffer.ai/guides/tools/#loading-deferred-tools-experimental) |
+| `use_mcp :tag, progressive: false`              | `uses_tools`                                                                                                                                                                                         |
+| Tags                                            | Plain Ruby: give each agent the servers' tools it should have                                                                                                                                        |
+
+Start with a module that lists the server's tools and builds a tool class for each:
 
 ```ruby
 # Gemfile: gem "mcp"
 require "mcp"
 
-class CreateIssueTool < Riffer::Tool
-  description "Creates a GitHub issue"
+module GithubMcp
+  URL = "https://mcp.github.com"
 
-  params do
-    required :title, :string, description: "The issue title"
-    optional :body, :string, description: "The issue body"
+  def self.tools
+    @tools ||= with_client(ENV.fetch("GITHUB_TOKEN")) { |client| client.tools.map { |tool| build(tool) } }.freeze
   end
 
-  def call(context:, title:, body: nil)
-    transport = MCP::Client::HTTP.new(
-      url: "https://mcp.github.com",
-      headers: { "Authorization" => "Bearer #{context[:github_token]}" }
-    )
+  def self.with_client(token)
+    transport = MCP::Client::HTTP.new(url: URL, headers: { "Authorization" => "Bearer #{token}" })
     client = MCP::Client.new(transport: transport)
-    result = client.call_tool(name: "create_issue", arguments: { title: title, body: body }.compact).fetch("result")
-    content = result["content"].filter_map { |item| item["text"] }.join
+    client.connect
+    yield client
+  ensure
+    transport&.close
+  end
 
-    result["isError"] ? error(content) : text(content)
+  def self.build(mcp_tool)
+    Class.new(Riffer::Tool) do
+      identifier "github__#{mcp_tool.name.gsub(/[^a-zA-Z0-9_-]/, "_")}"
+      description mcp_tool.description
+      define_singleton_method(:parameters_schema) { |strict: false| mcp_tool.input_schema }
+
+      define_method(:call) do |context:, **arguments|
+        response = GithubMcp.with_client(context[:github_token]) do |client|
+          client.call_tool(tool: mcp_tool, arguments: arguments)
+        end
+        result = response.fetch("result")
+        content = result["content"].filter_map { |item| item["text"] }.join
+
+        result["isError"] ? error(content) : text(content)
+      end
+    end
   end
 end
 ```
 
-A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`.
+The tools have no `params`, so the server's own schema goes to the provider and the server validates the arguments. The `github__` prefix keeps tool names from different servers apart. A result with `isError` goes back to the model as a tool error. A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`, which riffer returns to the model as an `:unhandled_error`.
+
+To give an agent every tool up front, the way `progressive: false` did, list them with `uses_tools`:
+
+```ruby
+class ResearchAgent < Riffer::Agent
+  model "anthropic/claude-sonnet-4-6"
+  uses_tools ->(context) { GithubMcp.tools }
+end
+```
+
+To hold them back until the model asks, the way `mcp_search` did, defer them and give the agent a search tool that loads the ones it finds:
+
+```ruby
+class FindGithubTools < Riffer::Tool
+  description "Find GitHub tools for a task. Describe what you need to do in a few words."
+  params { required :query, :string }
+
+  def call(context:, query:)
+    words = query.downcase.split
+    matches = context.deferred_tools.select do |tool|
+      words.any? { |word| "#{tool.name} #{tool.description}".downcase.include?(word) }
+    end
+    load_tools(matches.first(5))
+  end
+end
+
+class ResearchAgent < Riffer::Agent
+  model "anthropic/claude-sonnet-4-6"
+  instructions "For anything on GitHub, use find_github_tools to get the tools you need."
+
+  uses_tools [FindGithubTools]
+  deferred_tools ->(context) { context[:github_token] ? GithubMcp.tools : [] }
+end
+```
+
+A user without a token gets no GitHub tools, which is what a `credentials` callback returning `nil` did. A loaded tool stays loaded for the rest of the conversation, including after the agent is [serialized](https://riffer.ai/guides/serialization/) and restored. Anthropic, OpenAI and Azure OpenAI load deferred tools natively; on any other provider, pass [`strategy: :gateway`](https://riffer.ai/guides/agents/#deferred-tools-strategy-experimental). Deferred tools are experimental, so this part of the recipe can change in a minor release.
