@@ -521,10 +521,6 @@ describe Riffer::Providers::Mock do
       provider.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
     end
 
-    def set_legacy_pricing(**rates)
-      allow_deprecations { Riffer.config.pricing.set("mock/riffer-1", **rates) }
-    end
-
     it "attaches cost to token usage when the catalog prices the model" do
       use_catalog({ "mock/riffer-1" => { "pricing" => { "input" => 3.0, "output" => 15.0 } } })
 
@@ -540,19 +536,6 @@ describe Riffer::Providers::Mock do
 
     it "leaves cost nil when the model is unpriced" do
       expect(generate_cost).must_be_nil
-    end
-
-    it "falls back to the deprecated config.pricing" do
-      set_legacy_pricing(input: 3.0, output: 15.0)
-
-      expect(generate_cost).must_equal 18.0
-    end
-
-    it "prefers catalog pricing over config.pricing" do
-      use_catalog({ "mock/riffer-1" => { "pricing" => { "input" => 1.0, "output" => 1.0 } } })
-      set_legacy_pricing(input: 3.0, output: 15.0)
-
-      expect(generate_cost).must_equal 2.0
     end
 
     it "carries cost on the streamed TokenUsageDone event" do

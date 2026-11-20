@@ -122,8 +122,10 @@ Riffer.config.deprecations = :raise
 Every deprecated call then raises `Riffer::DeprecationError`, naming the line that made it. A test that uses a deprecated call on purpose wraps it in `allow_deprecations`:
 
 ```ruby
-it 'still reads legacy pricing' do
-  allow_deprecations { Riffer.config.pricing.set('openai/gpt-5', input: 1.0, output: 2.0) }
+it 'still accepts class param types' do
+  tool = allow_deprecations do
+    Class.new(Riffer::Tool) { params { required :city, String } }
+  end
 
   # ...
 end
