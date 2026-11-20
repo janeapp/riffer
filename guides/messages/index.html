@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.57.2</span>
+            <span class="version">v0.58.0</span>
           </div>
         </nav>
       </div>
@@ -303,7 +303,7 @@
 <p>The cache buckets are subsets of <code>input_tokens</code>, never additions to it — summing <code>input_tokens + cache_read_tokens</code> double-counts. <code>total_tokens</code> (input + output) matches the totals providers report on their dashboards.</p>
 
 <ul>
-  <li><code>cost</code> — the computed cost of the call, set when a <a href="/guides/catalog/#pricing">catalog</a> or the deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> prices the model in use; <code>nil</code> when the model is unpriced. It’s for observability, not billing. Run-level usage sums per-call costs through <code>TokenUsage#+</code>, so <code>response.token_usage.cost</code> is the total spend across the run — but the sum is <code>nil</code> if any call in the run used an unpriced model, rather than silently under-reporting.</li>
+  <li><code>cost</code> — the computed cost of the call, set when a <a href="/guides/catalog/#pricing">catalog</a> prices the model in use; <code>nil</code> when the model is unpriced. It’s for observability, not billing. Run-level usage sums per-call costs through <code>TokenUsage#+</code>, so <code>response.token_usage.cost</code> is the total spend across the run — but the sum is <code>nil</code> if any call in the run used an unpriced model, rather than silently under-reporting.</li>
 </ul>
 
 <h4 id="finish-reasons">Finish Reasons</h4>

@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.57.2</span>
+            <span class="version">v0.58.0</span>
           </div>
         </nav>
       </div>
@@ -581,7 +581,7 @@
 
 <h3 id="model-catalog">Model Catalog</h3>
 
-<p>List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, <code>reasoning</code> uses each provider’s default mapping, and calls carry no cost unless the deprecated <a href="#pricing-deprecated"><code>config.pricing</code></a> prices the model.</p>
+<p>List JSON catalog files that hold per-model reasoning mappings and pricing. Riffer ships no catalog, so without one, <code>reasoning</code> uses each provider’s default mapping, and calls carry no cost.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">catalog_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"config/riffer/models.json"</span><span class="p">]</span>
@@ -605,26 +605,11 @@
 
 <p>See <a href="/guides/catalog/">Model Catalog</a> for the file format, lookup, layering, and validation.</p>
 
-<h3 id="pricing-deprecated">Pricing (deprecated)</h3>
-
-<p><code>config.pricing</code> is deprecated and will be removed in a future release. Move rates into a <a href="/guides/catalog/#pricing">catalog file</a>; each line that calls <code>set</code> reports a <a href="#deprecations">deprecation</a>. Riffer still reads these rates as a fallback, and catalog pricing wins when both price a model.</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># before</span>
-<span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"anthropic/claude-sonnet-4-6"</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">3.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">15.0</span><span class="p">)</span>
-<span class="k">end</span>
-</code></pre></div></div>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"models"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"anthropic/claude-sonnet-4-6"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"pricing"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="mf">15.0</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
-
-<p><code>set</code> takes a <code>provider/model</code> id or an array of ids, plus <code>input:</code>, <code>output:</code>, and optional <code>cache_read:</code> and <code>cache_write:</code> rates per million tokens. The rates and cost formula are the same as <a href="/guides/catalog/#pricing">catalog pricing</a>.</p>
-
 <h3 id="deprecations">Deprecations</h3>
 
 <p>A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:</p>
 
-<pre><code>riffer: config.pricing is deprecated and will be removed in a future version; move rates into a catalog file listed in config.catalog_files (see docs/CATALOG.md). Called from config/initializers/riffer.rb:4.
+<pre><code>riffer: [param_class_types] String as a param type is deprecated and will be removed in a future version, not before 1 December 2026; use :string. Called from app/tools/weather_tool.rb:5.
 </code></pre>
 
 <p><code>config.deprecations</code> decides what happens:</p>
@@ -662,6 +647,16 @@
 </table>
 
 <p>Any other value raises <code>Riffer::ArgumentError</code>.</p>
+
+<p>Each report starts with its deprecation id in brackets (<code>param_class_types</code> above), which is also <code>event.id</code>. <code>config.silenced_deprecations</code> takes a list of ids that every mode skips, callables included, so you can keep <code>:raise</code> on for everything except the deprecations you can’t move off yet:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">deprecations</span> <span class="o">=</span> <span class="ss">:raise</span> <span class="k">if</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">.</span><span class="nf">local?</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">silenced_deprecations</span> <span class="o">=</span> <span class="sx">%i[evals config_evals param_class_types]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>It defaults to <code>[]</code>; anything but an Array of Symbols raises <code>Riffer::ArgumentError</code>.</p>
 
 <h3 id="future-flags">Future flags</h3>
 

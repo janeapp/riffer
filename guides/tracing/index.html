@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.57.2</span>
+            <span class="version">v0.58.0</span>
           </div>
         </nav>
       </div>
@@ -714,7 +714,7 @@ cache_read.input_tokens      =  800   → 800 of the 1000 were cache hits
 
 <h3 id="cost">Cost</h3>
 
-<p><code>riffer.cost</code> is the modeled cost of one call (on a <code>chat</code> span) or a whole run (on the <code>invoke_agent</code> span). It lives in Riffer’s own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats <code>gen_ai.*</code> for it. The attribute appears only when a <a href="/guides/catalog/#pricing">catalog</a> or the deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> prices the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no <code>riffer.cost</code>.</p>
+<p><code>riffer.cost</code> is the modeled cost of one call (on a <code>chat</code> span) or a whole run (on the <code>invoke_agent</code> span). It lives in Riffer’s own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats <code>gen_ai.*</code> for it. The attribute appears only when a <a href="/guides/catalog/#pricing">catalog</a> prices the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no <code>riffer.cost</code>.</p>
 
 <p>The value is <strong>unitless on the wire</strong> — Riffer attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a <code>riffer.cost</code> of <code>0.0123</code> means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.</p>
 

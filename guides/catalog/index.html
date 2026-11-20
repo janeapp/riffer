@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.57.2</span>
+            <span class="version">v0.58.0</span>
           </div>
         </nav>
       </div>
@@ -217,7 +217,7 @@
 
 <ul>
   <li><code>reasoning</code> still works through each provider’s default mapping (see <a href="#provider-defaults">Provider defaults</a>).</li>
-  <li>Calls carry no cost (<code>token_usage.cost</code> is <code>nil</code>), unless the deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> prices the model.</li>
+  <li>Calls carry no cost (<code>token_usage.cost</code> is <code>nil</code>).</li>
 </ul>
 
 <h2 id="loading-catalog-files">Loading catalog files</h2>
@@ -464,7 +464,7 @@
 
 <p>(all rates ÷ 1,000,000; an unset cache rate falls back to <code>input_rate</code>.) Cost is for observability, not billing: it’s a <code>Float</code>, and sub-cent rounding can accumulate over a long run. See <a href="/guides/messages/#token-usage-semantics">Messages → Token Usage Semantics</a> for how cost surfaces and aggregates.</p>
 
-<p>A model with no catalog pricing carries no cost. The deprecated <a href="/guides/configuration/#pricing-deprecated"><code>config.pricing</code></a> is still read as a fallback; catalog pricing wins when both price a model.</p>
+<p>A model with no catalog pricing carries no cost.</p>
 
 <h2 id="layering-files">Layering files</h2>
 
