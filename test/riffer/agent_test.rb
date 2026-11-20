@@ -1122,6 +1122,22 @@ describe Riffer::Agent do
       err = expect { klass.new }.must_raise Riffer::ArgumentError
       expect(err.message).must_equal "Duplicate tool names: lookup"
     end
+
+    it "gives each agent its own copy of the class's tools" do
+      lookup = stub_tool("Lookup") { description "Looks things up" }
+      search = stub_tool("Search") { description "Searches" }
+
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        uses_tools [lookup]
+      end
+
+      agent = klass.new
+      klass.uses_tools << search
+
+      expect(agent.tools).must_equal [lookup]
+      expect(klass.new.tools).must_equal [lookup, search]
+    end
   end
 
   describe "seeded history repair" do

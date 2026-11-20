@@ -345,7 +345,7 @@ class Riffer::Agent
   #--
   #: () -> Array[singleton(Riffer::Tool)]
   def resolve_tools
-    tools = Riffer::Helpers::CallOrValue.resolve(@config.tools_config, context: @context, default: [])
+    tools = Riffer::Helpers::CallOrValue.resolve(@config.tools_config, context: @context, default: []).dup
 
     skills_config = @config.skills_config
 
