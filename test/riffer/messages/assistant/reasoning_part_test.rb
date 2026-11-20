@@ -74,6 +74,10 @@ describe Riffer::Messages::Assistant::ReasoningPart do
       expect { Riffer::Messages::Assistant::ReasoningPart.from_hash(type: "bogus") }.must_raise(Riffer::ArgumentError)
     end
 
+    it "raises on a hash without a type" do
+      expect { Riffer::Messages::Assistant::ReasoningPart.from_hash(text: "Thinking") }.must_raise(Riffer::ArgumentError)
+    end
+
     it "round-trips every attribute" do
       part = Riffer::Messages::Assistant::ReasoningPart.new(
         type: :encrypted,

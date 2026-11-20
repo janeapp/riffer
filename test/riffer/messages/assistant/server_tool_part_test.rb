@@ -55,6 +55,28 @@ describe Riffer::Messages::Assistant::ServerToolPart do
     it "returns a part unchanged" do
       expect(Riffer::Messages::Assistant::ServerToolPart.from_hash(part)).must_be_same_as part
     end
+
+    it "raises Riffer::ArgumentError when the kind is missing" do
+      expect do
+        Riffer::Messages::Assistant::ServerToolPart.from_hash(name: "web_search", data: "{}")
+      end.must_raise Riffer::ArgumentError
+    end
+
+    it "raises Riffer::ArgumentError when the name is missing" do
+      error = expect do
+        Riffer::Messages::Assistant::ServerToolPart.from_hash(kind: "call", data: "{}")
+      end.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_equal "Server tool part hash must include :name and :data"
+    end
+
+    it "raises Riffer::ArgumentError when the data is missing" do
+      error = expect do
+        Riffer::Messages::Assistant::ServerToolPart.from_hash(name: "web_search", kind: "call")
+      end.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_equal "Server tool part hash must include :name and :data"
+    end
   end
 
   describe "equality" do

@@ -14,11 +14,12 @@ class Riffer::Messages::Assistant::ToolCall
   def self.from_hash(call)
     return call if call.is_a?(Riffer::Messages::Assistant::ToolCall)
 
-    if call.values_at(:call_id, :name, :arguments).any?(&:nil?)
-      raise Riffer::ArgumentError, "Tool call hash must include :call_id, :name, and :arguments"
+    if call.values_at(:call_id, :name).any?(&:nil?)
+      raise Riffer::ArgumentError, "Tool call hash must include :call_id and :name"
     end
 
-    new(call_id: call[:call_id], name: call[:name], arguments: call[:arguments])
+    # A call without arguments can carry "", which a source that drops blank strings omits.
+    new(call_id: call[:call_id], name: call[:name], arguments: call[:arguments] || "")
   end
 
   #--
