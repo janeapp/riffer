@@ -283,7 +283,7 @@ See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and valid
 A deprecated riffer call reports itself at least one release before it is removed. The report names the line in your code that made the call:
 
 ```
-riffer: String as a param type is deprecated and will be removed in a future version, not before 1 December 2026; use :string. Called from app/tools/weather_tool.rb:5.
+riffer: [param_class_types] String as a param type is deprecated and will be removed in a future version, not before 1 December 2026; use :string. Called from app/tools/weather_tool.rb:5.
 ```
 
 `config.deprecations` decides what happens:
@@ -302,6 +302,17 @@ end
 | A callable        | Called with a `Riffer::Deprecation::Event` once per deprecation per calling line. The event has `id`, `message` and `location` (`"path:line"`); `to_s` is the report. |
 
 Any other value raises `Riffer::ArgumentError`.
+
+Each report starts with its deprecation id in brackets (`param_class_types` above), which is also `event.id`. `config.silenced_deprecations` takes a list of ids that every mode skips, callables included, so you can keep `:raise` on for everything except the deprecations you can't move off yet:
+
+```ruby
+Riffer.configure do |config|
+  config.deprecations = :raise if Rails.env.local?
+  config.silenced_deprecations = %i[evals config_evals param_class_types]
+end
+```
+
+It defaults to `[]`; anything but an Array of Symbols raises `Riffer::ArgumentError`.
 
 ### Future flags
 

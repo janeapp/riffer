@@ -108,6 +108,18 @@ class Riffer::Config
     @deprecations = value
   end
 
+  attr_reader :silenced_deprecations #: Array[Symbol] # @dynamic silenced_deprecations
+
+  #--
+  #: (Array[Symbol]) -> void
+  def silenced_deprecations=(ids)
+    unless ids.is_a?(Array) && ids.all?(Symbol)
+      raise Riffer::ArgumentError, "silenced_deprecations must be an Array of Symbols, got #{ids.inspect}"
+    end
+
+    @silenced_deprecations = ids.dup.freeze
+  end
+
   #--
   #: () -> void
   def initialize
@@ -129,5 +141,7 @@ class Riffer::Config
     @catalog_files = no_files.freeze
     @message_id_strategy = :none
     @deprecations = :warn
+    no_ids = [] #: Array[Symbol]
+    @silenced_deprecations = no_ids.freeze
   end
 end

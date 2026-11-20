@@ -154,6 +154,31 @@ describe Riffer::Config do
     end
   end
 
+  describe "silenced_deprecations" do
+    it "defaults to an empty list" do
+      expect(Riffer::Config.new.silenced_deprecations).must_equal []
+    end
+
+    it "stores a frozen copy of the ids" do
+      config = Riffer::Config.new
+      ids = [:evals]
+      config.silenced_deprecations = ids
+      ids << :config_evals
+
+      expect(config.silenced_deprecations).must_equal [:evals]
+      expect(config.silenced_deprecations).must_be :frozen?
+    end
+
+    it "raises for anything but an Array of Symbols" do
+      config = Riffer::Config.new
+
+      error = expect { config.silenced_deprecations = :evals }.must_raise Riffer::ArgumentError
+      expect(error.message).must_include "silenced_deprecations must be an Array of Symbols"
+      expect { config.silenced_deprecations = [:evals, "config_evals"] }.must_raise Riffer::ArgumentError
+      expect { config.silenced_deprecations = nil }.must_raise Riffer::ArgumentError
+    end
+  end
+
   describe "catalog_files" do
     it "defaults to an empty list and an empty catalog" do
       config = Riffer::Config.new

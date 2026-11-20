@@ -19,7 +19,7 @@ module Riffer::Deprecation
   #--
   #: (id: Symbol, message: String) -> void
   def warn(id:, message:)
-    return if Fiber[ALLOWED_KEY]
+    return if Fiber[ALLOWED_KEY] || Riffer.config.silenced_deprecations.include?(id)
 
     frame = caller_locations&.find { |location| !location.path.to_s.start_with?(LIB_DIR) }
     location = frame && "#{frame.path}:#{frame.lineno}"
