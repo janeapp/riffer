@@ -51,15 +51,6 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?, ?strategy: Symbol?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.deferred_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?, ?strategy: Symbol?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
-  # @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
-  # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
-  # --
-  # : (String | Symbol, ?progressive: bool) -> void
-  def self.use_mcp: (String | Symbol, ?progressive: bool) -> void
-
-  # : () -> Array[Hash[Symbol, untyped]]
-  def self.mcp_configs: () -> Array[Hash[Symbol, untyped]]
-
   # --
   # : (?(singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def self.tool_runtime: (?(singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
@@ -186,18 +177,6 @@ class Riffer::Agent
   # --
   # : () -> Riffer::Tools::Runtime
   def resolve_tool_runtime: () -> Riffer::Tools::Runtime
-
-  # --
-  # : () -> Array[singleton(Riffer::Tool)]
-  def resolve_mcp_tool_classes: () -> Array[singleton(Riffer::Tool)]
-
-  # --
-  # : (Array[Hash[Symbol, untyped]]) -> [Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]]]
-  def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> [ Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]] ]
-
-  # --
-  # : (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
-  def mcp_tools_for_registration: (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
 
   # --
   # : (Array[singleton(Riffer::Tool)]) -> void

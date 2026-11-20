@@ -94,25 +94,6 @@ class Riffer::Agent
     config.deferred_tools_config
   end
 
-  # @deprecated MCP client support will be removed; wrap the +mcp+ gem in your own Riffer::Tool (see docs/MCP.md).
-  # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
-  #--
-  #: (String | Symbol, ?progressive: bool) -> void
-  def self.use_mcp(tag, progressive: true)
-    Riffer::Deprecation.warn(
-      id: :use_mcp,
-      message: "use_mcp is deprecated; MCP client support will be removed in a future release. " \
-               "Wrap the mcp gem in your own Riffer::Tool instead (see docs/MCP.md).",
-    )
-
-    config.add_mcp(tag, progressive: progressive)
-  end
-
-  #: () -> Array[Hash[Symbol, untyped]]
-  def self.mcp_configs
-    config.mcp_configs
-  end
-
   #--
   #: (?(singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def self.tool_runtime(value = nil)
@@ -378,7 +359,6 @@ class Riffer::Agent
       tools += [skill_activate_tool_class]
     end
 
-    tools += resolve_mcp_tool_classes
     assert_distinct_tool_names!(tools)
     tools.each(&:validate_as_tool!)
     tools
@@ -397,7 +377,7 @@ class Riffer::Agent
             "use deferred_tools(..., strategy: :gateway) to load them through a gateway tool"
     end
 
-    tools = @tools + (@context.mcp_progressive_tools || []) + deferred
+    tools = @tools + deferred
     # The gateway goes on every request alongside the agent's tools, so no tool can share its name.
     tools += [Riffer::Providers::DeferredToolGateway::Tool] if gateway
     assert_distinct_tool_names!(tools)
@@ -410,55 +390,6 @@ class Riffer::Agent
   def resolve_tool_runtime
     runtime = Riffer::Helpers::CallOrValue.resolve(@config.tool_runtime, context: @context)
     runtime.is_a?(Class) ? runtime.new : runtime
-  end
-
-  #--
-  #: () -> Array[singleton(Riffer::Tool)]
-  def resolve_mcp_tool_classes
-    configs = @config.mcp_configs
-    return [] if configs.empty?
-
-    cred = Riffer.config.mcp.credentials
-    ctx = @context
-
-    regular_reg_tags, progressive_reg_tags = gather_mcp_registrations_with_tags(configs)
-
-    regular_tools = regular_reg_tags.flat_map do |reg, tag_accum|
-      mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx)
-    end
-    progressive_tools = progressive_reg_tags.flat_map do |reg, tag_accum|
-      mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx)
-    end
-
-    if progressive_tools.any?
-      @context.mcp_progressive_tools = progressive_tools.freeze
-      regular_tools + [Riffer::Mcp::SearchTool]
-    else
-      regular_tools
-    end
-  end
-
-  #--
-  #: (Array[Hash[Symbol, untyped]]) -> [Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]]]
-  def gather_mcp_registrations_with_tags(configs)
-    regular = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]
-    progressive = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]
-    configs.each do |cfg|
-      target = cfg[:progressive] ? progressive : regular
-      Riffer::Mcp::Registry.find_by_tags(cfg[:tags]).each do |reg|
-        (target[reg] ||= []).concat(cfg[:tags] & reg.manifest.tags)
-      end
-    end
-    [regular, progressive]
-  end
-
-  #--
-  #: (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
-  def mcp_tools_for_registration(reg, matched_tags, cred, ctx)
-    return reg.tools unless cred
-    return [] if cred.call(manifest: reg.manifest, matched_tags: matched_tags, context: ctx).nil?
-
-    Riffer::Mcp::AuthenticatedTool.wrap_all(reg.tools, reg.manifest, matched_tags)
   end
 
   #--

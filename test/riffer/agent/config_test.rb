@@ -46,10 +46,6 @@ describe Riffer::Agent::Config do
       expect(config.tools_config).must_be_nil
     end
 
-    it "starts with mcp_configs as []" do
-      expect(config.mcp_configs).must_equal []
-    end
-
     it "starts with tool_runtime defaulted to Riffer.config.tool_runtime" do
       expect(config.tool_runtime).must_be_same_as Riffer.config.tool_runtime
     end
@@ -325,40 +321,6 @@ describe Riffer::Agent::Config do
     end
   end
 
-  describe "#add_mcp" do
-    it "appends a tag entry with the tag symbolized" do
-      config = Riffer::Agent::Config.new
-      config.add_mcp("weather")
-
-      expect(config.mcp_configs).must_equal [{ tags: [:weather], progressive: true }]
-    end
-
-    it "accumulates additively across calls" do
-      config = Riffer::Agent::Config.new
-      config.add_mcp(:a)
-      config.add_mcp(:b)
-
-      expect(config.mcp_configs).must_equal [{ tags: [:a], progressive: true }, { tags: [:b], progressive: true }]
-    end
-
-    it "stores progressive flag for mixed progressive and non-progressive servers" do
-      config = Riffer::Agent::Config.new
-      config.add_mcp(:github)
-      config.add_mcp(:jira, progressive: false)
-
-      expect(config.mcp_configs).must_equal [
-        { tags: [:github], progressive: true },
-        { tags: [:jira], progressive: false },
-      ]
-    end
-
-    it "raises ArgumentError for non-boolean progressive values" do
-      config = Riffer::Agent::Config.new
-
-      expect { config.add_mcp(:x, progressive: "false") }.must_raise Riffer::ArgumentError
-    end
-  end
-
   describe "#add_guardrail" do
     let(:guardrail_class) { Class.new(Riffer::Guardrail) }
 
@@ -428,7 +390,6 @@ describe Riffer::Agent::Config do
         deferred_tools_strategy: :gateway,
         tool_runtime: Riffer::Tools::Runtime::Inline,
       )
-      config.add_mcp(:a_tag)
       config.add_guardrail(:before, klass: Riffer::Guardrail, options: { threshold: 1 })
       config.skills_config = Riffer::Skills::Config.new.tap { |sc| sc.activate(["a-skill"]) }
       config.add_guardrail(:around, klass: Riffer::Guardrail, options: { phase: :both })

@@ -60,9 +60,6 @@ groups:
       - source: SKILLS.md
         slug: skills
         description: Packaged agent capabilities
-      - source: MCP.md
-        slug: mcp
-        description: Third-party MCP servers
       - source: SERIALIZATION.md
         slug: serialization
         description: Persisting agent definitions

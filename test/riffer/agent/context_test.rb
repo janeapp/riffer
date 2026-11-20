@@ -43,16 +43,6 @@ describe Riffer::Agent::Context do
         must_raise Riffer::ArgumentError
     end
 
-    it "raises when :mcp_progressive_tools is passed by the caller" do
-      expect { Riffer::Agent::Context.new(mcp_progressive_tools: []) }.
-        must_raise Riffer::ArgumentError
-    end
-
-    it "raises when :discovered_tools is passed by the caller" do
-      expect { Riffer::Agent::Context.new(discovered_tools: []) }.
-        must_raise Riffer::ArgumentError
-    end
-
     it "deprecates passing :deferred_tools, which a future release reserves" do
       error = expect { Riffer::Agent::Context.new(deferred_tools: []) }.must_raise Riffer::DeprecationError
 
@@ -134,82 +124,6 @@ describe Riffer::Agent::Context do
     end
   end
 
-  describe "#mcp_progressive_tools=" do
-    let(:context) { Riffer::Agent::Context.new }
-
-    it "accepts nil" do
-      context.mcp_progressive_tools = nil
-
-      expect(context.mcp_progressive_tools).must_be_nil
-    end
-
-    it "accepts an Array of Riffer::Tool subclasses" do
-      tool = stub_tool("Tool")
-      context.mcp_progressive_tools = [tool]
-
-      expect(context.mcp_progressive_tools).must_equal [tool]
-    end
-
-    it "accepts an empty Array" do
-      context.mcp_progressive_tools = []
-
-      expect(context.mcp_progressive_tools).must_equal []
-    end
-
-    it "raises on a non-Array, non-nil value" do
-      expect { context.mcp_progressive_tools = :nope }.must_raise Riffer::ArgumentError
-    end
-
-    it "raises when Array contains non-Tool entries" do
-      expect { context.mcp_progressive_tools = [String] }.must_raise Riffer::ArgumentError
-    end
-
-    it "exposes the written value via #[] (hash-style read still works)" do
-      tool = stub_tool("Tool")
-      context.mcp_progressive_tools = [tool]
-
-      expect(context[:mcp_progressive_tools]).must_equal [tool]
-    end
-  end
-
-  describe "#discovered_tools=" do
-    let(:context) { Riffer::Agent::Context.new }
-
-    it "accepts nil" do
-      context.discovered_tools = nil
-
-      expect(context.discovered_tools).must_be_nil
-    end
-
-    it "accepts an Array of Riffer::Tool subclasses" do
-      tool = stub_tool("Tool")
-      context.discovered_tools = [tool]
-
-      expect(context.discovered_tools).must_equal [tool]
-    end
-
-    it "accepts an empty Array" do
-      context.discovered_tools = []
-
-      expect(context.discovered_tools).must_equal []
-    end
-
-    it "raises on a non-Array, non-nil value" do
-      expect { context.discovered_tools = :nope }.must_raise Riffer::ArgumentError
-    end
-
-    it "raises when Array contains non-Tool entries" do
-      expect { context.discovered_tools = [String] }.must_raise Riffer::ArgumentError
-    end
-
-    it "exposes the written value via #[] (hash-style read still works)" do
-      tool = stub_tool("Tool")
-      context.discovered_tools = [tool]
-
-      expect(context[:discovered_tools]).must_equal [tool]
-    end
-  end
-
   describe "#deferred_tools=" do
     let(:context) { Riffer::Agent::Context.new }
 
@@ -235,47 +149,10 @@ describe Riffer::Agent::Context do
     end
   end
 
-  describe "#discover_tools" do
-    let(:context) { Riffer::Agent::Context.new }
-
-    it "accumulates tools from a nil start" do
-      tool = stub_tool("ToolA")
-      context.discover_tools([tool])
-
-      expect(context.discovered_tools).must_equal [tool]
-    end
-
-    it "extends an existing set" do
-      tool_a = stub_tool("ToolA")
-      tool_b = stub_tool("ToolB")
-      context.discover_tools([tool_a])
-      context.discover_tools([tool_b])
-
-      expect(context.discovered_tools).must_include tool_a
-      expect(context.discovered_tools).must_include tool_b
-    end
-
-    it "deduplicates by name" do
-      tool = stub_tool("ToolA")
-      context.discover_tools([tool])
-      context.discover_tools([tool])
-
-      expect(context.discovered_tools.length).must_equal 1
-    end
-
-    it "returns the updated array" do
-      tool = stub_tool("ToolA")
-      result = context.discover_tools([tool])
-
-      expect(result).must_equal [tool]
-    end
-  end
-
   describe "#to_h" do
     it "returns the underlying hash" do
       expect(Riffer::Agent::Context.new(tenant: "alpha").to_h).
-        must_equal({ tenant: "alpha", skills: nil, token_usage: nil, mcp_progressive_tools: nil,
-                     discovered_tools: nil, })
+        must_equal({ tenant: "alpha", skills: nil, token_usage: nil })
     end
 
     it "returns a copy (caller mutations do not leak back)" do

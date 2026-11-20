@@ -33,8 +33,6 @@ class Riffer::Config
     @evals
   end
 
-  attr_reader :mcp #: Riffer::Config::Mcp # @dynamic mcp
-
   attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) # @dynamic tool_runtime
 
   #--
@@ -131,7 +129,6 @@ class Riffer::Config
     @openai = OpenAI.new
     @openrouter = OpenRouter.new
     @evals = Evals.new
-    @mcp = Mcp.new
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
     @tracing = Tracing.new

@@ -33,8 +33,6 @@ class Riffer::Agent::Config
 
   attr_reader deferred_tools_strategy: Symbol
 
-  attr_reader mcp_configs: Array[Hash[Symbol, untyped]]
-
   attr_accessor skills_config: Riffer::Skills::Config?
 
   attr_reader guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
@@ -52,12 +50,11 @@ class Riffer::Agent::Config
   #     ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #     ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #     ?deferred_tools_strategy: Symbol,
-  #     ?mcp_configs: Array[Hash[Symbol, untyped]],
   #     ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #     ?skills_config: Riffer::Skills::Config?,
   #     ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
   #   ) -> void
-  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?reasoning: (Symbol | String)?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_strategy: Symbol, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?structured_output_strategy: Symbol, ?max_steps: Numeric?, ?reasoning: (Symbol | String)?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?deferred_tools_strategy: Symbol, ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
 
   # --
   # : (untyped) -> String?
@@ -94,10 +91,6 @@ class Riffer::Agent::Config
   # --
   # : ((String | Proc)?) -> (String | Proc)?
   def instructions=: ((String | Proc)?) -> (String | Proc)?
-
-  # --
-  # : (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
-  def add_mcp: (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
 
   # --
   # : (Symbol, klass: singleton(Riffer::Guardrail), ?options: Hash[Symbol, untyped]) -> void

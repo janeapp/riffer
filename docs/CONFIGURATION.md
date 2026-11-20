@@ -133,27 +133,6 @@ Streaming is tested with the default `net_http` adapter.
 - A non-success status raises `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream) and `body` the raw response text.
 - Transport failures are raised as Faraday's own errors, such as `Faraday::TimeoutError` and `Faraday::ConnectionFailed` (both `Faraday::Error`s).
 
-### MCP (deprecated)
-
-`config.mcp` is deprecated and will be removed with MCP client support in a future release; each line that sets `credentials` or `discovery_runner` reports a [deprecation](#deprecations). See [MCP → Moving off MCP](MCP.md#moving-off-mcp).
-
-Optional settings for [MCP server integrations](MCP.md):
-
-| Option             | Description                                                                                                                                                                               |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `credentials`      | Optional callable for per-run `tools/call` HTTP headers: `->(manifest:, matched_tags:, context:) { Hash or nil }`. Raises `Riffer::ArgumentError` unless `nil` or it responds to `#call`. |
-| `discovery_runner` | `Riffer::Runner` instance for tool discovery (default `Runner::Sequential.new`). Raises `Riffer::ArgumentError` for anything that isn't a `Riffer::Runner` instance.                      |
-
-```ruby
-Riffer.configure do |config|
-  config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
-    {"Authorization" => "Bearer #{token_for(context)}"}
-  end
-end
-```
-
-See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
-
 ### Evals (deprecated)
 
 `config.evals` is deprecated and will move out of riffer into the `riffer-evals` gem along with [evals](EVALS.md). Reading it reports a [deprecation](#deprecations).

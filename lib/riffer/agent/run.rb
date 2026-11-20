@@ -256,7 +256,7 @@ module Riffer::Agent::Run
     agent.provider.generate_text(
       messages: agent.session.messages,
       model: agent.model_name,
-      tools: effective_tools(agent),
+      tools: agent.tools,
       **merged_model_options(agent, tags),
     )
   end
@@ -267,7 +267,7 @@ module Riffer::Agent::Run
     agent.provider.stream_text(
       messages: agent.session.messages,
       model: agent.model_name,
-      tools: effective_tools(agent),
+      tools: agent.tools,
       **merged_model_options(agent, tags),
     )
   end
@@ -287,13 +287,11 @@ module Riffer::Agent::Run
 
     dispatched = agent.tool_runtime.execute(
       callable,
-      tools: effective_tools(agent) + loaded,
+      tools: agent.tools + loaded,
       context: agent.context,
       assistant_message: assistant_message,
       tags: tags,
     ).to_h { |tool_call, result| [tool_call, reject_invalid_load(agent, result)] }
-
-    inject_discovered_tools(agent, dispatched)
 
     results = dispatched.merge(refused.to_h { |tool_call| [tool_call, tool_not_loaded(tool_call)] })
     tool_calls.each do |tool_call|
@@ -343,17 +341,6 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
-  def inject_discovered_tools(agent, results)
-    to_inject = results.values.flat_map do |result|
-      result.is_a?(Riffer::Mcp::SearchTool::Result) ? result.discovered_tools : [] #: Array[singleton(Riffer::Tool)]
-    end
-    return if to_inject.empty?
-
-    agent.context.discover_tools(to_inject)
-  end
-
-  #--
   #: (Riffer::Agent, ?Hash[String, String]) -> void
   def execute_pending_tool_calls(agent, tags = {})
     assistant_message, pending = agent.session.pending_tool_calls
@@ -397,13 +384,6 @@ module Riffer::Agent::Run
     return unless message
 
     agent.structured_output&.parse_and_validate(message.content)
-  end
-
-  #--
-  #: (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
-  def effective_tools(agent)
-    discovered = agent.context.discovered_tools || []
-    discovered.empty? ? agent.tools : agent.tools + discovered
   end
 
   #--
