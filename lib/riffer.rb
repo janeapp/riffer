@@ -39,6 +39,33 @@ module Riffer
     attr_reader :body #: String? # @dynamic body
 
     #--
+    #: (Integer) -> singleton(Riffer::APIError)
+    def self.for_status(status)
+      case status
+      when 429 then RateLimitError
+      when 529 then OverloadedError
+      when 401, 403 then AuthenticationError
+      when 400..499 then InvalidRequestError
+      when 500..599 then ServerError
+      else APIError
+      end
+    end
+
+    # +type+ is the +error.type+ of a Messages API stream +error+ event.
+    #--
+    #: (String?) -> singleton(Riffer::APIError)
+    def self.for_stream_error_type(type)
+      case type
+      when "rate_limit_error" then RateLimitError
+      when "overloaded_error" then OverloadedError
+      when "api_error", "timeout_error" then ServerError
+      when "authentication_error", "permission_error" then AuthenticationError
+      when "invalid_request_error", "not_found_error", "request_too_large" then InvalidRequestError
+      else APIError
+      end
+    end
+
+    #--
     #: (?String?, ?status: Integer?, ?body: String?) -> void
     def initialize(message = nil, status: nil, body: nil)
       super(message)
@@ -46,6 +73,16 @@ module Riffer
       @body = body
     end
   end
+
+  class RateLimitError < APIError; end
+
+  class OverloadedError < APIError; end
+
+  class ServerError < APIError; end
+
+  class AuthenticationError < APIError; end
+
+  class InvalidRequestError < APIError; end
 
   # Rescue it in the tool to clean up; otherwise it becomes a
   # +:timeout_error+ response.

@@ -29,7 +29,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   # : (tools: Array[singleton(Riffer::Tool)]) -> void
   def initialize: (tools: Array[singleton(Riffer::Tool)]) -> void
 
-  # Raises Riffer::APIError on a stream +error+ event.
+  # Raises a Riffer::APIError subclass picked by +error.type+ on a stream +error+ event.
   # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def handle: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void

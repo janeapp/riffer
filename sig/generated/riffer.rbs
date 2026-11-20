@@ -20,8 +20,32 @@ module Riffer
     attr_reader body: String?
 
     # --
+    # : (Integer) -> singleton(Riffer::APIError)
+    def self.for_status: (Integer) -> singleton(Riffer::APIError)
+
+    # +type+ is the +error.type+ of a Messages API stream +error+ event.
+    # --
+    # : (String?) -> singleton(Riffer::APIError)
+    def self.for_stream_error_type: (String?) -> singleton(Riffer::APIError)
+
+    # --
     # : (?String?, ?status: Integer?, ?body: String?) -> void
     def initialize: (?String?, ?status: Integer?, ?body: String?) -> void
+  end
+
+  class RateLimitError < APIError
+  end
+
+  class OverloadedError < APIError
+  end
+
+  class ServerError < APIError
+  end
+
+  class AuthenticationError < APIError
+  end
+
+  class InvalidRequestError < APIError
   end
 
   # Rescue it in the tool to clean up; otherwise it becomes a

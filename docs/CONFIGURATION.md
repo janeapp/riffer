@@ -130,7 +130,17 @@ Streaming is tested with the default `net_http` adapter.
 
 #### Errors
 
-- A non-success status raises `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream) and `body` the raw response text.
+- A non-success status raises a `Riffer::APIError` (a `Riffer::Error`). `status` holds the HTTP status (`nil` for an error event inside a stream) and `body` the raw response text.
+- The error's class follows the HTTP status, or the `error.type` of an Anthropic stream error event. Every class below is a `Riffer::APIError`, so `rescue Riffer::APIError` still catches them all. Any other status or type raises a bare `Riffer::APIError`.
+
+  | Class                         | HTTP status                        | Stream `error.type`                                             |
+  | ----------------------------- | ---------------------------------- | --------------------------------------------------------------- |
+  | `Riffer::RateLimitError`      | 429                                | `rate_limit_error`                                              |
+  | `Riffer::OverloadedError`     | 529                                | `overloaded_error`                                              |
+  | `Riffer::ServerError`         | any other 5xx                      | `api_error`, `timeout_error`                                    |
+  | `Riffer::AuthenticationError` | 401, 403                           | `authentication_error`, `permission_error`                      |
+  | `Riffer::InvalidRequestError` | any other 4xx (e.g. 400, 404, 422) | `invalid_request_error`, `not_found_error`, `request_too_large` |
+
 - Transport failures are raised as Faraday's own errors, such as `Faraday::TimeoutError` and `Faraday::ConnectionFailed` (both `Faraday::Error`s).
 
 ### MCP (deprecated)

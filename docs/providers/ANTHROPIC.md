@@ -36,7 +36,7 @@ end
 | `headers`    | `{}`                                   | Sent on every request; replaces riffer's headers of the same name |
 | `connection` | Faraday defaults, 10s open / 600s read | Your own `Faraday::Connection`; see [Connections][connections]    |
 
-Timeouts, retries, proxies, beta headers and errors are covered in [Configuration → Connections][connections]. An API error becomes a `Riffer::APIError` whose message carries the Anthropic error type, e.g. `Anthropic API error (401): authentication_error: Invalid bearer token`. No requests are retried unless your connection adds retries.
+Timeouts, retries, proxies, beta headers and errors are covered in [Configuration → Connections][connections]. An API error becomes a `Riffer::APIError` subclass picked by status, whose message carries the Anthropic error type, e.g. a `Riffer::AuthenticationError` with `Anthropic API error (401): authentication_error: Invalid bearer token`. No requests are retried unless your connection adds retries.
 
 The `anthropic-version` header is pinned to `2026-10-21`. To send another version, pass it in `headers:`:
 

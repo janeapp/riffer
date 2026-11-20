@@ -179,6 +179,39 @@ describe Riffer::HTTP::Client do
 
       expect(error.message).must_equal "Example API error (400): invalid: no"
     end
+
+    {
+      429 => Riffer::RateLimitError,
+      529 => Riffer::OverloadedError,
+      500 => Riffer::ServerError,
+      503 => Riffer::ServerError,
+      401 => Riffer::AuthenticationError,
+      403 => Riffer::AuthenticationError,
+      400 => Riffer::InvalidRequestError,
+      404 => Riffer::InvalidRequestError,
+      413 => Riffer::InvalidRequestError,
+      422 => Riffer::InvalidRequestError,
+      409 => Riffer::InvalidRequestError,
+    }.each do |status, error_class|
+      it "raises #{error_class} for a #{status}" do
+        body = '{"error":{"message":"failed"}}'
+        stub_request(:post, url).to_return(status: status, body: body)
+        error = expect { client.post("v1/messages", {}) }.must_raise error_class
+
+        expect(error.class).must_equal error_class
+        expect(error).must_be_kind_of Riffer::APIError
+        expect([error.status, error.body]).must_equal [status, body]
+        expect(error.message).must_equal "Example API error (#{status}): failed"
+      end
+    end
+
+    it "raises a bare Riffer::APIError for an unknown status" do
+      stub_request(:post, url).to_return(status: 302, body: "Found")
+      error = expect { client.post("v1/messages", {}) }.must_raise Riffer::APIError
+
+      expect(error.class).must_equal Riffer::APIError
+      expect(error.status).must_equal 302
+    end
   end
 
   describe "#post_stream" do

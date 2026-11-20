@@ -200,12 +200,40 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream do
     end
   end
 
-  it "raises Riffer::APIError on an error event" do
-    event = { type: "error", error: { type: "overloaded_error", message: "Overloaded" } }
+  {
+    "rate_limit_error" => Riffer::RateLimitError,
+    "overloaded_error" => Riffer::OverloadedError,
+    "api_error" => Riffer::ServerError,
+    "timeout_error" => Riffer::ServerError,
+    "authentication_error" => Riffer::AuthenticationError,
+    "permission_error" => Riffer::AuthenticationError,
+    "invalid_request_error" => Riffer::InvalidRequestError,
+    "not_found_error" => Riffer::InvalidRequestError,
+    "request_too_large" => Riffer::InvalidRequestError,
+  }.each do |type, error_class|
+    it "raises #{error_class} on a #{type} error event" do
+      event = { type: "error", error: { type: type, message: "failed" } }
+      error = expect { stream.handle(event, []) }.must_raise error_class
+
+      expect(error.class).must_equal error_class
+      expect(error).must_be_kind_of Riffer::APIError
+      expect([error.status, error.body]).must_equal [nil, event.to_json]
+      expect(error.message).must_equal "Anthropic stream error (#{type}): failed"
+    end
+  end
+
+  it "raises a bare Riffer::APIError on an error event with an unknown type" do
+    event = { type: "error", error: { type: "brand_new_error", message: "failed" } }
     error = expect { stream.handle(event, []) }.must_raise Riffer::APIError
 
-    expect(error.message).must_equal "Anthropic stream error (overloaded_error): Overloaded"
-    expect([error.status, error.body]).must_equal [nil, event.to_json]
+    expect(error.class).must_equal Riffer::APIError
+  end
+
+  it "raises a bare Riffer::APIError on an error event with no type" do
+    event = { type: "error", error: { message: "failed" } }
+    error = expect { stream.handle(event, []) }.must_raise Riffer::APIError
+
+    expect(error.class).must_equal Riffer::APIError
   end
 
   it "ignores ping events" do

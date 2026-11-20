@@ -58,7 +58,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
     @completed = false
   end
 
-  # Raises Riffer::APIError on a stream +error+ event.
+  # Raises a Riffer::APIError subclass picked by +error.type+ on a stream +error+ event.
   #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def handle(event, yielder)
@@ -185,7 +185,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI::Stream
   #: (Hash[Symbol, untyped]) -> void
   def raise_stream_error(event)
     error = event[:error] || {}
-    raise Riffer::APIError.new("Anthropic stream error (#{error[:type]}): #{error[:message]}", body: event.to_json)
+    message = "Anthropic stream error (#{error[:type]}): #{error[:message]}"
+    raise Riffer::APIError.for_stream_error_type(error[:type]).new(message, body: event.to_json)
   end
 
   # A response cut off by max_tokens can end a block mid-input, leaving JSON

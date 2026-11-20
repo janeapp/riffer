@@ -22,7 +22,7 @@ class Riffer::HTTP::Client
     )
   end
 
-  # Raises Riffer::APIError on a non-success status.
+  # Raises a Riffer::APIError subclass picked by status on a non-success status.
   #--
   #: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def post(path, body)
@@ -31,7 +31,8 @@ class Riffer::HTTP::Client
     JSON.parse(response.body, symbolize_names: true)
   end
 
-  # Raises Riffer::APIError on a non-success status; the error body is never yielded.
+  # Raises a Riffer::APIError subclass picked by status on a non-success status;
+  # the error body is never yielded.
   #--
   #: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
   def post_stream(path, body, &)
@@ -136,6 +137,6 @@ class Riffer::HTTP::Client
     fields = parsed.is_a?(Hash) ? parsed : {} #: Hash[Symbol, untyped]
 
     message = "#{error_label} API error (#{status}): #{error_message(fields, raw)}"
-    raise Riffer::APIError.new(message, status: status, body: raw)
+    raise Riffer::APIError.for_status(status).new(message, status: status, body: raw)
   end
 end
