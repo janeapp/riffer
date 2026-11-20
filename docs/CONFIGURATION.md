@@ -294,12 +294,12 @@ Riffer.configure do |config|
 end
 ```
 
-| Value             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `:warn` (default) | Prints the report to stderr with `Kernel.warn`, once per deprecation per calling line.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `:raise`          | Raises `Riffer::DeprecationError` on every call, so a test suite fails on each test that makes one. See [Testing — Deprecations](TESTING.md#deprecations).                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `:silence`        | Reports nothing.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| A callable        | Called with a `Riffer::Deprecation::Event`, which has `id`, `message` and `location` (`"path:line"`); `to_s` is the report. By default it is called once per deprecation per calling line, and its first call in a process is followed by a `deprecation_callable_once_per_line` event (with no `location`) asking you to opt in. With [`config.future.deprecation_callable_every_report`](#future-flags) it is called on every report, like `:raise`; a callable that wants once-per-line reporting can dedupe on `event.id` and `event.location` itself. |
+| Value             | Description                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:warn` (default) | Prints the report to stderr with `Kernel.warn`, once per deprecation per calling line.                                                                                |
+| `:raise`          | Raises `Riffer::DeprecationError` on every call, so a test suite fails on each test that makes one. See [Testing — Deprecations](TESTING.md#deprecations).            |
+| `:silence`        | Reports nothing.                                                                                                                                                      |
+| A callable        | Called with a `Riffer::Deprecation::Event` once per deprecation per calling line. The event has `id`, `message` and `location` (`"path:line"`); `to_s` is the report. |
 
 Any other value raises `Riffer::ArgumentError`.
 
@@ -332,9 +332,9 @@ A flag goes through three stages:
 2. **Default.** A [breaking release](STABILITY.md#breaking-releases) makes the new behaviour the default. The flag always reads as on, and setting it reports a [deprecation](#deprecations) saying it's no longer needed and can be removed.
 3. **Removed.** A release later the flag is gone, and setting it raises `NoMethodError`.
 
-| Flag                                | Stage  | Description                                                                                                               |
-| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `deprecation_callable_every_report` | Opt-in | Calls a [`config.deprecations` callable](#deprecations) on every report instead of once per deprecation per calling line. |
+| Flag     | Stage | Description                     |
+| -------- | ----- | ------------------------------- |
+| _(none)_ |       | Riffer has no future flags yet. |
 
 ### Message ID Strategy
 

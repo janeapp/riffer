@@ -11,10 +11,7 @@ module Riffer::Deprecation
 
   LIB_DIR = "#{File.dirname(__FILE__, 2)}/".freeze #: String
   ALLOWED_KEY = :riffer_deprecations_allowed #: Symbol
-  ONCE_PER_LINE_MESSAGE = "Calling config.deprecations callables once per deprecation per calling line is " \
-                          "deprecated; a future version will call them on every report. Set " \
-                          "config.future.deprecation_callable_every_report = true to opt in now." #: String
-  private_constant :LIB_DIR, :ALLOWED_KEY, :ONCE_PER_LINE_MESSAGE
+  private_constant :LIB_DIR, :ALLOWED_KEY
 
   @mutex = Mutex.new
   @reported = Set.new
@@ -22,7 +19,7 @@ module Riffer::Deprecation
   #--
   #: (id: Symbol, message: String) -> void
   def warn(id:, message:)
-    return if Fiber[ALLOWED_KEY] || silenced?(id)
+    return if Fiber[ALLOWED_KEY] || Riffer.config.silenced_deprecations.include?(id)
 
     frame = caller_locations&.find { |location| !location.path.to_s.start_with?(LIB_DIR) }
     location = frame && "#{frame.path}:#{frame.lineno}"
@@ -35,7 +32,7 @@ module Riffer::Deprecation
     when :warn then Kernel.warn(event.to_s) if first_report?(event)
     else
       callable = handler #: ^(Event) -> void
-      call_handler(callable, event)
+      callable.call(event) if first_report?(event)
     end
   end
 
@@ -54,24 +51,6 @@ module Riffer::Deprecation
   end
 
   private
-
-  #--
-  #: (Symbol) -> bool
-  def silenced?(id)
-    Riffer.config.silenced_deprecations.include?(id)
-  end
-
-  #--
-  #: (^(Event) -> void, Event) -> void
-  def call_handler(callable, event)
-    if Riffer.config.future.enabled?(:deprecation_callable_every_report)
-      callable.call(event)
-    elsif first_report?(event)
-      callable.call(event)
-      notice = Event.new(id: :deprecation_callable_once_per_line, message: ONCE_PER_LINE_MESSAGE, location: nil)
-      callable.call(notice) if !silenced?(notice.id) && first_report?(notice)
-    end
-  end
 
   #--
   #: (Event) -> bool

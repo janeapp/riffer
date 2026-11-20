@@ -141,6 +141,8 @@ Riffer.config.deprecations = :raise
 Riffer.config.silenced_deprecations = %i[param_class_types]
 ```
 
+Prefer this to a `config.deprecations` callable that raises. A callable is called once per deprecation per calling line, so it fails only the first test to reach that line, and which test that is depends on run order.
+
 ## When a stub leaks
 
 Stubbing an identifier that is already taken raises `Riffer::DuplicateIdentifierError`:

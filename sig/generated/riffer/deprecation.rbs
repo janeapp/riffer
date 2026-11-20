@@ -11,8 +11,6 @@ module Riffer::Deprecation
 
   ALLOWED_KEY: Symbol
 
-  ONCE_PER_LINE_MESSAGE: String
-
   # --
   # : (id: Symbol, message: String) -> void
   def warn: (id: Symbol, message: String) -> void
@@ -22,14 +20,6 @@ module Riffer::Deprecation
   def allow: [T] () { () -> T } -> T
 
   private
-
-  # --
-  # : (Symbol) -> bool
-  def silenced?: (Symbol) -> bool
-
-  # --
-  # : (^(Event) -> void, Event) -> void
-  def call_handler: (^(Event) -> void, Event) -> void
 
   # --
   # : (Event) -> bool

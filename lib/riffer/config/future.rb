@@ -2,9 +2,10 @@
 # rbs_inline: enabled
 
 class Riffer::Config::Future
-  FLAGS = {
-    deprecation_callable_every_report: { default: false },
-  }.freeze #: Hash[Symbol, { default: bool }]
+  # Steep can't type an empty literal; drop the ignore once FLAGS has an entry.
+  # steep:ignore:start
+  FLAGS = {}.freeze #: Hash[Symbol, { default: bool }]
+  # steep:ignore:end
 
   # @rbs @flags: Hash[Symbol, { default: bool }]
   # @rbs @enabled: Hash[Symbol, bool]
