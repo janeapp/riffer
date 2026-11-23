@@ -144,7 +144,7 @@ Like `uses_tools`, `deferred_tools` takes an Array or a lambda that receives the
 deferred_tools ->(context) { context[:billing] ? [ListEvents, SendInvoice] : [ListEvents] }
 ```
 
-A tool can't be both: one that's in `uses_tools` (or comes from skills or MCP) and in `deferred_tools` raises `Riffer::ArgumentError` when the agent is built. The resolved list is `agent.deferred_tools`, and tools read it at call time as `context.deferred_tools`.
+A tool can't be both: one that's in `uses_tools` (or comes from skills) and in `deferred_tools` raises `Riffer::ArgumentError` when the agent is built. The resolved list is `agent.deferred_tools`, and tools read it at call time as `context.deferred_tools`.
 
 Any tool loads deferred tools by returning `load_tools(...)`; see [Tools → Loading deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are [serialized](SERIALIZATION.md) and restored. A call to a deferred tool that hasn't been loaded is refused.
 
@@ -178,10 +178,6 @@ With `strategy: :gateway`, the provider never loads deferred tools natively, eve
 | `:gateway`          | Loaded tools are called through one extra tool, on every provider; experimental, may change |
 
 Riffer does not pick a strategy per provider — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a lambda: `deferred_tools ->(context) { [ListEvents] }, strategy: :gateway`.
-
-### use_mcp (deprecated)
-
-Loads tools from registered [MCP](MCP.md) servers by tag. MCP client support is deprecated and will be removed in a future release; each `use_mcp` line reports a [deprecation](CONFIGURATION.md#deprecations). See [MCP → Moving off MCP](MCP.md#moving-off-mcp).
 
 ### model_options
 

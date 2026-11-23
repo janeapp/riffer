@@ -13,7 +13,6 @@ updates:
           - anthropic
           - openai
           - aws-sdk-bedrockruntime
-          - mcp
           - faraday
           - async
           - io-event

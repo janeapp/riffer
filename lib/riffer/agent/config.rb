@@ -21,7 +21,6 @@ class Riffer::Agent::Config
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
   attr_accessor :deferred_tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic deferred_tools_config, deferred_tools_config=
   attr_reader :deferred_tools_strategy #: Symbol # @dynamic deferred_tools_strategy
-  attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
   attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
   attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]] # @dynamic guardrails
 
@@ -38,7 +37,6 @@ class Riffer::Agent::Config
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?deferred_tools_strategy: Symbol,
-  #    ?mcp_configs: Array[Hash[Symbol, untyped]],
   #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #    ?skills_config: Riffer::Skills::Config?,
   #    ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
@@ -55,7 +53,6 @@ class Riffer::Agent::Config
     tools_config: nil,
     deferred_tools_config: nil,
     deferred_tools_strategy: :native,
-    mcp_configs: [],
     tool_runtime: nil,
     skills_config: nil,
     guardrails: { before: [], after: [] }
@@ -64,7 +61,6 @@ class Riffer::Agent::Config
     @max_steps = max_steps
     @tools_config = tools_config
     @deferred_tools_config = deferred_tools_config
-    @mcp_configs = mcp_configs
     @skills_config = skills_config
     @guardrails = guardrails
     self.identifier = identifier
@@ -162,14 +158,6 @@ class Riffer::Agent::Config
   end
 
   #--
-  #: (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
-  def add_mcp(tag, progressive: true)
-    raise Riffer::ArgumentError, "progressive must be a boolean" unless [true, false].include?(progressive)
-
-    @mcp_configs << { tags: [tag.to_sym], progressive: progressive }
-  end
-
-  #--
   #: (Symbol, klass: singleton(Riffer::Guardrail), ?options: Hash[Symbol, untyped]) -> void
   def add_guardrail(phase, klass:, options: {})
     valid_phases = [*Riffer::Guardrails::PHASES, :around]
@@ -204,9 +192,8 @@ class Riffer::Agent::Config
   def initialize_copy(source)
     super
     # A shallow copy would share collections, letting a declaration on either
-    # config reach the other; entries nest (mcp +:tags+, guardrail +:options+).
+    # config reach the other; entries nest (guardrail +:options+).
     @model_options = Riffer::Helpers::DeepDup.call(source.model_options)
-    @mcp_configs = Riffer::Helpers::DeepDup.call(source.mcp_configs)
     @guardrails = Riffer::Helpers::DeepDup.call(source.guardrails)
     @tools_config = Riffer::Helpers::DeepDup.call(source.tools_config)
     @deferred_tools_config = Riffer::Helpers::DeepDup.call(source.deferred_tools_config)

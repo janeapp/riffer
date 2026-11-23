@@ -3,10 +3,6 @@
 require "test_helper"
 
 describe Riffer::Agent do
-  def stub_mcp_agent(...)
-    allow_deprecations { stub_agent(...) }
-  end
-
   let(:agent_class) do
     stub_agent do
       identifier "test-agent"
@@ -326,17 +322,6 @@ describe Riffer::Agent do
       end
     end
 
-    it "does not let a subclass append to the parent's mcp registrations" do
-      parent = stub_mcp_agent("McpParentAgent") do
-        model "mock/riffer-1"
-        use_mcp :parent_tag
-      end
-      child = stub_mcp_agent("McpChildAgent", base: parent) { use_mcp :child_tag }
-
-      expect(child.mcp_configs.length).must_equal 2
-      expect(parent.mcp_configs.length).must_equal 1
-    end
-
     it "does not let a subclass append to the parent's guardrails" do
       parent = stub_agent("GuardrailParentAgent") { model "mock/riffer-1" }
       guardrail_class = Class.new(Riffer::Guardrail)
@@ -409,19 +394,6 @@ describe Riffer::Agent do
       expect(parent_nested.parameters.map(&:name)).must_equal %i[id]
     end
 
-    it "does not let a subclass reach the tags inside a parent's mcp entry" do
-      parent = stub_mcp_agent("McpTagsParentAgent") do
-        model "mock/riffer-1"
-        use_mcp :shared_tag
-      end
-      child = stub_agent("McpTagsChildAgent", base: parent)
-
-      child.config.mcp_configs.first[:tags] << :extra_tag
-
-      expect(child.config.mcp_configs.first[:tags]).must_equal %i[shared_tag extra_tag]
-      expect(parent.config.mcp_configs.first[:tags]).must_equal %i[shared_tag]
-    end
-
     it "does not let a subclass reach the options inside a parent's guardrail entry" do
       guardrail_class = Class.new(Riffer::Guardrail)
       parent = stub_agent("GuardrailOptionsParentAgent") do
@@ -465,7 +437,7 @@ describe Riffer::Agent do
     it "accounts for every field on Config" do
       known = %i[
         identifier model instructions model_options structured_output structured_output_strategy max_steps reasoning
-        tools_config deferred_tools_config deferred_tools_strategy mcp_configs tool_runtime skills_config guardrails
+        tools_config deferred_tools_config deferred_tools_strategy tool_runtime skills_config guardrails
       ]
 
       declared = Riffer::Agent::Config.instance_method(:initialize).parameters.map(&:last)
@@ -1126,323 +1098,6 @@ describe Riffer::Agent do
     end
   end
 
-  describe ".use_mcp / .mcp_configs" do
-    after { clear_mcp_registry! }
-
-    describe "deprecation" do
-      after { reset_riffer_config! }
-
-      it "raises the use_mcp deprecation in :raise mode" do
-        error = expect { stub_agent("Agent") { use_mcp :github } }.must_raise Riffer::DeprecationError
-
-        expect(error.message).must_match(/use_mcp is deprecated/)
-      end
-
-      it "reports the agent class body line as the location" do
-        events = []
-        Riffer.config.deprecations = ->(event) { events << event }
-        line = __LINE__ + 2
-        stub_agent("Agent") do
-          use_mcp :github
-        end
-
-        expect(events.map { |event| [event.id, event.location] }).must_equal [[:use_mcp, "#{__FILE__}:#{line}"]]
-      end
-    end
-
-    it "accumulates mcp_configs with progressive flag per call" do
-      klass = stub_mcp_agent("Agent") do
-        use_mcp :github
-        use_mcp :jira, progressive: false
-      end
-
-      expect(klass.mcp_configs).must_equal [
-        { tags: [:github], progressive: true },
-        { tags: [:jira], progressive: false },
-      ]
-    end
-  end
-
-  describe "#tools" do
-    after { clear_mcp_registry! }
-
-    let(:fake_tool_class) do
-      Class.new(Riffer::Mcp::Tool) do
-        identifier "srv__mcp_tool"
-        description "Fake MCP tool"
-        @mcp_server_tool_name = "mcp_tool"
-      end
-    end
-
-    def inject_ready_registration(name:, tags:, tools:)
-      manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com", discovery_headers: {})
-      reg = Riffer::Mcp::Registration.allocate
-      reg.instance_variable_set(:@manifest, manifest)
-      reg.instance_variable_set(:@tools, tools)
-      reg.instance_variable_set(:@mutex, Mutex.new)
-      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
-      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
-      reg
-    end
-
-    def resolved_tools_for(klass)
-      klass.new.tools
-    end
-
-    def resolved_tools_and_context_for(klass)
-      agent = klass.new
-      [agent.tools, agent.context]
-    end
-
-    it "merges MCP tools with uses_tools tools" do
-      static_tool = stub_tool("StaticTool") do
-        description "Static tool"
-      end
-      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
-
-      klass = stub_mcp_agent("Agent") do
-        model "mock/riffer-1"
-        uses_tools [static_tool]
-        use_mcp :srv, progressive: false
-      end
-
-      tools = resolved_tools_for(klass)
-
-      expect(tools).must_include static_tool
-      expect(tools).must_include fake_tool_class
-    end
-
-    it "raises ArgumentError when tools share the same name" do
-      static = stub_tool do
-        identifier "srv__mcp_tool"
-        description "Static tool"
-      end
-      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
-
-      klass = stub_mcp_agent("Agent") do
-        model "mock/riffer-1"
-        uses_tools [static]
-        use_mcp :srv, progressive: false
-      end
-
-      err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
-      expect(err.message).must_match(/Duplicate tool names:.*srv__mcp_tool/)
-    end
-
-    it "returns MCP tools even when uses_tools is not set" do
-      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
-
-      klass = stub_mcp_agent("Agent") do
-        model "mock/riffer-1"
-        use_mcp :srv, progressive: false
-      end
-
-      expect(resolved_tools_for(klass)).must_include fake_tool_class
-    end
-
-    it "omits MCP tools when credentials proc returns nil at resolve time" do
-      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
-      prev = Riffer.config.mcp.credentials
-      configure_mcp_credentials(->(manifest:, matched_tags:, context:) {})
-
-      klass = stub_mcp_agent("Agent") do
-        model "mock/riffer-1"
-        use_mcp :srv, progressive: false
-      end
-
-      expect(resolved_tools_for(klass)).must_be_empty
-    ensure
-      configure_mcp_credentials(prev)
-    end
-
-    it "uses AuthenticatedTool wrappers when credentials proc is set" do
-      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
-      prev = Riffer.config.mcp.credentials
-      configure_mcp_credentials(->(manifest:, matched_tags:, context:) { { "Authorization" => "Bearer x" } })
-
-      klass = stub_mcp_agent("Agent") do
-        model "mock/riffer-1"
-        use_mcp :srv, progressive: false
-      end
-
-      tools = resolved_tools_for(klass)
-
-      expect(tools.size).must_equal 1
-      expect(tools.first).wont_equal fake_tool_class
-      expect(tools.first.name).must_equal fake_tool_class.name
-    ensure
-      configure_mcp_credentials(prev)
-    end
-
-    describe "progressive mode" do
-      let(:fake_tool_a) do
-        Class.new(Riffer::Mcp::Tool) do
-          identifier "srv__tool_a"
-          description "Tool A"
-          @mcp_server_tool_name = "tool_a"
-        end
-      end
-
-      let(:fake_tool_b) do
-        Class.new(Riffer::Mcp::Tool) do
-          identifier "srv__tool_b"
-          description "Tool B"
-          @mcp_server_tool_name = "tool_b"
-        end
-      end
-
-      it "returns mcp_search instead of individual tool classes" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a, fake_tool_b])
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :srv, progressive: true
-        end
-
-        tools = resolved_tools_for(klass)
-        names = tools.map(&:name)
-
-        expect(tools.size).must_equal 1
-        expect(names).must_include "mcp_search"
-      end
-
-      it "search tool returns matching tools as inject_tools" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :srv, progressive: true
-        end
-
-        tools, ctx = resolved_tools_and_context_for(klass)
-        st = tools.find { |t| t.name == "mcp_search" }
-        resp = st.new.call(context: ctx, query: "tool_a")
-
-        expect(resp.success?).must_equal true
-        expect(resp.content).must_include "srv__tool_a"
-        expect(resp.discovered_tools).wont_be_empty
-        expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
-      end
-
-      it "raises when a deferred tool shares a name with a progressive MCP tool" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
-        deferred = stub_tool("DeferredToolA") do
-          identifier "srv__tool_a"
-          description "Deferred tool A"
-        end
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :srv, progressive: true
-          deferred_tools [deferred]
-        end
-
-        err = expect { allow_deprecations { klass.new } }.must_raise Riffer::ArgumentError
-        expect(err.message).must_equal "Duplicate tool names: srv__tool_a"
-      end
-
-      it "mixes regular and progressive use_mcp in the same agent" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
-        inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :other, progressive: false
-          use_mcp :srv, progressive: true
-        end
-
-        tools, ctx = resolved_tools_and_context_for(klass)
-        names = tools.map(&:name)
-
-        expect(names).must_include "srv__tool_b"
-        expect(names).must_include "mcp_search"
-        expect(names).wont_include "mcp_call"
-
-        st = tools.find { |t| t.name == "mcp_search" }
-        resp = st.new.call(context: ctx, query: "tool_a")
-
-        expect(resp.content).must_include "srv__tool_a"
-        expect(resp.content).wont_include "srv__tool_b"
-      end
-
-      it "accumulates tools from multiple progressive registrations into one mcp_search" do
-        inject_ready_registration(name: "srv1", tags: [:g1], tools: [fake_tool_a])
-        inject_ready_registration(name: "srv2", tags: [:g2], tools: [fake_tool_b])
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :g1, progressive: true
-          use_mcp :g2, progressive: true
-        end
-
-        tools, ctx = resolved_tools_and_context_for(klass)
-
-        expect(tools.count { |t| t.name == "mcp_search" }).must_equal 1
-        expect(tools.map(&:name)).wont_include "mcp_call"
-
-        resp = tools.find { |t| t.name == "mcp_search" }.new.call(context: ctx, query: "tool")
-
-        expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
-        expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_b"
-      end
-
-      it "omits progressive tools when credentials proc returns nil" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
-        prev = Riffer.config.mcp.credentials
-        configure_mcp_credentials(->(**) {})
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :srv, progressive: true
-        end
-
-        expect(resolved_tools_for(klass)).must_be_empty
-      ensure
-        configure_mcp_credentials(prev)
-      end
-
-      it "keeps regular tools but omits meta-tools when only progressive credentials return nil" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
-        inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
-        prev = Riffer.config.mcp.credentials
-        configure_mcp_credentials(lambda { |matched_tags:, **|
-          matched_tags.include?(:srv) ? nil : { token: "tok" }
-        })
-
-        klass = stub_mcp_agent("Agent") do
-          model "mock/riffer-1"
-          use_mcp :other, progressive: false
-          use_mcp :srv, progressive: true
-        end
-
-        tools = resolved_tools_for(klass)
-        names = tools.map(&:name)
-
-        expect(names).wont_include "mcp_search"
-        expect(tools).wont_be_empty
-      ensure
-        configure_mcp_credentials(prev)
-      end
-
-      it "mcp_configs stores the progressive flag" do
-        klass = stub_mcp_agent("Agent") do
-          use_mcp :foo
-          use_mcp :bar, progressive: false
-        end
-        configs = klass.mcp_configs
-
-        expect(configs.first[:progressive]).must_equal true
-        expect(configs.last[:progressive]).must_equal false
-      end
-
-      it "defaults progressive to true when not specified" do
-        klass = stub_mcp_agent("Agent") { use_mcp :foo }
-
-        expect(klass.mcp_configs.first[:progressive]).must_equal true
-      end
-    end
-  end
-
   describe "#tools validation" do
     it "raises when a tool is missing a description" do
       bad_tool = stub_tool("BadTool")
@@ -1456,26 +1111,32 @@ describe Riffer::Agent do
       expect(err.message).must_match(/must define a description/)
     end
 
-    it "raises when an MCP tool is missing a description" do
-      bad_mcp_tool = stub_tool("BadMcpTool")
+    it "raises when uses_tools lists a tool twice" do
+      tool = stub_tool("Lookup") { description "Looks things up" }
 
-      manifest = Riffer::Mcp::Manifest.new(name: "srv", tags: [:srv], endpoint: "https://x.com", discovery_headers: {})
-      reg = Riffer::Mcp::Registration.allocate
-      reg.instance_variable_set(:@manifest, manifest)
-      reg.instance_variable_set(:@tools, [bad_mcp_tool])
-      reg.instance_variable_set(:@mutex, Mutex.new)
-      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
-      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store["srv"] = reg }
-
-      klass = stub_mcp_agent("Agent") do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
-        use_mcp :srv, progressive: false
+        uses_tools [tool, tool]
       end
 
       err = expect { klass.new }.must_raise Riffer::ArgumentError
-      expect(err.message).must_match(/must define a description/)
-    ensure
-      clear_mcp_registry!
+      expect(err.message).must_equal "Duplicate tool names: lookup"
+    end
+
+    it "gives each agent its own copy of the class's tools" do
+      lookup = stub_tool("Lookup") { description "Looks things up" }
+      search = stub_tool("Search") { description "Searches" }
+
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        uses_tools [lookup]
+      end
+
+      agent = klass.new
+      klass.uses_tools << search
+
+      expect(agent.tools).must_equal [lookup]
+      expect(klass.new.tools).must_equal [lookup, search]
     end
   end
 

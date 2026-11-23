@@ -94,7 +94,7 @@ module Riffer::Registrable
     # Class#subclasses keeps returning superseded generations of a reloaded or
     # stubbed class, so a subclass counts only while its own name still
     # resolves back to it. Anonymous classes are skipped even with an
-    # identifier: the MCP factory and serializer shells synthesize short-lived
+    # identifier: the serializer synthesizes short-lived tool shells as
     # anonymous classes whose registration would flake with GC timing.
     real_name = Riffer::Helpers::Identifier.real_name(subclass)
     return false if real_name.nil?

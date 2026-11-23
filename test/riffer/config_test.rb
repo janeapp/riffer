@@ -8,7 +8,7 @@ describe Riffer::Config do
     it "initializes every section" do
       config = Riffer::Config.new
       sections = %i[
-        amazon_bedrock anthropic azure_openai gemini google_cloud openai openrouter evals mcp skills tracing files
+        amazon_bedrock anthropic azure_openai gemini google_cloud openai openrouter evals skills tracing files
         future
       ]
 
@@ -23,7 +23,6 @@ describe Riffer::Config do
         Riffer::Config::OpenAI,
         Riffer::Config::OpenRouter,
         Riffer::Config::Evals,
-        Riffer::Config::Mcp,
         Riffer::Config::Skills,
         Riffer::Config::Tracing,
         Riffer::Config::Files,
