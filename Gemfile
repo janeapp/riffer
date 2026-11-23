@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "async", "~> 2.46"
-gem "aws-sdk-bedrockruntime", "~> 1.85"
+gem "aws-sdk-bedrockruntime", "~> 1.97"
 gem "dotenv"
 gem "googleauth", "~> 1.17"
 gem "guard"
@@ -12,7 +12,7 @@ gem "guard-shell"
 gem "io-event", "< 1.23"
 gem "irb"
 gem "minitest", "~> 6.0"
-gem "openai", "~> 0.97.0"
+gem "openai", "~> 0.130.0"
 gem "rake", "~> 13.0"
 gem "rbs-inline", "~> 0.12"
 gem "rubocop", require: false
