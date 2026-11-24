@@ -77,7 +77,7 @@ end
 GITHUB_MCP = McpServer.new(name: :github, url: "https://api.githubcopilot.com/mcp/", service_token: ENV.fetch("GITHUB_TOKEN"))
 ```
 
-The service token lists the tools once per process. The tools have no `params`, so the server's own schema goes to the provider and the server validates the arguments. A server tool without a description is described by its name, since riffer requires one. OpenAI, Azure OpenAI and OpenRouter send every tool in strict mode, which rejects a schema unless each object sets `additionalProperties: false` and lists every property as required, and most MCP schemas don't. On those providers, defer the tools with [`strategy: :gateway`](https://riffer.ai/guides/agents/#deferred-tools-strategy-experimental), which never sends their schemas as tools, or rewrite the schema in `parameters_schema`. The name prefix keeps tool names from different servers apart. A result with `isError` goes back to the model as a tool error. A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`, which riffer returns to the model as an `:unhandled_error`.
+The service token lists the tools once per process. The tools have no `params`, so the server's own schema goes to the provider and the server validates the arguments. A server tool without a description is described by its name, since riffer requires one. OpenAI, Azure OpenAI and OpenRouter send every tool in strict mode, which rejects a schema unless each object sets `additionalProperties: false` and lists every property as required, and most MCP schemas don't. On those providers, rewrite the schema in `parameters_schema`. On OpenRouter, deferring the tools also works: it loads them through the [gateway](https://riffer.ai/guides/tools/#the-gateway), which never sends their schemas as tools. The name prefix keeps tool names from different servers apart. A result with `isError` goes back to the model as a tool error. A JSON-RPC error raises `MCP::Client::ServerError` from `call_tool`, which riffer returns to the model as an `:unhandled_error`.
 
 The tools call the server through a client in the agent's context, under the server's name. Connect once per request with the user's own token, in place of the `credentials` callback, and every tool call in the run reuses that session. The connection closes when the block returns:
 
@@ -123,7 +123,7 @@ class ResearchAgent < Riffer::Agent
 end
 ```
 
-An agent without a GitHub connection gets no GitHub tools, which is what a `credentials` callback returning `nil` did. A loaded tool stays loaded for the rest of the conversation, including after the agent is [serialized](https://riffer.ai/guides/serialization/) and restored. To run these tools in a restored agent, pass `from_json` a `tool_resolver:` that returns the real classes, such as `->(descriptor) { (GITHUB_MCP.tools + [FindGithubTools]).find { |tool| tool.name == descriptor[:name] } }`, and the connected client in `context:`. Anthropic, OpenAI and Azure OpenAI load deferred tools natively; on any other provider, pass [`strategy: :gateway`](https://riffer.ai/guides/agents/#deferred-tools-strategy-experimental). Deferred tools are experimental, so this part of the recipe can change in a minor release.
+An agent without a GitHub connection gets no GitHub tools, which is what a `credentials` callback returning `nil` did. A loaded tool stays loaded for the rest of the conversation, including after the agent is [serialized](https://riffer.ai/guides/serialization/) and restored. To run these tools in a restored agent, pass `from_json` a `tool_resolver:` that returns the real classes, such as `->(descriptor) { (GITHUB_MCP.tools + [FindGithubTools]).find { |tool| tool.name == descriptor[:name] } }`, and the connected client in `context:`. Anthropic, OpenAI and Azure OpenAI load deferred tools natively; every other provider loads them through the [gateway](https://riffer.ai/guides/tools/#the-gateway). Deferred tools are experimental, so this part of the recipe can change in a minor release.
 
 ## 0.58.0
 
@@ -153,7 +153,12 @@ end
   "version": 1,
   "models": {
     "anthropic/claude-sonnet-4-6": {
-      "pricing": { "input": 3.0, "output": 15.0, "cache_read": 0.3, "cache_write": 3.75 }
+      "pricing": {
+        "input": 3.0,
+        "output": 15.0,
+        "cache_read": 0.3,
+        "cache_write": 3.75
+      }
     },
     "openai/gpt-5.1": {
       "aliases": ["azure_openai/my-gpt-prod"],
