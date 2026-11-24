@@ -710,7 +710,6 @@ describe Riffer::Providers::Gemini do
         model: "gemini-3.5-flash-lite",
         tools: [loader],
         deferred_tools: [list_events],
-        riffer_deferred_tools_strategy: :gateway,
       }
     end
 

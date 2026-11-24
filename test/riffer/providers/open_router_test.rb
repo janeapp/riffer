@@ -1248,7 +1248,6 @@ describe Riffer::Providers::OpenRouter do
         model: "openai/gpt-5-mini",
         tools: [loader],
         deferred_tools: [list_events],
-        riffer_deferred_tools_strategy: :gateway,
         **options,
       )
     end

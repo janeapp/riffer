@@ -48,8 +48,8 @@ class Riffer::Agent
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
   # --
-  # : (?(Array[singleton(Riffer::Tool)] | Proc)?, ?strategy: Symbol?) -> (Array[singleton(Riffer::Tool)] | Proc)?
-  def self.deferred_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?, ?strategy: Symbol?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+  # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+  def self.deferred_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
   # --
   # : (?(singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)

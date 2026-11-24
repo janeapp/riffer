@@ -148,36 +148,13 @@ A tool can't be both: one that's in `uses_tools` (or comes from skills) and in `
 
 Any tool loads deferred tools by returning `load_tools(...)`; see [Tools → Loading deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are [serialized](SERIALIZATION.md) and restored. A call to a deferred tool that hasn't been loaded is refused.
 
-By default deferred tools load natively, which needs provider support. `anthropic` and `anthropic_vertex` (see [Anthropic → Deferred Tools](providers/ANTHROPIC.md#deferred-tools)), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load them natively, and the [Mock provider](providers/MOCK_PROVIDER.md) does too, for tests. Building an agent with deferred tools on any other provider raises `Riffer::ArgumentError` naming the provider, unless it uses the [gateway strategy](#deferred-tools-strategy-experimental). Riffer doesn't check which models support native loading, so an unsupported model on one of those providers gets the provider's own error.
+How the deferred tools reach the model depends on the provider, and riffer picks it for you. A provider that loads deferred tools natively gets them that way: `anthropic` and `anthropic_vertex` (see [Anthropic → Deferred Tools](providers/ANTHROPIC.md#deferred-tools)), [OpenAI](providers/OPENAI.md#deferred-tools-experimental), [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental), and the [Mock provider](providers/MOCK_PROVIDER.md), for tests. Every other provider, custom ones included, goes through the [gateway](TOOLS.md#the-gateway): each request carries one extra tool, and the model calls a loaded tool through it. On those providers no other tool of the agent can share the gateway's name. Riffer doesn't check which models support native loading, so an unsupported model on a native provider gets the provider's own error.
 
 Nothing tells the model that more tools exist unless you do, in a tool's description or the instructions. If no tool ever returns `load_tools`, the deferred tools can't be reached, and riffer can't detect that.
 
 Deferring a tool hides it from the model; it doesn't restrict it. Any tool can load any deferred tool, so leave a tool out of the agent entirely if the user mustn't reach it.
 
 The feature is **experimental**: it can change in any minor release (see [Stability](STABILITY.md#experimental-features)).
-
-#### Deferred tools strategy (experimental)
-
-By default the provider loads deferred tools itself. For a provider without native loading, or a model that rejects it, opt the agent into the **experimental** gateway strategy:
-
-```ruby
-class Assistant < Riffer::Agent
-  model 'amazon_bedrock/my-model'
-  instructions "If you need a tool you don't have, use find_tools."
-
-  uses_tools [FindTools]
-  deferred_tools [ListEvents, CreateEvent], strategy: :gateway
-end
-```
-
-With `strategy: :gateway`, the provider never loads deferred tools natively, even one that can. Every request carries one extra tool, the gateway, and the model calls a loaded tool through it, so the tool list never changes and a load keeps the prompt cache; see [Tools → The gateway strategy](TOOLS.md#the-gateway-strategy). No other tool of the agent can share the gateway's name.
-
-| Strategy            | Behavior                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------- |
-| `:native` (default) | The provider loads deferred tools itself; raises on a provider without native loading       |
-| `:gateway`          | Loaded tools are called through one extra tool, on every provider; experimental, may change |
-
-Riffer does not pick a strategy per provider — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a lambda: `deferred_tools ->(context) { [ListEvents] }, strategy: :gateway`.
 
 ### model_options
 
@@ -234,7 +211,7 @@ end
 
 The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
 
-If the response is not valid JSON on its own, Riffer recovers a JSON object wrapped in a code fence (```` ```json ````), surrounded by prose (`Here is the data: {...}`), or wrapped in formatting (`**{...}**`). It parses the span from the first `{` to the last `}`, so a reply whose surrounding text contains other braces, or that holds more than one object, is still rejected. When the recovered object validates, `response.content` holds only the extracted JSON text, without the fence or prose; the assistant message in `response.messages` keeps the raw reply. A reply that fails parsing or validation leaves the raw text in `response.content`.
+If the response is not valid JSON on its own, Riffer recovers a JSON object wrapped in a code fence (` ```json `), surrounded by prose (`Here is the data: {...}`), or wrapped in formatting (`**{...}**`). It parses the span from the first `{` to the last `}`, so a reply whose surrounding text contains other braces, or that holds more than one object, is still rejected. When the recovered object validates, `response.content` holds only the extracted JSON text, without the fence or prose; the assistant message in `response.messages` keeps the raw reply. A reply that fails parsing or validation leaves the raw text in `response.content`.
 
 When the response contains no well-formed JSON object or does not satisfy the schema, `response.structured_output` is `nil`, `response.outcome.reason` is `:invalid_structured_output`, and `response.outcome.detail` carries the parse or validation message:
 
@@ -265,10 +242,10 @@ end
 
 With `strategy: :prompted`, the provider never receives its native structured-output field. Instead, an instruction is appended to the end of every user message on every request of the run, after consecutive user messages are merged (it is not stored in `session.messages`, and the system instructions are left untouched). The instruction carries the JSON Schema, an example of the expected shape with placeholder values (`"<string>"`, enum values as `"a | b"`, an `:any_of` field as its first variant, or as `"<integer> | <string>"` when every variant is primitive), and a nudge to reply with the JSON right away unless the request needs a tool. The reply is parsed and validated exactly as above: `response.content` is the reply's JSON text, `response.structured_output` holds the validated object, and a reply that fails parsing or validation ends with `:invalid_structured_output`. Because nothing forces the model to comply, expect more `:invalid_structured_output` outcomes than with the native strategy.
 
-| Strategy            | Behavior                                                        |
-| ------------------- | --------------------------------------------------------------- |
-| `:native` (default) | Schema sent through the provider's structured-output field      |
-| `:prompted`         | Schema appended to each user message; experimental, may change  |
+| Strategy            | Behavior                                                       |
+| ------------------- | -------------------------------------------------------------- |
+| `:native` (default) | Schema sent through the provider's structured-output field     |
+| `:prompted`         | Schema appended to each user message; experimental, may change |
 
 Riffer does not pick a strategy per model — the choice is always yours. The strategy is copied to subclasses and survives [serialization](SERIALIZATION.md). An unknown value raises `Riffer::ArgumentError`. `strategy:` can also be passed with a `Riffer::Params` instance: `structured_output params, strategy: :prompted`.
 

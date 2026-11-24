@@ -175,7 +175,7 @@ end
 
 ## Deferred Tools (experimental)
 
-OpenRouter has no native deferred loading, so an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) on OpenRouter needs the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`; without it, building the agent raises `Riffer::ArgumentError`. Every request then has one extra function in `tools`, the [gateway](../TOOLS.md#the-gateway-strategy), and the model calls a loaded tool through it, so `tools` stays the same and a load keeps the prompt cache. Calls come back under the real tool's name.
+OpenRouter has no native deferred loading, so an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) on OpenRouter goes through the [gateway](../TOOLS.md#the-gateway). Every request has one extra function in `tools`, the gateway, and the model calls a loaded tool through it, so `tools` stays the same and a load keeps the prompt cache. Calls come back under the real tool's name.
 
 The gateway is sent with `strict: true`, like every other tool. Its parameters are two required strings, `name` and `arguments` (the loaded tool's arguments, JSON-encoded), with no additional properties, so the schema is valid in strict mode; riffer checks the arguments against the real tool's `params` when it runs.
 
@@ -205,14 +205,14 @@ end
 
 Each entry in OpenRouter's `reasoning_details` becomes a [`ReasoningPart`](../MESSAGES.md#reasoning) on the assistant message, on both `generate_text` and `stream_text`, with nothing dropped:
 
-| `reasoning_details` field | `ReasoningPart` field                                                                                         |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `reasoning_details` field | `ReasoningPart` field                                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `type`                    | `type`: `reasoning.text` → `:text`, `reasoning.summary` → `:summary`, `reasoning.encrypted` → `:encrypted` |
-| `text` / `summary`        | `text`                                                                                                        |
-| `data`                    | `data`                                                                                                        |
-| `signature`               | `signature`                                                                                                   |
-| `id`                      | `id`                                                                                                          |
-| `format`                  | `format` (e.g. `"anthropic-claude-v1"`, `"openai-responses-v1"`, `"unknown"`)                                 |
+| `text` / `summary`        | `text`                                                                                                     |
+| `data`                    | `data`                                                                                                     |
+| `signature`               | `signature`                                                                                                |
+| `id`                      | `id`                                                                                                       |
+| `format`                  | `format` (e.g. `"anthropic-claude-v1"`, `"openai-responses-v1"`, `"unknown"`)                              |
 
 When streaming, OpenRouter splits one block into many fragments that share an `index`. The provider concatenates their `text`, `summary`, and `data` and keeps the `signature`, `id`, and `format` that arrive along the way, so each block ends as one `ReasoningDone` part. Each non-empty `text` or `summary` fragment is also yielded as a `ReasoningDelta`. Detail types riffer doesn't know are skipped.
 

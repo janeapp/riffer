@@ -357,7 +357,7 @@ class ConnectCalendar < Riffer::Tool
 end
 ```
 
-How a load reaches the model depends on the agent's [strategy](AGENTS.md#deferred-tools-strategy-experimental). By default [Anthropic](providers/ANTHROPIC.md#deferred-tools), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load deferred tools natively; with `strategy: :gateway`, any provider goes through the [gateway](#the-gateway-strategy).
+How a load reaches the model depends on the provider. [Anthropic](providers/ANTHROPIC.md#deferred-tools), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load deferred tools natively; every other provider goes through the [gateway](#the-gateway).
 
 A load takes effect from the model's next turn. The model made every call in a turn before it saw any of that turn's results, so a call to a tool loaded in the same turn is refused like any other unloaded call; the model calls it again once it has seen the load.
 
@@ -371,9 +371,9 @@ A load takes effect from the model's next turn. The model made every call in a t
 
 Loading puts the loaded tools' full schemas into the conversation, and every load is an extra round trip to the model, so load a handful of tools at a time rather than dozens.
 
-### The gateway strategy
+### The gateway
 
-With `deferred_tools [...], strategy: :gateway`, riffer doesn't use the provider's native loading, so it works on every provider, custom ones included. Adding a loaded tool to the request's tools partway through a conversation would break the prompt cache on every load, so riffer keeps the tool list fixed and sends one extra tool instead, `Riffer::Providers::DeferredToolGateway::Tool`, the gateway, named `riffer_gateway`:
+On a provider without native loading, custom ones included, riffer loads deferred tools through a gateway. Adding a loaded tool to the request's tools partway through a conversation would break the prompt cache on every load, so riffer keeps the tool list fixed and sends one extra tool instead, `Riffer::Providers::DeferredToolGateway::Tool`, the gateway, named `riffer_gateway`:
 
 - Every request with deferred tools carries the gateway after the agent's other tools, before any load and after it. Its name, description and schema never change, and the deferred tools themselves are never in the tool list, so the tool list is the same for the whole conversation.
 - The gateway takes two required string parameters and nothing else: `name`, the loaded tool's name, and `arguments`, the loaded tool's arguments as a JSON-encoded object (`"{\"query\":\"red shoes\",\"limit\":5}"`). Strings rather than a free-form object keep the schema valid for providers that send tools in strict mode, such as OpenRouter. Riffer still validates the arguments against the real tool's `params` when the tool runs.
@@ -382,4 +382,4 @@ With `deferred_tools [...], strategy: :gateway`, riffer doesn't use the provider
 - On later requests, a call to a deferred tool in the history is sent back as a gateway call, and its result under the gateway's name, keeping its `tool_call_id`, so the provider never sees a call to a tool missing from the tool list.
 - A gateway call riffer can't read, because its arguments aren't a JSON object with a string `name` and a string `arguments` or its `name` isn't one of the agent's deferred tools, stays a call to the gateway, which no agent has as a tool, so the model gets an `:unknown_tool` error result and can try again.
 
-An agent with the gateway strategy can't have a tool of its own with the gateway's name, in `uses_tools` or `deferred_tools`: building it raises `Riffer::ArgumentError`. Like the rest of deferred tools, the gateway is experimental, and its name, description and the text it adds to a load can change in any minor release.
+An agent with deferred tools on such a provider can't have a tool of its own with the gateway's name, in `uses_tools` or `deferred_tools`: building it raises `Riffer::ArgumentError`. Like the rest of deferred tools, the gateway is experimental, and its name, description and the text it adds to a load can change in any minor release.

@@ -158,7 +158,7 @@ class Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
   def gateway_deferred_tools(options)
-    options[:riffer_deferred_tools_strategy] == :gateway ? options[:deferred_tools] || [] : []
+    self.class.supports_deferred_tools? ? [] : options[:deferred_tools] || []
   end
 
   #--
@@ -477,11 +477,11 @@ class Riffer::Providers::Base
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def request_options(options)
     gateway = !gateway_deferred_tools(options).empty?
-    options = options.except(:riffer_reasoning_level, :riffer_deferred_tools_strategy)
+    options = options.except(:riffer_reasoning_level)
     # Every request with deferred tools carries the gateway, before a load and after, so the tool list never changes.
     options = options.merge(tools: (options[:tools] || []) + [Riffer::Providers::DeferredToolGateway::Tool]) if gateway
-    # Providers splat unknown options into their SDK request, and a gateway request must not load natively too.
-    options = options.except(:deferred_tools) if gateway || !self.class.supports_deferred_tools?
+    # Providers splat unknown options into their SDK request.
+    options = options.except(:deferred_tools) unless self.class.supports_deferred_tools?
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 

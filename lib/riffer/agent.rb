@@ -87,11 +87,9 @@ class Riffer::Agent
   end
 
   #--
-  #: (?(Array[singleton(Riffer::Tool)] | Proc)?, ?strategy: Symbol?) -> (Array[singleton(Riffer::Tool)] | Proc)?
-  def self.deferred_tools(value = nil, strategy: nil)
-    config.deferred_tools_config = value if value
-    config.deferred_tools_strategy = strategy if strategy
-    config.deferred_tools_config
+  #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
+  def self.deferred_tools(value = nil)
+    value.nil? ? config.deferred_tools_config : (config.deferred_tools_config = value)
   end
 
   #--
@@ -370,16 +368,10 @@ class Riffer::Agent
     deferred = Riffer::Helpers::CallOrValue.resolve(@config.deferred_tools_config, context: @context, default: [])
     return deferred if deferred.empty?
 
-    gateway = @config.deferred_tools_strategy == :gateway
-    unless gateway || @provider.class.supports_deferred_tools?
-      raise Riffer::ArgumentError,
-            "Provider #{@provider_name} does not support deferred tools natively; " \
-            "use deferred_tools(..., strategy: :gateway) to load them through a gateway tool"
-    end
-
     tools = @tools + deferred
-    # The gateway goes on every request alongside the agent's tools, so no tool can share its name.
-    tools += [Riffer::Providers::DeferredToolGateway::Tool] if gateway
+    # A provider without native loading sends the gateway on every request alongside the agent's tools, so no tool
+    # can share its name.
+    tools += [Riffer::Providers::DeferredToolGateway::Tool] unless @provider.class.supports_deferred_tools?
     assert_distinct_tool_names!(tools)
     deferred.each(&:validate_as_tool!)
     deferred

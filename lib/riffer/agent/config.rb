@@ -4,7 +4,6 @@
 class Riffer::Agent::Config
   DEFAULT_MAX_STEPS = 16 #: Integer
   STRUCTURED_OUTPUT_STRATEGIES = %i[native prompted].freeze #: Array[Symbol]
-  DEFERRED_TOOLS_STRATEGIES = %i[native gateway].freeze #: Array[Symbol]
 
   REASONING_LEVELS = %i[off low medium high xhigh max].freeze #: Array[Symbol]
 
@@ -20,7 +19,6 @@ class Riffer::Agent::Config
   attr_reader :reasoning #: Symbol? # @dynamic reasoning
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
   attr_accessor :deferred_tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic deferred_tools_config, deferred_tools_config=
-  attr_reader :deferred_tools_strategy #: Symbol # @dynamic deferred_tools_strategy
   attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
   attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]] # @dynamic guardrails
 
@@ -36,7 +34,6 @@ class Riffer::Agent::Config
   #    ?reasoning: (Symbol | String)?,
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?deferred_tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
-  #    ?deferred_tools_strategy: Symbol,
   #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #    ?skills_config: Riffer::Skills::Config?,
   #    ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
@@ -52,7 +49,6 @@ class Riffer::Agent::Config
     reasoning: nil,
     tools_config: nil,
     deferred_tools_config: nil,
-    deferred_tools_strategy: :native,
     tool_runtime: nil,
     skills_config: nil,
     guardrails: { before: [], after: [] }
@@ -68,7 +64,6 @@ class Riffer::Agent::Config
     self.instructions = instructions
     self.structured_output = structured_output
     self.structured_output_strategy = structured_output_strategy
-    self.deferred_tools_strategy = deferred_tools_strategy
     self.reasoning = reasoning
     self.tool_runtime = tool_runtime if tool_runtime
   end
@@ -98,17 +93,6 @@ class Riffer::Agent::Config
     end
 
     @structured_output_strategy = value
-  end
-
-  #--
-  #: (Symbol) -> Symbol
-  def deferred_tools_strategy=(value)
-    unless DEFERRED_TOOLS_STRATEGIES.include?(value)
-      raise Riffer::ArgumentError,
-            "deferred_tools_strategy must be one of #{DEFERRED_TOOLS_STRATEGIES.inspect}, got #{value.inspect}"
-    end
-
-    @deferred_tools_strategy = value
   end
 
   #--

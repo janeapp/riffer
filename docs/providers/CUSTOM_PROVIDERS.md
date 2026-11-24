@@ -235,9 +235,9 @@ end
 
 ### Deferred tools (experimental)
 
-The `supports_deferred_tools?` class method says whether your provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively. The default is false, and riffer raises `Riffer::ArgumentError` when an agent with deferred tools and the default `:native` [strategy](../AGENTS.md#deferred-tools-strategy-experimental) is built on your provider. A provider that returns true receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`.
+The `supports_deferred_tools?` class method says whether your provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively. A provider that returns true receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`.
 
-An agent with `strategy: :gateway` works on your provider either way, through the [gateway](../TOOLS.md#the-gateway-strategy), with no code in your provider. It never sees `options[:deferred_tools]`, even if `supports_deferred_tools?` returns true. Instead, `build_request_params` receives:
+The default is false, and riffer then loads deferred tools through the [gateway](../TOOLS.md#the-gateway), with no code in your provider, and your provider never sees `options[:deferred_tools]`. Instead, `build_request_params` receives:
 
 - `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool` named `riffer_gateway`, so your tool conversion handles it, strict mode included.
 - Messages where each call to a deferred tool is a call to the gateway, its result is named after the gateway, and a result that loaded tools has their descriptions appended to its content.

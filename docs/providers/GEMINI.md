@@ -172,7 +172,7 @@ Gemini's own call ids are short, so riffer gives each tool call its own `call_id
 
 ### Deferred Tools (experimental)
 
-Gemini has no native deferred loading, so an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) on Gemini needs the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`; without it, building the agent raises `Riffer::ArgumentError`. Every request then has one extra function in `functionDeclarations`, the [gateway](../TOOLS.md#the-gateway-strategy), and the model calls a loaded tool through it, so the declarations stay the same and a load keeps the prompt cache. Calls come back under the real tool's name.
+Gemini has no native deferred loading, so an agent with [deferred tools](../AGENTS.md#deferred_tools-experimental) on Gemini goes through the [gateway](../TOOLS.md#the-gateway). Every request has one extra function in `functionDeclarations`, the gateway, and the model calls a loaded tool through it, so the declarations stay the same and a load keeps the prompt cache. Calls come back under the real tool's name.
 
 ### Thought Signatures
 
