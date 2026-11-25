@@ -481,6 +481,20 @@ describe Riffer::Providers::OpenRouter do
       expect(result[:file][:file_data]).must_equal "data:application/pdf;base64,pdfdata"
       expect(result[:file][:filename]).must_equal "doc.pdf"
     end
+
+    it "encodes a raw bytes image as a data URL" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", media_type: "image/png")
+      result = provider.send(:convert_file_part_to_chat_completions_format, file)
+
+      expect(result[:image_url][:url]).must_equal "data:image/png;base64,#{Base64.strict_encode64('png-bytes')}"
+    end
+
+    it "encodes a raw bytes document as a data URL" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "pdf-bytes", media_type: "application/pdf")
+      result = provider.send(:convert_file_part_to_chat_completions_format, file)
+
+      expect(result[:file][:file_data]).must_equal "data:application/pdf;base64,#{Base64.strict_encode64('pdf-bytes')}"
+    end
   end
 
   describe "extract_token_usage" do

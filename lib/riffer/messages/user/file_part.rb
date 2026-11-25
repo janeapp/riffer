@@ -9,6 +9,8 @@ class Riffer::Messages::User::FilePart
   # @rbs @data: String?
   # @rbs @downloaded_data: String?
   # @rbs @data_bytes: String?
+  # @rbs @bytes: String?
+  # @rbs @encoded_bytes: String?
 
   MEDIA_TYPES = {
     ".jpg" => "image/jpeg",
@@ -32,10 +34,16 @@ class Riffer::Messages::User::FilePart
 
   attr_reader :sha256 #: String? # @dynamic sha256
 
+  # +bytes+ is held, not copied, so a large file isn't duplicated in memory;
+  # mutating that String afterwards changes what gets sent.
   #--
-  #: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
-  def initialize(media_type:, data: nil, filename: nil, url: nil, sha256: nil)
-    raise Riffer::ArgumentError, "Either data or url must be provided" if data.nil? && url.nil?
+  #: (media_type: String, ?data: String?, ?bytes: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
+  def initialize(media_type:, data: nil, bytes: nil, filename: nil, url: nil, sha256: nil)
+    if bytes.nil?
+      raise Riffer::ArgumentError, "Either data, bytes or url must be provided" if data.nil? && url.nil?
+    elsif data || url
+      raise Riffer::ArgumentError, "bytes cannot be combined with data or url"
+    end
     unless SUPPORTED_MEDIA_TYPES.include?(media_type)
       raise Riffer::ArgumentError,
             "Unsupported media type: #{media_type}"
@@ -47,6 +55,7 @@ class Riffer::Messages::User::FilePart
 
     @sha256 = sha256&.downcase
     @data = data
+    @bytes = bytes
     @media_type = media_type
     @filename = filename
     @url_string = url
@@ -65,16 +74,18 @@ class Riffer::Messages::User::FilePart
 
     url = file[:url]
     data = file[:data]
+    bytes = file[:bytes]
     media_type = file[:media_type]
     filename = file[:filename]
     sha256 = file[:sha256]
 
     if url
-      new(url: url, data: data, media_type: media_type || detect_media_type(url), filename: filename, sha256: sha256)
-    elsif data && media_type
-      new(data: data, media_type: media_type, filename: filename, sha256: sha256)
+      new(url: url, data: data, bytes: bytes, media_type: media_type || detect_media_type(url), filename: filename,
+          sha256: sha256,)
+    elsif (data || bytes) && media_type
+      new(data: data, bytes: bytes, media_type: media_type, filename: filename, sha256: sha256)
     else
-      raise Riffer::ArgumentError, "File hash must include :url or :data with :media_type"
+      raise Riffer::ArgumentError, "File hash must include :url, or :data or :bytes with :media_type"
     end
   end
 
@@ -86,14 +97,20 @@ class Riffer::Messages::User::FilePart
   end
   private_class_method :detect_media_type
 
+  # A +bytes:+ source is encoded on first call, so providers that send raw
+  # bytes never hold a base64 copy.
   #--
   #: () -> String?
   def data
+    bytes = @bytes
+    return @encoded_bytes ||= Base64.strict_encode64(bytes) if bytes
+
     @data || @downloaded_data
   end
 
   #: () -> String?
   def data_bytes
+    return @bytes if @bytes
     return @data_bytes if @data_bytes
 
     encoded = data
@@ -111,7 +128,7 @@ class Riffer::Messages::User::FilePart
 
   #: () -> bool
   def inline_data?
-    !@data.nil?
+    !!(@data || @bytes)
   end
 
   #--
@@ -148,8 +165,9 @@ class Riffer::Messages::User::FilePart
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = { media_type: media_type } #: Hash[Symbol, untyped]
-    # Downloaded data is left out so persisted history stays free of megabytes
-    # of base64; the in-memory cache still spares refetching on every turn.
+    # Downloaded data and +bytes:+ content (raw or encoded) are left out so
+    # persisted history stays free of file content; the in-memory copies
+    # still spare refetching or re-encoding on every turn.
     hash[:data] = @data if @data
     hash[:url] = @url_string if @url_string
     hash[:filename] = filename if filename

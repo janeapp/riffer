@@ -201,4 +201,15 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
         must_equal [["calendar/list_events", '{"date":"2026-11-06"}']]
     end
   end
+
+  describe "file conversion" do
+    it "sends a raw bytes file as a base64 source" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", media_type: "image/png")
+      result = provider.send(:convert_file_part, file)
+
+      source = { type: "base64", media_type: "image/png", data: Base64.strict_encode64("png-bytes") }
+
+      expect(result).must_equal({ type: "image", source: source })
+    end
+  end
 end
