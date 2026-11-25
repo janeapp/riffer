@@ -95,6 +95,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
+    reject_native_deferred_tools!(options)
     partitioned_messages = partition_messages(messages)
     tools = options[:tools]
     structured_output = options[:structured_output]
@@ -105,7 +106,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       model_id: model,
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
-      **options.except(:tools, :structured_output, :cache_control, :tags),
+      **options.except(:tools, :deferred_tools, :structured_output, :cache_control, :tags),
     } #: Hash[Symbol, untyped]
 
     # Converse has no dedicated end-user field, so every tag (including the

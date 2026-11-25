@@ -22,12 +22,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   }.freeze #: Hash[String, Symbol | Hash[String, Symbol]]
 
   #--
-  #: () -> bool
-  def self.supports_deferred_tools?
-    true
-  end
-
-  #--
   #: () -> String
   def self.semconv_provider_name
     "openai"

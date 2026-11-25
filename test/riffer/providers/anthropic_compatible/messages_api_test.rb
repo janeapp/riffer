@@ -117,10 +117,6 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
                     { tools: [find_tools], deferred_tools: deferred_tools, **options })
     end
 
-    it "supports deferred tools" do
-      expect(Riffer::Providers::AnthropicCompatible::MessagesAPI.supports_deferred_tools?).must_equal true
-    end
-
     it "sends every deferred tool after the other tools with defer_loading, and no deferred_tools key" do
       params = request([question], web_search: true)
 

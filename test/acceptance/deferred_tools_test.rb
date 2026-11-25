@@ -4,11 +4,7 @@ require "acceptance/acceptance_helper"
 
 describe "Acceptance: deferred tools" do
   acceptance_providers.each do |provider_name|
-    # Every provider runs the gateway; one that loads deferred tools natively runs that too.
-    native = Riffer::Providers::Repository.find(provider_name).supports_deferred_tools?
-    strategies = native ? %i[native gateway] : %i[gateway]
-
-    strategies.each do |strategy|
+    acceptance_setting(provider_name, :deferred_tools_strategies).each do |strategy|
       describe "#{provider_name} (#{strategy})" do
         before { configure_acceptance_provider(provider_name) }
         after { reset_acceptance_provider(provider_name) }

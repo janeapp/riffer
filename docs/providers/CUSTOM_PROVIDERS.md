@@ -235,22 +235,29 @@ end
 
 ### Deferred tools (experimental)
 
-The `supports_deferred_tools?` class method says whether your provider loads [deferred tools](../AGENTS.md#deferred_tools-experimental) natively. The default is false, and riffer raises `Riffer::ArgumentError` when an agent with deferred tools and the default `:native` [strategy](../AGENTS.md#deferred-tools-strategy-experimental) is built on your provider. A provider that returns true receives `options[:deferred_tools]`, every deferred tool whether loaded or not, next to `options[:tools]`, and works out what each tool result loaded from its `loaded_tools`.
+With an agent's default `:native` [strategy](../AGENTS.md#deferred-tools-strategy-experimental), `build_request_params` receives `options[:deferred_tools]`, every one of the agent's [deferred tools](../AGENTS.md#deferred_tools-experimental) whether loaded or not, next to `options[:tools]`. A provider whose API loads tools on demand sends them that way and works out what each tool result loaded from its `loaded_tools`. A provider without native loading calls `reject_native_deferred_tools!(options)` first, which raises `Riffer::ArgumentError` pointing the caller at `strategy: :gateway` when the request carries deferred tools. Either way, keep `:deferred_tools` out of anything you splat into your SDK request.
 
-An agent with `strategy: :gateway` works on your provider either way, through the [gateway](../TOOLS.md#the-gateway-strategy), with no code in your provider. It never sees `options[:deferred_tools]`, even if `supports_deferred_tools?` returns true. Instead, `build_request_params` receives:
+```ruby
+def build_request_params(messages, model, options)
+  reject_native_deferred_tools!(options)
+
+  {
+    model: model,
+    messages: convert_messages(messages),
+    tools: (options[:tools] || []).map { |t| convert_tool(t) },
+    **options.except(:tools, :deferred_tools)
+  }
+end
+```
+
+An agent with `strategy: :gateway` works on your provider either way, through the [gateway](../TOOLS.md#the-gateway-strategy), with no code in your provider. It never sees `options[:deferred_tools]`. Instead, `build_request_params` receives:
 
 - `options[:tools]` with `Riffer::Providers::DeferredToolGateway::Tool` on the end, on every request of an agent with deferred tools. It's an ordinary `Riffer::Tool` named `riffer_gateway`, so your tool conversion handles it, strict mode included.
 - Messages where each call to a deferred tool is a call to the gateway, its result is named after the gateway, and a result that loaded tools has their descriptions appended to its content.
 
 The model's calls to the gateway that you return from `extract_tool_calls`, or stream as `ToolCallDone` events, are turned back into calls to the real tools before they leave the provider, and the `ToolCallDelta` events you stream for them are dropped.
 
-This hook is experimental too: `supports_deferred_tools?` and the `options[:deferred_tools]` it gates can change or be replaced in any minor release, for example by a capability in the [model catalog](../CATALOG.md) (see [Stability](../STABILITY.md#experimental-features)).
-
-```ruby
-def self.supports_deferred_tools?
-  true
-end
-```
+This hook is experimental too: `options[:deferred_tools]` and `reject_native_deferred_tools!` can change or be replaced in any minor release (see [Stability](../STABILITY.md#experimental-features)).
 
 ## Stream Events
 

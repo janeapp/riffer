@@ -357,7 +357,7 @@ class ConnectCalendar < Riffer::Tool
 end
 ```
 
-How a load reaches the model depends on the agent's [strategy](AGENTS.md#deferred-tools-strategy-experimental). By default [Anthropic](providers/ANTHROPIC.md#deferred-tools), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load deferred tools natively; with `strategy: :gateway`, any provider goes through the [gateway](#the-gateway-strategy).
+How a load reaches the model depends on the agent's [strategy](AGENTS.md#deferred-tools-strategy-experimental). By default [Anthropic](providers/ANTHROPIC.md#deferred-tools), Anthropic Vertex, [OpenAI](providers/OPENAI.md#deferred-tools-experimental), [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) and Mock load deferred tools natively, and a request with deferred tools on Gemini, Google Cloud, Amazon Bedrock or OpenRouter raises `Riffer::ArgumentError`; with `strategy: :gateway`, any provider goes through the [gateway](#the-gateway-strategy).
 
 A load takes effect from the model's next turn. The model made every call in a turn before it saw any of that turn's results, so a call to a tool loaded in the same turn is refused like any other unloaded call; the model calls it again once it has seen the load.
 

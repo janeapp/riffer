@@ -38,6 +38,7 @@ ACCEPTANCE_PROVIDERS = {
     thinking_options: {},
     # Implicit caching needs no request field.
     cache_options: {},
+    deferred_tools_strategies: %i[gateway],
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     # The Developer API has no request field for tags, so none are sent.
     wire_tags: {},
@@ -55,6 +56,7 @@ ACCEPTANCE_PROVIDERS = {
     thinking_options: {},
     # Implicit caching needs no request field.
     cache_options: {},
+    deferred_tools_strategies: %i[gateway],
     web_search_options: { timeRangeFilter: { startTime: "2026-01-01T00:00:00Z", endTime: "2026-10-22T00:00:00Z" } },
     wire_tags: { "labels" => { "team" => "growth", "agent" => "support_triage_agent", "user_id" => "u_1" } },
     error_contract: HTTP_ERROR_CONTRACT,
@@ -82,6 +84,7 @@ ACCEPTANCE_PROVIDERS = {
       additional_model_request_fields: { thinking: { type: "adaptive" }, output_config: { effort: "max" } },
     },
     cache_options: { cache_control: true },
+    deferred_tools_strategies: %i[gateway],
     wire_tags: { "requestMetadata" => ACCEPTANCE_TAGS },
     error_contract: {
       class: Aws::BedrockRuntime::Errors::ServiceError,
@@ -110,6 +113,7 @@ ACCEPTANCE_PROVIDERS = {
     # Below max effort, Haiku 5.5 rarely thinks before a simple tool call.
     thinking_options: { thinking: { type: "adaptive" }, output_config: { effort: "max" } },
     cache_options: { cache_control: { type: "ephemeral" } },
+    deferred_tools_strategies: %i[native gateway],
     web_search_options: { max_uses: 2, allowed_domains: ["ruby-lang.org"] },
     # The Messages API keeps only user_id, as metadata.user_id.
     wire_tags: { "metadata" => { "user_id" => "u_1" } },
@@ -126,6 +130,7 @@ ACCEPTANCE_PROVIDERS = {
     # Below max effort, Haiku 5.5 rarely thinks before a simple tool call.
     thinking_options: { thinking: { type: "adaptive" }, output_config: { effort: "max" } },
     cache_options: { cache_control: { type: "ephemeral" } },
+    deferred_tools_strategies: %i[native gateway],
     web_search_options: { max_uses: 2, allowed_domains: ["ruby-lang.org"] },
     # The Messages API keeps only user_id, as metadata.user_id.
     wire_tags: { "metadata" => { "user_id" => "u_1" } },
@@ -153,6 +158,7 @@ ACCEPTANCE_PROVIDERS = {
     thinking_options: { reasoning: "max" },
     # Prompt caching is automatic and needs no request field.
     cache_options: {},
+    deferred_tools_strategies: %i[native gateway],
     web_search_options: { search_context_size: "low" },
     wire_tags: { "metadata" => ACCEPTANCE_TAGS, "safety_identifier" => "u_1" },
     error_contract: { class: OpenAI::Errors::APIStatusError, status: :status.to_proc, detail: :message.to_proc },
@@ -171,6 +177,7 @@ ACCEPTANCE_PROVIDERS = {
     # Caching is implicit, but OpenRouter spreads requests across GLM's
     # upstreams and they share no cache, so one is pinned.
     cache_options: { provider: { order: ["coreweave"], allow_fallbacks: false } },
+    deferred_tools_strategies: %i[gateway],
     wire_tags: { "metadata" => ACCEPTANCE_TAGS, "user" => "u_1" },
     error_contract: { class: OpenAI::Errors::APIStatusError, status: :status.to_proc, detail: :message.to_proc },
     configure: -> { Riffer.config.openrouter.api_key = ENV.fetch("OPENROUTER_API_KEY", "test_api_key") },

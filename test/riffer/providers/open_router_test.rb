@@ -1253,8 +1253,21 @@ describe Riffer::Providers::OpenRouter do
       )
     end
 
-    it "has no native loading" do
-      expect(Riffer::Providers::OpenRouter.supports_deferred_tools?).must_equal false
+    it "raises for native deferred tools, pointing at the gateway strategy" do
+      requests = []
+      install_completion(provider, requests)
+
+      err = expect do
+        provider.generate_text(prompt: "What's on?", model: "openai/gpt-5-mini", deferred_tools: [list_events])
+      end.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/use deferred_tools\(\.\.\., strategy: :gateway\)/)
+      expect(requests).must_be_empty
+    end
+
+    it "raises for native deferred tools when streaming" do
+      expect do
+        provider.stream_text(prompt: "What's on?", model: "openai/gpt-5-mini", deferred_tools: [list_events])
+      end.must_raise Riffer::ArgumentError
     end
 
     it "sends the gateway as a strict tool and returns its call as a call to the real tool" do

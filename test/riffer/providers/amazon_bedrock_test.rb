@@ -252,6 +252,41 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "deferred tools" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
+    let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+    let(:list_events) { stub_tool("ListEvents") { description "Lists calendar events" } }
+
+    it "raises for native deferred tools, pointing at the gateway strategy" do
+      client = stub_converse
+      err = expect { provider.generate_text(prompt: "What's on?", model: model, deferred_tools: [list_events]) }.
+        must_raise Riffer::ArgumentError
+
+      expect(err.message).must_match(/use deferred_tools\(\.\.\., strategy: :gateway\)/)
+      expect(client.api_requests).must_be_empty
+    end
+
+    it "raises for native deferred tools when streaming" do
+      stub_stream_events([])
+
+      expect { provider.stream_text(prompt: "What's on?", model: model, deferred_tools: [list_events]) }.
+        must_raise Riffer::ArgumentError
+    end
+
+    it "sends the gateway tool with the gateway strategy" do
+      client = stub_converse
+      provider.generate_text(
+        prompt: "What's on?",
+        model: model,
+        deferred_tools: [list_events],
+        riffer_deferred_tools_strategy: :gateway,
+      )
+
+      expect(client.api_requests.last[:params][:tool_config][:tools].map { |t| t[:tool_spec][:name] }).
+        must_equal [Riffer::Wire.encode_tool_name(Riffer::Providers::DeferredToolGateway::Tool.name)]
+    end
+  end
+
   describe "#extract_content" do
     let(:provider) { Riffer::Providers::AmazonBedrock.new }
 
