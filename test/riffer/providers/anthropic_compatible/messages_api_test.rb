@@ -201,4 +201,30 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
         must_equal [["calendar/list_events", '{"date":"2026-11-06"}']]
     end
   end
+
+  describe "file conversion" do
+    it "sends a raw bytes file as a base64 source" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", media_type: "image/png")
+      result = provider.send(:convert_file_part, file)
+
+      source = { type: "base64", media_type: "image/png", data: Base64.strict_encode64("png-bytes") }
+
+      expect(result).must_equal({ type: "image", source: source })
+    end
+
+    it "sends inline data instead of a url when a file has both" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", url: "https://example.com/a.png",
+                                                  media_type: "image/png",)
+      result = provider.send(:convert_file_part, file)
+
+      expect(result[:source]).must_equal({ type: "base64", media_type: "image/png", data: "aGVsbG8=" })
+    end
+
+    it "sends a url-only file as a url source" do
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/a.png")
+      result = provider.send(:convert_file_part, file)
+
+      expect(result[:source]).must_equal({ type: "url", url: "https://example.com/a.png" })
+    end
+  end
 end

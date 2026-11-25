@@ -353,8 +353,11 @@ file = Riffer::Messages::User::FilePart.from_url("https://example.com/doc.pdf")
 file.url?        # => true
 file.document?   # => true
 
-# From raw base64 data
+# From base64 data
 file = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
+
+# From raw bytes (no base64 needed)
+file = Riffer::Messages::User::FilePart.new(media_type: "application/pdf", bytes: File.binread("report.pdf"), filename: "report.pdf")
 
 # With an expected sha256 checksum of the file's contents
 file = Riffer::Messages::User::FilePart.from_url(
@@ -365,6 +368,12 @@ file.sha256  # => "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b
 ```
 
 `sha256:` accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises `Riffer::ArgumentError` on any other format.
+
+`bytes:` takes the raw file content as a String and keeps that String as given, without copying it, so don't change it afterwards. It can't be combined with `data:` (raises `Riffer::ArgumentError`). Providers that send raw bytes, such as Amazon Bedrock, use it directly; providers that need base64 encode it for you.
+
+A file can carry a `url:` alongside `data:` or `bytes:`. The inline content always wins: it's what riffer sends to the provider and what `sha256:` is checked against, and the URL is never downloaded.
+
+`to_h` leaves out file content that didn't come from `data:`: downloaded content and `bytes:` content are never included. A `bytes:` file with a `url:` serializes to its URL, so `from_hash` rebuilds it as a URL file. A `bytes:` file without one serializes to its metadata only (`media_type`, `filename`, `sha256`), and `from_hash` raises `Riffer::ArgumentError` on that hash; attach the bytes again when you restore the message.
 
 ### Hash Shorthand
 
@@ -381,6 +390,9 @@ When passing files to agents or messages, hashes are automatically converted:
 
 # Data shorthand
 {data: base64_string, media_type: "image/png", filename: "chart.png"}
+
+# Bytes shorthand
+{bytes: raw_string, media_type: "application/pdf", filename: "report.pdf"}
 ```
 
 ### Predicates

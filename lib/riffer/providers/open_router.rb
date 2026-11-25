@@ -458,7 +458,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_chat_completions_format(file)
     if file.image?
-      image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"
+      image_url = file.inline_data? ? "data:#{file.media_type};base64,#{file.data}" : file.url
       { type: "image_url", image_url: { url: image_url } }
     else
       data_uri = "data:#{file.media_type};base64,#{file.data}"
