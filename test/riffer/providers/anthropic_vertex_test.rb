@@ -28,12 +28,6 @@ describe Riffer::Providers::AnthropicVertex do
     end
   end
 
-  describe ".supports_deferred_tools?" do
-    it "returns true" do
-      expect(Riffer::Providers::AnthropicVertex.supports_deferred_tools?).must_equal true
-    end
-  end
-
   describe ".skills_adapter" do
     it "returns XmlAdapter" do
       expect(Riffer::Providers::AnthropicVertex.skills_adapter(model)).must_equal Riffer::Skills::XmlAdapter

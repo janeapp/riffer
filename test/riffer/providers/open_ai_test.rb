@@ -810,12 +810,6 @@ describe Riffer::Providers::OpenAI do
       )
     end
 
-    it "is supported, and inherited by Azure OpenAI" do
-      supported = [Riffer::Providers::OpenAI, Riffer::Providers::AzureOpenAI].map(&:supports_deferred_tools?)
-
-      expect(supported).must_equal [true, true]
-    end
-
     it "leaves every deferred tool out of tools, loaded or not" do
       params = request([question, *loading_turn("call_1", "calendar/list_events")])
 

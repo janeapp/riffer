@@ -81,6 +81,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
+    reject_native_deferred_tools!(options)
     reasoning = options[:reasoning]
     tools = options[:tools]
     structured_output = options[:structured_output]
@@ -89,7 +90,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     params = {
       model: model,
       messages: convert_messages_to_chat_completions_format(messages),
-      **options.except(:reasoning, :tools, :structured_output, :tags),
+      **options.except(:reasoning, :tools, :deferred_tools, :structured_output, :tags),
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?

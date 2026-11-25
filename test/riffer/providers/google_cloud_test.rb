@@ -160,6 +160,38 @@ describe Riffer::Providers::GoogleCloud do
     end
   end
 
+  describe "deferred tools" do
+    let(:messages) { [Riffer::Messages::User.new("What's on?")] }
+    let(:list_events) { stub_tool("ListEvents") { description "Lists calendar events" } }
+
+    it "raises for native deferred tools, pointing at the gateway strategy" do
+      err = expect do
+        provider.send(:build_request_params, messages, "gemini-3.5-flash-lite", { deferred_tools: [list_events] })
+      end.must_raise Riffer::ArgumentError
+
+      expect(err.message).must_match(/use deferred_tools\(\.\.\., strategy: :gateway\)/)
+    end
+
+    it "sends the gateway tool with the gateway strategy" do
+      sent = []
+      client = Object.new
+      client.define_singleton_method(:post) do |_path, body|
+        sent << body
+        { candidates: [{ content: { parts: [{ text: "Nothing" }] }, finishReason: "STOP" }] }
+      end
+      Riffer.config.google_cloud.client = client
+      provider.generate_text(
+        prompt: "What's on?",
+        model: "gemini-3.5-flash-lite",
+        deferred_tools: [list_events],
+        riffer_deferred_tools_strategy: :gateway,
+      )
+
+      expect(sent.first.dig(:tools, 0, :functionDeclarations).map { |d| d[:name] }).
+        must_equal [Riffer::Wire.encode_tool_name(Riffer::Providers::DeferredToolGateway::Tool.name)]
+    end
+  end
+
   describe "structured output" do
     it "sends the JSON schema as a responseFormat list" do
       params = Riffer::Params.new

@@ -42,10 +42,6 @@ class DefaultReasoningProvider < Riffer::Providers::Mock
   end
 end
 
-class NoDeferredToolsProvider < Riffer::Providers::Mock
-  def self.supports_deferred_tools? = false
-end
-
 class RawFinishReasonProvider < Riffer::Providers::Mock
   private
 
@@ -139,39 +135,42 @@ describe Riffer::Providers::Base do
     end
   end
 
-  describe ".supports_deferred_tools?" do
-    it "is false by default" do
-      expect(Riffer::Providers::Base.supports_deferred_tools?).must_equal false
-    end
-  end
-
   describe "deferred_tools option" do
     let(:tool) { stub_tool("DeferredOptionTool") { description "Deferred" } }
 
-    it "reaches a provider that supports deferred tools" do
-      provider = Riffer::Providers::Mock.new
+    let(:provider) { Riffer::Providers::Mock.new }
+
+    it "reaches the request params with the native strategy" do
       provider.generate_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool])
 
       expect(provider.calls.last[:deferred_tools]).must_equal [tool]
     end
 
-    it "is kept out of the request params of a provider without support" do
-      provider = NoDeferredToolsProvider.new
-      provider.generate_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool])
+    it "reaches the streamed request params with the native strategy" do
+      provider.stream_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool]).each { |_| }
+
+      expect(provider.calls.last[:deferred_tools]).must_equal [tool]
+    end
+
+    def gateway_options
+      { prompt: "Hello", model: "riffer-1", deferred_tools: [tool], riffer_deferred_tools_strategy: :gateway }
+    end
+
+    it "is kept out of the request params with the gateway strategy" do
+      provider.generate_text(**gateway_options)
 
       refute_includes provider.calls.last.keys, :deferred_tools
     end
 
-    it "is kept out of the streamed request params of a provider without support" do
-      provider = NoDeferredToolsProvider.new
-      provider.stream_text(prompt: "Hello", model: "riffer-1", deferred_tools: [tool]).each { |_| }
+    it "is kept out of the streamed request params with the gateway strategy" do
+      provider.stream_text(**gateway_options).each { |_| }
 
       refute_includes provider.calls.last.keys, :deferred_tools
     end
   end
 
   describe "deferred tools gateway" do
-    let(:provider) { NoDeferredToolsProvider.new }
+    let(:provider) { Riffer::Providers::Mock.new }
     let(:gateway_name) { Riffer::Providers::DeferredToolGateway::Tool.name }
     let(:gateway_tool) { Riffer::Providers::DeferredToolGateway::Tool }
     let(:loader) { stub_tool("ConnectCalendar") { description "Connects the calendar" } }
@@ -259,24 +258,12 @@ describe Riffer::Providers::Base do
       refute_includes provider.calls.last.keys, :riffer_deferred_tools_strategy
     end
 
-    it "sends the gateway instead of loading natively on a provider with native loading" do
-      native = Riffer::Providers::Mock.new
-      native.stub_response("", tool_calls: [gateway_call])
-      message = native.generate_text(messages: loaded_history, **request_options)
-
-      expect(native.calls.last[:tools]).must_equal [loader, gateway_tool]
-      refute_includes native.calls.last.keys, :deferred_tools
-      expect(native.calls.last[:messages][4][:name]).must_equal gateway_name
-      expect(message.tool_calls).must_equal [call("calendar/list_events", "c_3", '{"day":1}')]
-    end
-
     it "sends neither the gateway nor wrapped history with the native strategy" do
-      native = Riffer::Providers::Mock.new
-      native.generate_text(messages: loaded_history, **request_options, riffer_deferred_tools_strategy: :native)
+      provider.generate_text(messages: loaded_history, **request_options, riffer_deferred_tools_strategy: :native)
 
-      expect(native.calls.last[:tools]).must_equal [loader]
-      expect(native.calls.last[:deferred_tools]).must_equal [list_events]
-      expect(native.calls.last[:messages]).must_equal loaded_history.map(&:to_h)
+      expect(provider.calls.last[:tools]).must_equal [loader]
+      expect(provider.calls.last[:deferred_tools]).must_equal [list_events]
+      expect(provider.calls.last[:messages]).must_equal loaded_history.map(&:to_h)
     end
 
     it "sends no gateway without deferred tools" do

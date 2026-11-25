@@ -866,36 +866,52 @@ describe Riffer::Agent do
       expect(err.message).must_equal "Duplicate tool names: riffer_gateway"
     end
 
-    describe "on a provider without deferred tool support" do
+    describe "on a provider not wired for native deferred tools" do
       before do
-        unsupported = Class.new(Riffer::Providers::Mock) do
-          def self.supports_deferred_tools? = false
+        unwired = Class.new(Riffer::Providers::Mock) do
+          private
+
+          def build_request_params(messages, model, options)
+            reject_native_deferred_tools!(options)
+            super
+          end
         end
-        Riffer::Providers::Repository.register(:no_deferred) { unsupported }
+        Riffer::Providers::Repository.register(:no_deferred) { unwired }
       end
 
       after { Riffer::Providers::Repository.unregister(:no_deferred) }
 
-      it "raises naming the provider and the gateway strategy" do
+      it "builds an agent with the native strategy" do
         tool = list_events
         klass = stub_agent("Agent") do
           model "no_deferred/riffer-1"
           deferred_tools [tool]
         end
 
-        err = expect { klass.new }.must_raise Riffer::ArgumentError
-        expect(err.message).must_equal "Provider no_deferred does not support deferred tools natively; " \
-                                       "use deferred_tools(..., strategy: :gateway) to load them through a gateway tool"
+        expect(klass.new.deferred_tools).must_equal [tool]
       end
 
-      it "builds an agent with the gateway strategy" do
+      it "raises from generate with the native strategy, pointing at the gateway strategy" do
+        tool = list_events
+        klass = stub_agent("Agent") do
+          model "no_deferred/riffer-1"
+          deferred_tools [tool]
+        end
+
+        err = expect { klass.new.generate("hi") }.must_raise Riffer::ArgumentError
+        expect(err.message).must_match(/use deferred_tools\(\.\.\., strategy: :gateway\)/)
+      end
+
+      it "generates with the gateway strategy" do
         tool = list_events
         klass = stub_agent("Agent") do
           model "no_deferred/riffer-1"
           deferred_tools [tool], strategy: :gateway
         end
+        agent = klass.new
+        agent.provider.stub_response("Done")
 
-        expect(klass.new.deferred_tools).must_equal [tool]
+        expect(agent.generate("hi").content).must_equal "Done"
       end
 
       it "allows a tool with the gateway's name when the agent defers nothing" do
