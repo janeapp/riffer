@@ -1,6 +1,10 @@
 # Generated from lib/riffer/messages/user/file_part.rb with RBS::Inline
 
 class Riffer::Messages::User::FilePart
+  @encoded_bytes: String?
+
+  @bytes: String?
+
   @data_bytes: String?
 
   @downloaded_data: String?
@@ -21,9 +25,11 @@ class Riffer::Messages::User::FilePart
 
   attr_reader sha256: String?
 
+  # +bytes+ is held, not copied, so a large file isn't duplicated in memory;
+  # mutating that String afterwards changes what gets sent.
   # --
-  # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
-  def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
+  # : (media_type: String, ?data: String?, ?bytes: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
+  def initialize: (media_type: String, ?data: String?, ?bytes: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
 
   # --
   # : (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
@@ -37,6 +43,8 @@ class Riffer::Messages::User::FilePart
   # : (String) -> String
   def self.detect_media_type: (String) -> String
 
+  # A +bytes:+ source is encoded on first call, so providers that send raw
+  # bytes never hold a base64 copy.
   # --
   # : () -> String?
   def data: () -> String?

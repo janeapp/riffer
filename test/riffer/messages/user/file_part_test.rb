@@ -28,7 +28,21 @@ describe Riffer::Messages::User::FilePart do
       error = expect do
         Riffer::Messages::User::FilePart.new(media_type: "image/png")
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/Either data or url/)
+      expect(error.message).must_match(/Either data, bytes or url/)
+    end
+
+    it "raises when bytes is combined with data" do
+      error = expect do
+        Riffer::Messages::User::FilePart.new(bytes: "hello", data: "aGVsbG8=", media_type: "text/plain")
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/bytes cannot be combined with data or url/)
+    end
+
+    it "raises when bytes is combined with url" do
+      error = expect do
+        Riffer::Messages::User::FilePart.new(bytes: "hello", url: "https://example.com/a.txt", media_type: "text/plain")
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/bytes cannot be combined with data or url/)
     end
 
     it "raises for unsupported media type" do
@@ -124,7 +138,29 @@ describe Riffer::Messages::User::FilePart do
       error = expect do
         Riffer::Messages::User::FilePart.from_hash({ media_type: "image/png" })
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/must include :url or :data/)
+      expect(error.message).must_match(/must include :url, or :data or :bytes/)
+    end
+
+    it "converts bytes hash" do
+      raw = "raw bytes"
+      result = Riffer::Messages::User::FilePart.from_hash({ bytes: raw, media_type: "text/plain", filename: "a.txt" })
+
+      expect(result.data_bytes).must_be_same_as raw
+      expect(result.filename).must_equal "a.txt"
+    end
+
+    it "raises for a bytes hash without media_type" do
+      error = expect do
+        Riffer::Messages::User::FilePart.from_hash({ bytes: "raw bytes" })
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/must include :url, or :data or :bytes/)
+    end
+
+    it "raises for a hash combining bytes with url instead of dropping the bytes" do
+      error = expect do
+        Riffer::Messages::User::FilePart.from_hash({ bytes: "raw", url: "https://example.com/a.txt" })
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/bytes cannot be combined with data or url/)
     end
 
     it "raises for a non-String sha256 in a data hash instead of crashing on #match?" do
@@ -151,7 +187,8 @@ describe Riffer::Messages::User::FilePart do
         sha256: "a" * 64,
       )
 
-      assert_round_trips file
+      # bytes: can't be combined with data:/url:, and to_h never persists it.
+      assert_round_trips file, omitted: [:bytes]
     end
   end
 
@@ -253,6 +290,16 @@ describe Riffer::Messages::User::FilePart do
       expect(file.to_h.key?(:url)).must_equal false
     end
 
+    it "omits the content of a bytes source, raw or encoded" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", media_type: "text/plain", filename: "a.txt",
+                                                  sha256: Digest::SHA256.hexdigest("hello"),)
+      file.data
+
+      expect(file.to_h).must_equal(
+        { media_type: "text/plain", filename: "a.txt", sha256: Digest::SHA256.hexdigest("hello") },
+      )
+    end
+
     it "omits filename when nil" do
       file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
 
@@ -328,6 +375,45 @@ describe Riffer::Messages::User::FilePart do
       file = Riffer::Messages::User::FilePart.new(data: "not base64!!!", media_type: "text/plain")
 
       expect { file.data_bytes }.must_raise Riffer::FileEncodingError
+    end
+  end
+
+  describe "a bytes source" do
+    it "returns the given String from data_bytes without copying it" do
+      raw = "hello"
+      file = Riffer::Messages::User::FilePart.new(bytes: raw, media_type: "text/plain")
+
+      expect(file.data_bytes).must_be_same_as raw
+    end
+
+    it "accepts sha256" do
+      sha256 = Digest::SHA256.hexdigest("hello")
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", media_type: "text/plain", sha256: sha256)
+
+      expect(file.sha256).must_equal sha256
+    end
+
+    it "base64-encodes data lazily" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", media_type: "text/plain")
+
+      expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
+      expect(file.data).must_equal Base64.strict_encode64("hello")
+    end
+
+    it "encodes only once, reusing the memoized value on later calls" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", media_type: "text/plain")
+
+      first = file.data
+      second = file.data
+
+      expect(second).must_be_same_as first
+    end
+
+    it "is inline data and not a url" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", media_type: "text/plain")
+
+      expect(file.inline_data?).must_equal true
+      expect(file.url?).must_equal false
     end
   end
 

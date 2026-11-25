@@ -90,6 +90,47 @@ describe Riffer::Files::Resolver do
       end
     end
 
+    describe "a raw bytes source" do
+      let(:body) { "inline body" }
+      let(:sha256) { Digest::SHA256.hexdigest(body) }
+
+      %i[url base64 bytes].each do |delivery|
+        it "never downloads with a #{delivery} provider, even when downloads are disabled" do
+          Riffer.config.files.allow_downloads = false
+          file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body, sha256: sha256)
+          message = Riffer::Messages::User.new("hi", files: [file])
+          resolver_for(delivery).resolve!([message])
+
+          expect(downloaded_calls).must_be_empty
+          expect(file.data_bytes).must_be_same_as body
+        end
+      end
+
+      it "skips verification and leaves the bytes unencoded when no sha256 is given" do
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body)
+        message = Riffer::Messages::User.new("hi", files: [file])
+        resolver_for(:base64).resolve!([message])
+
+        expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
+      end
+
+      it "verifies the raw bytes without encoding them when the sha256 matches" do
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body, sha256: sha256)
+        message = Riffer::Messages::User.new("hi", files: [file])
+        resolver_for(:base64).resolve!([message])
+
+        expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
+      end
+
+      it "raises Riffer::FileChecksumMismatchError when the sha256 doesn't match" do
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body,
+                                                    sha256: Digest::SHA256.hexdigest("something else"),)
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
+      end
+    end
+
     describe "a url-only source with a provider that doesn't support files" do
       it "raises Riffer::FileUnsupportedError" do
         file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")

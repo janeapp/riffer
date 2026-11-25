@@ -1139,6 +1139,22 @@ describe Riffer::Providers::AmazonBedrock do
   end
 
   describe "file handling" do
+    describe "with raw bytes" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new }
+
+      it "sends the given String as the bytes source without encoding it" do
+        client = stub_converse
+        raw = "png-bytes"
+        file = Riffer::Messages::User::FilePart.new(bytes: raw, media_type: "image/png")
+
+        provider.generate_text(prompt: "Describe", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
+        block = client.api_requests.last[:params][:messages].last[:content].last
+
+        expect(block).must_equal({ image: { format: "png", source: { bytes: raw } } })
+        expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
+      end
+    end
+
     describe "with an S3 URI" do
       let(:provider) { Riffer::Providers::AmazonBedrock.new }
 

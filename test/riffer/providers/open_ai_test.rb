@@ -1036,4 +1036,31 @@ describe Riffer::Providers::OpenAI do
       expect(close_count).must_equal 1
     end
   end
+
+  describe "file conversion" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+
+    it "sends a raw bytes image as a base64 data URL" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", media_type: "image/png")
+      result = provider.send(:convert_file_part_to_openai_format, file)
+
+      expect(result).must_equal(
+        { type: "input_image", image_url: "data:image/png;base64,#{Base64.strict_encode64('png-bytes')}" },
+      )
+    end
+
+    it "sends a raw bytes document as a base64 data URL" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "pdf-bytes", media_type: "application/pdf",
+                                                  filename: "doc.pdf",)
+      result = provider.send(:convert_file_part_to_openai_format, file)
+
+      expect(result).must_equal(
+        {
+          type: "input_file",
+          file_data: "data:application/pdf;base64,#{Base64.strict_encode64('pdf-bytes')}",
+          filename: "doc.pdf",
+        },
+      )
+    end
+  end
 end

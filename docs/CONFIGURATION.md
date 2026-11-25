@@ -223,7 +223,7 @@ end
 
 Per file, riffer applies this policy, in order:
 
-1. **Already inline data** — nothing to download. If `sha256:` was given, it's verified against the existing bytes regardless of any other setting below.
+1. **Already inline (`data:` or `bytes:`)** — nothing to download. If `sha256:` was given, it's verified against the existing bytes regardless of any other setting below.
 2. **Provider can't accept the file at all** — raises `Riffer::FileUnsupportedError`.
 3. **Provider accepts a URL as-is** — passed straight through, untouched, _unless_ `sha256:` was given, in which case riffer downloads and verifies anyway (a caller who set `sha256:` is asking for integrity verification, not a passthrough).
 4. **Provider needs the bytes inline** — riffer downloads the file, verifying `sha256:` if given.

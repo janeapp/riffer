@@ -220,6 +220,17 @@ describe Riffer::Providers::AnthropicVertex do
       expect(body.key?(:deferred_tools)).must_equal false
     end
 
+    it "sends a raw bytes file inline as base64 without downloading" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", media_type: "image/png")
+      transport.response = message_body
+      provider.generate_text(messages: [Riffer::Messages::User.new("Describe this", files: [file])], model: model)
+      body = transport.requests.first.last
+
+      source = { type: "base64", media_type: "image/png", data: Base64.strict_encode64("png-bytes") }
+
+      expect(body[:messages].first[:content].last).must_equal({ type: "image", source: source })
+    end
+
     it "downloads a URL file and sends it inline as base64" do
       Riffer.config.files.allow_downloads = true
       Riffer.config.files.downloader = ->(_url, **) { "png-bytes" }

@@ -759,4 +759,15 @@ describe Riffer::Providers::Gemini do
         must_equal({ id: "g1", name: gateway_wire_name })
     end
   end
+
+  describe "file conversion" do
+    it "sends a raw bytes file as base64 inlineData" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "pdf-bytes", media_type: "application/pdf")
+      result = Riffer::Providers::Gemini.new.send(:convert_file_part_to_gemini_format, file)
+
+      expect(result).must_equal(
+        { inlineData: { mimeType: "application/pdf", data: Base64.strict_encode64("pdf-bytes") } },
+      )
+    end
+  end
 end
