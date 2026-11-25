@@ -41,8 +41,8 @@ class Riffer::Messages::User::FilePart
   def initialize(media_type:, data: nil, bytes: nil, filename: nil, url: nil, sha256: nil)
     if bytes.nil?
       raise Riffer::ArgumentError, "Either data, bytes or url must be provided" if data.nil? && url.nil?
-    elsif data || url
-      raise Riffer::ArgumentError, "bytes cannot be combined with data or url"
+    elsif data
+      raise Riffer::ArgumentError, "bytes cannot be combined with data"
     end
     unless SUPPORTED_MEDIA_TYPES.include?(media_type)
       raise Riffer::ArgumentError,

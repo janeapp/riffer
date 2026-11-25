@@ -35,14 +35,15 @@ describe Riffer::Messages::User::FilePart do
       error = expect do
         Riffer::Messages::User::FilePart.new(bytes: "hello", data: "aGVsbG8=", media_type: "text/plain")
       end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/bytes cannot be combined with data or url/)
+      expect(error.message).must_match(/bytes cannot be combined with data/)
     end
 
-    it "raises when bytes is combined with url" do
-      error = expect do
-        Riffer::Messages::User::FilePart.new(bytes: "hello", url: "https://example.com/a.txt", media_type: "text/plain")
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/bytes cannot be combined with data or url/)
+    it "accepts bytes with a url" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", url: "https://example.com/a.txt",
+                                                  media_type: "text/plain",)
+
+      expect(file.data_bytes).must_equal "hello"
+      expect(file.url).must_equal "https://example.com/a.txt"
     end
 
     it "raises for unsupported media type" do
@@ -156,11 +157,20 @@ describe Riffer::Messages::User::FilePart do
       expect(error.message).must_match(/must include :url, or :data or :bytes/)
     end
 
-    it "raises for a hash combining bytes with url instead of dropping the bytes" do
-      error = expect do
-        Riffer::Messages::User::FilePart.from_hash({ bytes: "raw", url: "https://example.com/a.txt" })
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/bytes cannot be combined with data or url/)
+    it "keeps the bytes of a hash that also has a url" do
+      result = Riffer::Messages::User::FilePart.from_hash({ bytes: "raw", url: "https://example.com/a.txt" })
+
+      expect(result.data_bytes).must_equal "raw"
+      expect(result.url).must_equal "https://example.com/a.txt"
+    end
+
+    it "rebuilds a bytes file with a url from its to_h as a url file" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "raw", url: "https://example.com/a.txt",
+                                                  media_type: "text/plain",)
+      reloaded = Riffer::Messages::User::FilePart.from_hash(file.to_h)
+
+      expect(reloaded.url).must_equal "https://example.com/a.txt"
+      expect(reloaded.inline_data?).must_equal false
     end
 
     it "raises for a non-String sha256 in a data hash instead of crashing on #match?" do
@@ -187,7 +197,7 @@ describe Riffer::Messages::User::FilePart do
         sha256: "a" * 64,
       )
 
-      # bytes: can't be combined with data:/url:, and to_h never persists it.
+      # bytes: can't be combined with data:, and to_h never persists it.
       assert_round_trips file, omitted: [:bytes]
     end
   end

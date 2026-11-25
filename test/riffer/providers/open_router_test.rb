@@ -489,6 +489,14 @@ describe Riffer::Providers::OpenRouter do
       expect(result[:image_url][:url]).must_equal "data:image/png;base64,#{Base64.strict_encode64('png-bytes')}"
     end
 
+    it "encodes inline data instead of the url for an image that has both" do
+      file = Riffer::Messages::User::FilePart.new(data: "xyz", url: "https://example.com/cat.png",
+                                                  media_type: "image/png",)
+      result = provider.send(:convert_file_part_to_chat_completions_format, file)
+
+      expect(result[:image_url][:url]).must_equal "data:image/png;base64,xyz"
+    end
+
     it "encodes a raw bytes document as a data URL" do
       file = Riffer::Messages::User::FilePart.new(bytes: "pdf-bytes", media_type: "application/pdf")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)

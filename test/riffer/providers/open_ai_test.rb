@@ -1043,6 +1043,21 @@ describe Riffer::Providers::OpenAI do
       )
     end
 
+    it "sends inline data instead of the url for an image that has both" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", url: "https://example.com/a.png",
+                                                  media_type: "image/png",)
+      result = provider.send(:convert_file_part_to_openai_format, file)
+
+      expect(result[:image_url]).must_equal "data:image/png;base64,#{Base64.strict_encode64('png-bytes')}"
+    end
+
+    it "sends a url-only image as its url" do
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/a.png")
+      result = provider.send(:convert_file_part_to_openai_format, file)
+
+      expect(result[:image_url]).must_equal "https://example.com/a.png"
+    end
+
     it "sends a raw bytes document as a base64 data URL" do
       file = Riffer::Messages::User::FilePart.new(bytes: "pdf-bytes", media_type: "application/pdf",
                                                   filename: "doc.pdf",)

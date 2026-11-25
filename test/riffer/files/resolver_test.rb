@@ -122,6 +122,15 @@ describe Riffer::Files::Resolver do
         expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
       end
 
+      it "verifies the bytes instead of downloading the url when both are given" do
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body,
+                                                    url: "https://example.com/a.txt", sha256: sha256,)
+        message = Riffer::Messages::User.new("hi", files: [file])
+        resolver_for(:url).resolve!([message])
+
+        expect(downloaded_calls).must_be_empty
+      end
+
       it "raises Riffer::FileChecksumMismatchError when the sha256 doesn't match" do
         file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body,
                                                     sha256: Digest::SHA256.hexdigest("something else"),)

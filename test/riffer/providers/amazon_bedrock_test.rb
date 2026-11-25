@@ -1188,6 +1188,17 @@ describe Riffer::Providers::AmazonBedrock do
         expect(block).must_equal({ image: { format: "png", source: { bytes: raw } } })
         expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
       end
+
+      it "sends the bytes instead of the S3 URI when a file has both" do
+        client = stub_converse
+        file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", url: "s3://riffer-test-bucket/image.png",
+                                                    media_type: "image/png",)
+
+        provider.generate_text(prompt: "Describe", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
+        block = client.api_requests.last[:params][:messages].last[:content].last
+
+        expect(block).must_equal({ image: { format: "png", source: { bytes: "png-bytes" } } })
+      end
     end
 
     describe "with an S3 URI" do

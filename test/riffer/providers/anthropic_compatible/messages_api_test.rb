@@ -211,5 +211,20 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
 
       expect(result).must_equal({ type: "image", source: source })
     end
+
+    it "sends inline data instead of a url when a file has both" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", url: "https://example.com/a.png",
+                                                  media_type: "image/png",)
+      result = provider.send(:convert_file_part, file)
+
+      expect(result[:source]).must_equal({ type: "base64", media_type: "image/png", data: "aGVsbG8=" })
+    end
+
+    it "sends a url-only file as a url source" do
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/a.png")
+      result = provider.send(:convert_file_part, file)
+
+      expect(result[:source]).must_equal({ type: "url", url: "https://example.com/a.png" })
+    end
   end
 end
