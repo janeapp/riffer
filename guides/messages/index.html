@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.58.0</span>
+            <span class="version">v0.59.0</span>
           </div>
         </nav>
       </div>
@@ -118,23 +118,18 @@
                 >
               </li>
               <li>
-                <a href="/guides/mcp/"
-                  ><span class="num">16</span> MCP</a
-                >
-              </li>
-              <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">17</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">18</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
               <li>
                 <a href="/guides/stability/"
-                  ><span class="num">19</span> Stability</a
+                  ><span class="num">18</span> Stability</a
                 >
               </li>
             </ul>
@@ -693,8 +688,11 @@
 <span class="n">file</span><span class="p">.</span><span class="nf">url?</span>        <span class="c1"># =&gt; true</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">document?</span>   <span class="c1"># =&gt; true</span>
 
-<span class="c1"># From raw base64 data</span>
+<span class="c1"># From base64 data</span>
 <span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">)</span>
+
+<span class="c1"># From raw bytes (no base64 needed)</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">,</span> <span class="ss">bytes: </span><span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="s2">"report.pdf"</span><span class="p">),</span> <span class="ss">filename: </span><span class="s2">"report.pdf"</span><span class="p">)</span>
 
 <span class="c1"># With an expected sha256 checksum of the file's contents</span>
 <span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span>
@@ -705,6 +703,12 @@
 </code></pre></div></div>
 
 <p><code>sha256:</code> accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises <code>Riffer::ArgumentError</code> on any other format.</p>
+
+<p><code>bytes:</code> takes the raw file content as a String and keeps that String as given, without copying it, so don’t change it afterwards. It can’t be combined with <code>data:</code> (raises <code>Riffer::ArgumentError</code>). Providers that send raw bytes, such as Amazon Bedrock, use it directly; providers that need base64 encode it for you.</p>
+
+<p>A file can carry a <code>url:</code> alongside <code>data:</code> or <code>bytes:</code>. The inline content always wins: it’s what riffer sends to the provider and what <code>sha256:</code> is checked against, and the URL is never downloaded.</p>
+
+<p><code>to_h</code> leaves out file content that didn’t come from <code>data:</code>: downloaded content and <code>bytes:</code> content are never included. A <code>bytes:</code> file with a <code>url:</code> serializes to its URL, so <code>from_hash</code> rebuilds it as a URL file. A <code>bytes:</code> file without one serializes to its metadata only (<code>media_type</code>, <code>filename</code>, <code>sha256</code>), and <code>from_hash</code> raises <code>Riffer::ArgumentError</code> on that hash; attach the bytes again when you restore the message.</p>
 
 <h3 id="hash-shorthand">Hash Shorthand</h3>
 
@@ -720,6 +724,9 @@
 
 <span class="c1"># Data shorthand</span>
 <span class="p">{</span><span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">}</span>
+
+<span class="c1"># Bytes shorthand</span>
+<span class="p">{</span><span class="ss">bytes: </span><span class="n">raw_string</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"report.pdf"</span><span class="p">}</span>
 </code></pre></div></div>
 
 <h3 id="predicates">Predicates</h3>

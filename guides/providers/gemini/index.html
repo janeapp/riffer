@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.58.0</span>
+            <span class="version">v0.59.0</span>
           </div>
         </nav>
       </div>
@@ -118,23 +118,18 @@
                 >
               </li>
               <li>
-                <a href="/guides/mcp/"
-                  ><span class="num">16</span> MCP</a
-                >
-              </li>
-              <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">17</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">18</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
               <li>
                 <a href="/guides/stability/"
-                  ><span class="num">19</span> Stability</a
+                  ><span class="num">18</span> Stability</a
                 >
               </li>
             </ul>
@@ -404,7 +399,7 @@
 
 <h3 id="deferred-tools-experimental">Deferred Tools (experimental)</h3>
 
-<p>Gemini has no native deferred loading, so an agent with <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> on Gemini needs the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a>, <code>deferred_tools [...], strategy: :gateway</code>; without it, building the agent raises <code>Riffer::ArgumentError</code>. Every request then has one extra function in <code>functionDeclarations</code>, the <a href="/guides/tools/#the-gateway-strategy">gateway</a>, and the model calls a loaded tool through it, so the declarations stay the same and a load keeps the prompt cache. Calls come back under the real tool’s name.</p>
+<p>Gemini has no native deferred loading, so an agent with <a href="/guides/agents/#deferred_tools-experimental">deferred tools</a> on Gemini needs the <a href="/guides/agents/#deferred-tools-strategy-experimental">gateway strategy</a>, <code>deferred_tools [...], strategy: :gateway</code>; without it, each <code>generate</code> or <code>stream</code> raises <code>Riffer::ArgumentError</code> before sending a request. Every request then has one extra function in <code>functionDeclarations</code>, the <a href="/guides/tools/#the-gateway-strategy">gateway</a>, and the model calls a loaded tool through it, so the declarations stay the same and a load keeps the prompt cache. Calls come back under the real tool’s name.</p>
 
 <h3 id="thought-signatures">Thought Signatures</h3>
 

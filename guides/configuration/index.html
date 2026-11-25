@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.58.0</span>
+            <span class="version">v0.59.0</span>
           </div>
         </nav>
       </div>
@@ -118,23 +118,18 @@
                 >
               </li>
               <li>
-                <a href="/guides/mcp/"
-                  ><span class="num">16</span> MCP</a
-                >
-              </li>
-              <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">17</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">18</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
               <li>
                 <a href="/guides/stability/"
-                  ><span class="num">19</span> Stability</a
+                  ><span class="num">18</span> Stability</a
                 >
               </li>
             </ul>
@@ -381,40 +376,6 @@
   <li>Transport failures are raised as Faraday’s own errors, such as <code>Faraday::TimeoutError</code> and <code>Faraday::ConnectionFailed</code> (both <code>Faraday::Error</code>s).</li>
 </ul>
 
-<h3 id="mcp-deprecated">MCP (deprecated)</h3>
-
-<p><code>config.mcp</code> is deprecated and will be removed with MCP client support in a future release; each line that sets <code>credentials</code> or <code>discovery_runner</code> reports a <a href="#deprecations">deprecation</a>. See <a href="/guides/mcp/#moving-off-mcp">MCP → Moving off MCP</a>.</p>
-
-<p>Optional settings for <a href="/guides/mcp/">MCP server integrations</a>:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Option</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>credentials</code></td>
-      <td>Optional callable for per-run <code>tools/call</code> HTTP headers: <code>-&gt;(manifest:, matched_tags:, context:) { Hash or nil }</code>. Raises <code>Riffer::ArgumentError</code> unless <code>nil</code> or it responds to <code>#call</code>.</td>
-    </tr>
-    <tr>
-      <td><code>discovery_runner</code></td>
-      <td><code>Riffer::Runner</code> instance for tool discovery (default <code>Runner::Sequential.new</code>). Raises <code>Riffer::ArgumentError</code> for anything that isn’t a <code>Riffer::Runner</code> instance.</td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">mcp</span><span class="p">.</span><span class="nf">credentials</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">manifest</span><span class="p">:,</span> <span class="n">matched_tags</span><span class="p">:,</span> <span class="n">context</span><span class="ss">:|</span>
-    <span class="p">{</span><span class="s2">"Authorization"</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">token_for</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre></div></div>
-
-<p>See <a href="/guides/mcp/">MCP</a> for registration, tags, and agent <code>use_mcp</code>.</p>
-
 <h3 id="evals-deprecated">Evals (deprecated)</h3>
 
 <p><code>config.evals</code> is deprecated and will move out of riffer into the <code>riffer-evals</code> gem along with <a href="/guides/evals/">evals</a>. Reading it reports a <a href="#deprecations">deprecation</a>.</p>
@@ -534,7 +495,7 @@
 <p>Per file, riffer applies this policy, in order:</p>
 
 <ol>
-  <li><strong>Already inline data</strong> — nothing to download. If <code>sha256:</code> was given, it’s verified against the existing bytes regardless of any other setting below.</li>
+  <li><strong>Already inline (<code>data:</code> or <code>bytes:</code>)</strong> — nothing to download. If <code>sha256:</code> was given, it’s verified against the existing bytes regardless of any other setting below.</li>
   <li><strong>Provider can’t accept the file at all</strong> — raises <code>Riffer::FileUnsupportedError</code>.</li>
   <li><strong>Provider accepts a URL as-is</strong> — passed straight through, untouched, <em>unless</em> <code>sha256:</code> was given, in which case riffer downloads and verifies anyway (a caller who set <code>sha256:</code> is asking for integrity verification, not a passthrough).</li>
   <li><strong>Provider needs the bytes inline</strong> — riffer downloads the file, verifying <code>sha256:</code> if given.</li>
