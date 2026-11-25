@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.59.0](https://github.com/janeapp/riffer/compare/riffer/v0.58.0...riffer/v0.59.0) (2026-11-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* MCP client support is removed. `Riffer::Mcp` (including `Riffer::Mcp.register`), `Agent.use_mcp`, `Agent.mcp_configs`, `Agent::Config#mcp_configs`, `config.mcp`, the `mcp_search` tool and the `mcp_progressive_tools` and `discovered_tools` context keys no longer exist. Wrap the `mcp` gem in your own `Riffer::Tool` instead, and use deferred tools in place of progressive discovery (see UPGRADING.md).
+
+### Features
+
+* **messages:** accept raw bytes in User::FilePart ([#604](https://github.com/janeapp/riffer/issues/604)) ([00d2536](https://github.com/janeapp/riffer/commit/00d25368c2f4ced0c917f31a12f7e4c046b54653))
+* **providers:** remove supports_deferred_tools? ([#605](https://github.com/janeapp/riffer/issues/605)) ([8fce04d](https://github.com/janeapp/riffer/commit/8fce04d7815879a30ecf685601b5426754e3a198))
+* remove MCP client support ([#591](https://github.com/janeapp/riffer/issues/591)) ([fd60bef](https://github.com/janeapp/riffer/commit/fd60bef34fa279b1f9a1b7d8e356c4ef68c7df4b))
+
 ## [0.58.0](https://github.com/janeapp/riffer/compare/riffer/v0.57.2...riffer/v0.58.0) (2026-11-20)
 
 

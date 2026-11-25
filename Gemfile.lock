@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    riffer (0.58.0)
+    riffer (0.59.0)
       base64
       faraday (~> 2.6)
       faraday-net_http (>= 3.0)
