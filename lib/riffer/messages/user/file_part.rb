@@ -35,15 +35,13 @@ class Riffer::Messages::User::FilePart
   attr_reader :sha256 #: String? # @dynamic sha256
 
   # +bytes+ is held, not copied, so a large file isn't duplicated in memory;
-  # mutating that String afterwards changes what gets sent.
+  # don't mutate it afterwards: base64 providers encode it once and keep
+  # sending that encoding.
   #--
   #: (media_type: String, ?data: String?, ?bytes: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
   def initialize(media_type:, data: nil, bytes: nil, filename: nil, url: nil, sha256: nil)
-    if bytes.nil?
-      raise Riffer::ArgumentError, "Either data, bytes or url must be provided" if data.nil? && url.nil?
-    elsif data
-      raise Riffer::ArgumentError, "bytes cannot be combined with data"
-    end
+    raise Riffer::ArgumentError, "Either data, bytes or url must be provided" if data.nil? && bytes.nil? && url.nil?
+    raise Riffer::ArgumentError, "bytes cannot be combined with data" if data && bytes
     unless SUPPORTED_MEDIA_TYPES.include?(media_type)
       raise Riffer::ArgumentError,
             "Unsupported media type: #{media_type}"
@@ -97,8 +95,6 @@ class Riffer::Messages::User::FilePart
   end
   private_class_method :detect_media_type
 
-  # A +bytes:+ source is encoded on first call, so providers that send raw
-  # bytes never hold a base64 copy.
   #--
   #: () -> String?
   def data

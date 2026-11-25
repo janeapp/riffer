@@ -103,19 +103,12 @@ describe Riffer::Files::Resolver do
 
           expect(downloaded_calls).must_be_empty
           expect(file.data_bytes).must_be_same_as body
+          expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
         end
       end
 
-      it "skips verification and leaves the bytes unencoded when no sha256 is given" do
+      it "resolves without encoding the bytes when no sha256 is given" do
         file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body)
-        message = Riffer::Messages::User.new("hi", files: [file])
-        resolver_for(:base64).resolve!([message])
-
-        expect(file.instance_variable_get(:@encoded_bytes)).must_be_nil
-      end
-
-      it "verifies the raw bytes without encoding them when the sha256 matches" do
-        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body, sha256: sha256)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:base64).resolve!([message])
 

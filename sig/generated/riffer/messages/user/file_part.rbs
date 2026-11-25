@@ -26,7 +26,8 @@ class Riffer::Messages::User::FilePart
   attr_reader sha256: String?
 
   # +bytes+ is held, not copied, so a large file isn't duplicated in memory;
-  # mutating that String afterwards changes what gets sent.
+  # don't mutate it afterwards: base64 providers encode it once and keep
+  # sending that encoding.
   # --
   # : (media_type: String, ?data: String?, ?bytes: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
   def initialize: (media_type: String, ?data: String?, ?bytes: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
@@ -43,8 +44,6 @@ class Riffer::Messages::User::FilePart
   # : (String) -> String
   def self.detect_media_type: (String) -> String
 
-  # A +bytes:+ source is encoded on first call, so providers that send raw
-  # bytes never hold a base64 copy.
   # --
   # : () -> String?
   def data: () -> String?

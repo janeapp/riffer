@@ -369,11 +369,11 @@ file.sha256  # => "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b
 
 `sha256:` accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises `Riffer::ArgumentError` on any other format.
 
-`bytes:` takes the raw file content as a String and keeps that String as given, without copying it. It can't be combined with `data:` (raises `Riffer::ArgumentError`). Providers that send raw bytes, such as Amazon Bedrock, use it directly; providers that need base64 encode it once, on first use, and reuse the result.
+`bytes:` takes the raw file content as a String and keeps that String as given, without copying it, so don't change it afterwards. It can't be combined with `data:` (raises `Riffer::ArgumentError`). Providers that send raw bytes, such as Amazon Bedrock, use it directly; providers that need base64 encode it for you.
 
-A file can carry a `url:` alongside `data:` or `bytes:`. The inline content always wins: it's what riffer sends to the provider and what `sha256:` is checked against, and the URL is never downloaded. The URL is used only when a file has no inline content.
+A file can carry a `url:` alongside `data:` or `bytes:`. The inline content always wins: it's what riffer sends to the provider and what `sha256:` is checked against, and the URL is never downloaded.
 
-`to_h` leaves out file content that didn't come from `data:`: downloaded content and `bytes:` content (raw or encoded) are never included. A `bytes:` file with a `url:` serializes to its URL, so `from_hash` rebuilds it as a URL file. A `bytes:` file without one serializes to its metadata only (`media_type`, `filename`, `sha256`), and `from_hash` raises `Riffer::ArgumentError` on that hash; attach the bytes again when you restore the message.
+`to_h` leaves out file content that didn't come from `data:`: downloaded content and `bytes:` content are never included. A `bytes:` file with a `url:` serializes to its URL, so `from_hash` rebuilds it as a URL file. A `bytes:` file without one serializes to its metadata only (`media_type`, `filename`, `sha256`), and `from_hash` raises `Riffer::ArgumentError` on that hash; attach the bytes again when you restore the message.
 
 ### Hash Shorthand
 
