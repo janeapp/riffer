@@ -18,12 +18,6 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: () -> bool
-  def self.supports_deferred_tools?
-    false
-  end
-
-  #--
   #: () -> String
   def self.semconv_provider_name
     # Anonymous classes stay uncached: a class assigned to a constant
@@ -171,6 +165,16 @@ class Riffer::Providers::Base
   #: (String, tools: Array[singleton(Riffer::Tool)]) -> String
   def decode_tool_name(wire_name, tools:)
     Riffer::Wire.decode_tool_name(wire_name, tools: tools)
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> void
+  def reject_native_deferred_tools!(options)
+    return if (options[:deferred_tools] || []).empty?
+
+    raise Riffer::ArgumentError,
+          "#{self.class} does not load deferred tools natively; " \
+          "use deferred_tools(..., strategy: :gateway) to load them through a gateway tool"
   end
 
   #--
@@ -478,10 +482,11 @@ class Riffer::Providers::Base
   def request_options(options)
     gateway = !gateway_deferred_tools(options).empty?
     options = options.except(:riffer_reasoning_level, :riffer_deferred_tools_strategy)
-    # Every request with deferred tools carries the gateway, before a load and after, so the tool list never changes.
-    options = options.merge(tools: (options[:tools] || []) + [Riffer::Providers::DeferredToolGateway::Tool]) if gateway
-    # Providers splat unknown options into their SDK request, and a gateway request must not load natively too.
-    options = options.except(:deferred_tools) if gateway || !self.class.supports_deferred_tools?
+    # Every request with deferred tools carries the gateway, before a load and after, so the tool list never changes,
+    # and a gateway request must not also load natively.
+    if gateway
+      options = options.except(:deferred_tools).merge(tools: (options[:tools] || []) + [Riffer::Providers::DeferredToolGateway::Tool])
+    end
     options[:structured_output]&.prompted? ? options.except(:structured_output) : options
   end
 

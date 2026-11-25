@@ -30,12 +30,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     Riffer::Skills::XmlAdapter
   end
 
-  #--
-  #: () -> bool
-  def self.supports_deferred_tools?
-    true
-  end
-
   private
 
   #--

@@ -714,10 +714,20 @@ describe Riffer::Providers::Gemini do
       }
     end
 
-    it "has no native loading, here or on Google Cloud" do
-      supported = [Riffer::Providers::Gemini, Riffer::Providers::GoogleCloud].map(&:supports_deferred_tools?)
+    it "raises for native deferred tools, pointing at the gateway strategy" do
+      options = request_options.except(:riffer_deferred_tools_strategy)
+      err = expect { Riffer::Providers::Gemini.new.generate_text(prompt: "What's on?", **options) }.
+        must_raise Riffer::ArgumentError
 
-      expect(supported).must_equal [false, false]
+      expect(err.message).must_match(/use deferred_tools\(\.\.\., strategy: :gateway\)/)
+      expect(requests).must_be_empty
+    end
+
+    it "raises for native deferred tools when streaming" do
+      options = request_options.except(:riffer_deferred_tools_strategy)
+
+      expect { Riffer::Providers::Gemini.new.stream_text(prompt: "What's on?", **options) }.
+        must_raise Riffer::ArgumentError
     end
 
     it "declares the gateway after the agent's tools and returns its call as a call to the real tool" do
