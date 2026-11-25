@@ -125,14 +125,6 @@ end
 
 An agent without a GitHub connection gets no GitHub tools, which is what a `credentials` callback returning `nil` did. A loaded tool stays loaded for the rest of the conversation, including after the agent is [serialized](https://riffer.ai/guides/serialization/) and restored. To run these tools in a restored agent, pass `from_json` a `tool_resolver:` that returns the real classes, such as `->(descriptor) { (GITHUB_MCP.tools + [FindGithubTools]).find { |tool| tool.name == descriptor[:name] } }`, and the connected client in `context:`. Anthropic, OpenAI and Azure OpenAI load deferred tools natively; on any other provider, pass [`strategy: :gateway`](https://riffer.ai/guides/agents/#deferred-tools-strategy-experimental). Deferred tools are experimental, so this part of the recipe can change in a minor release.
 
-### `supports_deferred_tools?` is removed
-
-`Riffer::Providers::Base.supports_deferred_tools?` and its overrides are gone. Native loading of [deferred tools](https://riffer.ai/guides/agents/#deferred_tools-experimental) depends on the model, not just the provider, so riffer no longer checks the provider when an agent is built:
-
-- An agent with deferred tools and the default `:native` strategy now builds on every provider. On Gemini, Google Cloud, Amazon Bedrock and OpenRouter, which have no native loading in riffer, each `generate` or `stream` raises `Riffer::ArgumentError` instead, pointing at [`strategy: :gateway`](https://riffer.ai/guides/agents/#deferred-tools-strategy-experimental). Agents on those providers that already pass `strategy: :gateway` are unaffected.
-- On Anthropic, OpenAI and Azure OpenAI, a model without native loading still gets the provider's own error.
-- A [custom provider](https://riffer.ai/guides/providers/custom/#deferred-tools-experimental) that overrides `supports_deferred_tools?` should drop the override. Its `build_request_params` now receives `options[:deferred_tools]` on every native request, whatever the override returned: load them natively, or call `reject_native_deferred_tools!(options)` to raise. Keep `:deferred_tools` out of anything it splats into its SDK request.
-
 ## 0.58.0
 
 ### `config.pricing` is removed
