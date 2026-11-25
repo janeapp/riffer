@@ -204,7 +204,7 @@ Riffer rebuilds the `additional_tools` items from the `loaded_tools` on the conv
 
 OpenAI returns a call to a loaded tool with a `namespace` field, and rejects a later request that replays the call without it. That namespace is always the tool's own name as sent to OpenAI, so riffer adds it back to every replayed call to a deferred tool and never stores it. Tools, the session, callbacks and traces see an ordinary tool call.
 
-Native loading needs gpt-5.4 or a later model. Riffer doesn't check the model, so an older one gets OpenAI's own error.
+Native loading needs gpt-5.4 or a later model. Riffer doesn't check the model, so an older one gets OpenAI's own error on the first request that carries an `additional_tools` item, after a tool loads a deferred tool.
 
 With the [gateway strategy](../AGENTS.md#deferred-tools-strategy-experimental), `deferred_tools [...], strategy: :gateway`, riffer sends the [gateway](../TOOLS.md#the-gateway-strategy) instead of loading them natively.
 
