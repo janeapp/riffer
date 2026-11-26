@@ -470,7 +470,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::User::FilePart) -> String
   def document_filename(file)
-    file.filename || "file#{Riffer::Messages::User::FilePart::MEDIA_TYPES.key(file.media_type)}"
+    file.filename || "file#{file.extension}"
   end
 
   #--

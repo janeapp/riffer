@@ -289,16 +289,16 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
   end
 
   describe "#file_delivery" do
-    it "downloads text files as bytes" do
-      %w[text/plain text/csv text/html].each do |media_type|
+    %w[text/plain text/csv text/html].each do |media_type|
+      it "downloads #{media_type} as bytes" do
         file = Riffer::Messages::User::FilePart.new(url: "https://example.com/a", media_type: media_type)
 
         expect(provider.file_delivery(file)).must_equal :bytes
       end
     end
 
-    it "passes image and PDF urls through" do
-      %w[https://example.com/a.png https://example.com/a.pdf].each do |url|
+    %w[https://example.com/a.png https://example.com/a.pdf].each do |url|
+      it "passes #{url} through" do
         expect(provider.file_delivery(Riffer::Messages::User::FilePart.from_url(url))).must_equal :url
       end
     end

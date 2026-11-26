@@ -78,6 +78,15 @@ class Riffer::Messages::User::FilePart
   def document?: () -> bool
 
   # --
+  # : () -> bool
+  def text?: () -> bool
+
+  # The first extension registered for the media type, e.g. ".jpg" for image/jpeg.
+  # --
+  # : () -> String
+  def extension: () -> String
+
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

@@ -34,7 +34,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(file)
-    text_file?(file) ? :bytes : :url
+    file.text? ? :bytes : :url
   end
 
   private
@@ -369,7 +369,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part(file)
-    return { type: "document", source: text_source(file) } if text_file?(file)
+    return { type: "document", source: text_source(file) } if file.text?
 
     type = file.image? ? "image" : "document"
 
@@ -391,12 +391,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     raise Riffer::FileEncodingError, "Text file is not valid UTF-8" unless text.valid_encoding?
 
     { type: "text", media_type: "text/plain", data: text }
-  end
-
-  #--
-  #: (Riffer::Messages::User::FilePart) -> bool
-  def text_file?(file)
-    file.media_type.start_with?("text/")
   end
 
   #--

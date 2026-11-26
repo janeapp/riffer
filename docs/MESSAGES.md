@@ -400,8 +400,11 @@ When passing files to agents or messages, hashes are automatically converted:
 ```ruby
 file.image?     # true for image/* media types
 file.document?  # true for non-image media types
+file.text?      # true for text/* media types
 file.url?       # true when source was a URL
 ```
+
+`file.extension` returns the first extension registered for the media type, such as `".jpg"` for `image/jpeg`.
 
 ## Using Messages with Agents
 

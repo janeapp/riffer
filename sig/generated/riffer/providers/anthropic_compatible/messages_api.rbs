@@ -142,10 +142,6 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def text_source: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::Messages::User::FilePart) -> bool
-  def text_file?: (Riffer::Messages::User::FilePart) -> bool
-
-  # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

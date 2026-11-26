@@ -21,7 +21,7 @@ class Riffer::Providers::AnthropicVertex < Riffer::Providers::AnthropicCompatibl
   #--
   #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(file)
-    text_file?(file) ? :bytes : :base64
+    file.text? ? :bytes : :base64
   end
 
   private
