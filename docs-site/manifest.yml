@@ -103,3 +103,10 @@ groups:
       - source: providers/CUSTOM_PROVIDERS.md
         slug: providers/custom
         description: Build your own provider adapter
+
+  - label: Add-ons
+    tone: rose
+    pages:
+      - source: COMMUNITY_GEMS.md
+        slug: community-gems
+        description: Gems built on Riffer by the community
