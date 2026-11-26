@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/janeapp/riffer"
-  spec.metadata["changelog_uri"] = "https://github.com/janeapp/riffer/blob/main/CHANGELOG.md"
+  spec.metadata["changelog_uri"] = "https://github.com/janeapp/riffer/blob/main/riffer-core/CHANGELOG.md"
 
   # Extra files to include in generated documentation
   spec.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE.txt"]

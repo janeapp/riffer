@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
-require "bundler/gem_tasks"
+require "bundler/gem_helper"
 require "minitest/test_task"
 
-Minitest::TestTask.create
+Bundler::GemHelper.install_tasks(dir: "riffer-core")
+
+Minitest::TestTask.create do |t|
+  t.libs = %w[riffer-core/lib riffer-core/test .]
+  t.test_globs = ["riffer-core/test/**/*_test.rb"]
+end
 
 require "rubocop/rake_task"
 
@@ -15,8 +20,8 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = "_site/api"
   rdoc.title = "Riffer API Reference"
   rdoc.main = "README.md"
-  rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "LICENSE.txt")
-  rdoc.rdoc_files.include("lib/**/*.rb")
+  rdoc.rdoc_files.include("README.md", "riffer-core/CHANGELOG.md", "LICENSE.txt")
+  rdoc.rdoc_files.include("riffer-core/lib/**/*.rb")
   rdoc.options << "--charset" << "utf-8"
 end
 
@@ -43,10 +48,10 @@ task docs: %w[docs:site rdoc]
 namespace :rbs do
   desc "Generate RBS type signatures from inline annotations"
   task :generate do
-    sh "bundle exec rbs-inline --output sig/generated lib"
+    sh "bundle exec rbs-inline --output sig/generated lib", chdir: "riffer-core"
   end
 
-  desc "Watch lib/ for changes and regenerate RBS files"
+  desc "Watch riffer-core/lib/ for changes and regenerate RBS files"
   task :watch do
     require "guard"
     require "guard/commander"

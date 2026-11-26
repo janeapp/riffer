@@ -84,7 +84,13 @@ Minitest/MultipleAssertions:
 # stream doubles.
 Lint/EmptyBlock:
   Exclude:
-    - test/**/*
+    - riffer-core/test/**/*
+
+# RuboCop's default `test/**/*` exclude is root-relative, so it misses each
+# gem's tests.
+Style/OneClassPerFile:
+  Exclude:
+    - riffer-core/test/**/*
 
 # Keyword-argument names are the calling contract for riffer's block-based
 # hooks (tool `execute` blocks, evaluator lambdas, dynamic instructions) —
@@ -107,9 +113,9 @@ Naming/PredicatePrefix:
 # elements.
 Performance/Sum:
   Exclude:
-    - lib/riffer/providers/base.rb
-    - lib/riffer/evals/run_result.rb
-    - lib/riffer/evals/scenario_result.rb
+    - riffer-core/lib/riffer/providers/base.rb
+    - riffer-core/lib/riffer/evals/run_result.rb
+    - riffer-core/lib/riffer/evals/scenario_result.rb
 
 # Each accessor carries its own trailing rbs-inline `#:` type; grouping them
 # onto one line drops every type but the first.

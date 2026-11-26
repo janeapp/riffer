@@ -8,7 +8,7 @@ _site
 coverage
 doc/
 pkg
-test/reports
+riffer-core/test/reports
 tmp
 vendor
 /.claude/settings.local.json

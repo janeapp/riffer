@@ -40,4 +40,4 @@ for f in "${files[@]}"; do
   esac
 done
 
-exec bundle exec ruby -Ilib:test "${requires[@]}" -e "" -- "${opts[@]}"
+exec bundle exec ruby -Iriffer-core/lib:riffer-core/test "${requires[@]}" -e "" -- "${opts[@]}"

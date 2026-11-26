@@ -5,6 +5,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 ## Quick Reference
 
 - **Ruby**: 3.3.0+ (CI: 3.3, 3.4, 4.0)
+- **Layout**: the `riffer` gem lives in `riffer-core/` (`lib/`, `sig/`, `test/`, `riffer.gemspec`, `CHANGELOG.md`). The Gemfile, Rakefile, Steepfile, `.rubocop.yml` and `bin/` wrappers are shared at the repo root — run every command from there (e.g. `bin/test riffer-core/test/riffer/agent_test.rb`)
 - **Lint + Test**: `bin/rake` (runs the default task: test + rubocop + steep:check)
 - **Autoloading**: Zeitwerk (file paths must match module/class names)
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)

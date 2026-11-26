@@ -58,7 +58,7 @@ jobs:
       - name: Generate RBS files
         run: bin/rbs
       - name: Check for RBS drift
-        run: git diff --exit-code sig/generated/
+        run: git diff --exit-code riffer-core/sig/generated/
       - name: Update RBS collection
         run: bundle exec rbs collection update
       - name: Check for rbs collection lock drift
@@ -75,3 +75,31 @@ jobs:
         with:
           bundler-cache: true
       - run: bin/rake docs:check
+
+  # Installs each built gem into an empty GEM_HOME, outside Bundler, so a
+  # runtime dependency missing from its gemspec can't be masked by the shared
+  # Gemfile. Optional provider SDKs are required lazily (depends_on), so
+  # eager-loading needs only the gemspec's runtime dependencies.
+  package:
+    runs-on: ubuntu-latest
+    name: package ${{ matrix.path }}
+
+    strategy:
+      matrix:
+        include:
+          - path: riffer-core
+            require: riffer
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ruby/setup-ruby@v1
+      - name: Build gem
+        working-directory: ${{ matrix.path }}
+        run: gem build --output "$RUNNER_TEMP/package.gem" ./*.gemspec
+      - name: Install, require and eager-load
+        env:
+          GEM_HOME: ${{ runner.temp }}/gems
+          GEM_PATH: ${{ runner.temp }}/gems
+        run: |
+          gem install --no-document "$RUNNER_TEMP/package.gem"
+          ruby -e 'require "${{ matrix.require }}"; Zeitwerk::Loader.eager_load_all'

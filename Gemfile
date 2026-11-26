@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
-gemspec
+gemspec path: "riffer-core"
 
 gem "async", "~> 2.46"
 gem "aws-sdk-bedrockruntime", "~> 1.85"
