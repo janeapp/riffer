@@ -58,7 +58,7 @@ jobs:
       - name: Generate RBS files
         run: bin/rbs
       - name: Check for RBS drift
-        run: git diff --exit-code riffer-core/sig/generated/
+        run: git diff --exit-code -- ':(glob)*/sig/generated/**'
       - name: Update RBS collection
         run: bundle exec rbs collection update
       - name: Check for rbs collection lock drift

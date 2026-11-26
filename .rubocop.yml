@@ -87,13 +87,13 @@ Minitest/MultipleAssertions:
 # stream doubles.
 Lint/EmptyBlock:
   Exclude:
-    - riffer-core/test/**/*
+    - "*/test/**/*"
 
 # RuboCop's default `test/**/*` exclude is root-relative, so it misses each
 # gem's tests.
 Style/OneClassPerFile:
   Exclude:
-    - riffer-core/test/**/*
+    - "*/test/**/*"
 
 # Keyword-argument names are the calling contract for riffer's block-based
 # hooks (tool `execute` blocks, evaluator lambdas, dynamic instructions) —

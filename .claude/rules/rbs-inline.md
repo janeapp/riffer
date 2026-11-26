@@ -1,5 +1,5 @@
 ---
-paths: ["riffer-core/lib/**/*.rb", "riffer-core/sig/**/*"]
+paths: ["*/lib/**/*.rb", "*/sig/**/*"]
 ---
 
 # RBS Inline
@@ -8,7 +8,7 @@ Type annotations are added directly in Ruby source files using [rbs-inline](http
 
 ## Required Header
 
-Every `riffer-core/lib/**/*.rb` file starts with the two-line header `# frozen_string_literal: true` + `# rbs_inline: enabled` — rbs-inline silently skips any file missing the magic comment on line 2.
+Every `lib/**/*.rb` file in a gem starts with the two-line header `# frozen_string_literal: true` + `# rbs_inline: enabled` — rbs-inline silently skips any file missing the magic comment on line 2.
 
 ## Annotation Conventions
 
