@@ -5,7 +5,6 @@
     "riffer-core": {
       "release-type": "ruby",
       "package-name": "riffer",
-      "component": "riffer",
       "version-file": "lib/riffer/version.rb",
       "bump-minor-pre-major": true
     }

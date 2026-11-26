@@ -120,11 +120,11 @@ GOOGLE_CLOUD_PROJECT=my-project
 The test helper loads this file automatically via `dotenv`. Then run the specific tests that need new cassettes:
 
 ```bash
-bundle exec ruby -Iriffer-core/test riffer-core/test/riffer/providers/open_ai_test.rb
-bundle exec ruby -Iriffer-core/test riffer-core/test/riffer/providers/anthropic_test.rb
-bundle exec ruby -Iriffer-core/test riffer-core/test/riffer/providers/amazon_bedrock_test.rb
+bin/test riffer-core/test/riffer/providers/open_ai_test.rb
+bin/test riffer-core/test/riffer/providers/anthropic_test.rb
+bin/test riffer-core/test/riffer/providers/amazon_bedrock_test.rb
 GOOGLE_CLOUD_ACCESS_TOKEN=$(gcloud auth application-default print-access-token) \
-  bundle exec ruby -Iriffer-core/test riffer-core/test/riffer/providers/anthropic_vertex_test.rb
+  bin/test riffer-core/test/riffer/providers/anthropic_vertex_test.rb
 ```
 
 Google Cloud tests take a short-lived access token rather than a key, so pass it on the command line instead of storing it in `.env`.

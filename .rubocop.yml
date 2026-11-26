@@ -40,6 +40,9 @@ AllCops:
   # enabling adopts new cops automatically and kills the warning spam.
   NewCops: enable
   SuggestExtensions: false
+  # The gems' minimum Ruby. Without a gemspec at the repo root RuboCop falls
+  # back to .ruby-version (the newest Ruby) and suggests syntax 3.3 lacks.
+  TargetRubyVersion: 3.3
 
 # Size thresholds are noise; BlockNesting stays — deep nesting is the one
 # limit worth enforcing.
