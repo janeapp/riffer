@@ -1,6 +1,6 @@
 # Stability
 
-This page covers which parts of Riffer you can depend on, how changes to them are announced, and how breaking releases work. Riffer is not at 1.0 yet; the [roadmap](https://github.com/janeapp/riffer/issues/528) tracks the path there.
+This page covers which parts of Riffer you can depend on, how changes to them are announced, how breaking releases work, and which gems this repo maintains. Riffer is not at 1.0 yet; the [roadmap](https://github.com/janeapp/riffer/issues/528) tracks the path there.
 
 ## Public API
 
@@ -30,3 +30,28 @@ Saved formats are the data Riffer produces for you to store and load later, such
 - Anything saved by a 1.x release loads in every later 1.x release.
 
 See [Serialization → Versioning](SERIALIZATION.md#versioning) for how agent data records its format version.
+
+## Packages
+
+Jane maintains every gem in this repo, releases them all through the same pipeline, and covers each one with the policies on this page. Each gem has its own version and is released separately.
+
+| Gem            | What it covers                     | Owner              | Status                                               |
+| -------------- | ---------------------------------- | ------------------ | ---------------------------------------------------- |
+| `riffer`       | The core framework in these guides | `@janeapp/jane-ai` | Released                                             |
+| `riffer-evals` | [Evals](EVALS.md)                  | `@janeapp/jane-ai` | Not yet released; evals ship inside `riffer` for now |
+
+### Adding a gem
+
+A gem joins this repo only when all of these hold:
+
+- Jane uses it in production.
+- It builds on Riffer's public extension points, such as [tools](TOOLS.md), hooks, [providers](providers/CUSTOM_PROVIDERS.md) and [saved runs](#saved-formats), rather than a specific vendor or app concern.
+- Someone at Jane owns it.
+
+### Retiring a gem
+
+If a gem loses its owner or Jane stops using it, it's deprecated for at least one release. After that, it's handed to a community maintainer or archived.
+
+### Community gems
+
+Anything else is welcome as a community gem. See [Community Gems](COMMUNITY_GEMS.md) for the ones we know about and how to add yours.
