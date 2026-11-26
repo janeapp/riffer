@@ -30,6 +30,13 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     Riffer::Skills::XmlAdapter
   end
 
+  # URL sources take only images and PDFs, so riffer downloads text files.
+  #--
+  #: (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery(file)
+    text_file?(file) ? :bytes : :url
+  end
+
   private
 
   #--
@@ -362,6 +369,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part(file)
+    return { type: "document", source: text_source(file) } if text_file?(file)
+
     type = file.image? ? "image" : "document"
 
     source = if !file.inline_data? && file_delivery(file) == :url
@@ -371,6 +380,23 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
              end
 
     { type: type, source: source }
+  end
+
+  # Base64 document sources take only PDFs and text sources only text/plain,
+  # so every text type goes as text/plain.
+  #--
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def text_source(file)
+    text = file.data_bytes.to_s.dup.force_encoding(Encoding::UTF_8)
+    raise Riffer::FileEncodingError, "Text file is not valid UTF-8" unless text.valid_encoding?
+
+    { type: "text", media_type: "text/plain", data: text }
+  end
+
+  #--
+  #: (Riffer::Messages::User::FilePart) -> bool
+  def text_file?(file)
+    file.media_type.start_with?("text/")
   end
 
   #--

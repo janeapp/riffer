@@ -1,0 +1,87 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the locker code
+        in these notes?"},{"inlineData":{"mimeType":"text/plain","data":"TWVldGluZyBub3RlcwoKVGhlIGxvY2tlciBjb2RlIGZvciB0aGUgc3RvcmFnZSByb29tIGlzIFpFQlJBLTc3MzEuCkJyaW5nIHlvdXIgYmFkZ2Ugb24gVGh1cnNkYXkuCg=="}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Goog-Request-Id:
+      - JX8Ha66CCOSX4_UP2put4QI
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Thu, 26 Nov 2026 00:36:53 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "The locker code in the notes is **ZEBRA-7731**.",
+                    "thoughtSignature": "AY89a19VFK3eKP8TBOX80rT48Q/TDh2REo08ctq3u6zlzqI3+C0RhXQ4WTlm33/Ag0V9VYHj2saWUmG6fuqgS7xfXctR/HK4+pEhavybfPNBveS+IvKz4YVuvW5H2T2rAZci5Q+bCW5rK1ZUSLC2jCSNmh9XeAeYe+AovtSLVw=="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 37,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 53,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 37
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 16
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-11-26T00:36:53.131374Z",
+          "responseId": "JX8Ha66CCOSX4_UP2put4QI"
+        }
+  recorded_at: Thu, 26 Nov 2026 00:36:53 GMT
+recorded_with: VCR 6.4.0

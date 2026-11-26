@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the price of
+        the blue widget?"},{"document":{"format":"csv","name":"widgets","source":{"bytes":"c2t1LG5hbWUscHJpY2UKVy0xMDAscmVkIHdpZGdldCw0LjUwClctMjAwLGJsdWUgd2lkZ2V0LDE3LjI1ClctMzAwLGdyZWVuIHdpZGdldCw5LjAwCg=="}}}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 35130b07-899c-4116-9ebf-97b4873f22f1
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261126T004104Z
+      X-Amz-Content-Sha256:
+      - 40a54b5258f12f4434f1ff7d523f6f5e7ebea435854771054016a3e793634f1a
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.10 md/4.0.10 m/Z,b,D,g
+      Content-Length:
+      - '288'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:41:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '358'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 6adefe17-c6ba-4433-b15c-b3f74e10e360
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":688},"output":{"message":{"content":[{"text":"The
+        blue widget costs **17.25** (SKU W-200)."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":115,"outputTokens":22,"serverToolUsage":{},"totalTokens":137}}'
+  recorded_at: Thu, 26 Nov 2026 00:41:05 GMT
+recorded_with: VCR 6.4.0

@@ -26,6 +26,17 @@ describe "Acceptance: files" do
         )
       end
 
+      let(:text_file) do
+        Riffer::Messages::User::FilePart.new(bytes: acceptance_file("notes.txt"), media_type: "text/plain")
+      end
+      let(:csv_file) do
+        Riffer::Messages::User::FilePart.new(
+          data: Base64.strict_encode64(acceptance_file("widgets.csv")),
+          media_type: "text/csv",
+          filename: "widgets.csv",
+        )
+      end
+
       ACCEPTANCE_MODES.each do |mode|
         it "reads an image (#{mode})" do
           message = acceptance_cassette("#{cassette_prefix}/image_#{mode}") do
@@ -47,6 +58,24 @@ describe "Acceptance: files" do
           end
 
           expect(message.content).must_include "INV-4821"
+        end
+
+        it "reads a text file (#{mode})" do
+          message = acceptance_cassette("#{cassette_prefix}/text_#{mode}") do
+            call_provider(provider, mode, prompt: "What is the locker code in these notes?", model: model,
+                                          files: [text_file],)
+          end
+
+          expect(message.content).must_include "ZEBRA-7731"
+        end
+
+        it "reads a CSV file (#{mode})" do
+          message = acceptance_cassette("#{cassette_prefix}/csv_#{mode}") do
+            call_provider(provider, mode, prompt: "What is the price of the blue widget?", model: model,
+                                          files: [csv_file],)
+          end
+
+          expect(message.content).must_include "17.25"
         end
 
         it "reads several files in one message (#{mode})" do
@@ -86,6 +115,17 @@ describe "Acceptance: files" do
             end
 
             expect(message.content).must_match(/red/i)
+          end
+
+          it "reads a text file (#{mode})" do
+            Riffer.config.files.downloader = ->(_url, **) { acceptance_file("notes.txt") }
+            file = Riffer::Messages::User::FilePart.from_url("https://example.com/notes.txt")
+            message = acceptance_cassette("#{cassette_prefix}/text_url_#{mode}") do
+              call_provider(provider, mode, prompt: "What is the locker code in these notes?", model: model,
+                                            files: [file],)
+            end
+
+            expect(message.content).must_include "ZEBRA-7731"
           end
         end
 

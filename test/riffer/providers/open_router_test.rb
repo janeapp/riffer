@@ -482,6 +482,13 @@ describe Riffer::Providers::OpenRouter do
       expect(result[:file][:filename]).must_equal "doc.pdf"
     end
 
+    it "names an unnamed document after its media type" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "a,b", media_type: "text/csv")
+      result = provider.send(:convert_file_part_to_chat_completions_format, file)
+
+      expect(result[:file][:filename]).must_equal "file.csv"
+    end
+
     it "encodes a raw bytes image as a data URL" do
       file = Riffer::Messages::User::FilePart.new(bytes: "png-bytes", media_type: "image/png")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
