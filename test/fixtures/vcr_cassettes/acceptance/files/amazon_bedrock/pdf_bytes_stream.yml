@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the invoice
+        number in this document?"},{"document":{"format":"pdf","name":"invoice","source":{"bytes":"JVBERi0xLjQKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3hbMCAwIDYxMiA3OTJdL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFI+Pj4+L0NvbnRlbnRzIDQgMCBSPj4KZW5kb2JqCjQgMCBvYmoKPDwvTGVuZ3RoIDY5Pj4Kc3RyZWFtCkJUIC9GMSAxOCBUZiA3MiA3MjAgVGQgKEludm9pY2UgSU5WLTQ4MjEgaXMgZHVlIG9uIDIwMjYtMTEtMzAuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwvVHlwZS9Gb250L1N1YnR5cGUvVHlwZTEvQmFzZUZvbnQvSGVsdmV0aWNhPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU0IDAwMDAwIG4gCjAwMDAwMDAxMDUgMDAwMDAgbiAKMDAwMDAwMDIxNyAwMDAwMCBuIAowMDAwMDAwMzM0IDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSA2L1Jvb3QgMSAwIFI+PgpzdGFydHhyZWYKMzk3CiUlRU9GCg=="}}}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - f529a47b-0538-40f4-888d-ff9a9062f8af
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261126T004614Z
+      X-Amz-Content-Sha256:
+      - 22432f30977e017905584e72a07d6bc91f76a93544c981684dd8d5908dafb3b8
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.10 md/4.0.10 m/Z,b,D,g
+      Content-Length:
+      - '951'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:46:15 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 51f9af96-a597-4fe7-83e7-d5558f34392e
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAmwAAAFJGkfmwCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDRCIsInJvbGUiOiJhc3Npc3RhbnQifbCidJ0AAADNAAAAV4GoN1QLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiVGhlIGludm9pY2UgbnVtYmVyIGlzICoqSU4ifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6In3Y9KziAAAAuQAAAFeN+nFbCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsidGV4dCI6IlYtNDgyMSoqLiJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dncifbyuajEAAADPAAAAV/toZDQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiIEl0IGlzIGR1ZSBvbiAyMDI2LSJ9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSEkifSgLMEEAAAC7AAAAV/c6IjsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJ0ZXh0IjoiMTEtMzAuIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCIn1jeautAAAAsQAAAFbKjQoMCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTIn1DzHT/AAAAqQAAAFEEeUPsCzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTiIsInN0b3BSZWFzb24iOiJlbmRfdHVybiJ93W0WygAAARQAAABOqnpRGQs6ZXZlbnQtdHlwZQcACG1ldGFkYXRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsibWV0cmljcyI6eyJsYXRlbmN5TXMiOjc2MX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaMDEyMzQ1NiIsInVzYWdlIjp7ImlucHV0VG9rZW5zIjoxNjMyLCJvdXRwdXRUb2tlbnMiOjI4LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MTY2MH19+MyjOA==
+  recorded_at: Thu, 26 Nov 2026 00:46:15 GMT
+recorded_with: VCR 6.4.0

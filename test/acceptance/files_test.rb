@@ -60,6 +60,25 @@ describe "Acceptance: files" do
           expect(message.content).must_include "INV-4821"
         end
 
+        it "reads a PDF passed as raw bytes (#{mode})" do
+          file = Riffer::Messages::User::FilePart.new(
+            bytes: acceptance_file("invoice.pdf"),
+            media_type: "application/pdf",
+            filename: "invoice.pdf",
+          )
+          message = acceptance_cassette("#{cassette_prefix}/pdf_bytes_#{mode}") do
+            call_provider(
+              provider,
+              mode,
+              prompt: "What is the invoice number in this document?",
+              model: model,
+              files: [file],
+            )
+          end
+
+          expect(message.content).must_include "INV-4821"
+        end
+
         it "reads a text file (#{mode})" do
           message = acceptance_cassette("#{cassette_prefix}/text_#{mode}") do
             call_provider(provider, mode, prompt: "What is the locker code in these notes?", model: model,
