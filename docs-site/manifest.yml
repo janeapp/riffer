@@ -48,6 +48,9 @@ groups:
       - source: CATALOG.md
         slug: catalog
         description: Reasoning mappings and pricing per model
+      - source: EVALS.md
+        slug: evals
+        description: Evaluating agent quality
       - source: TESTING.md
         slug: testing
         description: Stubbing agents and tools in tests
@@ -104,9 +107,6 @@ groups:
   - label: Add-ons
     tone: rose
     pages:
-      - source: EVALS.md
-        slug: evals
-        description: Evaluating agent quality
       - source: COMMUNITY_GEMS.md
         slug: community-gems
         description: Gems built on Riffer by the community

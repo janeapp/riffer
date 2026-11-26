@@ -35,10 +35,9 @@ See [Serialization → Versioning](SERIALIZATION.md#versioning) for how agent da
 
 Jane maintains every gem in this repo, releases them all through the same pipeline, and covers each one with the policies on this page. Each gem has its own version and is released separately.
 
-| Gem            | What it covers                     | Owner              | Status                                               |
-| -------------- | ---------------------------------- | ------------------ | ---------------------------------------------------- |
-| `riffer`       | The core framework in these guides | `@janeapp/jane-ai` | Released                                             |
-| `riffer-evals` | [Evals](EVALS.md)                  | `@janeapp/jane-ai` | Not yet released; evals ship inside `riffer` for now |
+| Gem      | What it covers                     | Owner              |
+| -------- | ---------------------------------- | ------------------ |
+| `riffer` | The core framework in these guides | `@janeapp/jane-ai` |
 
 ### Adding a gem
 
