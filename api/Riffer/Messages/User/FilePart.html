@@ -506,9 +506,13 @@
 
         <li ><a href="#method-i-document-3F">document?</a></li>
 
+        <li ><a href="#method-i-extension">extension</a></li>
+
         <li ><a href="#method-i-image-3F">image?</a></li>
 
         <li ><a href="#method-i-inline_data-3F">inline_data?</a></li>
+
+        <li ><a href="#method-i-text-3F">text?</a></li>
 
         <li ><a href="#method-i-to_h">to_h</a></li>
 
@@ -1083,6 +1087,48 @@
       </div>
 
 
+      <div id="method-i-extension" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-extension" title="Link to this method">
+                <span class="method-name">extension</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="extension-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user/file_part.rb, line 169</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">extension</span>
+  <span class="ruby-constant">MEDIA_TYPES</span>.<span class="ruby-identifier">key</span>(<span class="ruby-identifier">media_type</span>).<span class="ruby-identifier">to_s</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>The first extension registered for the media type, e.g. “.jpg” for image/jpeg.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-image-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1167,6 +1213,48 @@
       </div>
 
 
+      <div id="method-i-text-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-text-3F" title="Link to this method">
+                <span class="method-name">text?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="text-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user/file_part.rb, line 162</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text?</span>
+  <span class="ruby-identifier">media_type</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-string">&quot;text/&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-to_h" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1186,7 +1274,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user/file_part.rb, line 162</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user/file_part.rb, line 175</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = { <span class="ruby-value">media_type:</span> <span class="ruby-identifier">media_type</span> } <span class="ruby-comment">#: Hash[Symbol, untyped]</span>
   <span class="ruby-comment"># Downloaded data and +bytes:+ content (raw or encoded) are left out so</span>

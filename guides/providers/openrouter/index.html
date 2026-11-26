@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.59.0</span>
+            <span class="version">v0.59.1</span>
           </div>
         </nav>
       </div>
@@ -495,7 +495,7 @@
   </tbody>
 </table>
 
-<p>User messages with files become multi-part content (<code>image_url</code> for images, <code>file</code> for documents). Assistant tool calls go into a nested <code>tool_calls</code> array on the assistant message.</p>
+<p>User messages with files become multi-part content (<code>image_url</code> for images, <code>file</code> for documents). A document without a <code>filename</code> is sent as <code>file</code> plus its type’s extension (<code>file.pdf</code>, <code>file.txt</code>). Assistant tool calls go into a nested <code>tool_calls</code> array on the assistant message.</p>
 
 <h2 id="limitations-v1">Limitations (v1)</h2>
 

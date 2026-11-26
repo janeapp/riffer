@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.59.0</span>
+            <span class="version">v0.59.1</span>
           </div>
         </nav>
       </div>
@@ -514,6 +514,8 @@
     </tr>
   </tbody>
 </table>
+
+<p>User messages with files become multi-part content: <code>image</code> blocks for images, <code>document</code> blocks for PDFs and text. PDFs go as base64, or as a URL source for a <code>FilePart.from_url</code>. Text files (<code>text/plain</code>, <code>text/csv</code>, <code>text/html</code>) go as plain-text documents with media type <code>text/plain</code>, so their content must be valid UTF-8 or riffer raises <code>Riffer::FileEncodingError</code>. The API takes URL sources only for images and PDFs, so riffer downloads a text <code>FilePart.from_url</code> source and sends it inline, subject to the <code>allow_downloads</code> policy in <a href="/guides/configuration/#file-downloads">File Downloads</a>.</p>
 
 <h2 id="direct-provider-usage">Direct Provider Usage</h2>
 

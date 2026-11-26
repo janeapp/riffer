@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.59.0</span>
+            <span class="version">v0.59.1</span>
           </div>
         </nav>
       </div>
@@ -733,8 +733,11 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span><span class="p">.</span><span class="nf">image?</span>     <span class="c1"># true for image/* media types</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">document?</span>  <span class="c1"># true for non-image media types</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">text?</span>      <span class="c1"># true for text/* media types</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">url?</span>       <span class="c1"># true when source was a URL</span>
 </code></pre></div></div>
+
+<p><code>file.extension</code> returns the first extension registered for the media type, such as <code>".jpg"</code> for <code>image/jpeg</code>.</p>
 
 <h2 id="using-messages-with-agents">Using Messages with Agents</h2>
 
