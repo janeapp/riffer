@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.59.1](https://github.com/janeapp/riffer/compare/riffer/v0.59.0...riffer/v0.59.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **providers:** send text files as text documents to Anthropic ([#607](https://github.com/janeapp/riffer/issues/607)) ([033ca4a](https://github.com/janeapp/riffer/commit/033ca4ad5381aee16bd7c8e94832e0992c8ad40b))
+
 ## [0.59.0](https://github.com/janeapp/riffer/compare/riffer/v0.58.0...riffer/v0.59.0) (2026-11-25)
 
 
