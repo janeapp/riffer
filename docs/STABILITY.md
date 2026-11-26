@@ -45,7 +45,6 @@ A gem joins this repo only when all of these hold:
 
 - Jane uses it in production.
 - It builds on Riffer's public extension points, such as [tools](TOOLS.md), hooks, [providers](providers/CUSTOM_PROVIDERS.md) and [saved runs](#saved-formats), rather than a specific vendor or app concern.
-- Someone at Jane owns it.
 
 ### Retiring a gem
 
