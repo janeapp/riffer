@@ -20,8 +20,8 @@ class Riffer::Providers::AnthropicVertex < Riffer::Providers::AnthropicCompatibl
   # Agent Platform rejects URL sources, so riffer downloads the file and sends it inline.
   #--
   #: (Riffer::Messages::User::FilePart) -> Symbol
-  def file_delivery(_file)
-    :base64
+  def file_delivery(file)
+    file.text? ? :bytes : :base64
   end
 
   private

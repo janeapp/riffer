@@ -1,0 +1,140 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":[{"type":"text","text":"What
+        is the invoice number in this document?"},{"type":"file","file":{"file_data":"data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3hbMCAwIDYxMiA3OTJdL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFI+Pj4+L0NvbnRlbnRzIDQgMCBSPj4KZW5kb2JqCjQgMCBvYmoKPDwvTGVuZ3RoIDY5Pj4Kc3RyZWFtCkJUIC9GMSAxOCBUZiA3MiA3MjAgVGQgKEludm9pY2UgSU5WLTQ4MjEgaXMgZHVlIG9uIDIwMjYtMTEtMzAuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwvVHlwZS9Gb250L1N1YnR5cGUvVHlwZTEvQmFzZUZvbnQvSGVsdmV0aWNhPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU0IDAwMDAwIG4gCjAwMDAwMDAxMDUgMDAwMDAgbiAKMDAwMDAwMDIxNyAwMDAwMCBuIAowMDAwMDAwMzM0IDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSA2L1Jvb3QgMSAwIFI+PgpzdGFydHhyZWYKMzk3CiUlRU9GCg==","filename":"invoice.pdf"}}]}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.10
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1060'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:46:17 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1795653976-vRox9AOI1Y3XNF3U3U7T
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray
+      X-Openrouter-Release:
+      - api;09c04aa7-0ed8-4b45-bdf9-2016dec4c065
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a604e0079f5e532b-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","annotations":[{"type":"file","file":{"hash":"d7dd1a6df5cf9fc3feeea544f97d537cfde1a2ab0460aa3259165d40a81d9b5b","name":"invoice.pdf","content":[{"type":"text","text":"<file name=\"invoice.pdf\">"},{"type":"text","text":"Invoice INV-4821 is due on 2026-11-30."},{"type":"text","text":"</file>"}]}}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"The","reasoning_details":[{"type":"reasoning.text","text":"The","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" user has","reasoning_details":[{"type":"reasoning.text","text":" user has","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" provided a document (","reasoning_details":[{"type":"reasoning.text","text":" provided a document (","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"an","reasoning_details":[{"type":"reasoning.text","text":"an","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" invoice)","reasoning_details":[{"type":"reasoning.text","text":" invoice)","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" and is","reasoning_details":[{"type":"reasoning.text","text":" and is","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" asking me","reasoning_details":[{"type":"reasoning.text","text":" asking me","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" to identify","reasoning_details":[{"type":"reasoning.text","text":" to identify","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the invoice number.","reasoning_details":[{"type":"reasoning.text","text":" the invoice number.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" The content","reasoning_details":[{"type":"reasoning.text","text":" The content","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" shows \"Invoice INV","reasoning_details":[{"type":"reasoning.text","text":" shows \"Invoice INV","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"-4821","reasoning_details":[{"type":"reasoning.text","text":"-4821","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" is due on ","reasoning_details":[{"type":"reasoning.text","text":" is due on ","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"2026-11","reasoning_details":[{"type":"reasoning.text","text":"2026-11","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"-30.\"\n\nThe","reasoning_details":[{"type":"reasoning.text","text":"-30.\"\n\nThe","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" invoice number is INV","reasoning_details":[{"type":"reasoning.text","text":" invoice number is INV","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"-4821","reasoning_details":[{"type":"reasoning.text","text":"-4821","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". This is a","reasoning_details":[{"type":"reasoning.text","text":". This is a","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" simple extraction question","reasoning_details":[{"type":"reasoning.text","text":" simple extraction question","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". I","reasoning_details":[{"type":"reasoning.text","text":". I","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" should just","reasoning_details":[{"type":"reasoning.text","text":" should just","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" answer it","reasoning_details":[{"type":"reasoning.text","text":" answer it","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" directly.","reasoning_details":[{"type":"reasoning.text","text":" directly.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"The invoice number","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":" is **INV-","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"4821**","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":".","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1795653976-vRox9AOI1Y3XNF3U3U7T","object":"chat.completion.chunk","created":1795653976,"model":"z-ai/glm-5.3-flash","provider":"River","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":46,"completion_tokens":79,"total_tokens":125,"cost":0.00203712,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.00003712,"upstream_inference_prompt_cost":0.00000552,"upstream_inference_completions_cost":0.0000316},"completion_tokens_details":{"reasoning_tokens":65,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Thu, 26 Nov 2026 00:46:18 GMT
+recorded_with: VCR 6.4.0
+...

@@ -140,6 +140,11 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_chat_completions_format: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
+  # The API rejects file data without a filename.
+  # --
+  # : (Riffer::Messages::User::FilePart) -> String
+  def document_filename: (Riffer::Messages::User::FilePart) -> String
+
   # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_chat_completions_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

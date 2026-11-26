@@ -1,0 +1,87 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the price of
+        the blue widget?"},{"inlineData":{"mimeType":"text/csv","data":"c2t1LG5hbWUscHJpY2UKVy0xMDAscmVkIHdpZGdldCw0LjUwClctMjAwLGJsdWUgd2lkZ2V0LDE3LjI1ClctMzAwLGdyZWVuIHdpZGdldCw5LjAwCg=="}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Goog-Request-Id:
+      - LX8Ha6vPJ56m4_UPzZSS6AI
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Thu, 26 Nov 2026 00:37:02 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "role": "model",
+                "parts": [
+                  {
+                    "text": "The price of the blue widget is $17.25.",
+                    "thoughtSignature": "AY89a19X9GnSceClix6KqWlDwHSU0vcgWGEpm9mIbeV9lyO+tdk8cbo3wVAPABz4wHRpSaaiHWzqxuuVjsBc3y37Ne2kWR0dTLpB/W7bCPdmuky8kHvelj/owskeOogg4hZ8NOO1PtuFNj0kibv8ROVu9NjdvrPR69r9+xDJZw=="
+                  }
+                ]
+              },
+              "finishReason": "STOP"
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 58,
+            "candidatesTokenCount": 14,
+            "totalTokenCount": 72,
+            "trafficType": "ON_DEMAND",
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 58
+              }
+            ],
+            "candidatesTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 14
+              }
+            ]
+          },
+          "modelVersion": "gemini-3.5-flash-lite",
+          "createTime": "2026-11-26T00:37:01.649131Z",
+          "responseId": "LX8Ha6vPJ56m4_UPzZSS6AI"
+        }
+  recorded_at: Thu, 26 Nov 2026 00:37:02 GMT
+recorded_with: VCR 6.4.0

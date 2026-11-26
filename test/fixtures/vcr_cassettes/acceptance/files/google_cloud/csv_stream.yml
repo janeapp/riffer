@@ -1,0 +1,63 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/google/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the price of
+        the blue widget?"},{"inlineData":{"mimeType":"text/csv","data":"c2t1LG5hbWUscHJpY2UKVy0xMDAscmVkIHdpZGdldCw0LjUwClctMjAwLGJsdWUgd2lkZ2V0LDE3LjI1ClctMzAwLGdyZWVuIHdpZGdldCw5LjAwCg=="}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 26 Nov 2026 00:37:02 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\":
+        [{\"text\": \"The price\"}]}}],\"usageMetadata\": {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"createTime\": \"2026-11-26T00:37:02.362100Z\",\"responseId\":
+        \"Ln8Ha_SMFp7w998P7IyO0As\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"role\": \"model\",\"parts\": [{\"text\": \" of the blue widget is $17.25.\"}]}}],\"usageMetadata\":
+        {\"trafficType\": \"ON_DEMAND\"},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-11-26T00:37:02.362100Z\",\"responseId\": \"Ln8Ha_SMFp7w998P7IyO0As\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"role\": \"model\",\"parts\": [{\"text\":
+        \"\",\"thoughtSignature\": \"AY89a1+jxN2QOWTm+yvXqLWo2zasx5yhYmYJ2KUzqKeNZLPOCQ9R20COttPxzXuz4QGTj0HvKOS8PqsVDuIHTUT8v6AUP8XokIZNEG4eB2f7Tc/vuRBdi47Dw9w+bDaPMRcf1FuxJ+wbUqUtyLvEZvxiTVb7JOd/X7gXQP9FGw==\"}]},\"finishReason\":
+        \"STOP\"}],\"usageMetadata\": {\"promptTokenCount\": 58,\"candidatesTokenCount\":
+        14,\"totalTokenCount\": 72,\"trafficType\": \"ON_DEMAND\",\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 58}],\"candidatesTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 14}]},\"modelVersion\": \"gemini-3.5-flash-lite\",\"createTime\":
+        \"2026-11-26T00:37:02.362100Z\",\"responseId\": \"Ln8Ha_SMFp7w998P7IyO0As\"}\r\n\r\n"
+  recorded_at: Thu, 26 Nov 2026 00:37:02 GMT
+recorded_with: VCR 6.4.0

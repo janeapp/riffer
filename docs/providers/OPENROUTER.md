@@ -250,7 +250,7 @@ Riffer messages convert to Chat Completions roles:
 | `Assistant`    | `assistant`           |
 | `Tool`         | `tool`                |
 
-User messages with files become multi-part content (`image_url` for images, `file` for documents). Assistant tool calls go into a nested `tool_calls` array on the assistant message.
+User messages with files become multi-part content (`image_url` for images, `file` for documents). A document without a `filename` is sent as `file` plus its type's extension (`file.pdf`, `file.txt`). Assistant tool calls go into a nested `tool_calls` array on the assistant message.
 
 ## Limitations (v1)
 

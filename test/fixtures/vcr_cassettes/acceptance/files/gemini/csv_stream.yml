@@ -1,0 +1,69 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the price of
+        the blue widget?"},{"inlineData":{"mimeType":"text/csv","data":"c2t1LG5hbWUscHJpY2UKVy0xMDAscmVkIHdpZGdldCw0LjUwClctMjAwLGJsdWUgd2lkZ2V0LDE3LjI1ClctMzAwLGdyZWVuIHdpZGdldCw5LjAwCg=="}}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+      Content-Type:
+      - application/json
+      Accept:
+      - text/event-stream
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/event-stream
+      Content-Disposition:
+      - attachment
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 26 Nov 2026 00:37:05 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=640
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+    body:
+      encoding: UTF-8
+      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"The
+        price\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        59,\"candidatesTokenCount\": 2,\"totalTokenCount\": 61,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 59}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"MX8Ha4b9FeDI0PEPsKiXkAU\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" of the blue widget
+        is $17.25.\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        59,\"candidatesTokenCount\": 14,\"totalTokenCount\": 73,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 59}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"MX8Ha4b9FeDI0PEPsKiXkAU\"}\r\n\r\ndata:
+        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"\",\"thoughtSignature\":
+        \"EpYBCpMBAWkUfRPXU5SOr3UJ02oNwrxcPJ4vbYQKHH56oPKp/uMTxr7VLZ8+H/UPeBFWFWYZduhu+0ib8DxLuz5FV2/aVAz+r1iY4uG/vjDtW//2C1N0Pf1nwpsZD8Ioe5mfNYjhCvKIcNPBqU+E/4Yc6vbJ+m1pCLdjLuMlKu5HP8QDyWNqMq/oWuBwO9bm1Db9k2VjFARN\"}],\"role\":
+        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        59,\"candidatesTokenCount\": 14,\"totalTokenCount\": 73,\"promptTokensDetails\":
+        [{\"modality\": \"TEXT\",\"tokenCount\": 59}],\"serviceTier\": \"standard\"},\"modelVersion\":
+        \"gemini-3.5-flash-lite\",\"responseId\": \"MX8Ha4b9FeDI0PEPsKiXkAU\"}\r\n\r\n"
+  recorded_at: Thu, 26 Nov 2026 00:37:05 GMT
+recorded_with: VCR 6.4.0

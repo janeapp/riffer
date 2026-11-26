@@ -1,0 +1,136 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":[{"type":"text","text":"What
+        is the locker code in these notes?"},{"type":"file","file":{"file_data":"data:text/plain;base64,TWVldGluZyBub3RlcwoKVGhlIGxvY2tlciBjb2RlIGZvciB0aGUgc3RvcmFnZSByb29tIGlzIFpFQlJBLTc3MzEuCkJyaW5nIHlvdXIgYmFkZ2Ugb24gVGh1cnNkYXkuCg==","filename":"file.txt"}}]}],"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.10
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '407'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:43:58 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1795653838-M76wquTSSDSLi0IppmhP
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray
+      X-Openrouter-Release:
+      - api;09c04aa7-0ed8-4b45-bdf9-2016dec4c065
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a604dcaa3b785782-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"We","reasoning_details":[{"type":"reasoning.text","text":"We","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" need answer user asks","reasoning_details":[{"type":"reasoning.text","text":" need answer user asks","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" \"","reasoning_details":[{"type":"reasoning.text","text":" \"","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"What is the locker","reasoning_details":[{"type":"reasoning.text","text":"What is the locker","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" code in these notes","reasoning_details":[{"type":"reasoning.text","text":" code in these notes","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"?Meeting","reasoning_details":[{"type":"reasoning.text","text":"?Meeting","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" notes ...","reasoning_details":[{"type":"reasoning.text","text":" notes ...","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" The locker code for","reasoning_details":[{"type":"reasoning.text","text":" The locker code for","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" the storage room is","reasoning_details":[{"type":"reasoning.text","text":" the storage room is","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" ZEBRA-","reasoning_details":[{"type":"reasoning.text","text":" ZEBRA-","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"7731.","reasoning_details":[{"type":"reasoning.text","text":"7731.","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" Bring your badge on","reasoning_details":[{"type":"reasoning.text","text":" Bring your badge on","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" Thursday.\" We","reasoning_details":[{"type":"reasoning.text","text":" Thursday.\" We","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" need provide code","reasoning_details":[{"type":"reasoning.text","text":" need provide code","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". Simple","reasoning_details":[{"type":"reasoning.text","text":". Simple","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":". Need maybe","reasoning_details":[{"type":"reasoning.text","text":". Need maybe","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" \"","reasoning_details":[{"type":"reasoning.text","text":" \"","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"Z","reasoning_details":[{"type":"reasoning.text","text":"Z","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"EBRA-77","reasoning_details":[{"type":"reasoning.text","text":"EBRA-77","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"31\". final","reasoning_details":[{"type":"reasoning.text","text":"31\". final","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" concise","reasoning_details":[{"type":"reasoning.text","text":" concise","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":".","reasoning_details":[{"type":"reasoning.text","text":".","format":"unknown","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"The locker","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":" code is **Z","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"EBRA-77","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","choices":[{"index":0,"delta":{"content":"31**.","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","system_fingerprint":"vllm-0.33.0rc1.dev229+g3966924d5-tp2-786bac74","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"stop"}]}
+
+        data: {"id":"gen-1795653838-M76wquTSSDSLi0IppmhP","object":"chat.completion.chunk","created":1795653838,"model":"z-ai/glm-5.3-flash","provider":"Wafer","system_fingerprint":"vllm-0.33.0rc1.dev229+g3966924d5-tp2-786bac74","service_tier":null,"choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"stop"}],"usage":{"prompt_tokens":46,"completion_tokens":77,"total_tokens":123,"cost":0.0000161,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.0000161,"upstream_inference_prompt_cost":0.000001932,"upstream_inference_completions_cost":0.000014168},"completion_tokens_details":{"reasoning_tokens":61,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Thu, 26 Nov 2026 00:43:59 GMT
+recorded_with: VCR 6.4.0
+...

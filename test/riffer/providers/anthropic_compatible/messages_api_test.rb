@@ -226,5 +226,99 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
 
       expect(result[:source]).must_equal({ type: "url", url: "https://example.com/a.png" })
     end
+
+    %w[image/jpeg image/png image/gif image/webp].each do |media_type|
+      it "sends #{media_type} as a base64 image" do
+        file = Riffer::Messages::User::FilePart.new(bytes: "image-bytes", media_type: media_type)
+        result = provider.send(:convert_file_part, file)
+
+        source = { type: "base64", media_type: media_type, data: Base64.strict_encode64("image-bytes") }
+
+        expect(result).must_equal({ type: "image", source: source })
+      end
+    end
+
+    it "sends a PDF as a base64 document" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "%PDF-1.7", media_type: "application/pdf")
+      result = provider.send(:convert_file_part, file)
+
+      source = { type: "base64", media_type: "application/pdf", data: Base64.strict_encode64("%PDF-1.7") }
+
+      expect(result).must_equal({ type: "document", source: source })
+    end
+
+    it "sends a url-only PDF as a url source" do
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/a.pdf")
+      result = provider.send(:convert_file_part, file)
+
+      expect(result).must_equal({ type: "document", source: { type: "url", url: "https://example.com/a.pdf" } })
+    end
+
+    %w[text/plain text/csv text/html].each do |media_type|
+      it "sends #{media_type} as a text/plain text document" do
+        file = Riffer::Messages::User::FilePart.new(bytes: "caf\xC3\xA9".b, media_type: media_type)
+        result = provider.send(:convert_file_part, file)
+
+        source = { type: "text", media_type: "text/plain", data: "café" }
+
+        expect(result).must_equal({ type: "document", source: source })
+        expect(result[:source][:data].encoding).must_equal Encoding::UTF_8
+      end
+    end
+
+    it "decodes base64 data for a text document" do
+      file = Riffer::Messages::User::FilePart.new(data: Base64.strict_encode64("a,b\n1,2\n"), media_type: "text/csv")
+      result = provider.send(:convert_file_part, file)
+
+      expect(result[:source]).must_equal({ type: "text", media_type: "text/plain", data: "a,b\n1,2\n" })
+    end
+
+    it "leaves the caller's bytes untouched" do
+      bytes = "hello".b
+      file = Riffer::Messages::User::FilePart.new(bytes: bytes, media_type: "text/plain")
+      provider.send(:convert_file_part, file)
+
+      expect(bytes.encoding).must_equal Encoding::BINARY
+    end
+
+    it "raises when a text file is not valid UTF-8" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "caf\xE9".b, media_type: "text/plain")
+
+      expect { provider.send(:convert_file_part, file) }.must_raise Riffer::FileEncodingError
+    end
+  end
+
+  describe "#file_delivery" do
+    %w[text/plain text/csv text/html].each do |media_type|
+      it "downloads #{media_type} as bytes" do
+        file = Riffer::Messages::User::FilePart.new(url: "https://example.com/a", media_type: media_type)
+
+        expect(provider.file_delivery(file)).must_equal :bytes
+      end
+    end
+
+    %w[https://example.com/a.png https://example.com/a.pdf].each do |url|
+      it "passes #{url} through" do
+        expect(provider.file_delivery(Riffer::Messages::User::FilePart.from_url(url))).must_equal :url
+      end
+    end
+  end
+
+  it "downloads a URL text file and sends it as a text document" do
+    Riffer.config.files.allow_downloads = true
+    Riffer.config.files.downloader = ->(_url, **) { "INV-4821".b }
+    file = Riffer::Messages::User::FilePart.from_url("https://example.com/notes.txt")
+    document = { type: "document", source: { type: "text", media_type: "text/plain", data: "INV-4821" } }
+    body = { messages: [{ role: "user", content: [{ type: "text", text: "Read this" }, document] }] }
+    stub = stub_request(:post, "https://llm.example.test/models/claude-x:rawPredict").
+      with(body: hash_including(body)).
+      to_return(status: 200, body: '{"content":[{"type":"text","text":"ok"}],"stop_reason":"end_turn"}')
+
+    provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: "claude-x")
+
+    assert_requested stub
+  ensure
+    Riffer.config.files.allow_downloads = false
+    Riffer.config.files.downloader = Riffer::Files::Downloader.new
   end
 end

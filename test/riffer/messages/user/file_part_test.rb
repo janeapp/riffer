@@ -266,6 +266,28 @@ describe Riffer::Messages::User::FilePart do
     end
   end
 
+  describe "#text?" do
+    it "returns true for text media types" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "text/csv")
+
+      expect(file.text?).must_equal true
+    end
+
+    it "returns false for other document media types" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "application/pdf")
+
+      expect(file.text?).must_equal false
+    end
+  end
+
+  describe "#extension" do
+    it "returns the first extension registered for the media type" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/jpeg", filename: "photo.jpeg")
+
+      expect(file.extension).must_equal ".jpg"
+    end
+  end
+
   describe "#to_h" do
     it "includes media_type and data" do
       file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")

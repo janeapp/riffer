@@ -499,10 +499,15 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       { type: "input_image", image_url: image_url }
     else
       data_uri = "data:#{file.media_type};base64,#{file.data}"
-      block = { type: "input_file", file_data: data_uri }
-      block[:filename] = file.filename if file.filename
-      block
+      { type: "input_file", file_data: data_uri, filename: document_filename(file) }
     end
+  end
+
+  # The API rejects file data without a filename.
+  #--
+  #: (Riffer::Messages::User::FilePart) -> String
+  def document_filename(file)
+    file.filename || "file#{file.extension}"
   end
 
   #--

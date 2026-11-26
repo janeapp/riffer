@@ -1,0 +1,67 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://aiplatform.googleapis.com/v1/projects/<GOOGLE_CLOUD_PROJECT>/locations/global/publishers/anthropic/models/claude-haiku-5-5:rawPredict
+    body:
+      encoding: UTF-8
+      string: '{"anthropic_version":"2026-10-21","messages":[{"role":"user","content":[{"type":"text","text":"What
+        is the locker code in these notes?"},{"type":"document","source":{"type":"text","media_type":"text/plain","data":"Meeting
+        notes\n\nThe locker code for the storage room is ZEBRA-7731.\nBring your badge
+        on Thursday.\n"}}]}],"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Internal-Weighted-Total-Tokens:
+      - '255'
+      Pinnacle-Error-Category:
+      - no_error
+      Internal-Output-Tokens:
+      - '31'
+      Content-Type:
+      - application/json
+      Request-Id:
+      - req_vrtx_011ChQbzNfBuCgTtqbeTMqA1
+      Internal-Context-Length:
+      - '100000'
+      Internal-Input-Tokens:
+      - '100'
+      X-Vertex-Ai-Internal-Prediction-Backend:
+      - harpoon
+      Stream-Reported-Http-Code:
+      - '200'
+      Date:
+      - Thu, 26 Nov 2026 00:36:51 GMT
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-5-5","id":"msg_vrtx_011ChQbzNgw7Jr2KWoyFbtGV","type":"message","role":"assistant","content":[{"type":"text","text":"The
+        locker code in these notes is **ZEBRA-7731**, for the storage room locker."}],"container":null,"stop_reason":"end_turn","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":100,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":31,"output_tokens_details":{"thinking_tokens":0},"speed":"standard"}}'
+  recorded_at: Thu, 26 Nov 2026 00:36:51 GMT
+recorded_with: VCR 6.4.0

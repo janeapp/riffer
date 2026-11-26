@@ -248,6 +248,8 @@ The provider converts Riffer messages to OpenAI format:
 | `Assistant`    | `assistant`            |
 | `Tool`         | `function_call_output` |
 
+User messages with files become multi-part content (`input_image` for images, `input_file` for documents). The API requires a filename on every document, so one without a `filename` is sent as `file` plus its type's extension (`file.pdf`, `file.txt`).
+
 ## Direct Provider Usage
 
 ```ruby

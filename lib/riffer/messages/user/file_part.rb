@@ -158,6 +158,19 @@ class Riffer::Messages::User::FilePart
   end
 
   #--
+  #: () -> bool
+  def text?
+    media_type.start_with?("text/")
+  end
+
+  # The first extension registered for the media type, e.g. ".jpg" for image/jpeg.
+  #--
+  #: () -> String
+  def extension
+    MEDIA_TYPES.key(media_type).to_s
+  end
+
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = { media_type: media_type } #: Hash[Symbol, untyped]

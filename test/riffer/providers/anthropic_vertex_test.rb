@@ -241,6 +241,22 @@ describe Riffer::Providers::AnthropicVertex do
       Riffer.config.files.downloader = Riffer::Files::Downloader.new
     end
 
+    it "downloads a URL text file and sends it as a text document" do
+      Riffer.config.files.allow_downloads = true
+      Riffer.config.files.downloader = ->(_url, **) { "a,b\n1,2\n".b }
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/data.csv")
+      transport.response = message_body
+      provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: model)
+      body = transport.requests.first.last
+
+      source = { type: "text", media_type: "text/plain", data: "a,b\n1,2\n" }
+
+      expect(body[:messages].first[:content].last).must_equal({ type: "document", source: source })
+    ensure
+      Riffer.config.files.allow_downloads = false
+      Riffer.config.files.downloader = Riffer::Files::Downloader.new
+    end
+
     it "streams from streamRawPredict and emits finish reason then usage after the text" do
       body = sse(
         message_start(input_tokens: 10, output_tokens: 1),

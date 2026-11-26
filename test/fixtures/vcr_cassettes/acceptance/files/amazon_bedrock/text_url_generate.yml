@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-5-5/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the locker
+        code in these notes?"},{"document":{"format":"txt","name":"document","source":{"bytes":"TWVldGluZyBub3RlcwoKVGhlIGxvY2tlciBjb2RlIGZvciB0aGUgc3RvcmFnZSByb29tIGlzIFpFQlJBLTc3MzEuCkJyaW5nIHlvdXIgYmFkZ2Ugb24gVGh1cnNkYXkuCg=="}}}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - fd105c50-8382-4820-b479-8705e474f2e1
+      Content-Type:
+      - application/json
+      X-Amz-Date:
+      - 20261126T004109Z
+      X-Amz-Content-Sha256:
+      - f701c11069c33ff61d10f4d640e00bfe8451632dbae5a4fb7d675890eee7fe49
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#27 md/arm64
+        lang/ruby#4.0.10 md/4.0.10 m/Z,b,D,g
+      Content-Length:
+      - '307'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:41:10 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '401'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b0771d47-2b40-4bd4-88ad-6c30f20e662f
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":709},"output":{"message":{"content":[{"text":"The
+        locker code for the storage room is **ZEBRA-7731**, according to the meeting
+        notes."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":110,"outputTokens":33,"serverToolUsage":{},"totalTokens":143}}'
+  recorded_at: Thu, 26 Nov 2026 00:41:10 GMT
+recorded_with: VCR 6.4.0

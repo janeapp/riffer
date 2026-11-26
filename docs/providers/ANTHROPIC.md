@@ -270,6 +270,8 @@ The provider converts Riffer messages to Anthropic format:
 | `Assistant`    | `{role: "assistant", content: [...]}`, one block per part, in part order |
 | `Tool`         | `{role: "user", content: [{type: "tool_result", ...}]}`                  |
 
+User messages with files become multi-part content: `image` blocks for images, `document` blocks for PDFs and text. PDFs go as base64, or as a URL source for a `FilePart.from_url`. Text files (`text/plain`, `text/csv`, `text/html`) go as plain-text documents with media type `text/plain`, so their content must be valid UTF-8 or riffer raises `Riffer::FileEncodingError`. The API takes URL sources only for images and PDFs, so riffer downloads a text `FilePart.from_url` source and sends it inline, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
+
 ## Direct Provider Usage
 
 ```ruby

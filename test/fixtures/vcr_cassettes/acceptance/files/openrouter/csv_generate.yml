@@ -1,0 +1,76 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"z-ai/glm-5.3-flash","messages":[{"role":"user","content":[{"type":"text","text":"What
+        is the price of the blue widget?"},{"type":"file","file":{"file_data":"data:text/csv;base64,c2t1LG5hbWUscHJpY2UKVy0xMDAscmVkIHdpZGdldCw0LjUwClctMjAwLGJsdWUgd2lkZ2V0LDE3LjI1ClctMzAwLGdyZWVuIHdpZGdldCw5LjAwCg==","filename":"widgets.csv"}}]}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.10
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '336'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:44:00 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1795653839-Y6hEp2ILOTdTpyVCApmd
+      Access-Control-Expose-Headers:
+      - WWW-Authenticate,PAYMENT-REQUIRED,Payment-Receipt,PAYMENT-RESPONSE,Location,X-Generation-Id,x-openrouter-error-origin,x-openrouter-error-tool,X-Provider-Name,request-id,x-openrouter-subscription-passthrough,anthropic-ratelimit-unified-status,Retry-After,cf-ray
+      X-Openrouter-Release:
+      - api;09c04aa7-0ed8-4b45-bdf9-2016dec4c065
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a604dcb09cc0c568-SEA
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAp7ImlkIjoiZ2VuLTE3OTU2NTM4MzktWTZoRXAySUxPVGRUcHlWQ0FwbWQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24iLCJjcmVhdGVkIjoxNzk1NjUzODM5LCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsInByb3ZpZGVyIjoiV2FmZXIiLCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJ2bGxtLTAuMzMuMHJjMS5kZXYyMjkrZzM5NjY5MjRkNS10cDItNzg2YmFjNzQiLCJzZXJ2aWNlX3RpZXIiOm51bGwsImNob2ljZXMiOlt7ImluZGV4IjowLCJsb2dwcm9icyI6bnVsbCwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6InN0b3AiLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjoiVGhlIGJsdWUgd2lkZ2V0IChXLTIwMCkgaXMgcHJpY2VkIGF0ICoqMTcuMjUqKi4iLCJyZWZ1c2FsIjpudWxsLCJyZWFzb25pbmciOiJUaGUgdXNlciBpcyBhc2tpbmcgYWJvdXQgdGhlIHByaWNlIG9mIHRoZSBibHVlIHdpZGdldCBmcm9tIGEgQ1NWLWZvcm1hdHRlZCBkYXRhIHRhYmxlLlxuXG5Mb29raW5nIGF0IHRoZSBkYXRhOlxuLSBXLTEwMCwgcmVkIHdpZGdldCwgNC41MFxuLSBXLTIwMCwgYmx1ZSB3aWRnZXQsIDE3LjI1XG4tIFctMzAwLCBncmVlbiB3aWRnZXQsIDkuMDBcblxuVGhlIGJsdWUgd2lkZ2V0IChXLTIwMCkgaXMgcHJpY2VkIGF0IDE3LjI1LlxuXG5UaGlzIGlzIGEgc2ltcGxlIGxvb2t1cCBxdWVzdGlvbi4gSSBzaG91bGQgdmVyaWZ5IGJ5IGNoZWNraW5nIGVhY2ggcm93OlxuLSBSb3cgMTogcmVkIHdpZGdldCwgbm90IHdoYXQgd2Ugd2FudFxuLSBSb3cgMjogYmx1ZSB3aWRnZXQsIHByaWNlID0gMTcuMjUg4pyTXG4tIFJvdyAzOiBncmVlbiB3aWRnZXQsIG5vdCB3aGF0IHdlIHdhbnRcblxuVGhlIGFuc3dlciBpcyAxNy4yNS4gVGhlIHF1ZXN0aW9uIGlzIHNpbXBsZSwgc28gbXkgYW5zd2VyIHNob3VsZCBiZSBicmllZi4iLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IlRoZSB1c2VyIGlzIGFza2luZyBhYm91dCB0aGUgcHJpY2Ugb2YgdGhlIGJsdWUgd2lkZ2V0IGZyb20gYSBDU1YtZm9ybWF0dGVkIGRhdGEgdGFibGUuXG5cbkxvb2tpbmcgYXQgdGhlIGRhdGE6XG4tIFctMTAwLCByZWQgd2lkZ2V0LCA0LjUwXG4tIFctMjAwLCBibHVlIHdpZGdldCwgMTcuMjVcbi0gVy0zMDAsIGdyZWVuIHdpZGdldCwgOS4wMFxuXG5UaGUgYmx1ZSB3aWRnZXQgKFctMjAwKSBpcyBwcmljZWQgYXQgMTcuMjUuXG5cblRoaXMgaXMgYSBzaW1wbGUgbG9va3VwIHF1ZXN0aW9uLiBJIHNob3VsZCB2ZXJpZnkgYnkgY2hlY2tpbmcgZWFjaCByb3c6XG4tIFJvdyAxOiByZWQgd2lkZ2V0LCBub3Qgd2hhdCB3ZSB3YW50XG4tIFJvdyAyOiBibHVlIHdpZGdldCwgcHJpY2UgPSAxNy4yNSDinJNcbi0gUm93IDM6IGdyZWVuIHdpZGdldCwgbm90IHdoYXQgd2Ugd2FudFxuXG5UaGUgYW5zd2VyIGlzIDE3LjI1LiBUaGUgcXVlc3Rpb24gaXMgc2ltcGxlLCBzbyBteSBhbnN3ZXIgc2hvdWxkIGJlIGJyaWVmLiIsImZvcm1hdCI6InVua25vd24iLCJpbmRleCI6MH1dfX1dLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjo1OSwiY29tcGxldGlvbl90b2tlbnMiOjE3NSwidG90YWxfdG9rZW5zIjoyMzQsImNvc3QiOjAuMDAwMDM0Njc4LCJpc19ieW9rIjpmYWxzZSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNhY2hlX3dyaXRlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowLCJ2aWRlb190b2tlbnMiOjB9LCJjb3N0X2RldGFpbHMiOnsidXBzdHJlYW1faW5mZXJlbmNlX2Nvc3QiOjAuMDAwMDM0Njc4LCJ1cHN0cmVhbV9pbmZlcmVuY2VfcHJvbXB0X2Nvc3QiOjAuMDAwMDAyNDc4LCJ1cHN0cmVhbV9pbmZlcmVuY2VfY29tcGxldGlvbnNfY29zdCI6MC4wMDAwMzIyfSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjoxNTYsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Thu, 26 Nov 2026 00:44:00 GMT
+recorded_with: VCR 6.4.0

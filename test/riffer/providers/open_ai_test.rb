@@ -1071,5 +1071,19 @@ describe Riffer::Providers::OpenAI do
         },
       )
     end
+
+    {
+      "application/pdf" => "file.pdf",
+      "text/plain" => "file.txt",
+      "text/csv" => "file.csv",
+      "text/html" => "file.html",
+    }.each do |media_type, filename|
+      it "names an unnamed #{media_type} document #{filename}" do
+        file = Riffer::Messages::User::FilePart.new(bytes: "content", media_type: media_type)
+        result = provider.send(:convert_file_part_to_openai_format, file)
+
+        expect(result[:filename]).must_equal filename
+      end
+    end
   end
 end

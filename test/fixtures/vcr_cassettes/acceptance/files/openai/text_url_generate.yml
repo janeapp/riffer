@@ -1,0 +1,186 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"What
+        is the locker code in these notes?"},{"type":"input_file","file_data":"data:text/plain;base64,TWVldGluZyBub3RlcwoKVGhlIGxvY2tlciBjb2RlIGZvciB0aGUgc3RvcmFnZSByb29tIGlzIFpFQlJBLTc3MzEuCkJyaW5nIHlvdXIgYmFkZ2Ugb24gVGh1cnNkYXkuCg==","filename":"file.txt"}]}],"model":"gpt-6-luna"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.97.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.97.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.10
+      Content-Type:
+      - application/json
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '345'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Nov 2026 00:38:16 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a604d449aab588f9-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID, Server-Timing-Total, X-OpenAI-Inference-Capacity-Reason
+      Openai-Processing-Ms:
+      - '974'
+      Openai-Version:
+      - '2020-10-01'
+      X-Request-Id:
+      - req_e3e8f66879df44b492ae89b761be2ee3
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0a8efb89b4a2a77c016b077f775e6087d09bab34cb8727e74c",
+          "object": "response",
+          "created_at": 1795653495,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1795653496,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "image": {
+            "context_compression": "disabled"
+          },
+          "incomplete_details": null,
+          "input_transformations": [],
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0a8efb89b4a2a77c016b077f77b45c87d0925999d985c3ab86",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABrB394zVUlFu_2YCYdT70-sa3MzkczoGWYVZGXlfyLNaGQ4u3xV148GPB4DxYU4j4tzMII_CjPlSCzaUDg0c8neeOFVoajcTuviDvBrl-oMc7YZvUpVs5vp1ykw4XXguEvmPxIdvo_9_nhfRVdEO5WS6Cgl372XYn8h3jmaeO9sNOvJ-ZPmHySMArlS8uc_bLVNliV-qvto-UqmJrq9OX01AJEjWqxAaA68bjypBoHcRPLqZhYoHmIAfbVxqBX2YKHBFHNL803-or0vGILnegqXfixpTZQtZpV5SDUNWjrCN5WEHhaZjiFzPQOUYN4h-UzVmQ_TQ3RLiN5g77q6zSFpfGiMOmlymDfQPSjw4hPLF8VNGsjd7dYyJ7uQOl3HW1v5vs62BKo5XAot6n19KU-_EruUbUhwfGTU3dQ6jlH_gEJnAe9clAiJOEQB1hpL5hFap1PJAwtM1R6-1Dy11tpLw2MTOZSIWXt-4503bMc4LSRVmGrMHjluSq0_tsXl9aex-D5HK-eWhuo2yPb3LKAbJ-7Eoz5Dl7HcIfnEyLfR5lo257OFJfBbosI3onQqN5cbGgWu4OKTfNj_hl5kmROYmw7Mp8jiesU3EEwDx-GieowzQC8Uz3DlMp460j4zku336BcmiO0XPhFy7CY0Zn8ycdy9bkNzMahrkMnAKgF1xjXuts-Gvc3MkjH6JVQV9Ye5CoTqw3a2j5MD8uhAH2YTHjrKPEitAHhWeHC6m2w3i74FH3dlaTLQqfTjVdLNtlA4MdhRKiCNGuyaquacRyMO4jJ0reGUt1LKv12uObNg-SYUmnA5_zBIHCFJ6mI9uVTtEQxRKcUVBDkSAlGgdJbVq3O6zuWlhnk_6Oz6kqGtiNvze0zRBBDQEr_DN6TTXSWgvYLtXbDTa_dofTxB8_oe_RjK259BcnTPKiHm-JvFKBo1Wi4GFhQjm9W9SBE8wpVfqvgFquT5Qql_FT3z_fO27Ls9Inly13S-ufBA78uDML_z3n6pwrAlpPnpZH9e8diZkjtiJ0-0BUYHc-JG25wics7cDklfoJhg-7B7oRliZmCfrYDtH-T-yaIGGFDUtS9aTu0RDgfLGMHxkOMMt6_-4lMl1YPrTmKk2JjrD5UDX8FpFIX6brhAQiMC8EPORenLH0cLN1WXP72Y1dZiliVyN4PewdJdf-LfGjQEOU9G4Ht8kRw4k5LDwEky8fIFdtwFEZOFS17xnY8E6wEEedFBtRV_lwA3Wc02GU6u73VrF3OVgf0u2aB8ETYTwpe9gk1oXYvLRG193uvxGJoAAJp4e2VJdYwRbL6-ofnRSubbONEQdL0ZnEBFbF_FO-NmMze2eCRm5eeJA1sTpLMb4LUSyn4XBY8D7IbEdRr3qXUW59yea67S9sKgu1giNqW4t2JnR8TnlE3_yE9qODHjNBxDnFuDRsaLt9mA02Ocw19WsFFKosg1X7UaouoXJvKR-lSMvs7av0mBCTbRR2O7efG5st2lfF5mPiTWSOfO2QTMD-PGSkydF2MvtoVWuyENp0Mrjy6RjmKAbeaBJ8HKCFrdiGH8VASQNUh39grXaeADnVT5ni3DSqcBApSn-2gbUP-xUoMYnYWb6Osr5CboewJf4SLGhDKQuM09E03-JxAhfx--ITdc83ZYCdEJuj7SjtjW6M8tOVRlIplY7bqzEHIHtiFV2bvneTBqz-mJrkQgoMmO7N4d2BMTE0gsGQfpuHpM8ynfpBYtubjdaHsJhhEEucz3-ddhP7RbtKq0uzJwDef82Mw3WDOtWWqCrXKfTdW4k4zhE1cct8JTT5mdt1StXBmPF8HFn-P8XUsk3KTe4QLGIFsAcQDrZa4HXW-0N_qnq_2FNS5VWRUON6Ed9hlJDAOTOdrt-0W2wulGrOjsn2GPXeTqP0iC5f6t6v7XvFmLGjU-HpUzxZpoZXaZVR57nkpMKojLyj1LGKiwy7kOQRKMjhxMA3VnevQz3blPPHEGGlp3Zxi8gEJUJEzfJwZXXuCJI8JGBtn4lLnh-XIy6NwjpkGsKAHirDfSKo53kCa2ZGvz7RYTPqVO4aQJ5MRh_XlPOKGgYMQz0r19KWHqpr9fcJSpNEL1XgFFXYdZxqOsS4el2BcCeSdfNu2iLPsBcVkDfdi7RNugZWIDYaMLTg1CGb2u2yKDVmqco21lhpAfEVNHWcWHDAD-dGtrRhMo5duqd1KlxPzpHFoMgMS2lowKolURr7b_V9i2xNv12Nzc1T53J1B_SGVSMdcMW1CuFjXLhMe4lo5ltlPyCYjyIyPa61S1x3dS-5kjlaNpX7XVgl-tDWgYfXZMUJNNTwcAUi6JHgSuyDhiufagwdbH7YcuqYftS8yUQFjbW8_iWtgsk1MS6-om6F8OAnwtnn0qDItlnXngJV7sfF2R-LADNIj4XejCMa0TA8B0nGkE9RyzZARcpM2nViovFFIYPF4ntR2N04kxZ5dZGosMEJe4PJl4Pwl5Blk1Lk6fVTMagL5CYSjYCG04ll-jUwNkNcn7II_M1sI--D3CimKq2-K39X8QwUO2wNlyEgKMluq0LCoCkU-5Vj-CPYdp50c61Og1CybPVDbbxGgrZEjfI2sPx4YQkPsNeRFeMnwFZYMEOuRnS7uhc3jZVtuaiRn_CU5QRdxrA==",
+              "summary": []
+            },
+            {
+              "id": "msg_0a8efb89b4a2a77c016b077f782a1887d0a20dde9f9c2a2b14",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "The locker code is **ZEBRA-7731**."
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 43,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cache_write_tokens_details": {
+                "ttl_12h_tokens": 0,
+                "ttl_30m_tokens": 0
+              },
+              "cached_tokens": 0
+            },
+            "output_tokens": 95,
+            "output_tokens_details": {
+              "reasoning_tokens": 76
+            },
+            "total_tokens": 138
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Thu, 26 Nov 2026 00:38:16 GMT
+recorded_with: VCR 6.4.0
