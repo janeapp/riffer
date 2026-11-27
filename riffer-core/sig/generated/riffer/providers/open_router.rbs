@@ -42,6 +42,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # OpenRouter returns an upstream provider's rejection as a 200 response with
+  # an +error+ and no +choices+.
   # --
   # : (Hash[Symbol, untyped]) -> untyped
   def execute_generate: (Hash[Symbol, untyped]) -> untyped

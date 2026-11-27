@@ -121,10 +121,16 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     params.compact
   end
 
+  # OpenRouter returns an upstream provider's rejection as a 200 response with
+  # an +error+ and no +choices+.
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    client.chat.completions.create(**params)
+    response = client.chat.completions.create(**params)
+    error = response[:error] #: Hash[Symbol, untyped]?
+    return response unless error
+
+    raise Riffer::APIError.new("OpenRouter API error (#{error[:code]}): #{error[:message]}", body: response.to_json)
   end
 
   #--

@@ -610,6 +610,49 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe "errors reported in a 200 response" do
+    let(:provider) { Riffer::Providers::OpenRouter.new }
+    let(:completions_url) { "#{Riffer::Providers::OpenRouter::BASE_URL}/chat/completions" }
+
+    it "raises an APIError for a response carrying an error and no choices" do
+      body = {
+        error: { code: 400, message: "Provider returned error", metadata: { provider_name: "DeepInfra" } },
+      }.to_json
+      stub_request(:post, completions_url).
+        to_return(status: 200, body: body, headers: { "content-type" => "application/json" })
+
+      error = expect do
+        provider.generate_text(prompt: "hi", model: "meta-llama/llama-4-scout")
+      end.must_raise Riffer::APIError
+
+      expect(error.message).must_equal "OpenRouter API error (400): Provider returned error"
+      expect(JSON.parse(error.body, symbolize_names: true)[:error][:metadata]).must_equal(provider_name: "DeepInfra")
+    end
+
+    # The openai gem raises on any stream chunk that carries an error.
+    it "raises the SDK's APIStatusError for an error chunk sent mid-stream" do
+      chunk = { id: "gen-1", object: "chat.completion.chunk", created: 1, model: "meta-llama/llama-4-scout" }
+      events = [
+        chunk.merge(choices: [{ index: 0, delta: { role: "assistant", content: "Hel" }, finish_reason: nil }]),
+        chunk.merge(
+          error: { code: "server_error", message: "Provider disconnected unexpectedly" },
+          choices: [{ index: 0, delta: { content: "" }, finish_reason: "error" }],
+        ),
+      ]
+      body = [*events.map { |event| "data: #{event.to_json}\n\n" }, "data: [DONE]\n\n"].join
+      stub_request(:post, completions_url).
+        to_return(status: 200, body: body, headers: { "content-type" => "text/event-stream" })
+      received = []
+
+      error = expect do
+        provider.stream_text(prompt: "hi", model: "meta-llama/llama-4-scout").each { |event| received << event }
+      end.must_raise OpenAI::Errors::APIStatusError
+
+      expect(error.message).must_equal "Provider disconnected unexpectedly"
+      expect(received.map(&:class)).must_equal [Riffer::StreamEvents::TextDelta]
+    end
+  end
+
   describe "structured output" do
     let(:basic_structured_output) do
       params = Riffer::Params.new

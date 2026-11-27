@@ -32,8 +32,9 @@ module Riffer
 
   class ValidationError < Error; end
 
-  # A provider answered with a non-success status, or sent an in-stream error
-  # event (+status+ is nil then). +body+ is the raw response text.
+  # A provider answered with a non-success status, or reported an error in a
+  # success response or stream event (+status+ is nil then). +body+ is the raw
+  # response text.
   class APIError < Error
     attr_reader :status #: Integer? # @dynamic status
     attr_reader :body #: String? # @dynamic body
