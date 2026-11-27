@@ -181,7 +181,7 @@ agent.stream('Hello').each do |event|
 end
 ```
 
-**Partial tool execution** — tool calls are executed one at a time. When an interrupt fires during tool execution, only the completed tool results remain in the message history. For example, if an assistant message requests two tool calls and the callback interrupts after the first tool result, only that first result will be in the message history.
+**Partial tool execution** — tool calls are executed one at a time. When an interrupt fires during tool execution, only the completed tool results remain in the message history. For example, if an assistant message requests two tool calls and the callback interrupts after the first tool result, only that first result will be in the message history. Riffer's own refusals of calls to unloaded [deferred tools](TOOLS.md#loading-deferred-tools-experimental) are added before any of the turn's calls run, so they're in the history even when the interrupt fires during the first call.
 
 ### Resuming an Interrupted Loop
 
