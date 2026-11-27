@@ -306,7 +306,8 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
 
   it "downloads a URL text file and sends it as a text document" do
     Riffer.config.files.allow_downloads = true
-    Riffer.config.files.downloader = ->(_url, **) { "INV-4821".b }
+    Riffer.config.future.file_downloads = true
+    Riffer.config.files.downloader = ->(_file, **) { "INV-4821".b }
     file = Riffer::Messages::User::FilePart.from_url("https://example.com/notes.txt")
     document = { type: "document", source: { type: "text", media_type: "text/plain", data: "INV-4821" } }
     body = { messages: [{ role: "user", content: [{ type: "text", text: "Read this" }, document] }] }
@@ -320,5 +321,6 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
   ensure
     Riffer.config.files.allow_downloads = false
     Riffer.config.files.downloader = Riffer::Files::Downloader.new
+    Riffer.config.future.file_downloads = false
   end
 end

@@ -1,6 +1,8 @@
 # Generated from lib/riffer/messages/user/file_part.rb with RBS::Inline
 
 class Riffer::Messages::User::FilePart
+  @verified: bool
+
   @encoded_bytes: String?
 
   @bytes: String?
@@ -51,6 +53,12 @@ class Riffer::Messages::User::FilePart
   # : () -> String?
   def data_bytes: () -> String?
 
+  # Unlike +data_bytes+, keeps no decoded copy, for a caller that reads the
+  # bytes once while the provider sends the base64.
+  # --
+  # : () -> String?
+  def decoded_data: () -> String?
+
   # : (String) -> void
   def cache_data_bytes: (String) -> void
 
@@ -60,6 +68,16 @@ class Riffer::Messages::User::FilePart
   # --
   # : (String) -> void
   def cache_downloaded_data: (String) -> void
+
+  # Whether this file's content has been checked against +sha256+. Held in
+  # memory only, so a file rebuilt from +to_h+ is checked again.
+  # --
+  # : () -> bool
+  def verified?: () -> bool
+
+  # --
+  # : () -> void
+  def mark_verified: () -> void
 
   # --
   # : () -> String?

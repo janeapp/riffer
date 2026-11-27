@@ -220,7 +220,7 @@ Converse requires every document to have a name, unique across the request, made
 
 Any other URL scheme (e.g. `https://`) isn't something Bedrock accepts as a reference, so riffer downloads the file itself and sends the raw bytes — see [File Downloads](../CONFIGURATION.md#file-downloads) for the `allow_downloads` policy this requires.
 
-**A `sha256:` on an `s3://` `FilePart` is a combination that always fails with the default setup.** Setting `sha256:` forces riffer to download and verify the file itself before Bedrock ever sees it, regardless of the URL scheme — but riffer's default downloader only fetches `https://` URLs, so an `s3://` source can never be verified out of the box. Either configure a custom `Riffer.config.files.downloader` that can reach S3, or omit `sha256:` and let the `s3://` URI pass straight through to Bedrock unverified.
+**Without [`config.future.file_downloads`](../CONFIGURATION.md#future-flags), a `sha256:` on an `s3://` `FilePart` always fails with the default setup.** With the flag on, the `s3://` URI passes straight through and `sha256:` isn't checked. With it off, setting `sha256:` forces riffer to download and verify the file itself before Bedrock ever sees it, regardless of the URL scheme — but riffer's default downloader only fetches `https://` URLs, so an `s3://` source can never be verified out of the box. Either configure a [custom downloader](../CONFIGURATION.md#custom-downloaders) that can reach S3 and checks `sha256`, or omit `sha256:` and let the `s3://` URI pass straight through to Bedrock unverified.
 
 ## Message Format
 

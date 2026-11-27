@@ -169,7 +169,7 @@ describe Riffer::Config::Files do
 
     it "allows setting downloader to any object responding to #call" do
       files = Riffer::Config::Files.new
-      downloader = ->(_url, max_bytes:, timeout:) { "" }
+      downloader = ->(_file, max_bytes:, timeout:) { "" }
       files.downloader = downloader
 
       expect(files.downloader).must_be_same_as downloader

@@ -227,7 +227,8 @@ describe Riffer::Providers::AnthropicVertex do
 
     it "downloads a URL file and sends it inline as base64" do
       Riffer.config.files.allow_downloads = true
-      Riffer.config.files.downloader = ->(_url, **) { "png-bytes" }
+      Riffer.config.future.file_downloads = true
+      Riffer.config.files.downloader = ->(_file, **) { "png-bytes" }
       file = Riffer::Messages::User::FilePart.from_url("https://example.com/red.png")
       transport.response = message_body
       provider.generate_text(messages: [Riffer::Messages::User.new("Describe this", files: [file])], model: model)
@@ -239,11 +240,13 @@ describe Riffer::Providers::AnthropicVertex do
     ensure
       Riffer.config.files.allow_downloads = false
       Riffer.config.files.downloader = Riffer::Files::Downloader.new
+      Riffer.config.future.file_downloads = false
     end
 
     it "downloads a URL text file and sends it as a text document" do
       Riffer.config.files.allow_downloads = true
-      Riffer.config.files.downloader = ->(_url, **) { "a,b\n1,2\n".b }
+      Riffer.config.future.file_downloads = true
+      Riffer.config.files.downloader = ->(_file, **) { "a,b\n1,2\n".b }
       file = Riffer::Messages::User::FilePart.from_url("https://example.com/data.csv")
       transport.response = message_body
       provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: model)
@@ -255,6 +258,7 @@ describe Riffer::Providers::AnthropicVertex do
     ensure
       Riffer.config.files.allow_downloads = false
       Riffer.config.files.downloader = Riffer::Files::Downloader.new
+      Riffer.config.future.file_downloads = false
     end
 
     it "streams from streamRawPredict and emits finish reason then usage after the text" do

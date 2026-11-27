@@ -5,6 +5,8 @@ class Riffer::Files::Resolver
 
   @config: Riffer::Config::Files
 
+  DEPRECATIONS: Hash[Symbol, String]
+
   # : (provider: Riffer::Providers::Base) -> void
   def initialize: (provider: Riffer::Providers::Base) -> void
 
@@ -16,14 +18,33 @@ class Riffer::Files::Resolver
   # : (Riffer::Messages::User) -> void
   def check_file_count!: (Riffer::Messages::User) -> void
 
-  # : (Riffer::Messages::User::FilePart) -> void
-  def resolve_file!: (Riffer::Messages::User::FilePart) -> void
+  # : (Riffer::Messages::User::FilePart) -> Array[Symbol]
+  def resolve_file!: (Riffer::Messages::User::FilePart) -> Array[Symbol]
 
-  # : (Riffer::Messages::User::FilePart) -> void
-  def verify_inline!: (Riffer::Messages::User::FilePart) -> void
+  # : (Riffer::Messages::User::FilePart) -> Array[Symbol]
+  def check_url!: (Riffer::Messages::User::FilePart) -> Array[Symbol]
 
-  # : (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> void
-  def download!: (Riffer::Messages::User::FilePart, cache: false | Symbol) -> void
+  # : (Riffer::Messages::User::FilePart, Symbol) -> Array[Symbol]
+  def resolve_inline!: (Riffer::Messages::User::FilePart, Symbol) -> Array[Symbol]
 
-  def verify_bytes!: (untyped bytes, untyped sha256) -> untyped
+  # : (Riffer::Messages::User::FilePart, Symbol) -> void
+  def verify_inline!: (Riffer::Messages::User::FilePart, Symbol) -> void
+
+  # : (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> Array[Symbol]
+  def download!: (Riffer::Messages::User::FilePart, cache: false | Symbol) -> Array[Symbol]
+
+  # : () -> bool
+  def file_downloads?: () -> bool
+
+  # The downloader's own errors propagate unwrapped so a host can raise and
+  # rescue its own error classes.
+  # --
+  # : (Riffer::Messages::User::FilePart) -> String
+  def download_file: (Riffer::Messages::User::FilePart) -> String
+
+  # : (Riffer::Messages::User::FilePart) -> String
+  def download_by_url: (Riffer::Messages::User::FilePart) -> String
+
+  # : (String, String) -> void
+  def verify_bytes!: (String, String) -> void
 end

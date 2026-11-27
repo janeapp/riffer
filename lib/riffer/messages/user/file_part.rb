@@ -11,6 +11,7 @@ class Riffer::Messages::User::FilePart
   # @rbs @data_bytes: String?
   # @rbs @bytes: String?
   # @rbs @encoded_bytes: String?
+  # @rbs @verified: bool
 
   MEDIA_TYPES = {
     ".jpg" => "image/jpeg",
@@ -57,6 +58,7 @@ class Riffer::Messages::User::FilePart
     @media_type = media_type
     @filename = filename
     @url_string = url
+    @verified = false
   end
 
   #--
@@ -107,12 +109,22 @@ class Riffer::Messages::User::FilePart
   #: () -> String?
   def data_bytes
     return @bytes if @bytes
-    return @data_bytes if @data_bytes
 
-    encoded = data
+    @data_bytes ||= decoded_data
+  end
+
+  # Unlike +data_bytes+, keeps no decoded copy, for a caller that reads the
+  # bytes once while the provider sends the base64.
+  #--
+  #: () -> String?
+  def decoded_data
+    raw = @bytes || @data_bytes
+    return raw if raw
+
+    encoded = @data || @downloaded_data
     return nil unless encoded
 
-    @data_bytes = Base64.strict_decode64(encoded.gsub(/\s/, ""))
+    Base64.strict_decode64(encoded.gsub(/\s/, ""))
   rescue ArgumentError
     raise Riffer::FileEncodingError, "Invalid base64 data"
   end
@@ -131,6 +143,20 @@ class Riffer::Messages::User::FilePart
   #: (String) -> void
   def cache_downloaded_data(data)
     @downloaded_data = data
+  end
+
+  # Whether this file's content has been checked against +sha256+. Held in
+  # memory only, so a file rebuilt from +to_h+ is checked again.
+  #--
+  #: () -> bool
+  def verified?
+    @verified
+  end
+
+  #--
+  #: () -> void
+  def mark_verified
+    @verified = true
   end
 
   #--

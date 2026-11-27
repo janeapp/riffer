@@ -8,10 +8,24 @@ describe Riffer::Files::Resolver do
   let(:fake_downloader) do
     calls = downloaded_calls
     content = downloaded_content
-    lambda do |url, max_bytes:, timeout:|
-      calls << { url: url, max_bytes: max_bytes, timeout: timeout }
+    lambda do |file, max_bytes:, timeout:|
+      calls << { file: file, max_bytes: max_bytes, timeout: timeout }
       content
     end
+  end
+
+  # Counts riffer's own hashing; the fake downloaders here never hash.
+  def count_sha256_digests
+    count = 0
+    original = Digest::SHA256.method(:hexdigest)
+    Digest::SHA256.define_singleton_method(:hexdigest) do |*args|
+      count += 1
+      original.call(*args)
+    end
+    yield
+    count
+  ensure
+    Digest::SHA256.singleton_class.send(:remove_method, :hexdigest)
   end
 
   before do
@@ -19,8 +33,11 @@ describe Riffer::Files::Resolver do
     @original_max_per_message = Riffer.config.files.max_per_message
     @original_downloader = Riffer.config.files.downloader
     @original_runner = Riffer.config.files.runner
+    @original_max_bytes = Riffer.config.files.max_bytes
+    @original_timeout = Riffer.config.files.timeout
     Riffer.config.files.allow_downloads = true
     Riffer.config.files.downloader = fake_downloader
+    Riffer.config.future.file_downloads = true
   end
 
   after do
@@ -28,6 +45,14 @@ describe Riffer::Files::Resolver do
     Riffer.config.files.max_per_message = @original_max_per_message
     Riffer.config.files.downloader = @original_downloader
     Riffer.config.files.runner = @original_runner
+    Riffer.config.files.max_bytes = @original_max_bytes
+    Riffer.config.files.timeout = @original_timeout
+    Riffer.config.future.file_downloads = false
+  end
+
+  def checked_url_file(sha256: Digest::SHA256.hexdigest(downloaded_content))
+    Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                              sha256: sha256,)
   end
 
   def resolver_for(delivery)
@@ -161,25 +186,62 @@ describe Riffer::Files::Resolver do
         expect(downloaded_calls).must_be_empty
       end
 
-      it "downloads and verifies when a sha256 is given, without caching the bytes" do
-        sha256 = Digest::SHA256.hexdigest(downloaded_content)
-        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
-                                                                                         sha256: sha256,)
+      it "passes the URL through unchecked when a sha256 is given, even with downloads disabled" do
+        Riffer.config.files.allow_downloads = false
+        file = checked_url_file
         message = Riffer::Messages::User.new("hi", files: [file])
-        resolver_for(:url).resolve!([message])
+        digests = count_sha256_digests { resolver_for(:url).resolve!([message]) }
 
-        expect(file.data).must_be_nil
-        expect(downloaded_calls.size).must_equal 1
+        expect(downloaded_calls).must_be_empty
+        expect(digests).must_equal 0
+        expect(file.verified?).must_equal false
       end
 
-      it "raises Riffer::FileChecksumMismatchError when the downloaded content doesn't match" do
-        sha256 = Digest::SHA256.hexdigest("something else")
-        file = Riffer::Messages::User::FilePart.from_url(
-          "https://example.com/file.pdf", media_type: "application/pdf", sha256: sha256,
-        )
-        message = Riffer::Messages::User.new("hi", files: [file])
+      describe "before config.future.file_downloads" do
+        before do
+          Riffer.config.future.file_downloads = false
+          Riffer.config.files.downloader = Riffer::Files::Downloader.new
+          stub_request(:get, "https://example.com/file.pdf").to_return(status: 200, body: downloaded_content)
+        end
 
-        expect { resolver_for(:url).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
+        it "reports the :url_sha256_check deprecation" do
+          message = Riffer::Messages::User.new("hi", files: [checked_url_file])
+          error = expect { resolver_for(:url).resolve!([message]) }.must_raise Riffer::DeprecationError
+
+          expect(error.message).must_include "[url_sha256_check]"
+        end
+
+        it "downloads and verifies without caching the bytes" do
+          file = checked_url_file
+          allow_deprecations { resolver_for(:url).resolve!([Riffer::Messages::User.new("hi", files: [file])]) }
+
+          expect(file.verified?).must_equal true
+          expect(file.data).must_be_nil
+          expect(file.instance_variable_get(:@data_bytes)).must_be_nil
+        end
+
+        it "raises Riffer::FileChecksumMismatchError when the downloaded content doesn't match" do
+          message = Riffer::Messages::User.new("hi", files: [checked_url_file(sha256: Digest::SHA256.hexdigest("other"))])
+
+          expect do
+            allow_deprecations { resolver_for(:url).resolve!([message]) }
+          end.must_raise Riffer::FileChecksumMismatchError
+        end
+
+        it "downloads once across two resolves" do
+          message = Riffer::Messages::User.new("hi", files: [checked_url_file])
+          allow_deprecations { 2.times { resolver_for(:url).resolve!([message]) } }
+
+          assert_requested :get, "https://example.com/file.pdf", times: 1
+        end
+
+        it "skips the download once an earlier :base64 resolution verified the file" do
+          message = Riffer::Messages::User.new("hi", files: [checked_url_file])
+          resolver_for(:base64).resolve!([message])
+          resolver_for(:url).resolve!([message])
+
+          assert_requested :get, "https://example.com/file.pdf", times: 1
+        end
       end
     end
 
@@ -279,18 +341,193 @@ describe Riffer::Files::Resolver do
         expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileUnsupportedError
       end
 
-      it "re-downloads and re-verifies for :url + sha256 instead of trusting an earlier :base64 resolution's cache" do
-        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
-                                                                                         sha256: Digest::SHA256.hexdigest(downloaded_content),)
+      it "downloads for :bytes after a :url resolution passed the URL through" do
+        file = checked_url_file
         message = Riffer::Messages::User.new("hi", files: [file])
 
-        resolver_for(:base64).resolve!([message])
+        resolver_for(:url).resolve!([message])
+        resolver_for(:bytes).resolve!([message])
 
         expect(downloaded_calls.size).must_equal 1
+        expect(file.data_bytes).must_equal downloaded_content
+      end
+    end
 
-        resolver_for(:url).resolve!([message])
+    describe "the downloader" do
+      let(:file) { checked_url_file }
 
-        expect(downloaded_calls.size).must_equal 2
+      it "receives the FilePart with the configured max_bytes and timeout" do
+        Riffer.config.files.max_bytes = 1_234
+        Riffer.config.files.timeout = 7
+        resolver_for(:bytes).resolve!([Riffer::Messages::User.new("hi", files: [file])])
+
+        expect(downloaded_calls).must_equal [{ file: file, max_bytes: 1_234, timeout: 7 }]
+      end
+
+      it "propagates the downloader's own exception class unwrapped" do
+        host_error = Class.new(StandardError)
+        Riffer.config.files.downloader = ->(_file, **) { raise host_error, "denied" }
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        error = expect { resolver_for(:bytes).resolve!([message]) }.must_raise host_error
+
+        expect(error.message).must_equal "denied"
+      end
+
+      it "leaves the file unverified when the downloader raises" do
+        Riffer.config.files.downloader = ->(_file, **) { raise Riffer::FileChecksumMismatchError, "File checksum mismatch" }
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
+        expect(file.verified?).must_equal false
+      end
+
+      it "is not reported as deprecated when it's the built-in one and the future flag is off" do
+        Riffer.config.future.file_downloads = false
+        Riffer.config.files.downloader = Riffer::Files::Downloader.new
+        stub_request(:get, file.url).to_return(status: 200, body: downloaded_content)
+        resolver_for(:bytes).resolve!([Riffer::Messages::User.new("hi", files: [file])])
+
+        expect(file.data_bytes).must_equal downloaded_content
+      end
+    end
+
+    describe "a url-only downloader, before config.future.file_downloads" do
+      let(:url_downloader) do
+        calls = downloaded_calls
+        content = downloaded_content
+        lambda do |url, max_bytes:, timeout:|
+          calls << { url: url, max_bytes: max_bytes, timeout: timeout }
+          content
+        end
+      end
+
+      before do
+        Riffer.config.future.file_downloads = false
+        Riffer.config.files.downloader = url_downloader
+      end
+
+      it "reports the :url_downloader deprecation" do
+        message = Riffer::Messages::User.new("hi", files: [checked_url_file])
+        error = expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::DeprecationError
+
+        expect(error.message).must_include "[url_downloader]"
+      end
+
+      it "is still called with the URL, and riffer checks the sha256" do
+        file = checked_url_file
+        message = Riffer::Messages::User.new("hi", files: [file])
+        allow_deprecations { resolver_for(:bytes).resolve!([message]) }
+
+        expect(downloaded_calls.map { |call| call[:url] }).must_equal ["https://example.com/file.pdf"]
+        expect(file.verified?).must_equal true
+      end
+
+      it "raises Riffer::FileChecksumMismatchError when the downloaded content doesn't match" do
+        message = Riffer::Messages::User.new("hi", files: [checked_url_file(sha256: Digest::SHA256.hexdigest("other"))])
+
+        expect do
+          allow_deprecations { resolver_for(:url).resolve!([message]) }
+        end.must_raise Riffer::FileChecksumMismatchError
+      end
+
+      it "downloads and hashes once across two resolves with :url delivery" do
+        message = Riffer::Messages::User.new("hi", files: [checked_url_file])
+        digests = count_sha256_digests do
+          allow_deprecations { 2.times { resolver_for(:url).resolve!([message]) } }
+        end
+
+        expect(downloaded_calls.size).must_equal 1
+        expect(digests).must_equal 1
+      end
+    end
+
+    describe "resolving the same messages on a second agent step" do
+      %i[base64 bytes].each do |delivery|
+        it "downloads once with #{delivery} delivery and never hashes the downloaded content" do
+          file = checked_url_file
+          message = Riffer::Messages::User.new("hi", files: [file])
+          digests = count_sha256_digests { 2.times { resolver_for(delivery).resolve!([message]) } }
+
+          expect(downloaded_calls.size).must_equal 1
+          expect(digests).must_equal 0
+        end
+      end
+
+      %i[url base64 bytes].each do |delivery|
+        it "hashes data: content once with #{delivery} delivery" do
+          body = "inline body"
+          file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: Base64.strict_encode64(body),
+                                                      sha256: Digest::SHA256.hexdigest(body),)
+          message = Riffer::Messages::User.new("hi", files: [file])
+          digests = count_sha256_digests { 2.times { resolver_for(delivery).resolve!([message]) } }
+
+          expect(digests).must_equal 1
+        end
+
+        it "hashes bytes: content once with #{delivery} delivery" do
+          body = "inline body"
+          file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: body,
+                                                      sha256: Digest::SHA256.hexdigest(body),)
+          message = Riffer::Messages::User.new("hi", files: [file])
+          digests = count_sha256_digests { 2.times { resolver_for(delivery).resolve!([message]) } }
+
+          expect(digests).must_equal 1
+        end
+      end
+
+      it "keeps no decoded copy of data: content when the provider sends base64" do
+        body = "inline body"
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: Base64.strict_encode64(body),
+                                                    sha256: Digest::SHA256.hexdigest(body),)
+        resolver_for(:base64).resolve!([Riffer::Messages::User.new("hi", files: [file])])
+
+        expect(file.verified?).must_equal true
+        expect(file.instance_variable_get(:@data_bytes)).must_be_nil
+      end
+
+      it "keeps the decoded copy of data: content when the provider sends bytes" do
+        body = "inline body"
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: Base64.strict_encode64(body),
+                                                    sha256: Digest::SHA256.hexdigest(body),)
+        resolver_for(:bytes).resolve!([Riffer::Messages::User.new("hi", files: [file])])
+
+        expect(file.instance_variable_get(:@data_bytes)).must_equal body
+      end
+
+      it "still raises for inline data with a wrong sha256 on every resolve" do
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", bytes: "inline body",
+                                                    sha256: Digest::SHA256.hexdigest("something else"),)
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        2.times { expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError }
+      end
+    end
+
+    describe "a FilePart attached more than once" do
+      it "is downloaded once" do
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        messages = [
+          Riffer::Messages::User.new("hi", files: [file, file]),
+          Riffer::Messages::User.new("again", files: [file]),
+        ]
+        Riffer.config.files.runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
+        resolver_for(:bytes).resolve!(messages)
+
+        expect(downloaded_calls.size).must_equal 1
+      end
+    end
+
+    describe "a deprecation reported while a concurrent runner resolves files" do
+      it "names the line that called resolve!" do
+        Riffer.config.future.file_downloads = false
+        Riffer.config.files.downloader = ->(_url, **) { downloaded_content }
+        Riffer.config.files.runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
+        message = Riffer::Messages::User.new("hi", files: [checked_url_file])
+
+        error = expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::DeprecationError
+
+        expect(error.message).must_include "#{__FILE__}:#{__LINE__ - 2}"
       end
     end
 
@@ -298,7 +535,7 @@ describe Riffer::Files::Resolver do
       let(:sleepy_downloader) do
         intervals = downloaded_calls
         mutex = Mutex.new
-        lambda do |_url, max_bytes:, timeout:|
+        lambda do |_file, max_bytes:, timeout:|
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           sleep 0.05
           finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)

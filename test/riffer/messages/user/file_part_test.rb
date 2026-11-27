@@ -289,6 +289,15 @@ describe Riffer::Messages::User::FilePart do
   end
 
   describe "#to_h" do
+    it "is unchanged by verification" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hello", media_type: "text/plain",
+                                                  url: "https://example.com/a.txt", sha256: "a" * 64,)
+      before = file.to_h
+      file.mark_verified
+
+      expect(file.to_h).must_equal before
+    end
+
     it "includes media_type and data" do
       file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       hash = file.to_h

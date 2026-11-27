@@ -225,21 +225,54 @@ Per file, riffer applies this policy, in order:
 
 1. **Already inline (`data:` or `bytes:`)** — nothing to download. If `sha256:` was given, it's verified against the existing bytes regardless of any other setting below.
 2. **Provider can't accept the file at all** — raises `Riffer::FileUnsupportedError`.
-3. **Provider accepts a URL as-is** — passed straight through, untouched, _unless_ `sha256:` was given, in which case riffer downloads and verifies anyway (a caller who set `sha256:` is asking for integrity verification, not a passthrough).
-4. **Provider needs the bytes inline** — riffer downloads the file, verifying `sha256:` if given.
+3. **Provider accepts a URL as-is** — passed straight through, untouched. With [`config.future.file_downloads`](#future-flags) on, that holds even when `sha256:` was given: riffer never sees the bytes the provider fetches, so it doesn't check them. With the flag off, a `sha256:` makes riffer download the file only to check it, and reports the `url_sha256_check` [deprecation](#deprecations).
+4. **Provider needs the bytes inline** — riffer downloads the file, and the downloader checks `sha256:` if given.
 
-Every download in step 3 or 4 is gated by `allow_downloads`; with it `false` (the default), reaching either of those steps raises `Riffer::FileDownloadsDisabledError` instead of fetching anything. This means upgrading to a riffer version with this feature never starts downloading arbitrary URLs on your behalf — you have to opt in.
+Every download in step 3 or 4 is gated by `allow_downloads`; with it `false` (the default), a step that needs a download raises `Riffer::FileDownloadsDisabledError` instead of fetching anything. This means upgrading to a riffer version with this feature never starts downloading arbitrary URLs on your behalf — you have to opt in.
 
-| Option            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allow_downloads` | Whether riffer may download a `FilePart`'s URL. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                       |
-| `max_bytes`       | Maximum size, in bytes, of a downloaded file; the download is aborted once the streamed body exceeds this, independent of (and regardless of a missing/lying) `content-length` header. Defaults to `3_500_000`.                                                                                                                                                                                                                                                |
-| `timeout`         | Open and read timeout, in seconds, for a single download attempt. Defaults to `60`.                                                                                                                                                                                                                                                                                                                                                                            |
-| `max_per_message` | Maximum number of files allowed on a single user message; checked against each message as originally authored, before consecutive messages are merged. `nil` (default) means uncapped.                                                                                                                                                                                                                                                                         |
-| `runner`          | A `Riffer::Runner` instance that resolves every file across a call's messages. Defaults to `Riffer::Runner::Sequential.new`; assign `Riffer::Runner::Threaded.new` (or `Riffer::Runner::Fibers.new` inside a fiber-based host) to resolve multiple files concurrently.                                                                                                                                                                                         |
-| `downloader`      | The object that fetches a URL's bytes; must respond to `#call(url, max_bytes:, timeout:)` returning the raw (not base64-encoded) file content. Riffer caches it as base64 or raw bytes, whichever the provider actually needs, rather than producing both. Defaults to `Riffer::Files::Downloader.new`, which fetches over HTTPS only, following up to 3 redirects. Assign your own to add logging/metrics, or to fetch from a non-HTTPS store (e.g. `s3://`). |
+Each `FilePart` is checked once. After its content has been downloaded, or its inline data matched against `sha256:`, later calls with the same `FilePart` object, such as the next step of an agent loop, skip both the hash and the download. The result is kept on the object only, so a `FilePart` rebuilt with `from_hash` is checked again.
+
+| Option            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allow_downloads` | Whether riffer may download a `FilePart`'s URL. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                    |
+| `max_bytes`       | Maximum size, in bytes, of a downloaded file; the download is aborted once the streamed body exceeds this, independent of (and regardless of a missing/lying) `content-length` header. Defaults to `3_500_000`.                                                                                                                                                                                                                                                             |
+| `timeout`         | Open and read timeout, in seconds, for a single download attempt. Defaults to `60`.                                                                                                                                                                                                                                                                                                                                                                                         |
+| `max_per_message` | Maximum number of files allowed on a single user message; checked against each message as originally authored, before consecutive messages are merged. `nil` (default) means uncapped.                                                                                                                                                                                                                                                                                      |
+| `runner`          | A `Riffer::Runner` instance that resolves every file across a call's messages. Defaults to `Riffer::Runner::Sequential.new`; assign `Riffer::Runner::Threaded.new` (or `Riffer::Runner::Fibers.new` inside a fiber-based host) to resolve multiple files concurrently.                                                                                                                                                                                                      |
+| `downloader`      | The object that fetches a file's bytes; see [Custom downloaders](#custom-downloaders) for its contract. Riffer caches the result as base64 or raw bytes, whichever the provider actually needs, rather than producing both. Defaults to `Riffer::Files::Downloader.new`, which fetches over HTTPS only, following up to 3 redirects, and checks `sha256` while the body streams. Assign your own to add logging/metrics, or to fetch from a non-HTTPS store (e.g. `s3://`). |
 
 A file that fails resolution raises a `Riffer::FileError` subclass — `Riffer::FileUnsupportedError`, `Riffer::FileDownloadsDisabledError`, `Riffer::TooManyFilesError`, `Riffer::FileChecksumMismatchError`, `Riffer::FileTooLargeError`, `Riffer::FileDownloadError`, or `Riffer::FileEncodingError` — so callers can `rescue Riffer::FileError` for any attachment problem, or a specific subclass to handle one case.
+
+#### Custom downloaders
+
+With [`config.future.file_downloads`](#future-flags) on, riffer calls the downloader as `call(file, max_bytes:, timeout:)`:
+
+- `file` is the `Riffer::Messages::User::FilePart`; read `file.url` and `file.sha256` from it.
+- Return the raw (not base64-encoded) content, at most `max_bytes` long.
+- When `file.sha256` is set, raise `Riffer::FileChecksumMismatchError` if the content doesn't match it. Riffer doesn't hash downloaded content again.
+- Any other exception your downloader raises reaches the caller unchanged.
+
+```ruby
+class S3Downloader
+  def call(file, max_bytes:, timeout:)
+    bucket, key = file.url.delete_prefix("s3://").split("/", 2)
+    body = Aws::S3::Client.new(http_read_timeout: timeout).get_object(bucket: bucket, key: key).body.read
+    raise Riffer::FileTooLargeError, "File too large" if body.bytesize > max_bytes
+    if file.sha256 && Digest::SHA256.hexdigest(body) != file.sha256
+      raise Riffer::FileChecksumMismatchError, "File checksum mismatch"
+    end
+
+    body
+  end
+end
+
+Riffer.configure do |config|
+  config.future.file_downloads = true
+  config.files.downloader = S3Downloader.new
+end
+```
+
+With the flag off, riffer calls a custom downloader with the URL string instead, as `call(url, max_bytes:, timeout:)`, and checks `sha256` itself. This form reports the `url_downloader` [deprecation](#deprecations) and goes away in a future breaking release. The built-in downloader takes the `FilePart` whether the flag is on or not.
 
 ### Model Catalog
 
@@ -251,8 +284,8 @@ Riffer.configure do |config|
 end
 ```
 
-| Option          | Description                                                                                                                         |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Option          | Description                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `catalog_files` | Array of paths (Strings or Pathnames), loaded in order; later files override earlier ones. Built at the end of `Riffer.configure`. |
 
 See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and validation.
@@ -311,9 +344,9 @@ A flag goes through three stages:
 2. **Default.** A [breaking release](STABILITY.md#breaking-releases) makes the new behaviour the default. The flag always reads as on, and setting it reports a [deprecation](#deprecations) saying it's no longer needed and can be removed.
 3. **Removed.** A release later the flag is gone, and setting it raises `NoMethodError`.
 
-| Flag     | Stage | Description                     |
-| -------- | ----- | ------------------------------- |
-| _(none)_ |       | Riffer has no future flags yet. |
+| Flag             | Stage  | Description                                                                                                                                                                                                                                                                               |
+| ---------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `file_downloads` | Opt-in | Calls `config.files.downloader` with the `FilePart` instead of its URL and leaves the `sha256` check of downloaded content to the downloader. A file the provider fetches by URL is passed through without being downloaded to check its `sha256`. See [File Downloads](#file-downloads). |
 
 ### Message ID Strategy
 

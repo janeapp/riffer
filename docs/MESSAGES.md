@@ -367,7 +367,7 @@ file = Riffer::Messages::User::FilePart.from_url(
 file.sha256  # => "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 ```
 
-`sha256:` accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises `Riffer::ArgumentError` on any other format.
+`sha256:` accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises `Riffer::ArgumentError` on any other format. It's checked against inline content and against content riffer downloads; a URL the provider fetches itself isn't checked (see [File Downloads](CONFIGURATION.md#file-downloads)).
 
 `bytes:` takes the raw file content as a String and keeps that String as given, without copying it, so don't change it afterwards. It can't be combined with `data:` (raises `Riffer::ArgumentError`). Providers that send raw bytes, such as Amazon Bedrock, use it directly; providers that need base64 encode it for you.
 

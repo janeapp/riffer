@@ -117,11 +117,13 @@ describe "Acceptance: files" do
         describe "from a URL" do
           before do
             Riffer.config.files.allow_downloads = true
-            Riffer.config.files.downloader = ->(_url, **) { acceptance_file("red_square.png") }
+            Riffer.config.future.file_downloads = true
+            Riffer.config.files.downloader = ->(_file, **) { acceptance_file("red_square.png") }
           end
 
           after do
             Riffer.config.files.allow_downloads = false
+            Riffer.config.future.file_downloads = false
             Riffer.config.files.downloader = Riffer::Files::Downloader.new
           end
 
@@ -137,7 +139,7 @@ describe "Acceptance: files" do
           end
 
           it "reads a text file (#{mode})" do
-            Riffer.config.files.downloader = ->(_url, **) { acceptance_file("notes.txt") }
+            Riffer.config.files.downloader = ->(_file, **) { acceptance_file("notes.txt") }
             file = Riffer::Messages::User::FilePart.from_url("https://example.com/notes.txt")
             message = acceptance_cassette("#{cassette_prefix}/text_url_#{mode}") do
               call_provider(provider, mode, prompt: "What is the locker code in these notes?", model: model,
