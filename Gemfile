@@ -11,7 +11,7 @@ gem "guard"
 gem "guard-shell"
 gem "io-event", "< 1.23"
 gem "irb"
-gem "minitest", "~> 6.0"
+gem "minitest", "~> 6.1"
 gem "openai", "~> 0.97.0"
 gem "rake", "~> 13.0"
 gem "rbs-inline", "~> 0.12"
@@ -20,8 +20,8 @@ gem "rubocop-minitest", require: false
 gem "rubocop-performance", require: false
 gem "rubocop-rake", require: false
 gem "steep", "~> 2.1"
-gem "vcr", "~> 6.0"
-gem "webmock", "~> 3.34"
+gem "vcr", "~> 6.4"
+gem "webmock", "~> 3.40"
 
 gem "kramdown"
 gem "kramdown-parser-gfm"
