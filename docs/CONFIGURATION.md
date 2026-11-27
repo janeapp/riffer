@@ -257,18 +257,43 @@ A file that riffer can't send raises a `Riffer::FileError` subclass: `Riffer::Fi
 
 A downloader gets the files that need bytes, each with a `url`, and returns their raw bytes (not base64) in the same order. It isn't called when no file needs bytes. Any error fails the whole batch and reaches the caller unchanged; riffer doesn't handle partial results. It gets no `context:`, so anything that depends on the tenant goes in a `:before` guardrail that transforms the file, for example by presigning its URL.
 
-For example, a downloader that checks each file's `sha256` around the default one:
+The examples below subclass the default downloader and only work with `config.future.file_downloads` on. Without the flag, riffer calls a custom downloader on the deprecated contract, with a URL string.
+
+For example, a downloader that fetches up to four files at a time:
+
+```ruby
+class ParallelDownloader < Riffer::Files::Downloader
+  def initialize(max_concurrency: 4)
+    super()
+    @max_concurrency = max_concurrency
+  end
+
+  def call(files)
+    files.each_slice(@max_concurrency).flat_map do |group|
+      threads = group.map do |file|
+        Thread.new do
+          Thread.current.report_on_exception = false
+          super([file]).first
+        end
+      end
+      threads.map(&:value)
+    end
+  end
+end
+
+Riffer.configure { |config| config.files.downloader = ParallelDownloader.new }
+```
+
+`Thread#value` re-raises a thread's error, so one failed file still fails the batch.
+
+Or one that checks each file's `sha256`:
 
 ```ruby
 class ChecksumMismatchError < Riffer::FileError; end
 
-class ChecksumDownloader
-  def initialize(inner = Riffer::Files::Downloader.new)
-    @inner = inner
-  end
-
+class ChecksumDownloader < Riffer::Files::Downloader
   def call(files)
-    @inner.call(files).zip(files).map do |bytes, file|
+    super.zip(files).map do |bytes, file|
       raise ChecksumMismatchError, file.url if file.sha256 && Digest::SHA256.hexdigest(bytes) != file.sha256
 
       bytes
@@ -279,7 +304,7 @@ end
 Riffer.configure { |config| config.files.downloader = ChecksumDownloader.new }
 ```
 
-Custom downloaders and guardrails define their own errors, or subclass `Riffer::FileError`.
+To get both, inherit `ChecksumDownloader` from `ParallelDownloader`. Custom downloaders and guardrails define their own errors, or subclass `Riffer::FileError`.
 
 ##### `sha256`
 
@@ -329,8 +354,8 @@ Riffer.configure do |config|
 end
 ```
 
-| Option          | Description                                                                                                                         |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Option          | Description                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `catalog_files` | Array of paths (Strings or Pathnames), loaded in order; later files override earlier ones. Built at the end of `Riffer.configure`. |
 
 See [Model Catalog](CATALOG.md) for the file format, lookup, layering, and validation.

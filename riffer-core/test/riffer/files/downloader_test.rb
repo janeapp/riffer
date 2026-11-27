@@ -203,4 +203,65 @@ describe Riffer::Files::Downloader do
       end
     end
   end
+
+  describe "the subclasses in docs/CONFIGURATION.md" do
+    parallel = Class.new(Riffer::Files::Downloader) do
+      def initialize(max_concurrency: 4)
+        super()
+        @max_concurrency = max_concurrency
+      end
+
+      def call(files)
+        files.each_slice(@max_concurrency).flat_map do |group|
+          threads = group.map do |file|
+            Thread.new do
+              Thread.current.report_on_exception = false
+              super([file]).first
+            end
+          end
+          threads.map(&:value)
+        end
+      end
+    end
+
+    checksum = Class.new(parallel) do
+      def call(files)
+        super.zip(files).map do |bytes, file|
+          raise Riffer::FileError, file.url if file.sha256 && Digest::SHA256.hexdigest(bytes) != file.sha256
+
+          bytes
+        end
+      end
+    end
+
+    let(:urls) { (1..5).map { |i| "https://example.com/#{i}.pdf" } }
+
+    before do
+      urls.each_with_index { |u, i| stub_request(:get, u).to_return(status: 200, body: "body #{i}") }
+    end
+
+    it "downloads in parallel groups and keeps the order of the files" do
+      bodies = parallel.new(max_concurrency: 2).call(urls.map { |u| file_for(u) })
+
+      expect(bodies).must_equal((0..4).map { |i| "body #{i}" })
+    end
+
+    it "fails the batch when one file fails" do
+      stub_request(:get, urls[2]).to_return(status: 500)
+
+      files = urls.map { |u| file_for(u) }
+
+      expect { parallel.new(max_concurrency: 2).call(files) }.must_raise Riffer::FileDownloadError
+    end
+
+    it "checks sha256 on top of the parallel downloader" do
+      good = Riffer::Messages::User::FilePart.new(
+        url: urls[0], media_type: "application/pdf", sha256: Digest::SHA256.hexdigest("body 0"),
+      )
+      bad = Riffer::Messages::User::FilePart.new(url: urls[1], media_type: "application/pdf", sha256: "0" * 64)
+
+      expect(checksum.new.call([good])).must_equal ["body 0"]
+      expect { checksum.new.call([good, bad]) }.must_raise Riffer::FileError
+    end
+  end
 end
