@@ -142,6 +142,19 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   end
 
   #--
+  #: (Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]) -> Riffer::Messages::Assistant
+  def with_parts(parts)
+    self.class.new(
+      id: id,
+      parts: parts,
+      token_usage: token_usage,
+      structured_output: structured_output,
+      finish_reason: finish_reason,
+      finish_reason_raw: finish_reason_raw,
+    )
+  end
+
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = { role: role } #: Hash[Symbol, untyped]

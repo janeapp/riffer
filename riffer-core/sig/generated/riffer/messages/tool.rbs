@@ -20,6 +20,10 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   def initialize: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?, ?loaded_tools: Array[String]) -> void
 
   # --
+  # : (?content: String, ?name: String) -> Riffer::Messages::Tool
+  def with: (?content: String, ?name: String) -> Riffer::Messages::Tool
+
+  # --
   # : () -> bool
   def error?: () -> bool
 

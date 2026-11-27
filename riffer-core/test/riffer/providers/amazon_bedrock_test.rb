@@ -1295,6 +1295,22 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "malformed tool calls in the history" do
+    it "replays them in a form Bedrock accepts" do
+      client = stub_converse
+
+      Riffer::Providers::AmazonBedrock.new.generate_text(
+        messages: malformed_tool_call_history,
+        model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      )
+
+      expect(client.api_requests.last[:params][:messages][1][:content].map { |block| block[:tool_use] }).must_equal [
+        { tool_use_id: "c_1", name: Riffer::Wire::INVALID_TOOL_NAME, input: {} },
+        { tool_use_id: "c_2", name: "list_events", input: {} },
+      ]
+    end
+  end
+
   describe "tool schema strict mode" do
     it "applies strict_schema to tool parameters" do
       tool = stub_tool("TestTool") do

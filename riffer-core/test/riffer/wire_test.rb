@@ -35,4 +35,87 @@ describe Riffer::Wire do
       expect(Riffer::Wire.parse_tool_arguments("")).must_equal({})
     end
   end
+
+  describe ".replayable_messages" do
+    def call(name, arguments = "{}", id: "c_1")
+      Riffer::Messages::Assistant::ToolCall.new(call_id: id, name: name, arguments: arguments)
+    end
+
+    def result(name)
+      Riffer::Messages::Tool.new(
+        "Unknown tool", tool_call_id: "c_1", name: name, error: "Unknown tool", error_type: :unknown_tool,
+      )
+    end
+
+    def replayed_calls(*calls)
+      Riffer::Wire.replayable_messages([Riffer::Messages::Assistant.new("", tool_calls: calls)]).first.tool_calls
+    end
+
+    it "keeps a readable call as it is" do
+      expect(replayed_calls(call("files/read", '{"path":"a.txt"}'))).must_equal [call("files/read", '{"path":"a.txt"}')]
+    end
+
+    it "keeps a call without arguments as it is" do
+      expect(replayed_calls(call("files/read", ""))).must_equal [call("files/read", "")]
+    end
+
+    it "replays unparseable arguments as an empty object" do
+      expect(replayed_calls(call("files/read", '{"path":'))).must_equal [call("files/read", "{}")]
+    end
+
+    it "replays arguments that aren't a JSON object as an empty object" do
+      expect(replayed_calls(call("files/read", "[]"), call("files/read", '"a.txt"', id: "c_2"))).
+        must_equal [call("files/read", "{}"), call("files/read", "{}", id: "c_2")]
+    end
+
+    it "replays an invalid name as the placeholder" do
+      names = [" files/read", "[TOOL_CALLS]files_read", "", "a" * 65]
+
+      expect(replayed_calls(*names.map { |name| call(name) }).map(&:name)).
+        must_equal [Riffer::Wire::INVALID_TOOL_NAME] * names.size
+    end
+
+    it "renames the result of a call with an invalid name to match it" do
+      replayed = Riffer::Wire.replayable_messages([result(" files/read")]).first
+
+      expect(replayed.to_h).must_equal result(Riffer::Wire::INVALID_TOOL_NAME).to_h
+    end
+
+    it "keeps the rest of the assistant message" do
+      message = Riffer::Messages::Assistant.new(
+        id: "m_1",
+        parts: [Riffer::Messages::Assistant::TextPart.new("Reading."), call(" files/read", "{")],
+        finish_reason: :tool_calls,
+      )
+
+      replayed = Riffer::Wire.replayable_messages([message]).first
+
+      expect(replayed.to_h).must_equal message.to_h.merge(
+        parts: [
+          { part: :text, **Riffer::Messages::Assistant::TextPart.new("Reading.").to_h },
+          { part: :tool_call, **call(Riffer::Wire::INVALID_TOOL_NAME).to_h },
+        ],
+      )
+    end
+
+    it "returns readable messages as they are" do
+      messages = [
+        Riffer::Messages::User.new("Read it"),
+        Riffer::Messages::Assistant.new("", tool_calls: [call("files/read")]),
+        result("files/read"),
+      ]
+
+      Riffer::Wire.replayable_messages(messages).zip(messages).each do |replayed, message|
+        expect(replayed).must_be_same_as message
+      end
+    end
+
+    it "leaves the given messages as they were" do
+      messages = [Riffer::Messages::Assistant.new("", tool_calls: [call(" files/read", "{")]), result(" files/read")]
+      before = messages.map(&:to_h)
+      Riffer::Wire.replayable_messages(messages)
+
+      expect(messages.map(&:to_h)).must_equal before
+    end
+  end
 end
