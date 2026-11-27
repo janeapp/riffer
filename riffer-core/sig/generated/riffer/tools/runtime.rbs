@@ -18,10 +18,6 @@ class Riffer::Tools::Runtime
 
   private
 
-  # --
-  # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
-  def instrument_tool_call: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]
-
   # Subclasses override this to dispatch elsewhere (e.g. HTTP, gRPC).
   # --
   # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
@@ -30,32 +26,4 @@ class Riffer::Tools::Runtime
   # --
   # : (String) -> untyped
   def parse_arguments: (String) -> untyped
-
-  # --
-  # : [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
-  def in_tool_span: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
-
-  # --
-  # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
-  def tool_span_attributes: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
-
-  # --
-  # : (Hash[String, String]) -> Hash[String, String]
-  def tag_attributes: (Hash[String, String]) -> Hash[String, String]
-
-  # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
-  def record_tool_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Tools::Response) -> void
-
-  # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Messages::Assistant::ToolCall) -> void
-  def capture_tool_arguments: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Messages::Assistant::ToolCall) -> void
-
-  # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
-  def capture_tool_result: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Tools::Response) -> void
-
-  # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
-  def capture_tool_content?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> bool
 end

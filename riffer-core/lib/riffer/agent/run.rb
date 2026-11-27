@@ -285,6 +285,11 @@ module Riffer::Agent::Run
     # Refused here rather than by the runtime, since a custom runtime may ignore +tools:+.
     refused, callable = tool_calls.partition { |tool_call| unloaded_names.include?(tool_call.name) }
 
+    # In the session before the runtime runs, since a runtime that hands its calls elsewhere may interrupt the run
+    # and leave the refused calls pending for an outside executor.
+    add_tool_results(agent, refused) { |tool_call| tool_not_loaded(tool_call, tags) }
+    return if callable.empty?
+
     dispatched = agent.tool_runtime.execute(
       callable,
       tools: agent.tools + loaded,
@@ -292,10 +297,14 @@ module Riffer::Agent::Run
       assistant_message: assistant_message,
       tags: tags,
     ).to_h { |tool_call, result| [tool_call, reject_invalid_load(agent, result)] }
+    add_tool_results(agent, callable) { |tool_call| dispatched[tool_call] }
+  end
 
-    results = dispatched.merge(refused.to_h { |tool_call| [tool_call, tool_not_loaded(tool_call)] })
+  #--
+  #: (Riffer::Agent, Array[Riffer::Messages::Assistant::ToolCall]) { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response? } -> void
+  def add_tool_results(agent, tool_calls)
     tool_calls.each do |tool_call|
-      result = results.fetch(tool_call, nil)
+      result = yield tool_call
       next unless result
 
       agent.session.add(
@@ -335,9 +344,11 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
-  def tool_not_loaded(tool_call)
-    Riffer::Tools::Response.error("Tool '#{tool_call.name}' has not been loaded", type: :tool_not_loaded)
+  #: (Riffer::Messages::Assistant::ToolCall, Hash[String, String]) -> Riffer::Tools::Response
+  def tool_not_loaded(tool_call, tags)
+    Riffer::Tracing::ToolSpan.trace(tool_call, tags) do
+      Riffer::Tools::Response.error("Tool '#{tool_call.name}' has not been loaded", type: :tool_not_loaded)
+    end
   end
 
   #--

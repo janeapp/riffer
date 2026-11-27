@@ -4255,7 +4255,7 @@ describe Riffer::Agent::Run do
       expect(agent.session.messages.grep(Riffer::Messages::Tool).last.content).must_equal "3 events"
     end
 
-    it "refuses a call to an unloaded tool, keeping results in call order" do
+    it "refuses a call to an unloaded tool, answering refusals ahead of the runtime's results" do
       agent = deferred_agent(uses: [get_weather], deferred: [list_events, create_event])
       agent.provider.stub_response(
         "",
@@ -4264,7 +4264,7 @@ describe Riffer::Agent::Run do
       agent.generate("hi")
 
       expect(tool_results(agent)).must_equal [
-        ["c_1", :tool_not_loaded, []], ["c_2", nil, []], ["c_3", :tool_not_loaded, []],
+        ["c_1", :tool_not_loaded, []], ["c_3", :tool_not_loaded, []], ["c_2", nil, []],
       ]
       expect(agent.session.messages.grep(Riffer::Messages::Tool).first.error).
         must_equal "Tool 'list_events' has not been loaded"
@@ -4286,7 +4286,7 @@ describe Riffer::Agent::Run do
       agent.generate("hi")
 
       expect(tool_results(agent)).must_equal [
-        ["c_1", nil, ["list_events"]], ["c_2", :tool_not_loaded, []], ["c_3", nil, []],
+        ["c_2", :tool_not_loaded, []], ["c_1", nil, ["list_events"]], ["c_3", nil, []],
       ]
     end
 
@@ -4385,21 +4385,118 @@ describe Riffer::Agent::Run do
       expect(tool_results(agent)).must_equal [["c_1", :tool_not_loaded, []]]
     end
 
-    it "refuses a same-turn call resumed after an interrupt that follows the load" do
-      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
-      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1"), call("list_events", "c_2")])
-      agent.provider.stub_response("Done")
-      interrupted = false
-      agent.session.on_message do |message|
-        next if interrupted || !message.is_a?(Riffer::Messages::Tool)
-
-        interrupted = true
-        agent.interrupt!("approval needed")
+    it "refuses a pending same-turn call in a restored session that already holds the load" do
+      tool_calls = [call("connect_calendar", "c_1"), call("list_events", "c_2")].map do |tool_call|
+        Riffer::Messages::Assistant::ToolCall.new(**tool_call)
       end
-      agent.generate("hi")
+      session = Riffer::Agent::Session.new(
+        messages: [
+          Riffer::Messages::User.new("hi"),
+          Riffer::Messages::Assistant.new("", tool_calls: tool_calls),
+          Riffer::Messages::Tool.new("", tool_call_id: "c_1", name: "connect_calendar", loaded_tools: ["list_events"]),
+        ],
+      )
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events], session: session)
       agent.generate
 
       expect(tool_results(agent)).must_equal [["c_1", nil, ["list_events"]], ["c_2", :tool_not_loaded, []]]
+    end
+
+    describe "with a runtime that interrupts the run" do
+      let(:interrupting_runtime) do
+        Class.new(Riffer::Tools::Runtime::Inline) do
+          def batches
+            @batches ||= []
+          end
+
+          def execute(tool_calls, **)
+            batches << tool_calls.map(&:call_id)
+            throw :riffer_interrupt, "handed off"
+          end
+        end.new
+      end
+
+      it "leaves the refusal in the session and only the callable call pending" do
+        agent = deferred_agent(uses: [get_weather], deferred: [list_events], runtime: interrupting_runtime)
+        agent.provider.stub_response("", tool_calls: [call("list_events", "c_1"), call("get_weather", "c_2")])
+        response = agent.generate("hi")
+
+        expect(response.outcome.reason).must_equal :interrupted
+        expect(interrupting_runtime.batches).must_equal [["c_2"]]
+        expect(tool_results(agent)).must_equal [["c_1", :tool_not_loaded, []]]
+        expect(agent.session.pending_tool_calls.last.map(&:call_id)).must_equal ["c_2"]
+      end
+
+      it "doesn't call the runtime when every call is refused" do
+        agent = deferred_agent(uses: [], deferred: [list_events, create_event], runtime: interrupting_runtime)
+        agent.provider.stub_response("", tool_calls: [call("list_events", "c_1"), call("create_event", "c_2")])
+        agent.provider.stub_response("Done")
+        response = agent.generate("hi")
+
+        expect(interrupting_runtime.batches).must_equal []
+        expect(response.outcome.reason).must_equal :completed
+        expect(tool_results(agent)).must_equal [["c_1", :tool_not_loaded, []], ["c_2", :tool_not_loaded, []]]
+      end
+    end
+
+    describe "tracing a refusal" do
+      after do
+        Riffer.config.tracing.enabled = true
+        Riffer.config.tracing.backend = nil
+      end
+
+      let(:hooked_runtime) do
+        Class.new(Riffer::Tools::Runtime::Inline) do
+          def hooked
+            @hooked ||= []
+          end
+
+          def around_tool_call(tool_call, context:, assistant_message: nil)
+            hooked << tool_call.call_id
+            yield
+          end
+        end.new
+      end
+
+      def tool_span(call_id)
+        @exporter.finished_spans.find { |span| span.attributes["gen_ai.tool.call.id"] == call_id }
+      end
+
+      before do
+        skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+        Riffer.config.tracing.enabled = true
+        @exporter = install_in_memory_tracer_provider
+        agent = deferred_agent(uses: [get_weather], deferred: [list_events], runtime: hooked_runtime)
+        agent.provider.stub_response("", tool_calls: [call("list_events", "c_1"), call("get_weather", "c_2")])
+        agent.generate("hi", tags: { team: "growth" })
+      end
+
+      it "records the refused call as an execute_tool span with error.type set" do
+        span = tool_span("c_1")
+
+        expect([span.name, span.kind]).must_equal ["execute_tool list_events", :internal]
+        expect(span.attributes.slice("gen_ai.operation.name", "gen_ai.tool.name", "error.type", "riffer.tag.team")).
+          must_equal(
+            {
+              "gen_ai.operation.name" => "execute_tool",
+              "gen_ai.tool.name" => "list_events",
+              "error.type" => "tool_not_loaded",
+              "riffer.tag.team" => "growth",
+            },
+          )
+        expect(span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+      end
+
+      it "parents the refusal's span to the run span" do
+        run_span = @exporter.finished_spans.find { |span| span.name.start_with?("invoke_agent") }
+
+        expect(tool_span("c_1").parent_span_id).must_equal run_span.span_id
+      end
+
+      it "doesn't run around_tool_call for the refused call" do
+        expect(hooked_runtime.hooked).must_equal ["c_2"]
+        expect(tool_span("c_2").attributes).wont_include "error.type"
+      end
     end
 
     describe "with the gateway strategy" do

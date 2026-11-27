@@ -57,6 +57,10 @@ module Riffer::Agent::Run
   def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?tags: Hash[String, String]) -> void
 
   # --
+  # : (Riffer::Agent, Array[Riffer::Messages::Assistant::ToolCall]) { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response? } -> void
+  def add_tool_results: (Riffer::Agent, Array[Riffer::Messages::Assistant::ToolCall]) { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response? } -> void
+
+  # --
   # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def loaded_tools: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
 
@@ -65,8 +69,8 @@ module Riffer::Agent::Run
   def reject_invalid_load: (Riffer::Agent, Riffer::Tools::Response) -> Riffer::Tools::Response
 
   # --
-  # : (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
-  def tool_not_loaded: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
+  # : (Riffer::Messages::Assistant::ToolCall, Hash[String, String]) -> Riffer::Tools::Response
+  def tool_not_loaded: (Riffer::Messages::Assistant::ToolCall, Hash[String, String]) -> Riffer::Tools::Response
 
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> void
