@@ -163,6 +163,92 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
       expect(params[:messages].last[:content].first[:content]).must_equal ""
     end
 
+    describe "replaying thinking after a load" do
+      def thinking(signature)
+        Riffer::Messages::Assistant::ReasoningPart.new(
+          type: :text, text: "Think", signature: signature, format: "anthropic-messages-v1",
+        )
+      end
+
+      def thinking_call(signature, call_id)
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: call_id, name: "find_tools", arguments: "{}")
+        Riffer::Messages::Assistant.new(parts: [thinking(signature), tool_call])
+      end
+
+      def thinking_answer(signature)
+        Riffer::Messages::Assistant.new(parts: [thinking(signature), Riffer::Messages::Assistant::TextPart.new("Done")])
+      end
+
+      def load_result(call_id, *names)
+        Riffer::Messages::Tool.new("", tool_call_id: call_id, name: "find_tools", loaded_tools: names)
+      end
+
+      def signatures(params)
+        params[:messages].select { |message| message[:role] == "assistant" }.map do |message|
+          message[:content].filter_map { |block| block[:signature] }
+        end
+      end
+
+      it "replays every thinking block when no load loses a reference" do
+        messages = [
+          question,
+          thinking_call("sig-1", "toolu_1"),
+          load_result("toolu_1", "send_invoice"),
+          thinking_answer("sig-2"),
+        ]
+
+        expect(signatures(request(messages))).must_equal [["sig-1"], ["sig-2"]]
+      end
+
+      it "drops the thinking after a load that lost a reference in an earlier turn, keeping the current turn's" do
+        messages = [
+          question,
+          thinking_call("sig-1", "toolu_1"),
+          load_result("toolu_1", "archived_tool"),
+          thinking_answer("sig-2"),
+          Riffer::Messages::User.new("And tomorrow?"),
+          thinking_call("sig-3", "toolu_2"),
+          load_result("toolu_2"),
+        ]
+        params = request(messages)
+
+        expect(signatures(params)).must_equal [["sig-1"], [], ["sig-3"]]
+        expect(params[:messages][3][:content]).must_equal [{ type: "text", text: "Done" }]
+      end
+
+      it "raises when thinking follows a load that lost a reference in the current turn" do
+        messages = [
+          question,
+          thinking_call("sig-1", "toolu_1"),
+          load_result("toolu_1", "archived_tool"),
+          thinking_call("sig-2", "toolu_2"),
+          load_result("toolu_2"),
+        ]
+
+        error = expect { request(messages) }.must_raise Riffer::ArgumentError
+        expect(error.message).must_include "archived_tool"
+      end
+
+      it "sends a load that lost a reference in the current turn when no thinking follows it" do
+        params = request([question, thinking_call("sig-1", "toolu_1"), load_result("toolu_1", "archived_tool")])
+
+        expect(signatures(params)).must_equal [["sig-1"]]
+      end
+
+      it "replays every thinking block on a gateway request" do
+        messages = [
+          question,
+          thinking_call("sig-1", "toolu_1"),
+          load_result("toolu_1", "send_invoice"),
+          thinking_call("sig-2", "toolu_2"),
+          load_result("toolu_2"),
+        ]
+        params = request(messages, deferred_tools: [], tools: [find_tools, Riffer::Providers::DeferredToolGateway::Tool])
+
+        expect(signatures(params)).must_equal [["sig-1"], ["sig-2"]]
+      end
+    end
+
     it "decodes a call to a loaded deferred tool" do
       stub_request(:post, "https://llm.example.test/models/claude-x:rawPredict").
         to_return(status: 200, body: {

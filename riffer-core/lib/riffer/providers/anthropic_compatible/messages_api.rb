@@ -202,7 +202,9 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def build_request_params(messages, model, options)
     tools = options[:tools]
     deferred_tools = options[:deferred_tools] || []
-    partitioned_messages = partition_messages(messages, deferred_tools)
+    # A gateway request sends a load as text, so no load ever loses a reference.
+    gateway = tools&.include?(Riffer::Providers::DeferredToolGateway::Tool) || false
+    partitioned_messages = partition_messages(messages, deferred_tools, gateway: gateway)
     structured_output = options[:structured_output]
     web_search = options[:web_search]
     tags = options[:tags] || {}
@@ -270,13 +272,14 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   end
 
   #--
-  #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
-  def partition_messages(messages, deferred_tools)
+  #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)], gateway: bool) -> Hash[Symbol, untyped]
+  def partition_messages(messages, deferred_tools, gateway:)
     deferred_names = deferred_tools.map(&:name)
+    stale_thinking = gateway ? (0...0) : stale_thinking_indices(messages, deferred_names)
     system_prompts = [] #: Array[Hash[Symbol, untyped]]
     conversation_messages = [] #: Array[Hash[Symbol, untyped]]
 
-    messages.each do |message|
+    messages.each_with_index do |message, index|
       case message
       when Riffer::Messages::System
         system_prompts << { type: "text", text: message.content }
@@ -289,7 +292,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
           conversation_messages << { role: "user", content: content }
         end
       when Riffer::Messages::Assistant
-        conversation_messages << convert_assistant(message)
+        conversation_messages << convert_assistant(message, replay_reasoning: !stale_thinking.cover?(index))
       when Riffer::Messages::Tool
         conversation_messages << {
           role: "user",
@@ -308,6 +311,39 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     }
   end
 
+  # Claude signs each thinking block over the conversation before it, so the
+  # thinking after a load that lost references no longer verifies. Earlier turns
+  # can go without it, but the API requires the current turn to keep its
+  # thinking, so a load that lost references inside the current turn can't be
+  # sent once thinking follows it.
+  #--
+  #: (Array[Riffer::Messages::Base], Array[String]) -> Range[Integer]
+  def stale_thinking_indices(messages, deferred_names)
+    dropped = messages.each_with_index.filter_map do |message, index|
+      next unless message.is_a?(Riffer::Messages::Tool)
+
+      names = message.loaded_tools - deferred_names
+      [index, names] unless names.empty?
+    end #: Array[[Integer, Array[String]]]
+    return 0...0 if dropped.empty?
+
+    turn_start = messages.rindex { |message| message.is_a?(Riffer::Messages::User) } || -1
+    in_turn = dropped.find { |index, _names| index > turn_start }
+    if in_turn && messages.drop(in_turn[0] + 1).any? { |message| signed_thinking?(message) }
+      raise Riffer::ArgumentError,
+            "the deferred tools changed mid-turn: #{in_turn[1].join(', ')} loaded in this turn but are no longer " \
+            "deferred, so Claude's thinking after the load can't be replayed; keep them deferred until the turn ends"
+    end
+
+    (dropped.first.first + 1)...turn_start
+  end
+
+  #--
+  #: (Riffer::Messages::Base) -> bool
+  def signed_thinking?(message)
+    message.is_a?(Riffer::Messages::Assistant) && message.reasoning.any? { |part| part.format == REASONING_FORMAT }
+  end
+
   # A load goes as tool_reference blocks alone, since the API rejects them mixed
   # with text. Only this request's deferred tools are referenced: the API rejects
   # a reference to a tool missing from +tools+, and a restored history may name
@@ -322,9 +358,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   end
 
   #--
-  #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-  def convert_assistant(message)
-    { role: "assistant", content: message.parts.filter_map { |part| convert_part(part) } }
+  #: (Riffer::Messages::Assistant, ?replay_reasoning: bool) -> Hash[Symbol, untyped]
+  def convert_assistant(message, replay_reasoning: true)
+    parts = replay_reasoning ? message.parts : message.parts - message.reasoning
+    { role: "assistant", content: parts.filter_map { |part| convert_part(part) } }
   end
 
   #--

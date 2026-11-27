@@ -329,6 +329,8 @@ msg.loaded_tools  # => ["list_events", "create_event"]
 msg.to_h          # => {role: :tool, content: "", tool_call_id: "call_456", name: "connect_calendar", loaded_tools: ["list_events", "create_event"]}
 ```
 
+If you store history yourself, always persist `loaded_tools` with the tool message, and never drop it for some requests and restore it on others. Some providers sign the model's reasoning over the conversation, load included: on [Anthropic](providers/ANTHROPIC.md#deferred-tools), a history whose loads change between requests gets every later request rejected (`Invalid signature in thinking block`), and riffer can't detect it.
+
 ## File Parts
 
 `Riffer::Messages::User::FilePart` represents a file attachment (image or document) that can be included with user messages.
