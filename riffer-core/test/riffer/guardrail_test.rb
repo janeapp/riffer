@@ -39,6 +39,17 @@ describe Riffer::Guardrail do
     end
   end
 
+  describe "#process_downloaded_files" do
+    it "passes the original messages by default" do
+      guardrail = Riffer::Guardrail.new
+      messages = [Riffer::Messages::User.new("Hello")]
+      result = guardrail.process_downloaded_files(messages, context: nil)
+
+      expect(result.pass?).must_equal true
+      expect(result.data).must_equal messages
+    end
+  end
+
   describe "custom guardrail" do
     let(:custom_guardrail_class) do
       Class.new(Riffer::Guardrail) do

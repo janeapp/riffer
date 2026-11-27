@@ -125,6 +125,48 @@ end
 
 An agent without a GitHub connection gets no GitHub tools, which is what a `credentials` callback returning `nil` did. A loaded tool stays loaded for the rest of the conversation, including after the agent is [serialized](https://riffer.ai/guides/serialization/) and restored. To run these tools in a restored agent, pass `from_json` a `tool_resolver:` that returns the real classes, such as `->(descriptor) { (GITHUB_MCP.tools + [FindGithubTools]).find { |tool| tool.name == descriptor[:name] } }`, and the connected client in `context:`. Anthropic, OpenAI and Azure OpenAI load deferred tools natively; on any other provider, pass [`strategy: :gateway`](https://riffer.ai/guides/agents/#deferred-tools-strategy-experimental). Deferred tools are experimental, so this part of the recipe can change in a minor release.
 
+### File downloads move to the agent
+
+This release adds the `config.future.file_downloads` [future flag](https://riffer.ai/guides/configuration/#future-flags). Apart from the deprecation warnings below, nothing changes until you turn it on; a later breaking release makes it the default and removes the old path. With it on, the agent downloads files before the first model call, file policy goes in guardrails, and riffer checks no file content. See [File Downloads](https://riffer.ai/guides/configuration/#file-downloads).
+
+```ruby
+Riffer.configure do |config|
+  config.future.file_downloads = true
+  config.files.allow_downloads = true
+end
+```
+
+Turn the flag on before your agent classes load: registering an `:after_files_download` guardrail without it raises `Riffer::ArgumentError`.
+
+Without the flag, each of these reports a deprecation. With the flag, do this instead:
+
+| Before                                                          | With the flag                                                                                                                                                                                    |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `config.files.max_bytes`, `config.files.timeout`                | Ignored. The default downloader has no size cap and uses Net::HTTP's default timeouts; set your own limits in a [custom downloader](https://riffer.ai/guides/configuration/#custom-downloaders). |
+| `config.files.max_per_message`, `Riffer::TooManyFilesError`     | Count files in a [`:before` guardrail](https://riffer.ai/guides/guardrails/#files).                                                                                                              |
+| `config.files.runner`                                           | Ignored. Download in parallel inside a custom downloader.                                                                                                                                        |
+| A downloader with `call(url, max_bytes:, timeout:)`             | `call(files)`: it gets the `FilePart`s that need bytes and returns their raw bytes in the same order.                                                                                            |
+| Riffer verifying `sha256:`, `Riffer::FileChecksumMismatchError` | Check it in a custom downloader or an [`:after_files_download` guardrail](https://riffer.ai/guides/guardrails/#files).                                                                           |
+| `Riffer::FileTooLargeError`                                     | Raise your own error from a custom downloader.                                                                                                                                                   |
+
+A downloader before:
+
+```ruby
+config.files.downloader = ->(url, max_bytes:, timeout:) { MyStore.read(url) }
+```
+
+After:
+
+```ruby
+config.files.downloader = ->(files) { files.map { |file| MyStore.read(file.url) } }
+```
+
+Other changes with the flag:
+
+- Providers never download. A direct `generate_text` or `stream_text` call with a file the provider sends as base64 or bytes and that has no data raises `Riffer::FileDataMissingError`. Pass `data:` or `bytes:`, or download with `Riffer.config.files.downloader.call(files)` yourself.
+- The default downloader fetches http as well as https, and follows redirects between them.
+- A `sha256:` no longer makes riffer download a file the provider takes as a URL.
+
 ## 0.58.0
 
 ### `config.pricing` is removed

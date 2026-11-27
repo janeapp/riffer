@@ -1,77 +1,58 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-require "net/http"
+require "faraday"
 require "uri"
 
 class Riffer::Files::Downloader
   MAX_REDIRECTS = 3 #: Integer
 
+  # A URL comes from a custom downloader on the deprecated
+  # call(url, max_bytes:, timeout:) contract that wraps this one.
+  #--
+  #: (Array[Riffer::Messages::User::FilePart]) -> Array[String]
   #: (String, max_bytes: Integer, timeout: Integer) -> String
-  def call(url, max_bytes:, timeout:)
-    fetch(url, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS)
-  rescue Riffer::Error
-    raise
-  rescue StandardError => e
-    raise Riffer::FileDownloadError, "Error downloading file: #{e.message}"
+  def call(files, max_bytes: nil, timeout: nil)
+    if files.is_a?(String)
+      size_limit = max_bytes #: Integer
+      seconds = timeout #: Integer
+      return Riffer::Files::Resolver::LegacyDownloader.new.call(files, max_bytes: size_limit, timeout: seconds)
+    end
+
+    files.map { |file| download(file.url.to_s) }
   end
 
   private
 
-  #: (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
-  def fetch(url, max_bytes:, timeout:, redirects_remaining:)
-    uri = begin
-      URI.parse(url) #: URI::HTTPS
-    rescue URI::InvalidURIError => e
-      raise Riffer::FileDownloadError, "Invalid file URL: #{e.message}"
-    end
-    raise Riffer::FileDownloadError, "Invalid file URL: missing host" if uri.host.nil?
-    raise Riffer::FileDownloadError, "Unsupported URL scheme: #{uri.scheme}" unless uri.scheme == "https"
+  #--
+  #: (String) -> String
+  def download(url)
+    redirects = 0
+    loop do
+      response = get(url)
+      return response.body.to_s if response.success?
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.open_timeout = timeout
-    http.read_timeout = timeout
-
-    # request_get without a block reads the whole body before returning, so the
-    # size cap has to run inside the block, before the body is consumed.
-    redirect_location = nil #: String?
-    content = nil #: String?
-
-    http.start do
-      http.request_get(uri.request_uri) do |response|
-        case response
-        when Net::HTTPRedirection
-          raise Riffer::FileDownloadError, "Too many redirects" if redirects_remaining.zero?
-
-          redirect_location = response["location"]
-          raise Riffer::FileDownloadError, "Redirect missing Location header" if redirect_location.nil?
-        when Net::HTTPSuccess
-          content = read_capped(response, max_bytes: max_bytes)
-        else
-          raise Riffer::FileDownloadError, "File download failed, status: #{response.code}"
-        end
+      location = response.headers["location"]
+      unless location && response.status.between?(300, 399)
+        raise Riffer::FileDownloadError, "File download failed, status: #{response.status}"
       end
-    end
+      raise Riffer::FileDownloadError, "Too many redirects" if redirects == MAX_REDIRECTS
 
-    if redirect_location
-      return fetch(redirect_location, max_bytes: max_bytes, timeout: timeout,
-                                      redirects_remaining: redirects_remaining - 1,)
+      redirects += 1
+      url = URI.join(url, location).to_s
     end
-
-    content #: String
+  rescue Faraday::Error, URI::Error => e
+    raise Riffer::FileDownloadError, "Error downloading file: #{e.message}"
   end
 
-  #: (Net::HTTPResponse, max_bytes: Integer) -> String
-  def read_capped(response, max_bytes:)
-    content_length = response["content-length"]&.to_i
-    raise Riffer::FileTooLargeError, "File too large" if content_length && content_length > max_bytes
+  #--
+  #: (String) -> Faraday::Response
+  def get(url)
+    uri = URI.parse(url)
+    raise Riffer::FileDownloadError, "Unsupported URL scheme: #{uri.scheme}" unless uri.is_a?(URI::HTTP)
+    # Net::HTTP connects to localhost when the host is empty.
+    raise Riffer::FileDownloadError, "Invalid file URL: missing host" if uri.host.to_s.empty?
 
-    buffer = +""
-    response.read_body do |chunk|
-      buffer << chunk
-      raise Riffer::FileTooLargeError, "File too large" if buffer.bytesize > max_bytes
-    end
-    buffer
+    Faraday.new.get(uri)
   end
 end

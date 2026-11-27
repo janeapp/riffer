@@ -238,6 +238,33 @@ describe Riffer::Messages::User::FilePart do
     end
   end
 
+  describe "#missing_data_for?" do
+    let(:url_file) { Riffer::Messages::User::FilePart.from_url("https://example.com/a.pdf") }
+
+    it "is true for a url file sent as base64 or bytes" do
+      expect(url_file.missing_data_for?(:base64)).must_equal true
+      expect(url_file.missing_data_for?(:bytes)).must_equal true
+    end
+
+    it "is false for a file sent as a url" do
+      expect(url_file.missing_data_for?(:url)).must_equal false
+    end
+
+    it "is false once the file holds the data the delivery needs" do
+      url_file.cache_downloaded_data("aGk=")
+
+      expect(url_file.missing_data_for?(:base64)).must_equal false
+      expect(url_file.missing_data_for?(:bytes)).must_equal false
+    end
+
+    it "is false for inline data" do
+      file = Riffer::Messages::User::FilePart.new(bytes: "hi", media_type: "text/plain")
+
+      expect(file.missing_data_for?(:base64)).must_equal false
+      expect(file.missing_data_for?(:bytes)).must_equal false
+    end
+  end
+
   describe "#image?" do
     it "returns true for image media types" do
       file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/jpeg")

@@ -406,7 +406,7 @@ describe Riffer::Providers::Base do
 
     after do
       Riffer.config.files.allow_downloads = @original_allow_downloads
-      Riffer.config.files.max_per_message = @original_max_per_message
+      allow_deprecations { Riffer.config.files.max_per_message = @original_max_per_message }
     end
 
     it "resolves file attachments in #generate_text before building request params" do
@@ -425,7 +425,7 @@ describe Riffer::Providers::Base do
     end
 
     it "checks max_per_message against each original message, not the post-merge total" do
-      Riffer.config.files.max_per_message = 1
+      allow_deprecations { Riffer.config.files.max_per_message = 1 }
       file_a = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: "YQ==")
       file_b = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: "Yg==")
       messages = [
@@ -437,6 +437,67 @@ describe Riffer::Providers::Base do
       # reaching NotImplementedError proves the cap is checked pre-merge.
       error = expect { provider.generate_text(messages: messages) }.must_raise(NotImplementedError)
       expect(error.message).must_equal "Subclasses must implement #build_request_params"
+    end
+
+    describe "with config.future.file_downloads" do
+      let(:provider) { Riffer::Providers::Mock.new }
+      let(:url_file) { Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf") }
+
+      before do
+        Riffer.config.future.file_downloads = true
+        Riffer.config.files.allow_downloads = true
+      end
+
+      after { Riffer.config.future.file_downloads = false }
+
+      def deliver_as(delivery)
+        provider.define_singleton_method(:file_delivery) { |_file| delivery }
+      end
+
+      %i[base64 bytes].each do |delivery|
+        it "raises Riffer::FileDataMissingError for a #{delivery} file with no data, without downloading" do
+          deliver_as(delivery)
+
+          expect { provider.generate_text(prompt: "Hello", files: [url_file]) }.must_raise(Riffer::FileDataMissingError)
+          expect { provider.stream_text(prompt: "Hello", files: [url_file]) }.must_raise(Riffer::FileDataMissingError)
+          assert_not_requested :get, "https://example.com/file.pdf"
+        end
+      end
+
+      it "sends a bytes file that already holds its data" do
+        deliver_as(:bytes)
+        url_file.cache_data_bytes("pdf")
+        provider.generate_text(prompt: "Hello", files: [url_file])
+
+        expect(provider.calls.last[:messages].first[:files]).must_equal [url_file.to_h]
+      end
+
+      it "passes a url file through" do
+        provider.generate_text(prompt: "Hello", files: [url_file])
+
+        expect(provider.calls.last[:messages].first[:files]).must_equal [url_file.to_h]
+      end
+
+      it "doesn't check a sha256" do
+        deliver_as(:bytes)
+        file = Riffer::Messages::User::FilePart.new(bytes: "inline", media_type: "text/plain",
+                                                    sha256: Digest::SHA256.hexdigest("something else"),)
+        provider.generate_text(prompt: "Hello", files: [file])
+
+        expect(provider.calls.length).must_equal 1
+      end
+
+      it "raises Riffer::FileUnsupportedError for a provider without file support" do
+        deliver_as(:unsupported)
+
+        expect { provider.generate_text(prompt: "Hello", files: [url_file]) }.must_raise(Riffer::FileUnsupportedError)
+      end
+
+      it "raises Riffer::ArgumentError for an unknown file_delivery result" do
+        deliver_as(:carrier_pigeon)
+
+        expect { provider.generate_text(prompt: "Hello", files: [url_file]) }.must_raise(Riffer::ArgumentError)
+      end
     end
   end
 

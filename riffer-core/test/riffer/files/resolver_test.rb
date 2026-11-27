@@ -15,6 +15,10 @@ describe Riffer::Files::Resolver do
   end
 
   before do
+    # This path is deprecated as a whole; each warning has its own test below.
+    Riffer.config.silenced_deprecations = %i[
+      files_downloader_contract files_sha256_check file_error_constants files_max_per_message files_runner
+    ]
     @original_allow_downloads = Riffer.config.files.allow_downloads
     @original_max_per_message = Riffer.config.files.max_per_message
     @original_downloader = Riffer.config.files.downloader
@@ -28,6 +32,7 @@ describe Riffer::Files::Resolver do
     Riffer.config.files.max_per_message = @original_max_per_message
     Riffer.config.files.downloader = @original_downloader
     Riffer.config.files.runner = @original_runner
+    Riffer.config.silenced_deprecations = []
   end
 
   def resolver_for(delivery)
@@ -335,6 +340,48 @@ describe Riffer::Files::Resolver do
         a, b = downloaded_calls
 
         expect(b[0] >= a[1]).must_equal true
+      end
+    end
+
+    describe "deprecations" do
+      # The outer after block restores these settings.
+      before { Riffer.config.silenced_deprecations = %i[files_max_per_message files_runner] }
+
+      let(:url_file) { Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf") }
+
+      it "reports a downloader on the old contract" do
+        message = Riffer::Messages::User.new("hi", files: [url_file])
+        error = expect { resolver_for(:base64).resolve!([message]) }.must_raise Riffer::DeprecationError
+
+        expect(error.message).must_include "[files_downloader_contract]"
+        expect(downloaded_calls).must_be_empty
+      end
+
+      it "downloads through the old implementation, without a report, when the built-in downloader is configured" do
+        Riffer.config.files.downloader = Riffer::Files::Downloader.new
+        stub_request(:get, "https://example.com/file.pdf").to_return(status: 200, body: "pdf")
+        message = Riffer::Messages::User.new("hi", files: [url_file])
+        resolver_for(:bytes).resolve!([message])
+
+        expect(url_file.data_bytes).must_equal "pdf"
+      end
+
+      it "keeps https-only for the built-in downloader" do
+        Riffer.config.files.downloader = Riffer::Files::Downloader.new
+        file = Riffer::Messages::User::FilePart.from_url("http://example.com/file.pdf")
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::FileDownloadError
+      end
+
+      it "reports checking a sha256" do
+        file = Riffer::Messages::User::FilePart.new(bytes: "inline", media_type: "text/plain",
+                                                    sha256: Digest::SHA256.hexdigest("inline"),)
+        message = Riffer::Messages::User.new("hi", files: [file])
+        error = expect { resolver_for(:bytes).resolve!([message]) }.must_raise Riffer::DeprecationError
+
+        expect(error.message).must_include "[files_sha256_check] A file's sha256 will no longer be verified"
+        expect(error.message).must_include ":after_files_download guardrail"
       end
     end
   end

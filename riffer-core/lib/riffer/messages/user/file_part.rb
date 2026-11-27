@@ -127,6 +127,17 @@ class Riffer::Messages::User::FilePart
     !!(@data || @bytes)
   end
 
+  # +delivery+ is a Riffer::Providers::Base#file_delivery result.
+  #--
+  #: (Symbol) -> bool
+  def missing_data_for?(delivery)
+    case delivery
+    when :base64 then data.nil?
+    when :bytes then data_bytes.nil?
+    else false
+    end
+  end
+
   #--
   #: (String) -> void
   def cache_downloaded_data(data)

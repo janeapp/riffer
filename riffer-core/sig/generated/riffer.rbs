@@ -60,11 +60,23 @@ module Riffer
   class FileEncodingError < FileError
   end
 
+  class FileDataMissingError < FileError
+  end
+
   class DuplicateIdentifierError < Error
   end
 
   class DeprecationError < Error
   end
+
+  # Taken off Riffer so that referencing one goes through const_missing, which
+  # reports the deprecation. Ruby's deprecate_constant only warns when
+  # Warning[:deprecated] is on. Removing the constant keeps the class's name.
+  DEPRECATED_FILE_ERRORS: Hash[Symbol, singleton(Riffer::FileError)]
+
+  # --
+  # : (Symbol) -> untyped
+  def self.const_missing: (Symbol) -> untyped
 
   # --
   # : () -> Riffer::Config

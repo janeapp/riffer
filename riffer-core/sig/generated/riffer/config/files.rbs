@@ -40,4 +40,10 @@ class Riffer::Config::Files
   # --
   # : (untyped) -> void
   def downloader=: (untyped) -> void
+
+  private
+
+  # --
+  # : (Symbol, String) -> void
+  def deprecate_setting: (Symbol, String) -> void
 end

@@ -230,7 +230,9 @@ describe Riffer::Providers::AnthropicVertex do
       Riffer.config.files.downloader = ->(_url, **) { "png-bytes" }
       file = Riffer::Messages::User::FilePart.from_url("https://example.com/red.png")
       transport.response = message_body
-      provider.generate_text(messages: [Riffer::Messages::User.new("Describe this", files: [file])], model: model)
+      allow_deprecations do
+        provider.generate_text(messages: [Riffer::Messages::User.new("Describe this", files: [file])], model: model)
+      end
       body = transport.requests.first.last
 
       source = { type: "base64", media_type: "image/png", data: Base64.strict_encode64("png-bytes") }
@@ -246,7 +248,9 @@ describe Riffer::Providers::AnthropicVertex do
       Riffer.config.files.downloader = ->(_url, **) { "a,b\n1,2\n".b }
       file = Riffer::Messages::User::FilePart.from_url("https://example.com/data.csv")
       transport.response = message_body
-      provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: model)
+      allow_deprecations do
+        provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: model)
+      end
       body = transport.requests.first.last
 
       source = { type: "text", media_type: "text/plain", data: "a,b\n1,2\n" }

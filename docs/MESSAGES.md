@@ -369,9 +369,11 @@ file.sha256  # => "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b
 
 `sha256:` accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises `Riffer::ArgumentError` on any other format.
 
+With `config.future.file_downloads`, `sha256` is metadata only: riffer carries it and never checks it. Check it in a custom downloader or an `:after_files_download` guardrail; see [File Downloads](CONFIGURATION.md#sha256). Without the flag, riffer still verifies it, which is deprecated.
+
 `bytes:` takes the raw file content as a String and keeps that String as given, without copying it, so don't change it afterwards. It can't be combined with `data:` (raises `Riffer::ArgumentError`). Providers that send raw bytes, such as Amazon Bedrock, use it directly; providers that need base64 encode it for you.
 
-A file can carry a `url:` alongside `data:` or `bytes:`. The inline content always wins: it's what riffer sends to the provider and what `sha256:` is checked against, and the URL is never downloaded.
+A file can carry a `url:` alongside `data:` or `bytes:`. The inline content always wins: it's what riffer sends to the provider, and the URL is never downloaded.
 
 `to_h` leaves out file content that didn't come from `data:`: downloaded content and `bytes:` content are never included. A `bytes:` file with a `url:` serializes to its URL, so `from_hash` rebuilds it as a URL file. A `bytes:` file without one serializes to its metadata only (`media_type`, `filename`, `sha256`), and `from_hash` raises `Riffer::ArgumentError` on that hash; attach the bytes again when you restore the message.
 

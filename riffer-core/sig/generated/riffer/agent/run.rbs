@@ -73,8 +73,13 @@ module Riffer::Agent::Run
   def execute_pending_tool_calls: (Riffer::Agent, ?Hash[String, String]) -> void
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
-  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  # : (Riffer::Agent, Symbol, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  def run_input_guardrails: (Riffer::Agent, Symbol, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+
+  # Tools don't add files, so one pass before the step loop covers the run.
+  # --
+  # : (Riffer::Agent, Hash[String, String]) -> void
+  def download_files: (Riffer::Agent, Hash[String, String]) -> void
 
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped

@@ -314,7 +314,9 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
       with(body: hash_including(body)).
       to_return(status: 200, body: '{"content":[{"type":"text","text":"ok"}],"stop_reason":"end_turn"}')
 
-    provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: "claude-x")
+    allow_deprecations do
+      provider.generate_text(messages: [Riffer::Messages::User.new("Read this", files: [file])], model: "claude-x")
+    end
 
     assert_requested stub
   ensure

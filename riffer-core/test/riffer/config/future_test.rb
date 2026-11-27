@@ -14,6 +14,10 @@ describe Riffer::Config::Future do
     expect(defaults - [true, false]).must_be_empty
   end
 
+  it "ships file_downloads as an opt-in flag" do
+    expect(Riffer::Config::Future.new.enabled?(:file_downloads)).must_equal false
+  end
+
   describe "#enabled?" do
     it "is false until a flag is turned on" do
       expect(future.enabled?(:early_access)).must_equal false

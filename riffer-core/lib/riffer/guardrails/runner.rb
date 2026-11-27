@@ -100,6 +100,8 @@ class Riffer::Guardrails::Runner
       guardrail.process_input(data, context: context)
     when :after
       guardrail.process_output(data, messages: messages || [], context: context)
+    when :after_files_download
+      guardrail.process_downloaded_files(data, context: context)
     else
       raise Riffer::Error,
             "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(', ')}"

@@ -366,6 +366,35 @@ describe Riffer::Agent::Config do
       error = expect { config.add_guardrail(:before, klass: String) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/must be a Riffer::Guardrail subclass/)
     end
+
+    describe ":after_files_download" do
+      after { Riffer.config.future.file_downloads = false }
+
+      it "raises without config.future.file_downloads" do
+        config = Riffer::Agent::Config.new
+        error = expect { config.add_guardrail(:after_files_download, klass: guardrail_class) }.must_raise(Riffer::ArgumentError)
+
+        expect(error.message).must_include "config.future.file_downloads"
+      end
+
+      it "appends to guardrails[:after_files_download] only, with config.future.file_downloads" do
+        Riffer.config.future.file_downloads = true
+        config = Riffer::Agent::Config.new
+        config.add_guardrail(:after_files_download, klass: guardrail_class)
+
+        expect(config.guardrails_for(:after_files_download).length).must_equal 1
+        expect(config.guardrails_for(:before)).must_equal []
+        expect(config.guardrails_for(:after)).must_equal []
+      end
+
+      it "is left out of :around" do
+        Riffer.config.future.file_downloads = true
+        config = Riffer::Agent::Config.new
+        config.add_guardrail(:around, klass: guardrail_class)
+
+        expect(config.guardrails_for(:after_files_download)).must_equal []
+      end
+    end
   end
 
   describe "#guardrails_for" do

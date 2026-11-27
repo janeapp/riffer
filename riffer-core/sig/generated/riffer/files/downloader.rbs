@@ -3,14 +3,21 @@
 class Riffer::Files::Downloader
   MAX_REDIRECTS: Integer
 
+  # A URL comes from a custom downloader on the deprecated
+  # call(url, max_bytes:, timeout:) contract that wraps this one.
+  # --
+  # : (Array[Riffer::Messages::User::FilePart]) -> Array[String]
   # : (String, max_bytes: Integer, timeout: Integer) -> String
-  def call: (String, max_bytes: Integer, timeout: Integer) -> String
+  def call: (Array[Riffer::Messages::User::FilePart]) -> Array[String]
+          | (String, max_bytes: Integer, timeout: Integer) -> String
 
   private
 
-  # : (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
-  def fetch: (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
+  # --
+  # : (String) -> String
+  def download: (String) -> String
 
-  # : (Net::HTTPResponse, max_bytes: Integer) -> String
-  def read_capped: (Net::HTTPResponse, max_bytes: Integer) -> String
+  # --
+  # : (String) -> Faraday::Response
+  def get: (String) -> Faraday::Response
 end

@@ -68,11 +68,13 @@ The yielded span must respond to `set_attribute(key, value)`, `add_event(name, a
 
 ## Spans
 
-Riffer emits four span types. A single agent run produces one `invoke_agent` span wrapping one `chat` span per model call, one `execute_tool` span per tool call, and one `execute_guardrail` span per guardrail execution, interleaved in execution order:
+Riffer emits five span types. A single agent run produces one `invoke_agent` span wrapping one `chat` span per model call, one `execute_tool` span per tool call, one `execute_guardrail` span per guardrail execution, and, with `config.future.file_downloads`, one `download_files` span when the agent downloads files, interleaved in execution order:
 
 ```
 invoke_agent {agent}             INTERNAL
 ├─ execute_guardrail {name}      INTERNAL   (one per before-phase guardrail)
+├─ download_files                INTERNAL   (with config.future.file_downloads, when a file needs downloading)
+├─ execute_guardrail {name}      INTERNAL   (one per after_files_download-phase guardrail)
 ├─ chat {model}                  CLIENT     (one per LLM call)
 ├─ execute_tool {tool}           INTERNAL   (one per tool call)
 │   └─ (host spans nest here via around_tool_call / tool internals)
@@ -95,31 +97,31 @@ The contract promise is: **when present**, a key carries the documented meaning 
 
 ### Per-call tags (`riffer.tag.*`)
 
-Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, and `execute_guardrail` spans. The [default tags](AGENTS.md#default-tags) are always present, e.g. `riffer.tag.kind` → `"agent"` and `riffer.tag.agent` → the agent identifier. See [Per-Call Tags](AGENTS.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
+Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all five** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`, and `download_files` spans. The [default tags](AGENTS.md#default-tags) are always present, e.g. `riffer.tag.kind` → `"agent"` and `riffer.tag.agent` → the agent identifier. See [Per-Call Tags](AGENTS.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
 
 ## `invoke_agent {agent}` — the run span
 
 `INTERNAL`. One per call to `Agent#generate` or `Agent#stream`. The span name suffix is the agent's identifier (e.g. `invoke_agent weather-agent`).
 
-| Attribute                                  | Type   | Present                                              |
-| ------------------------------------------ | ------ | ---------------------------------------------------- |
-| `gen_ai.operation.name`                    | string | Always (`"invoke_agent"`)                            |
-| `gen_ai.agent.name`                        | string | Always — the agent's identifier                      |
-| `gen_ai.provider.name`                     | string | Always — see [provider names](#provider-names)       |
-| `gen_ai.request.model`                     | string | Always — the agent's configured model                |
-| `riffer.steps`                             | int    | Always — number of LLM calls in the run              |
-| `gen_ai.usage.input_tokens`                | int    | When the run made an LLM call that reported usage    |
-| `gen_ai.usage.output_tokens`               | int    | When the run made an LLM call that reported usage    |
-| `gen_ai.usage.cache_read.input_tokens`     | int    | When the provider reported cache reads               |
-| `gen_ai.usage.cache_creation.input_tokens` | int    | When the provider reported cache writes              |
-| `riffer.cost`                              | float  | When every call in the run was priced                |
-| `riffer.outcome.reason`                    | string | Always — the `response.outcome.reason`               |
-| `riffer.outcome.detail`                    | string | When `response.outcome.detail` is present            |
-| `riffer.interrupt.reason`                  | string | On interrupt (e.g. approval needed, max steps)       |
-| `riffer.tripwire.guardrail`                | string | On a guardrail tripwire, when the guardrail is named |
-| `riffer.tripwire.reason`                   | string | On a guardrail tripwire                              |
-| `riffer.tripwire.phase`                    | string | On a guardrail tripwire (`"before"` / `"after"`)     |
-| `error.type`                               | string | On an unhandled exception                            |
+| Attribute                                  | Type   | Present                                                                     |
+| ------------------------------------------ | ------ | --------------------------------------------------------------------------- |
+| `gen_ai.operation.name`                    | string | Always (`"invoke_agent"`)                                                   |
+| `gen_ai.agent.name`                        | string | Always — the agent's identifier                                             |
+| `gen_ai.provider.name`                     | string | Always — see [provider names](#provider-names)                              |
+| `gen_ai.request.model`                     | string | Always — the agent's configured model                                       |
+| `riffer.steps`                             | int    | Always — number of LLM calls in the run                                     |
+| `gen_ai.usage.input_tokens`                | int    | When the run made an LLM call that reported usage                           |
+| `gen_ai.usage.output_tokens`               | int    | When the run made an LLM call that reported usage                           |
+| `gen_ai.usage.cache_read.input_tokens`     | int    | When the provider reported cache reads                                      |
+| `gen_ai.usage.cache_creation.input_tokens` | int    | When the provider reported cache writes                                     |
+| `riffer.cost`                              | float  | When every call in the run was priced                                       |
+| `riffer.outcome.reason`                    | string | Always — the `response.outcome.reason`                                      |
+| `riffer.outcome.detail`                    | string | When `response.outcome.detail` is present                                   |
+| `riffer.interrupt.reason`                  | string | On interrupt (e.g. approval needed, max steps)                              |
+| `riffer.tripwire.guardrail`                | string | On a guardrail tripwire, when the guardrail is named                        |
+| `riffer.tripwire.reason`                   | string | On a guardrail tripwire                                                     |
+| `riffer.tripwire.phase`                    | string | On a guardrail tripwire (`"before"` / `"after"` / `"after_files_download"`) |
+| `error.type`                               | string | On an unhandled exception                                                   |
 
 The `riffer.tripwire.*` attributes are the run-level summary of the guardrail that halted the run; `riffer.tripwire.guardrail` carries the same name value as the blocking [`execute_guardrail`](#execute_guardrail-name--the-guardrail-span) span's `riffer.guardrail.name`, so the two join on a single key.
 
@@ -186,7 +188,7 @@ This status convention is the same on `chat` and `invoke_agent`: an unhandled ex
 | Attribute                 | Type   | Present                                                     |
 | ------------------------- | ------ | ----------------------------------------------------------- |
 | `riffer.guardrail.name`   | string | Always — the guardrail's name                               |
-| `riffer.guardrail.phase`  | string | Always (`"before"` / `"after"`)                             |
+| `riffer.guardrail.phase`  | string | Always (`"before"` / `"after"` / `"after_files_download"`)  |
 | `riffer.guardrail.action` | string | On a returned result (`"pass"` / `"transform"` / `"block"`) |
 | `riffer.tripwire.reason`  | string | On a block — the block reason                               |
 | `error.type`              | string | On an unhandled exception                                   |
@@ -194,6 +196,15 @@ This status convention is the same on `chat` and `invoke_agent`: an unhandled ex
 `riffer.guardrail.*` holds the facts true of any execution — name, phase, action. A reason exists only on a block, so it reuses the run-level `riffer.tripwire.reason` key: one query finds the reason on both the per-guardrail span and the enclosing `invoke_agent` summary.
 
 A block is a **handled outcome**: `riffer.guardrail.action` is `block` and the **span status stays unset** — the same convention `execute_tool` uses for a returned error response. Only a guardrail that **raises** sets `error.type` to the exception class name and marks the **span status `ERROR`** (with the exception recorded); on a raise no result is produced, so `riffer.guardrail.action` is absent.
+
+## `download_files` — the file download span
+
+`INTERNAL`. With `config.future.file_downloads`, one per agent run that downloads files, around the call to `config.files.downloader`. A run where no file needs downloading has no `download_files` span. See [File Downloads](CONFIGURATION.md#file-downloads).
+
+| Attribute            | Type   | Present                                   |
+| -------------------- | ------ | ----------------------------------------- |
+| `riffer.files.count` | int    | Always — the number of files in the batch |
+| `error.type`         | string | On an unhandled exception                 |
 
 ## Example trace
 

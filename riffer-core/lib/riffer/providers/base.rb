@@ -37,7 +37,7 @@ class Riffer::Providers::Base
     @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
-    Riffer::Files::Resolver.new(provider: self).resolve!(messages)
+    resolve_files!(messages)
     messages = with_structured_output_prompt(merge_consecutive_messages(messages), options[:structured_output])
     options = apply_reasoning(model, options)
     gateway_tools = gateway_deferred_tools(options)
@@ -79,7 +79,7 @@ class Riffer::Providers::Base
     @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
-    Riffer::Files::Resolver.new(provider: self).resolve!(messages)
+    resolve_files!(messages)
     messages = with_structured_output_prompt(merge_consecutive_messages(messages), options[:structured_output])
     options = apply_reasoning(model, options)
     gateway_tools = gateway_deferred_tools(options)
@@ -112,6 +112,36 @@ class Riffer::Providers::Base
   end
 
   private
+
+  # Under config.future.file_downloads the agent downloads before calling the
+  # provider, so a file still missing its data here is the caller's to supply.
+  #--
+  #: (Array[Riffer::Messages::Base]) -> void
+  def resolve_files!(messages)
+    unless Riffer.config.future.enabled?(:file_downloads)
+      Riffer::Files::Resolver.new(provider: self).resolve!(messages)
+      return
+    end
+
+    user_messages = messages.grep(Riffer::Messages::User) #: Array[Riffer::Messages::User]
+    user_messages.flat_map(&:files).each do |file|
+      delivery = file_delivery(file)
+      case delivery
+      when :unsupported
+        raise Riffer::FileUnsupportedError, "Provider does not support user message file attachments"
+      when :url
+        nil
+      when :base64, :bytes
+        next unless file.missing_data_for?(delivery)
+
+        raise Riffer::FileDataMissingError,
+              "#{self.class} sends this file as #{delivery} and it has no data; pass data: or bytes:, " \
+              "or send it through an agent with config.files.allow_downloads"
+      else
+        raise Riffer::ArgumentError, "Unknown file_delivery result #{delivery.inspect} from #{self.class}"
+      end
+    end
+  end
 
   #: (String) -> true
   def depends_on(gem_name)
