@@ -2278,13 +2278,20 @@ describe Riffer::Agent::Run do
       build_agent.generate("Read this", files: [pdf])
 
       expect(pdf.data_bytes).must_equal "bytes of #{pdf_url}"
-      expect(pdf.data).must_be_nil
     end
 
     it "stores base64 for a provider that sends base64" do
       build_agent(delivery: :base64).generate("Read this", files: [pdf])
 
       expect(pdf.data).must_equal Base64.strict_encode64("bytes of #{pdf_url}")
+    end
+
+    it "reuses downloaded bytes when a base64 provider gets the same file" do
+      build_agent.generate("Read this", files: [pdf])
+      build_agent(delivery: :base64).generate("Read this", files: [pdf])
+
+      expect(download_batches.length).must_equal 1
+      expect(pdf.data).must_equal Base64.strict_encode64(pdf.data_bytes)
     end
 
     it "downloads while streaming" do

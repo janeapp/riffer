@@ -215,11 +215,16 @@ describe Riffer::Files::Downloader do
         files.each_slice(@max_concurrency).flat_map do |group|
           threads = group.map do |file|
             Thread.new do
-              Thread.current.report_on_exception = false
               super([file]).first
+            rescue StandardError => e
+              e
             end
           end
-          threads.map(&:value)
+          results = threads.map(&:value)
+          error = results.find { |result| result.is_a?(StandardError) }
+          raise error if error
+
+          results
         end
       end
     end
@@ -252,6 +257,18 @@ describe Riffer::Files::Downloader do
       files = urls.map { |u| file_for(u) }
 
       expect { parallel.new(max_concurrency: 2).call(files) }.must_raise Riffer::FileDownloadError
+    end
+
+    it "waits for the rest of the group before failing the batch" do
+      stub_request(:get, urls[0]).to_return(status: 500)
+      stub_request(:get, urls[1]).to_return do
+        sleep 0.05
+        { status: 200, body: "slow" }
+      end
+      threads_before = Thread.list.size
+
+      expect { parallel.new(max_concurrency: 2).call(urls.map { |u| file_for(u) }) }.must_raise Riffer::FileDownloadError
+      expect(Thread.list.size).must_equal threads_before
     end
 
     it "checks sha256 on top of the parallel downloader" do

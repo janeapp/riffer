@@ -257,6 +257,13 @@ describe Riffer::Messages::User::FilePart do
       expect(url_file.missing_data_for?(:bytes)).must_equal false
     end
 
+    it "is false for base64 once the file holds downloaded bytes" do
+      url_file.cache_data_bytes("hi")
+
+      expect(url_file.missing_data_for?(:base64)).must_equal false
+      expect(url_file.data).must_equal Base64.strict_encode64("hi")
+    end
+
     it "is false for inline data" do
       file = Riffer::Messages::User::FilePart.new(bytes: "hi", media_type: "text/plain")
 

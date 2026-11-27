@@ -220,7 +220,7 @@ describe Riffer::Files::Resolver do
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:bytes).resolve!([message])
 
-        expect(file.data).must_be_nil
+        expect(file.instance_variable_get(:@downloaded_data)).must_be_nil
       end
 
       it "caches raw bytes from the sha256 check without decoding data again" do

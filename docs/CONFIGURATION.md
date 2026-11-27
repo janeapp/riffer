@@ -272,11 +272,16 @@ class ParallelDownloader < Riffer::Files::Downloader
     files.each_slice(@max_concurrency).flat_map do |group|
       threads = group.map do |file|
         Thread.new do
-          Thread.current.report_on_exception = false
           super([file]).first
+        rescue StandardError => e
+          e
         end
       end
-      threads.map(&:value)
+      results = threads.map(&:value)
+      error = results.find { |result| result.is_a?(StandardError) }
+      raise error if error
+
+      results
     end
   end
 end
@@ -284,7 +289,7 @@ end
 Riffer.configure { |config| config.files.downloader = ParallelDownloader.new }
 ```
 
-`Thread#value` re-raises a thread's error, so one failed file still fails the batch.
+Each thread returns its error instead of raising it, so a failed file fails the batch only after every download in its group has finished.
 
 Or one that checks each file's `sha256`:
 
