@@ -10,7 +10,7 @@ Everything else is internal, even when Ruby lets you reach it. That includes cla
 
 ## Experimental features
 
-Experimental features are labelled _experimental_ in the guides, like the [prompted structured output strategy](AGENTS.md#structured-output-strategy-experimental). They can change in any minor release, and the [CHANGELOG](https://github.com/janeapp/riffer/blob/main/CHANGELOG.md) notes each change.
+Experimental features are labelled _experimental_ in the guides, like the [prompted structured output strategy](AGENTS.md#structured-output-strategy-experimental). They can change in any minor release, and the [CHANGELOG](https://github.com/janeapp/riffer/blob/main/riffer-core/CHANGELOG.md) notes each change.
 
 ## Deprecations
 

@@ -12,7 +12,10 @@ jobs:
       contents: write
       pull-requests: write
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
+      prs_created: ${{ steps.release.outputs.prs_created }}
+      pr: ${{ steps.release.outputs.pr }}
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
@@ -20,25 +23,52 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
 
+  # release-please bumps the version only in each package's own Gemfile.lock,
+  # but the shared lock lives at the root. A stale path-gem version there fails
+  # every frozen bundle, so refresh it on the release PR branch.
+  lockfile:
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ needs.release.outputs.prs_created == 'true' }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ fromJSON(needs.release.outputs.pr).headBranchName }}
+      - uses: ruby/setup-ruby@v1
+      - run: bundle lock
+      - name: Push Gemfile.lock
+        run: |
+          git diff --quiet Gemfile.lock && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update Gemfile.lock" Gemfile.lock
+          git push
+
   publish:
     runs-on: ubuntu-latest
     needs: release
-    if: ${{ needs.release.outputs.release_created == 'true' }}
+    if: ${{ needs.release.outputs.releases_created == 'true' }}
+    name: publish ${{ matrix.path }}
     permissions:
       id-token: write
+    strategy:
+      matrix:
+        path: ${{ fromJSON(needs.release.outputs.paths_released) }}
     steps:
       - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
       - uses: rubygems/configure-rubygems-credentials@v2.1.0
-      - run: bin/build
-      - run: gem push pkg/riffer-*.gem
+      - run: bin/rake ${{ matrix.path }}:build
+      - run: gem push ${{ matrix.path }}/pkg/*.gem
 
   docs:
     runs-on: ubuntu-latest
     needs: release
-    if: ${{ needs.release.outputs.release_created == 'true' }}
+    if: ${{ needs.release.outputs.releases_created == 'true' }}
     permissions:
       contents: write
     steps:

@@ -2,7 +2,7 @@
   "release-type": "ruby",
   "bump-minor-pre-major": true,
   "packages": {
-    ".": {
+    "riffer-core": {
       "release-type": "ruby",
       "package-name": "riffer",
       "version-file": "lib/riffer/version.rb",

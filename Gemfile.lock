@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: riffer-core
   specs:
     riffer (0.59.1)
       base64

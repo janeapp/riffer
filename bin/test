@@ -32,12 +32,17 @@ if [ ${#files[@]} -eq 0 ]; then
 fi
 
 # Files (and optional flags): load each file via `ruby -r`, forward flags to Minitest.
+# Each file's gem is its top-level directory, which supplies lib/ and test/.
 requires=()
+includes=()
 for f in "${files[@]}"; do
   case "$f" in
     /*) requires+=("-r" "$f") ;;
     *)  requires+=("-r" "./$f") ;;
   esac
+  relative="${f#"$PWD"/}"
+  gem_dir="${relative%%/*}"
+  includes+=("-I$gem_dir/lib" "-I$gem_dir/test")
 done
 
-exec bundle exec ruby -Ilib:test "${requires[@]}" -e "" -- "${opts[@]}"
+exec bundle exec ruby "${includes[@]}" "${requires[@]}" -e "" -- "${opts[@]}"

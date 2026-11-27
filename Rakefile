@@ -1,9 +1,30 @@
 # frozen_string_literal: true
 
-require "bundler/gem_tasks"
+require "bundler/gem_helper"
 require "minitest/test_task"
 
-Minitest::TestTask.create
+GEM_DIRS = Dir["*/*.gemspec"].map { |gemspec| File.dirname(gemspec) }.freeze
+
+# Bundler's gem tasks share fixed names (build, install, release), so each
+# gem's set lives in a namespace named after its directory.
+GEM_DIRS.each do |dir|
+  namespace(dir) { Bundler::GemHelper.install_tasks(dir:) }
+end
+
+desc "Build every gem into its pkg/ directory"
+task build: GEM_DIRS.map { |dir| "#{dir}:build" }
+
+# One test process per gem: each gem's tests `require "test_helper"`, and a
+# load path holding every gem's test/ would resolve them all to the first.
+GEM_DIRS.each do |dir|
+  Minitest::TestTask.create(:"test:#{dir}") do |t|
+    t.libs = ["#{dir}/lib", "#{dir}/test", "."]
+    t.test_globs = ["#{dir}/test/**/*_test.rb"]
+  end
+end
+
+desc "Run every gem's tests"
+task test: GEM_DIRS.map { |dir| "test:#{dir}" }
 
 require "rubocop/rake_task"
 
@@ -15,8 +36,8 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = "_site/api"
   rdoc.title = "Riffer API Reference"
   rdoc.main = "README.md"
-  rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "LICENSE.txt")
-  rdoc.rdoc_files.include("lib/**/*.rb")
+  rdoc.rdoc_files.include("README.md", "riffer-core/CHANGELOG.md", "LICENSE.txt")
+  rdoc.rdoc_files.include(*GEM_DIRS.map { |dir| "#{dir}/lib/**/*.rb" })
   rdoc.options << "--charset" << "utf-8"
 end
 
@@ -43,10 +64,10 @@ task docs: %w[docs:site rdoc]
 namespace :rbs do
   desc "Generate RBS type signatures from inline annotations"
   task :generate do
-    sh "bundle exec rbs-inline --output sig/generated lib"
+    GEM_DIRS.each { |dir| sh "bundle exec rbs-inline --output sig/generated lib", chdir: dir }
   end
 
-  desc "Watch lib/ for changes and regenerate RBS files"
+  desc "Watch each gem's lib/ for changes and regenerate RBS files"
   task :watch do
     require "guard"
     require "guard/commander"

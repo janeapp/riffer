@@ -1,5 +1,5 @@
 ---
-paths: ["lib/**/*.rb", "sig/**/*"]
+paths: ["*/lib/**/*.rb", "*/sig/**/*"]
 ---
 
 # RBS Inline
@@ -8,7 +8,7 @@ Type annotations are added directly in Ruby source files using [rbs-inline](http
 
 ## Required Header
 
-Every `lib/**/*.rb` file starts with the two-line header `# frozen_string_literal: true` + `# rbs_inline: enabled` — rbs-inline silently skips any file missing the magic comment on line 2.
+Every `lib/**/*.rb` file in a gem starts with the two-line header `# frozen_string_literal: true` + `# rbs_inline: enabled` — rbs-inline silently skips any file missing the magic comment on line 2.
 
 ## Annotation Conventions
 
@@ -64,7 +64,7 @@ def execute_generate(params)
 end
 ```
 
-`test/shipped_signatures_test.rb` enforces this — it fails if any optional-dependency type appears in `sig/generated/` or `sig/manual/`.
+`riffer-core/test/shipped_signatures_test.rb` enforces this — it fails if any optional-dependency type appears in `sig/generated/` or `sig/manual/`.
 
 ### Where stubs and stdlib deps live
 

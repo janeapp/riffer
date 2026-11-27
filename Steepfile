@@ -21,12 +21,12 @@ if RBS::Environment::ModuleEntry.instance_method(:validate_type_params).owner ==
   RBS::Environment::ClassEntry.prepend(validate_once)
 end
 
-target :lib do
-  signature "sig/generated"
-  signature "sig/manual"
-  signature "sig/_private"
+target :riffer do
+  signature "riffer-core/sig/generated"
+  signature "riffer-core/sig/manual"
+  signature "riffer-core/sig/_private"
 
-  check "lib"
+  check "riffer-core/lib"
 
   configure_code_diagnostics(D::Ruby.all_error)
 end

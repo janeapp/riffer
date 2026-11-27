@@ -9,7 +9,7 @@ require "kramdown"
 require "kramdown-parser-gfm"
 require "rouge"
 
-require_relative "../lib/riffer/version"
+require_relative "../riffer-core/lib/riffer/version"
 
 HERE = Pathname(__dir__)
 ROOT = HERE.parent
