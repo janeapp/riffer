@@ -115,8 +115,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def tool_result_content: (Riffer::Messages::Tool, Array[String]) -> (String | Array[Hash[Symbol, untyped]])
 
   # --
-  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-  def convert_assistant: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::Assistant, replay_reasoning: bool) -> Hash[Symbol, untyped]
+  def convert_assistant: (Riffer::Messages::Assistant, replay_reasoning: bool) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?

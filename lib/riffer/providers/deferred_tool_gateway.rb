@@ -108,7 +108,7 @@ module Riffer::Providers::DeferredToolGateway
   def wrap_tool_result(message, deferred_tools)
     loaded = loaded_deferred_tools(message, deferred_tools)
     deferred_call = deferred_tools.any? { |tool| tool.name == message.name }
-    return message if loaded.empty? && !deferred_call
+    return message if message.loaded_tools.empty? && !deferred_call
 
     Riffer::Messages::Tool.new(
       loaded.empty? ? message.content : [message.content, describe_loaded_tools(loaded)].reject(&:empty?).join("\n\n"),
@@ -117,7 +117,8 @@ module Riffer::Providers::DeferredToolGateway
       id: message.id,
       error: message.error,
       error_type: message.error_type,
-      loaded_tools: message.loaded_tools,
+      # Loads go out as text or not at all, so a provider must not also send them natively.
+      loaded_tools: [],
     )
   end
 

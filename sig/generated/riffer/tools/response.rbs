@@ -36,6 +36,10 @@ class Riffer::Tools::Response
   def self.load_tools: (Array[singleton(Riffer::Tool)]) -> Riffer::Tools::Response
 
   # --
+  # : (String) -> Riffer::Tools::Response
+  def self.unknown_tool: (String) -> Riffer::Tools::Response
+
+  # --
   # : (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
   def self.error: (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
 

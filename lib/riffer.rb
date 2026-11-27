@@ -30,6 +30,10 @@ module Riffer
 
   class ArgumentError < ::ArgumentError; end
 
+  # An agent's tools can't be sent as configured: two share a name, or deferred
+  # tools have no tool to load them.
+  class InvalidToolsError < ArgumentError; end
+
   class ValidationError < Error; end
 
   # A provider answered with a non-success status, or sent an in-stream error

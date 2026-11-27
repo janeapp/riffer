@@ -832,7 +832,7 @@ describe Riffer::Providers::Anthropic do
 
     def convert(reasoning, content: "42", tool_calls: [])
       assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
-      provider.send(:convert_assistant, assistant)
+      provider.send(:convert_assistant, assistant, replay_reasoning: true)
     end
 
     describe "capturing thinking blocks" do
@@ -900,7 +900,7 @@ describe Riffer::Providers::Anthropic do
         expect(message.parts.grep(Riffer::Messages::Assistant::ServerToolPart).map { |p| [p.name, p.kind] }).
           must_equal [["code_execution", :call], ["web_search", :call], ["web_search", :result],
                       ["code_execution", :result],]
-        expect(provider.send(:convert_assistant, message)[:content]).must_equal blocks
+        expect(provider.send(:convert_assistant, message, replay_reasoning: true)[:content]).must_equal blocks
       end
 
       it "drops an MCP tool result along with its call" do
@@ -1034,7 +1034,7 @@ describe Riffer::Providers::Anthropic do
         json = JSON.generate(message.to_h)
         restored = Riffer::Messages::Base.from_hash(JSON.parse(json, symbolize_names: true))
 
-        expect(provider.send(:convert_assistant, restored)[:content]).must_equal blocks
+        expect(provider.send(:convert_assistant, restored, replay_reasoning: true)[:content]).must_equal blocks
       end
 
       it "skips server tool parts and text blocks from another adapter, keeping the text" do
@@ -1047,7 +1047,8 @@ describe Riffer::Providers::Anthropic do
           ],
         )
 
-        expect(provider.send(:convert_assistant, message)[:content]).must_equal [{ type: "text", text: "42" }]
+        expect(provider.send(:convert_assistant, message,
+                             replay_reasoning: true,)[:content]).must_equal [{ type: "text", text: "42" }]
       end
 
       it "sends no whitespace-only text block for the separator added when merging assistant messages" do

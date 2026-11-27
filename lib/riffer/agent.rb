@@ -353,7 +353,7 @@ class Riffer::Agent
       skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
 
       if tools.any? { |t| t.name == skill_activate_tool_class.name }
-        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
+        raise Riffer::InvalidToolsError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
       end
 
       tools += [skill_activate_tool_class]
@@ -369,6 +369,7 @@ class Riffer::Agent
   def resolve_deferred_tools
     deferred = Riffer::Helpers::CallOrValue.resolve(@config.deferred_tools_config, context: @context, default: [])
     return deferred if deferred.empty?
+    raise Riffer::InvalidToolsError, "Deferred tools need a tool in uses_tools that loads them" if @tools.empty?
 
     tools = @tools + deferred
     # The gateway goes on every request alongside the agent's tools, so no tool can share its name.
@@ -393,6 +394,6 @@ class Riffer::Agent
     dupes = tally.filter_map { |name, n| name if n > 1 }
     return if dupes.empty?
 
-    raise Riffer::ArgumentError, "Duplicate tool names: #{dupes.sort.join(', ')}"
+    raise Riffer::InvalidToolsError, "Duplicate tool names: #{dupes.sort.join(', ')}"
   end
 end

@@ -163,6 +163,82 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
       expect(params[:messages].last[:content].first[:content]).must_equal ""
     end
 
+    it "raises when every tool would be deferred" do
+      error = expect do
+        provider.send(:build_request_params, [question], "claude-x", { tools: [], deferred_tools: [list_events] })
+      end.must_raise(Riffer::ArgumentError)
+
+      expect(error.message).must_match(/at least one tool that isn't deferred/)
+    end
+
+    it "accepts web search as the tool that isn't deferred" do
+      params = provider.send(:build_request_params, [question], "claude-x",
+                             { deferred_tools: [list_events], web_search: true })
+
+      expect(params[:tools].map { |tool| tool[:name] }).must_equal %w[web_search calendar__list_events]
+    end
+
+    describe "replayed thinking" do
+      let(:thinking) do
+        Riffer::Messages::Assistant::ReasoningPart.new(
+          type: :text, text: "Check the calendar.", signature: "sig_1",
+          format: Riffer::Providers::AnthropicCompatible::MessagesAPI::REASONING_FORMAT,
+        )
+      end
+
+      def thinking_turn
+        call = Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_2", name: "calendar/list_events",
+                                                         arguments: "{}",)
+        [
+          Riffer::Messages::Assistant.new(parts: [thinking, call]),
+          Riffer::Messages::Tool.new("3 events", tool_call_id: "toolu_2", name: "calendar/list_events"),
+        ]
+      end
+
+      def history_with_thinking(*loaded)
+        [*loaded_history(*loaded), *thinking_turn]
+      end
+
+      def history_with_earlier_thinking(*loaded)
+        [*history_with_thinking(*loaded), Riffer::Messages::User.new("And tomorrow?")]
+      end
+
+      def assistant_block_types(params)
+        params[:messages].select { |message| message[:role] == "assistant" }.map do |message|
+          message[:content].map { |block| block[:type] }
+        end
+      end
+
+      it "replays thinking after a load the request can reference" do
+        params = request(history_with_earlier_thinking("calendar/list_events"))
+
+        expect(assistant_block_types(params)).must_equal [["tool_use"], %w[thinking tool_use]]
+      end
+
+      it "drops an earlier turn's thinking after a load naming a tool the request no longer defers" do
+        params = request(history_with_earlier_thinking("calendar/list_events", "archived_tool"))
+
+        expect(assistant_block_types(params)).must_equal [["tool_use"], ["tool_use"]]
+      end
+
+      it "keeps the current turn's thinking after a load naming a tool the request no longer defers" do
+        params = request(history_with_thinking("calendar/list_events", "archived_tool"))
+
+        expect(assistant_block_types(params)).must_equal [["tool_use"], %w[thinking tool_use]]
+      end
+
+      it "replays an earlier turn's thinking after a gateway load, which goes out as text" do
+        gateway_tools = [list_events]
+        messages = Riffer::Providers::DeferredToolGateway.wrap_messages(
+          history_with_earlier_thinking("calendar/list_events"), gateway_tools,
+        )
+        params = provider.send(:build_request_params, messages, "claude-x",
+                               { tools: [find_tools, Riffer::Providers::DeferredToolGateway::Tool] })
+
+        expect(assistant_block_types(params)).must_equal [["tool_use"], %w[thinking tool_use]]
+      end
+    end
+
     it "decodes a call to a loaded deferred tool" do
       stub_request(:post, "https://llm.example.test/models/claude-x:rawPredict").
         to_return(status: 200, body: {

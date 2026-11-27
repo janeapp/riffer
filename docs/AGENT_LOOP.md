@@ -5,13 +5,14 @@
 When an agent receives a response with tool calls:
 
 1. Agent detects `tool_calls` in the assistant message
-2. The configured tool runtime executes the tool calls (sequentially by default, or concurrently with `Riffer::Tools::Runtime::Threaded`):
+2. Riffer answers calls to a tool the agent doesn't have, or to a deferred tool that isn't loaded, with an error result, without the runtime
+3. The configured tool runtime executes the remaining tool calls (sequentially by default, or concurrently with `Riffer::Tools::Runtime::Threaded`):
    - Finds the matching tool class
    - Validates arguments against the tool's parameter schema
    - Calls the tool's `call` method with `context` and arguments
    - Creates a Tool message with the result
-3. Sends the updated message history back to the LLM
-4. Repeats until no more tool calls
+4. Sends the updated message history back to the LLM
+5. Repeats until no more tool calls
 
 ## Error Handling
 
