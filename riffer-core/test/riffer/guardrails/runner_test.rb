@@ -163,6 +163,38 @@ describe Riffer::Guardrails::Runner do
     end
   end
 
+  describe "#run for after_files_download phase" do
+    let(:downloaded_files_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        def process_downloaded_files(messages, context:)
+          return block("No files") if messages.grep(Riffer::Messages::User).all? { |m| m.files.empty? }
+
+          transform(messages.map { |m| Riffer::Messages::User.new("[checked] #{m.content}", files: m.files) })
+        end
+      end
+    end
+
+    let(:file) { Riffer::Messages::User::FilePart.new(bytes: "hi", media_type: "text/plain") }
+
+    let(:runner) do
+      Riffer::Guardrails::Runner.new([config_for(downloaded_files_guardrail_class)], phase: :after_files_download)
+    end
+
+    it "calls process_downloaded_files" do
+      data, _tripwire, modifications = runner.run([Riffer::Messages::User.new("Hello", files: [file])])
+
+      expect(data.first.content).must_equal "[checked] Hello"
+      expect(modifications.map(&:phase)).must_equal [:after_files_download]
+    end
+
+    it "returns a tripwire with the after_files_download phase when blocked" do
+      _data, tripwire, _modifications = runner.run([Riffer::Messages::User.new("Hello")])
+
+      expect(tripwire.reason).must_equal "No files"
+      expect(tripwire.phase).must_equal :after_files_download
+    end
+  end
+
   describe "sequential execution" do
     it "chains multiple transform guardrails" do
       configs = [config_for(transform_guardrail_class), config_for(transform_guardrail_class)]

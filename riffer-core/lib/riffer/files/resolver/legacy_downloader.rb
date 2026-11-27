@@ -1,0 +1,86 @@
+# frozen_string_literal: true
+# rbs_inline: enabled
+
+require "net/http"
+require "uri"
+
+class Riffer::Files::Resolver::LegacyDownloader
+  MAX_REDIRECTS = 3 #: Integer
+
+  #--
+  #: (String, max_bytes: Integer, timeout: Integer) -> String
+  def call(url, max_bytes:, timeout:)
+    fetch(url, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS)
+  rescue Riffer::Error
+    raise
+  rescue StandardError => e
+    raise Riffer::FileDownloadError, "Error downloading file: #{e.message}"
+  end
+
+  private
+
+  #--
+  #: (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
+  def fetch(url, max_bytes:, timeout:, redirects_remaining:)
+    uri = begin
+      URI.parse(url) #: URI::HTTPS
+    rescue URI::InvalidURIError => e
+      raise Riffer::FileDownloadError, "Invalid file URL: #{e.message}"
+    end
+    raise Riffer::FileDownloadError, "Invalid file URL: missing host" if uri.host.nil?
+    raise Riffer::FileDownloadError, "Unsupported URL scheme: #{uri.scheme}" unless uri.scheme == "https"
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.open_timeout = timeout
+    http.read_timeout = timeout
+
+    # request_get without a block reads the whole body before returning, so the
+    # size cap has to run inside the block, before the body is consumed.
+    redirect_location = nil #: String?
+    content = nil #: String?
+
+    http.start do
+      http.request_get(uri.request_uri) do |response|
+        case response
+        when Net::HTTPRedirection
+          raise Riffer::FileDownloadError, "Too many redirects" if redirects_remaining.zero?
+
+          redirect_location = response["location"]
+          raise Riffer::FileDownloadError, "Redirect missing Location header" if redirect_location.nil?
+        when Net::HTTPSuccess
+          content = read_capped(response, max_bytes: max_bytes)
+        else
+          raise Riffer::FileDownloadError, "File download failed, status: #{response.code}"
+        end
+      end
+    end
+
+    if redirect_location
+      return fetch(redirect_location, max_bytes: max_bytes, timeout: timeout,
+                                      redirects_remaining: redirects_remaining - 1,)
+    end
+
+    content #: String
+  end
+
+  #--
+  #: (Net::HTTPResponse, max_bytes: Integer) -> String
+  def read_capped(response, max_bytes:)
+    content_length = response["content-length"]&.to_i
+    raise too_large_error, "File too large" if content_length && content_length > max_bytes
+
+    buffer = +""
+    response.read_body do |chunk|
+      buffer << chunk
+      raise too_large_error, "File too large" if buffer.bytesize > max_bytes
+    end
+    buffer
+  end
+
+  #--
+  #: () -> singleton(Riffer::FileError)
+  def too_large_error
+    Riffer::Deprecation.allow { Riffer::FileTooLargeError }
+  end
+end

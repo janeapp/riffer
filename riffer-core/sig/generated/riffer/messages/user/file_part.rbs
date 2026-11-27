@@ -57,6 +57,11 @@ class Riffer::Messages::User::FilePart
   # : () -> bool
   def inline_data?: () -> bool
 
+  # +delivery+ is a Riffer::Providers::Base#file_delivery result.
+  # --
+  # : (Symbol) -> bool
+  def missing_data_for?: (Symbol) -> bool
+
   # --
   # : (String) -> void
   def cache_downloaded_data: (String) -> void

@@ -2234,6 +2234,291 @@ describe Riffer::Agent::Run do
     end
   end
 
+  describe "file downloads with config.future.file_downloads" do
+    let(:download_batches) { [] }
+    let(:downloader) do
+      batches = download_batches
+      lambda do |files|
+        batches << files
+        files.map { |file| "bytes of #{file.url}" }
+      end
+    end
+
+    let(:pdf_url) { "https://example.com/report.pdf" }
+    let(:pdf) { Riffer::Messages::User::FilePart.from_url(pdf_url) }
+    let(:image) { Riffer::Messages::User::FilePart.from_url("https://example.com/photo.png") }
+
+    before do
+      Riffer.config.future.file_downloads = true
+      Riffer.config.files.allow_downloads = true
+      Riffer.config.files.downloader = downloader
+    end
+
+    after do
+      Riffer.config.future.file_downloads = false
+      Riffer.config.files.allow_downloads = false
+      Riffer.config.files.downloader = Riffer::Files::Downloader.new
+    end
+
+    def build_agent(klass = agent_class, delivery: :bytes)
+      agent = klass.new
+      agent.provider.define_singleton_method(:file_delivery) { |file| file.image? ? :url : delivery }
+      agent
+    end
+
+    it "downloads only the files that need bytes, in one batch" do
+      inline = Riffer::Messages::User::FilePart.new(bytes: "inline", media_type: "text/plain")
+      second_pdf = Riffer::Messages::User::FilePart.from_url("https://example.com/other.pdf")
+      build_agent.generate("Read these", files: [image, pdf, inline, second_pdf])
+
+      expect(download_batches).must_equal [[pdf, second_pdf]]
+    end
+
+    it "stores raw bytes for a provider that sends bytes" do
+      build_agent.generate("Read this", files: [pdf])
+
+      expect(pdf.data_bytes).must_equal "bytes of #{pdf_url}"
+    end
+
+    it "stores base64 for a provider that sends base64" do
+      build_agent(delivery: :base64).generate("Read this", files: [pdf])
+
+      expect(pdf.data).must_equal Base64.strict_encode64("bytes of #{pdf_url}")
+    end
+
+    it "reuses downloaded bytes when a base64 provider gets the same file" do
+      build_agent.generate("Read this", files: [pdf])
+      build_agent(delivery: :base64).generate("Read this", files: [pdf])
+
+      expect(download_batches.length).must_equal 1
+      expect(pdf.data).must_equal Base64.strict_encode64(pdf.data_bytes)
+    end
+
+    it "downloads while streaming" do
+      build_agent.stream("Read this", files: [pdf]).each { |_| }
+
+      expect(download_batches).must_equal [[pdf]]
+    end
+
+    it "downloads once per run, not once per step" do
+      tool_class = stub_tool("DownloadsTool") do
+        description "Does nothing"
+        def call(context:)
+          text("done")
+        end
+      end
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+        uses_tools [tool_class]
+      end
+      agent = build_agent(klass)
+      agent.provider.stub_response("", tool_calls: [{ name: "downloads_tool", arguments: "{}" }])
+      agent.provider.stub_response("Done")
+      agent.generate("Read this", files: [pdf])
+
+      expect(agent.provider.calls.length).must_equal 2
+      expect(download_batches.length).must_equal 1
+    end
+
+    it "skips files that already hold their bytes on a later run" do
+      agent = build_agent
+      agent.generate("Read this", files: [pdf])
+      agent.generate("And again")
+
+      expect(download_batches.length).must_equal 1
+    end
+
+    it "doesn't call the downloader when no file needs bytes" do
+      build_agent.generate("Look", files: [image])
+
+      expect(download_batches).must_be_empty
+    end
+
+    it "raises Riffer::FileDownloadsDisabledError when allow_downloads is false and a file needs bytes" do
+      Riffer.config.files.allow_downloads = false
+
+      expect { build_agent.generate("Read this", files: [pdf]) }.must_raise Riffer::FileDownloadsDisabledError
+      expect(download_batches).must_be_empty
+    end
+
+    it "sends a url file without downloads when allow_downloads is false" do
+      Riffer.config.files.allow_downloads = false
+      response = build_agent.generate("Look", files: [image])
+
+      expect(response.outcome.reason).must_equal :completed
+    end
+
+    it "lets a downloader error reach the caller unchanged" do
+      Riffer.config.files.downloader = ->(_files) { raise IOError, "bucket offline" }
+      error = expect { build_agent.generate("Read this", files: [pdf]) }.must_raise IOError
+
+      expect(error.message).must_equal "bucket offline"
+    end
+
+    it "runs the :before guardrails before downloading" do
+      swap = Class.new(Riffer::Guardrail) do
+        def process_input(messages, context:)
+          signed = Riffer::Messages::User::FilePart.from_url("https://example.com/signed.pdf")
+          transform(messages.map { |m| Riffer::Messages::User.new(m.content, files: [signed]) })
+        end
+      end
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
+      klass.guardrail(:before, with: swap)
+      build_agent(klass).generate("Read this", files: [pdf])
+
+      expect(download_batches.flatten.map(&:url)).must_equal ["https://example.com/signed.pdf"]
+    end
+
+    describe "without config.future.file_downloads" do
+      before { Riffer.config.future.file_downloads = false }
+
+      it "leaves downloads to the provider" do
+        Riffer.config.files.downloader = ->(_url, **) { "legacy" }
+        allow_deprecations { build_agent.generate("Read this", files: [pdf]) }
+
+        expect(download_batches).must_be_empty
+        expect(pdf.data_bytes).must_equal "legacy"
+      end
+
+      it "raises Riffer::ArgumentError for :after_files_download guardrails registered while the flag was on" do
+        Riffer.config.future.file_downloads = true
+        klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+        klass.guardrail(:after_files_download, with: Riffer::Guardrail)
+        Riffer.config.future.file_downloads = false
+        agent = klass.new
+        error = expect { agent.generate("Read this", files: [pdf]) }.must_raise Riffer::ArgumentError
+
+        expect(error.message).must_include "config.future.file_downloads"
+        expect(agent.provider.calls).must_be_empty
+      end
+
+      it "raises Riffer::ArgumentError when an :after_files_download guardrail is registered" do
+        klass = stub_agent("Agent") { model "mock/riffer-1" }
+        error = expect { klass.guardrail(:after_files_download, with: Riffer::Guardrail) }.must_raise Riffer::ArgumentError
+
+        expect(error.message).must_include "config.future.file_downloads"
+      end
+    end
+
+    describe "the :after_files_download guardrails" do
+      let(:checksum_guardrail_class) do
+        Class.new(Riffer::Guardrail) do
+          def process_downloaded_files(messages, context:)
+            files = messages.grep(Riffer::Messages::User).flat_map(&:files)
+            bad = files.find { |f| f.sha256 && f.data_bytes && Digest::SHA256.hexdigest(f.data_bytes) != f.sha256 }
+            bad ? block("checksum mismatch") : pass(messages)
+          end
+        end
+      end
+
+      let(:transform_guardrail_class) do
+        Class.new(Riffer::Guardrail) do
+          def process_downloaded_files(messages, context:)
+            transform(messages.map { |m| Riffer::Messages::User.new("[scanned] #{m.content}", files: m.files) })
+          end
+        end
+      end
+
+      def agent_with(phase_guardrail)
+        klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+        klass.guardrail(:after_files_download, with: phase_guardrail)
+        build_agent(klass)
+      end
+
+      it "sees the downloaded bytes and passes" do
+        sha256 = Digest::SHA256.hexdigest("bytes of #{pdf_url}")
+        file = Riffer::Messages::User::FilePart.from_url(pdf_url, sha256: sha256)
+        response = agent_with(checksum_guardrail_class).generate("Read this", files: [file])
+
+        expect(response.outcome.reason).must_equal :completed
+      end
+
+      it "blocks the run before the provider is called" do
+        file = Riffer::Messages::User::FilePart.from_url(pdf_url, sha256: Digest::SHA256.hexdigest("something else"))
+        agent = agent_with(checksum_guardrail_class)
+        response = agent.generate("Read this", files: [file])
+
+        expect(response.outcome.reason).must_equal :guardrail_blocked
+        expect(response.tripwire.phase).must_equal :after_files_download
+        expect(response.tripwire.reason).must_equal "checksum mismatch"
+        expect(agent.provider.calls).must_be_empty
+      end
+
+      it "runs when nothing was downloaded" do
+        file = Riffer::Messages::User::FilePart.new(bytes: "inline", media_type: "text/plain",
+                                                    sha256: Digest::SHA256.hexdigest("something else"),)
+        response = agent_with(checksum_guardrail_class).generate("Read this", files: [file])
+
+        expect(download_batches).must_be_empty
+        expect(response.outcome.reason).must_equal :guardrail_blocked
+      end
+
+      it "records a transform as a modification on the session's messages" do
+        agent = agent_with(transform_guardrail_class)
+        response = agent.generate("Read this", files: [pdf])
+        modification = response.modifications.find { |m| m.phase == :after_files_download }
+
+        expect(modification.guardrail).must_equal transform_guardrail_class
+        expect(modification.message_indices).must_equal [0]
+        expect(agent.session.messages.first.content).must_equal "[scanned] Read this"
+      end
+
+      it "emits GuardrailModification and GuardrailTripwire events when streaming" do
+        events = agent_with(transform_guardrail_class).stream("Read this", files: [pdf]).to_a
+        modification = events.grep(Riffer::StreamEvents::GuardrailModification).first
+
+        expect(modification.phase).must_equal :after_files_download
+
+        file = Riffer::Messages::User::FilePart.from_url(pdf_url, sha256: Digest::SHA256.hexdigest("something else"))
+        events = agent_with(checksum_guardrail_class).stream("Read this", files: [file]).to_a
+
+        expect(events.grep(Riffer::StreamEvents::GuardrailTripwire).first.phase).must_equal :after_files_download
+      end
+    end
+
+    describe "tracing" do
+      before do
+        skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+        Riffer.config.tracing.enabled = true
+        @exporter = install_in_memory_tracer_provider
+      end
+
+      after do
+        Riffer.config.tracing.enabled = true
+        Riffer.config.tracing.backend = nil
+      end
+
+      def download_span
+        @exporter.finished_spans.find { |span| span.name == "download_files" }
+      end
+
+      it "downloads inside an internal download_files span under invoke_agent" do
+        second_pdf = Riffer::Messages::User::FilePart.from_url("https://example.com/other.pdf")
+        build_agent.generate("Read these", files: [pdf, second_pdf], tags: { team: "growth" })
+        run_span = @exporter.finished_spans.find { |span| span.name.start_with?("invoke_agent") }
+
+        expect(download_span.kind).must_equal :internal
+        expect(download_span.attributes["riffer.files.count"]).must_equal 2
+        expect(download_span.attributes["riffer.tag.team"]).must_equal "growth"
+        expect(download_span.parent_span_id).must_equal run_span.span_id
+      end
+
+      it "records error.type when the downloader raises" do
+        Riffer.config.files.downloader = ->(_files) { raise Riffer::FileDownloadError, "nope" }
+
+        expect { build_agent.generate("Read this", files: [pdf]) }.must_raise Riffer::FileDownloadError
+
+        expect(download_span.attributes["error.type"]).must_equal "Riffer::FileDownloadError"
+      end
+
+      it "emits no download_files span when nothing is downloaded" do
+        build_agent.generate("Look", files: [image])
+
+        expect(download_span).must_be_nil
+      end
+    end
+  end
+
   describe "dynamic model selection" do
     it "resolves lambda for generate" do
       dynamic_agent_class = stub_agent("DynamicAgent") do

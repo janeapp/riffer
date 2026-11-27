@@ -111,6 +111,24 @@ def process_output(response, messages:, context:)
 end
 ```
 
+### process_downloaded_files
+
+Override to process the messages after the agent downloads their files, before the first LLM call. It runs in the `:after_files_download` phase, which needs `config.future.file_downloads` (see [File Downloads](CONFIGURATION.md#file-downloads)):
+
+```ruby
+def process_downloaded_files(messages, context:)
+  # messages - Array of Riffer::Messages::Base, with downloaded bytes on their files
+  # context - Optional context passed to the agent
+
+  # Return one of:
+  pass(messages)           # Continue unchanged
+  transform(new_messages)  # Continue with transformed data
+  block("reason")          # Halt execution
+end
+```
+
+Takes and returns the same shape as `process_input`. A transform is recorded as a modification and a block ends the run with `:guardrail_blocked`, as in the other phases. See [Files](#files) for what it sees.
+
 ## Result Helpers
 
 Inside guardrail methods, use these helpers to return results:
@@ -173,6 +191,7 @@ Extra keyword arguments after `with:` are forwarded to the guardrail's `initiali
 - `:before` - Runs before the LLM call on input messages
 - `:after` - Runs after the LLM call on the response
 - `:around` - Runs on both before and after
+- `:after_files_download` - Runs once per run, after the agent downloads files and before the first LLM call. Needs `config.future.file_downloads`; registering it without the flag raises `Riffer::ArgumentError`, so turn the flag on before your agent classes load. `:around` doesn't include it.
 
 ### Multiple Guardrails
 
@@ -370,6 +389,45 @@ class ContentPolicyFilter < Riffer::Guardrail
   end
 end
 ```
+
+## Files
+
+With `config.future.file_downloads`, riffer checks nothing about files itself, and file policy goes in guardrails (see [File Downloads](CONFIGURATION.md#file-downloads)). Both phases see every file in the messages:
+
+- **`:before`** runs before anything is downloaded. URL policy goes here: host allowlists, file counts, requiring `sha256`, hashing inline bytes, or presigning URLs with `transform`. A host allowlist only checks the first URL, and redirects can lead elsewhere.
+- **`:after_files_download`** runs with the downloaded bytes on the files. Content policy goes here: checking `sha256`, checking content against `media_type`, malware scans.
+
+Files the provider sends as URLs are never downloaded, so they have no bytes in `:after_files_download`; tell them apart with `file.data_bytes.nil?`. Nothing downloads a file that an `:after_files_download` transform adds or swaps in: if the provider needs its bytes, it raises `Riffer::FileDataMissingError`. Swap URLs in `:before`.
+
+For example, one guardrail for both phases:
+
+```ruby
+class FilePolicy < Riffer::Guardrail
+  ALLOWED_HOSTS = ["files.example.com"].freeze
+
+  def process_input(messages, context:)
+    files = messages.grep(Riffer::Messages::User).flat_map(&:files)
+    return block("too many files") if files.size > 10
+    return block("host not allowed") if files.any? { |f| f.url && !ALLOWED_HOSTS.include?(URI(f.url).host) }
+
+    pass(messages)
+  end
+
+  def process_downloaded_files(messages, context:)
+    files = messages.grep(Riffer::Messages::User).flat_map(&:files)
+    bad = files.find { |f| f.sha256 && f.data_bytes && Digest::SHA256.hexdigest(f.data_bytes) != f.sha256 }
+    bad ? block("checksum mismatch") : pass(messages)
+  end
+end
+
+class MyAgent < Riffer::Agent
+  model "amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  guardrail :before, with: FilePolicy
+  guardrail :after_files_download, with: FilePolicy
+end
+```
+
+The checksum check covers inline `data:` or `bytes:` files and downloaded ones alike, since both have `data_bytes` by then.
 
 ## Error Handling
 

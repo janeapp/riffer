@@ -2,5 +2,5 @@
 # rbs_inline: enabled
 
 module Riffer::Guardrails
-  PHASES = %i[before after].freeze #: Array[Symbol]
+  PHASES = %i[before after after_files_download].freeze #: Array[Symbol]
 end

@@ -162,6 +162,9 @@ class Riffer::Agent::Config
   def add_guardrail(phase, klass:, options: {})
     valid_phases = [*Riffer::Guardrails::PHASES, :around]
     raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
+    if phase == :after_files_download && !Riffer.config.future.enabled?(:file_downloads)
+      raise Riffer::ArgumentError, "The :after_files_download guardrail phase needs config.future.file_downloads"
+    end
     unless klass.is_a?(Class) && klass <= Riffer::Guardrail
       raise Riffer::ArgumentError,
             "Guardrail must be a Riffer::Guardrail subclass"
@@ -173,6 +176,8 @@ class Riffer::Agent::Config
       @guardrails[:before] << cfg
     when :after
       @guardrails[:after] << cfg
+    when :after_files_download
+      (@guardrails[:after_files_download] ||= []) << cfg
     when :around
       @guardrails[:before] << cfg
       @guardrails[:after] << cfg

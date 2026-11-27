@@ -32,6 +32,14 @@ describe Riffer::Config::Files do
   end
 
   describe "#max_bytes" do
+    it "reports a deprecation" do
+      files = Riffer::Config::Files.new
+      error = expect { files.max_bytes = 1_000 }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "[files_max_bytes] config.files.max_bytes is deprecated"
+      expect(error.message).must_include "set a size limit in a custom downloader"
+    end
+
     it "initializes max_bytes to 3_500_000" do
       files = Riffer::Config::Files.new
 
@@ -40,7 +48,7 @@ describe Riffer::Config::Files do
 
     it "allows setting max_bytes to a positive integer" do
       files = Riffer::Config::Files.new
-      files.max_bytes = 1_000
+      allow_deprecations { files.max_bytes = 1_000 }
 
       expect(files.max_bytes).must_equal 1_000
     end
@@ -48,23 +56,31 @@ describe Riffer::Config::Files do
     it "raises for a zero max_bytes" do
       files = Riffer::Config::Files.new
 
-      expect { files.max_bytes = 0 }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.max_bytes = 0 } }.must_raise Riffer::ArgumentError
     end
 
     it "raises for a negative max_bytes" do
       files = Riffer::Config::Files.new
 
-      expect { files.max_bytes = -1 }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.max_bytes = -1 } }.must_raise Riffer::ArgumentError
     end
 
     it "raises for a non-integer max_bytes" do
       files = Riffer::Config::Files.new
 
-      expect { files.max_bytes = "1000" }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.max_bytes = "1000" } }.must_raise Riffer::ArgumentError
     end
   end
 
   describe "#timeout" do
+    it "reports a deprecation" do
+      files = Riffer::Config::Files.new
+      error = expect { files.timeout = 30 }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "[files_timeout] config.files.timeout is deprecated"
+      expect(error.message).must_include "set timeouts in a custom downloader"
+    end
+
     it "initializes timeout to 60" do
       files = Riffer::Config::Files.new
 
@@ -73,7 +89,7 @@ describe Riffer::Config::Files do
 
     it "allows setting timeout to a positive integer" do
       files = Riffer::Config::Files.new
-      files.timeout = 30
+      allow_deprecations { files.timeout = 30 }
 
       expect(files.timeout).must_equal 30
     end
@@ -81,23 +97,31 @@ describe Riffer::Config::Files do
     it "raises for a zero timeout" do
       files = Riffer::Config::Files.new
 
-      expect { files.timeout = 0 }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.timeout = 0 } }.must_raise Riffer::ArgumentError
     end
 
     it "raises for a negative timeout" do
       files = Riffer::Config::Files.new
 
-      expect { files.timeout = -1 }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.timeout = -1 } }.must_raise Riffer::ArgumentError
     end
 
     it "raises for a non-integer timeout" do
       files = Riffer::Config::Files.new
 
-      expect { files.timeout = "30" }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.timeout = "30" } }.must_raise Riffer::ArgumentError
     end
   end
 
   describe "#max_per_message" do
+    it "reports a deprecation" do
+      files = Riffer::Config::Files.new
+      error = expect { files.max_per_message = 2 }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "[files_max_per_message] config.files.max_per_message is deprecated"
+      expect(error.message).must_include "count files in a :before guardrail"
+    end
+
     it "initializes max_per_message to nil" do
       files = Riffer::Config::Files.new
 
@@ -106,15 +130,15 @@ describe Riffer::Config::Files do
 
     it "allows setting max_per_message to a positive integer" do
       files = Riffer::Config::Files.new
-      files.max_per_message = 2
+      allow_deprecations { files.max_per_message = 2 }
 
       expect(files.max_per_message).must_equal 2
     end
 
     it "allows clearing max_per_message with nil" do
       files = Riffer::Config::Files.new
-      files.max_per_message = 2
-      files.max_per_message = nil
+      allow_deprecations { files.max_per_message = 2 }
+      allow_deprecations { files.max_per_message = nil }
 
       expect(files.max_per_message).must_be_nil
     end
@@ -122,23 +146,31 @@ describe Riffer::Config::Files do
     it "raises for a zero max_per_message" do
       files = Riffer::Config::Files.new
 
-      expect { files.max_per_message = 0 }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.max_per_message = 0 } }.must_raise Riffer::ArgumentError
     end
 
     it "raises for a negative max_per_message" do
       files = Riffer::Config::Files.new
 
-      expect { files.max_per_message = -1 }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.max_per_message = -1 } }.must_raise Riffer::ArgumentError
     end
 
     it "raises for a non-integer max_per_message" do
       files = Riffer::Config::Files.new
 
-      expect { files.max_per_message = "2" }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.max_per_message = "2" } }.must_raise Riffer::ArgumentError
     end
   end
 
   describe "#runner" do
+    it "reports a deprecation" do
+      files = Riffer::Config::Files.new
+      error = expect { files.runner = Riffer::Runner::Sequential.new }.must_raise Riffer::DeprecationError
+
+      expect(error.message).must_include "[files_runner] config.files.runner is deprecated"
+      expect(error.message).must_include "parallel downloads are up to the downloader"
+    end
+
     it "initializes runner to a Sequential instance" do
       files = Riffer::Config::Files.new
 
@@ -148,7 +180,7 @@ describe Riffer::Config::Files do
     it "allows setting runner to a Riffer::Runner instance" do
       files = Riffer::Config::Files.new
       runner = Riffer::Runner::Sequential.new
-      files.runner = runner
+      allow_deprecations { files.runner = runner }
 
       expect(files.runner).must_be_same_as runner
     end
@@ -156,7 +188,7 @@ describe Riffer::Config::Files do
     it "raises for a runner that isn't a Riffer::Runner instance" do
       files = Riffer::Config::Files.new
 
-      expect { files.runner = Object.new }.must_raise Riffer::ArgumentError
+      expect { allow_deprecations { files.runner = Object.new } }.must_raise Riffer::ArgumentError
     end
   end
 

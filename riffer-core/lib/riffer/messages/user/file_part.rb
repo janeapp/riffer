@@ -101,7 +101,11 @@ class Riffer::Messages::User::FilePart
     bytes = @bytes
     return @encoded_bytes ||= Base64.strict_encode64(bytes) if bytes
 
-    @data || @downloaded_data
+    return @data if @data
+
+    raw = @data_bytes
+    @downloaded_data ||= Base64.strict_encode64(raw) if raw
+    @downloaded_data
   end
 
   #: () -> String?
@@ -125,6 +129,17 @@ class Riffer::Messages::User::FilePart
   #: () -> bool
   def inline_data?
     !!(@data || @bytes)
+  end
+
+  # +delivery+ is a Riffer::Providers::Base#file_delivery result.
+  #--
+  #: (Symbol) -> bool
+  def missing_data_for?(delivery)
+    case delivery
+    when :base64 then data.nil?
+    when :bytes then data_bytes.nil?
+    else false
+    end
   end
 
   #--

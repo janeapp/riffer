@@ -14,6 +14,12 @@ class Riffer::Guardrail
     pass(response)
   end
 
+  #--
+  #: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
+  def process_downloaded_files(messages, context:)
+    pass(messages)
+  end
+
   # Used as the tracing span suffix and the <tt>riffer.guardrail.name</tt>
   # attribute.
   #--

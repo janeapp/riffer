@@ -33,6 +33,12 @@ class Riffer::Providers::Base
 
   private
 
+  # Under config.future.file_downloads the agent downloads before calling the
+  # provider, so a file still missing its data here is the caller's to supply.
+  # --
+  # : (Array[Riffer::Messages::Base]) -> void
+  def resolve_files!: (Array[Riffer::Messages::Base]) -> void
+
   # : (String) -> true
   def depends_on: (String) -> true
 

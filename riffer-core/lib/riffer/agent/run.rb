@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
+require "base64"
+
 module Riffer::Agent::Run
   extend self
 
@@ -53,8 +55,21 @@ module Riffer::Agent::Run
     run_usage = nil #: Riffer::Providers::TokenUsage?
     run_steps = 0
 
-    run_before_guardrails(agent, stream_yielder, all_modifications, tags) do |tripwire|
+    file_downloads = Riffer.config.future.enabled?(:file_downloads)
+    if !file_downloads && !agent.config.guardrails_for(:after_files_download).empty?
+      raise Riffer::ArgumentError,
+            "#{agent.identifier} has :after_files_download guardrails, which need config.future.file_downloads"
+    end
+
+    run_input_guardrails(agent, :before, stream_yielder, all_modifications, tags) do |tripwire|
       return tripwire_response(agent, stream_yielder, tripwire, all_modifications, steps: run_steps)
+    end
+
+    if file_downloads
+      download_files(agent, tags)
+      run_input_guardrails(agent, :after_files_download, stream_yielder, all_modifications, tags) do |tripwire|
+        return tripwire_response(agent, stream_yielder, tripwire, all_modifications, steps: run_steps)
+      end
     end
 
     skills = agent.context.skills
@@ -348,16 +363,47 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
-  def run_before_guardrails(agent, stream_yielder, all_modifications, tags = {})
-    guardrails = agent.config.guardrails_for(:before)
+  #: (Riffer::Agent, Symbol, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  def run_input_guardrails(agent, phase, stream_yielder, all_modifications, tags = {})
+    guardrails = agent.config.guardrails_for(phase)
     return if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: agent.context, tags: tags)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: phase, context: agent.context, tags: tags)
     processed_messages, tripwire, modifications = runner.run(agent.session.messages)
     agent.session.set(processed_messages) unless tripwire
     record_modifications!(stream_yielder, all_modifications, modifications)
     yield tripwire if tripwire
+  end
+
+  # Tools don't add files, so one pass before the step loop covers the run.
+  #--
+  #: (Riffer::Agent, Hash[String, String]) -> void
+  def download_files(agent, tags)
+    user_messages = agent.session.messages.grep(Riffer::Messages::User) #: Array[Riffer::Messages::User]
+    pending = {} #: Hash[Riffer::Messages::User::FilePart, Symbol]
+    user_messages.flat_map(&:files).each do |file|
+      delivery = agent.provider.file_delivery(file)
+      pending[file] = delivery if file.missing_data_for?(delivery)
+    end
+    return if pending.empty?
+
+    files_config = Riffer.config.files
+    raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless files_config.allow_downloads
+
+    Riffer::Tracing.in_span(
+      "download_files",
+      attributes: { "riffer.files.count" => pending.size }.merge(tag_attributes(tags)),
+      kind: :internal,
+    ) do |span|
+      contents = files_config.downloader.call(pending.keys)
+      pending.each_with_index do |(file, delivery), index|
+        raw = contents.fetch(index)
+        delivery == :base64 ? file.cache_downloaded_data(Base64.strict_encode64(raw)) : file.cache_data_bytes(raw)
+      end
+    rescue StandardError => e
+      span.set_attribute("error.type", e.class.name)
+      raise
+    end
   end
 
   #--

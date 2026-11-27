@@ -2,10 +2,9 @@
 # rbs_inline: enabled
 
 class Riffer::Config::Future
-  # Steep can't type an empty literal; drop the ignore once FLAGS has an entry.
-  # steep:ignore:start
-  FLAGS = {}.freeze #: Hash[Symbol, { default: bool }]
-  # steep:ignore:end
+  FLAGS = {
+    file_downloads: { default: false },
+  }.freeze #: Hash[Symbol, { default: bool }]
 
   # @rbs @flags: Hash[Symbol, { default: bool }]
   # @rbs @enabled: Hash[Symbol, bool]

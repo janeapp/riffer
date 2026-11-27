@@ -33,7 +33,7 @@ class Riffer::Files::Resolver
     max = @config.max_per_message
     return if max.nil? || message.files.size <= max
 
-    raise Riffer::TooManyFilesError, "Too many files specified in user message"
+    raise Riffer::Deprecation.allow { Riffer::TooManyFilesError }, "Too many files specified in user message"
   end
 
   #: (Riffer::Messages::User::FilePart) -> void
@@ -71,7 +71,7 @@ class Riffer::Files::Resolver
   def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads
 
-    raw = @config.downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
+    raw = downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
     verify_bytes!(raw, file.sha256) if file.sha256
 
     case cache
@@ -85,8 +85,28 @@ class Riffer::Files::Resolver
   end
 
   def verify_bytes!(bytes, sha256)
+    Riffer::Deprecation.warn(
+      id: :files_sha256_check,
+      message: "A file's sha256 will no longer be verified; check it in a custom downloader or an " \
+               ":after_files_download guardrail (see config.future.file_downloads).",
+    )
     return if Digest::SHA256.hexdigest(bytes) == sha256
 
-    raise Riffer::FileChecksumMismatchError, "File checksum mismatch"
+    raise Riffer::Deprecation.allow { Riffer::FileChecksumMismatchError }, "File checksum mismatch"
+  end
+
+  #--
+  #: () -> untyped
+  def downloader
+    configured = @config.downloader
+    return configured if configured.instance_of?(Riffer::Files::Downloader)
+
+    Riffer::Deprecation.warn(
+      id: :files_downloader_contract,
+      message: "A downloader on the call(url, max_bytes:, timeout:) contract is deprecated; under " \
+               "config.future.file_downloads riffer calls downloader.call(files) with a batch of FileParts " \
+               "and expects their raw bytes back in the same order.",
+    )
+    configured
   end
 end

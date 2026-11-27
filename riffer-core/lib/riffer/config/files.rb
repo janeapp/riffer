@@ -29,18 +29,21 @@ class Riffer::Config::Files
   #--
   #: (untyped) -> void
   def max_bytes=(value)
+    deprecate_setting(:max_bytes, "set a size limit in a custom downloader")
     @max_bytes = Riffer::Helpers::Validate.positive_integer(value, attribute: "max_bytes")
   end
 
   #--
   #: (untyped) -> void
   def timeout=(value)
+    deprecate_setting(:timeout, "set timeouts in a custom downloader")
     @timeout = Riffer::Helpers::Validate.positive_integer(value, attribute: "timeout")
   end
 
   #--
   #: (untyped) -> void
   def max_per_message=(value)
+    deprecate_setting(:max_per_message, "count files in a :before guardrail")
     @max_per_message =
       value.nil? ? nil : Riffer::Helpers::Validate.positive_integer(value, attribute: "max_per_message")
   end
@@ -48,6 +51,7 @@ class Riffer::Config::Files
   #--
   #: (untyped) -> void
   def runner=(value)
+    deprecate_setting(:runner, "parallel downloads are up to the downloader")
     @runner = Riffer::Helpers::Validate.runner(value, attribute: "runner")
   end
 
@@ -57,5 +61,17 @@ class Riffer::Config::Files
     raise Riffer::ArgumentError, "downloader must respond to #call" unless value.respond_to?(:call)
 
     @downloader = value
+  end
+
+  private
+
+  #--
+  #: (Symbol, String) -> void
+  def deprecate_setting(name, replacement)
+    Riffer::Deprecation.warn(
+      id: :"files_#{name}",
+      message: "config.files.#{name} is deprecated and will be removed, and config.future.file_downloads " \
+               "ignores it; #{replacement}.",
+    )
   end
 end

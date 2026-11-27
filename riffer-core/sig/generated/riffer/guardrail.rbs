@@ -9,6 +9,10 @@ class Riffer::Guardrail
   # : (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_output: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
 
+  # --
+  # : (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
+  def process_downloaded_files: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
+
   # Used as the tracing span suffix and the <tt>riffer.guardrail.name</tt>
   # attribute.
   # --

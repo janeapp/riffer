@@ -118,11 +118,13 @@ describe "Acceptance: files" do
           before do
             Riffer.config.files.allow_downloads = true
             Riffer.config.files.downloader = ->(_url, **) { acceptance_file("red_square.png") }
+            Riffer.config.silenced_deprecations = %i[files_downloader_contract]
           end
 
           after do
             Riffer.config.files.allow_downloads = false
             Riffer.config.files.downloader = Riffer::Files::Downloader.new
+            Riffer.config.silenced_deprecations = []
           end
 
           it "reads an image (#{mode})" do

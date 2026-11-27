@@ -568,7 +568,7 @@ Keys and values may be `String` or `Symbol`; both are stringified, and entries w
 Tags propagate to **two** places:
 
 1. The provider's native per-request metadata field (see the mapping below).
-2. Observability — stamped as `riffer.tag.<key>` on **every** span the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`). See [Tracing](TRACING.md).
+2. Observability — stamped as `riffer.tag.<key>` on **every** span the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`, `download_files`). See [Tracing](TRACING.md).
 
 ### Default tags
 

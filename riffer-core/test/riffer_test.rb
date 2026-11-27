@@ -23,6 +23,27 @@ describe Riffer do
     end
   end
 
+  describe "deprecated file errors" do
+    %i[TooManyFilesError FileTooLargeError FileChecksumMismatchError].each do |name|
+      it "reports a deprecation when Riffer::#{name} is referenced" do
+        error = expect { Riffer.const_get(name) }.must_raise Riffer::DeprecationError
+
+        expect(error.message).must_include "[file_error_constants] Riffer::#{name} is deprecated"
+      end
+
+      it "still resolves Riffer::#{name} to a Riffer::FileError with its name" do
+        klass = allow_deprecations { Riffer.const_get(name) }
+
+        expect(klass.name).must_equal "Riffer::#{name}"
+        expect(klass.superclass).must_equal Riffer::FileError
+      end
+    end
+
+    it "raises NameError for other missing constants" do
+      expect { Riffer.const_get(:NoSuchConstant) }.must_raise NameError
+    end
+  end
+
   describe ".configure" do
     it "yields the config object" do
       yielded = nil

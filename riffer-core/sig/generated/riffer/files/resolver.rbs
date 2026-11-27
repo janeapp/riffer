@@ -26,4 +26,8 @@ class Riffer::Files::Resolver
   def download!: (Riffer::Messages::User::FilePart, cache: false | Symbol) -> void
 
   def verify_bytes!: (untyped bytes, untyped sha256) -> untyped
+
+  # --
+  # : () -> untyped
+  def downloader: () -> untyped
 end
