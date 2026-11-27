@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gemspec path: "riffer-core"
 
 gem "async", "~> 2.46"
-gem "aws-sdk-bedrockruntime", "~> 1.85"
+gem "aws-sdk-bedrockruntime", "~> 1.98"
 gem "dotenv"
 gem "googleauth", "~> 1.17"
 gem "guard"
