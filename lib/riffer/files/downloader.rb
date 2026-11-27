@@ -14,7 +14,7 @@ class Riffer::Files::Downloader
   #: ((Riffer::Messages::User::FilePart | String), max_bytes: Integer, timeout: Integer) -> String
   def call(file, max_bytes:, timeout:)
     url, sha256 = file.is_a?(String) ? [file, nil] : [file.url, file.sha256]
-    raise Riffer::ArgumentError, "File has no URL to download" if url.nil?
+    raise Riffer::FileDownloadError, "File has no URL to download" if url.nil?
 
     fetch(url, sha256: sha256, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS)
   rescue Riffer::Error
@@ -25,6 +25,7 @@ class Riffer::Files::Downloader
 
   private
 
+  #--
   #: (String, sha256: String?, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
   def fetch(url, sha256:, max_bytes:, timeout:, redirects_remaining:)
     uri = begin
@@ -71,6 +72,7 @@ class Riffer::Files::Downloader
     content #: String
   end
 
+  #--
   #: (Net::HTTPResponse, sha256: String?, max_bytes: Integer) -> String
   def read_capped(response, sha256:, max_bytes:)
     content_length = response["content-length"]&.to_i

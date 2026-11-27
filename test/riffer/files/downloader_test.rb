@@ -45,6 +45,12 @@ describe Riffer::Files::Downloader do
       expect { downloader.call(file_for("https:"), max_bytes: 1_000, timeout: 5) }.must_raise Riffer::FileDownloadError
     end
 
+    it "raises Riffer::FileDownloadError for a file with no URL" do
+      inline = Riffer::Messages::User::FilePart.new(data: "aGk=", media_type: "text/plain")
+      error = expect { downloader.call(inline, max_bytes: 1_000, timeout: 5) }.must_raise Riffer::FileDownloadError
+      expect(error.message).must_equal "File has no URL to download"
+    end
+
     it "raises Riffer::FileDownloadError for a non-https scheme" do
       expect { downloader.call(file_for("http://example.com/file.pdf"), max_bytes: 1_000, timeout: 5) }.must_raise Riffer::FileDownloadError
     end

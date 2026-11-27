@@ -1,9 +1,11 @@
 # Generated from lib/riffer/files/resolver.rb with RBS::Inline
 
 class Riffer::Files::Resolver
-  @provider: Riffer::Providers::Base
+  @file_downloads: bool
 
   @config: Riffer::Config::Files
+
+  @provider: Riffer::Providers::Base
 
   DEPRECATIONS: Hash[Symbol, String]
 
@@ -18,23 +20,29 @@ class Riffer::Files::Resolver
   # : (Riffer::Messages::User) -> void
   def check_file_count!: (Riffer::Messages::User) -> void
 
+  # --
   # : (Riffer::Messages::User::FilePart) -> Array[Symbol]
   def resolve_file!: (Riffer::Messages::User::FilePart) -> Array[Symbol]
 
+  # --
   # : (Riffer::Messages::User::FilePart) -> Array[Symbol]
   def check_url!: (Riffer::Messages::User::FilePart) -> Array[Symbol]
 
+  # --
   # : (Riffer::Messages::User::FilePart, Symbol) -> Array[Symbol]
-  def resolve_inline!: (Riffer::Messages::User::FilePart, Symbol) -> Array[Symbol]
+  def download_unless_cached!: (Riffer::Messages::User::FilePart, Symbol) -> Array[Symbol]
 
+  # --
   # : (Riffer::Messages::User::FilePart, Symbol) -> void
   def verify_inline!: (Riffer::Messages::User::FilePart, Symbol) -> void
 
+  # --
   # : (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> Array[Symbol]
   def download!: (Riffer::Messages::User::FilePart, cache: false | Symbol) -> Array[Symbol]
 
+  # --
   # : () -> bool
-  def file_downloads?: () -> bool
+  def url_downloader?: () -> bool
 
   # The downloader's own errors propagate unwrapped so a host can raise and
   # rescue its own error classes.
@@ -42,9 +50,11 @@ class Riffer::Files::Resolver
   # : (Riffer::Messages::User::FilePart) -> String
   def download_file: (Riffer::Messages::User::FilePart) -> String
 
+  # --
   # : (Riffer::Messages::User::FilePart) -> String
   def download_by_url: (Riffer::Messages::User::FilePart) -> String
 
+  # --
   # : (String, String) -> void
   def verify_bytes!: (String, String) -> void
 end

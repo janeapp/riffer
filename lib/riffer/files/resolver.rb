@@ -7,6 +7,7 @@ require "base64"
 class Riffer::Files::Resolver
   # @rbs @provider: Riffer::Providers::Base
   # @rbs @config: Riffer::Config::Files
+  # @rbs @file_downloads: bool
 
   DEPRECATIONS = {
     url_downloader: "Calling config.files.downloader with the file's URL is deprecated; a future breaking release " \
@@ -21,6 +22,7 @@ class Riffer::Files::Resolver
   def initialize(provider:)
     @provider = provider
     @config = Riffer.config.files
+    @file_downloads = Riffer.config.future.enabled?(:file_downloads)
   end
 
   #: (Array[Riffer::Messages::Base]) -> void
@@ -35,7 +37,7 @@ class Riffer::Files::Resolver
     deprecations = @config.runner.map(files.uniq, context: nil) { |file| resolve_file!(file) }
     # Reported here rather than inside the runner, whose threads and fibers
     # carry no caller frames to name the app's line.
-    deprecations.flatten.uniq.each { |id| Riffer::Deprecation.warn(id: id, message: DEPRECATIONS.fetch(id)) }
+    deprecations.flatten.each { |id| Riffer::Deprecation.warn(id: id, message: DEPRECATIONS.fetch(id)) }
   end
 
   private
@@ -48,6 +50,7 @@ class Riffer::Files::Resolver
     raise Riffer::TooManyFilesError, "Too many files specified in user message"
   end
 
+  #--
   #: (Riffer::Messages::User::FilePart) -> Array[Symbol]
   def resolve_file!(file)
     delivery = @provider.file_delivery(file)
@@ -62,31 +65,31 @@ class Riffer::Files::Resolver
 
     case delivery
     when :url then check_url!(file)
-    when :base64, :bytes then resolve_inline!(file, delivery)
+    when :base64, :bytes then download_unless_cached!(file, delivery)
     else
       raise Riffer::ArgumentError,
             "Unknown file_delivery result #{delivery.inspect} from #{@provider.class}"
     end
   end
 
+  #--
   #: (Riffer::Messages::User::FilePart) -> Array[Symbol]
   def check_url!(file)
-    return [] if file.sha256.nil? || file.verified? || Riffer.config.future.enabled?(:file_downloads)
+    return [] if file.sha256.nil? || file.verified? || @file_downloads
 
     # The request sends the URL, never these bytes, so caching them would
     # hold memory nothing reads.
     [:url_sha256_check, *download!(file, cache: false)]
   end
 
+  #--
   #: (Riffer::Messages::User::FilePart, Symbol) -> Array[Symbol]
-  def resolve_inline!(file, delivery)
+  def download_unless_cached!(file, delivery)
     cached = delivery == :base64 ? file.data : file.data_bytes
-    return download!(file, cache: delivery) unless cached
-
-    verify_inline!(file, delivery)
-    []
+    cached ? [] : download!(file, cache: delivery)
   end
 
+  #--
   #: (Riffer::Messages::User::FilePart, Symbol) -> void
   def verify_inline!(file, delivery)
     sha256 = file.sha256
@@ -98,12 +101,13 @@ class Riffer::Files::Resolver
     file.mark_verified
   end
 
+  #--
   #: (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> Array[Symbol]
   def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads
 
-    url_only = !file_downloads?
-    raw = url_only ? download_by_url(file) : download_file(file)
+    url_downloader = url_downloader?
+    raw = url_downloader ? download_by_url(file) : download_file(file)
     file.mark_verified if file.sha256
 
     case cache
@@ -112,12 +116,13 @@ class Riffer::Files::Resolver
     when :bytes
       file.cache_data_bytes(raw)
     end
-    url_only ? [:url_downloader] : []
+    url_downloader ? [:url_downloader] : []
   end
 
+  #--
   #: () -> bool
-  def file_downloads?
-    @config.downloader.instance_of?(Riffer::Files::Downloader) || Riffer.config.future.enabled?(:file_downloads)
+  def url_downloader?
+    !@file_downloads && !@config.downloader.instance_of?(Riffer::Files::Downloader)
   end
 
   # The downloader's own errors propagate unwrapped so a host can raise and
@@ -128,6 +133,7 @@ class Riffer::Files::Resolver
     @config.downloader.call(file, max_bytes: @config.max_bytes, timeout: @config.timeout)
   end
 
+  #--
   #: (Riffer::Messages::User::FilePart) -> String
   def download_by_url(file)
     url = file.url #: String
@@ -137,6 +143,7 @@ class Riffer::Files::Resolver
     raw
   end
 
+  #--
   #: (String, String) -> void
   def verify_bytes!(bytes, sha256)
     return if Digest::SHA256.hexdigest(bytes) == sha256

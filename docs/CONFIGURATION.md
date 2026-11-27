@@ -226,11 +226,11 @@ Per file, riffer applies this policy, in order:
 1. **Already inline (`data:` or `bytes:`)** — nothing to download. If `sha256:` was given, it's verified against the existing bytes regardless of any other setting below.
 2. **Provider can't accept the file at all** — raises `Riffer::FileUnsupportedError`.
 3. **Provider accepts a URL as-is** — passed straight through, untouched. With [`config.future.file_downloads`](#future-flags) on, that holds even when `sha256:` was given: riffer never sees the bytes the provider fetches, so it doesn't check them. With the flag off, a `sha256:` makes riffer download the file only to check it, and reports the `url_sha256_check` [deprecation](#deprecations).
-4. **Provider needs the bytes inline** — riffer downloads the file, and the downloader checks `sha256:` if given.
+4. **Provider needs the bytes inline** — riffer downloads the file and checks `sha256:` if given. With `config.future.file_downloads` on, the downloader does the check (see [Custom downloaders](#custom-downloaders)).
 
 Every download in step 3 or 4 is gated by `allow_downloads`; with it `false` (the default), a step that needs a download raises `Riffer::FileDownloadsDisabledError` instead of fetching anything. This means upgrading to a riffer version with this feature never starts downloading arbitrary URLs on your behalf — you have to opt in.
 
-Each `FilePart` is checked once. After its content has been downloaded, or its inline data matched against `sha256:`, later calls with the same `FilePart` object, such as the next step of an agent loop, skip both the hash and the download. The result is kept on the object only, so a `FilePart` rebuilt with `from_hash` is checked again.
+Each `FilePart` is checked once. After its content has been downloaded, or its inline data matched against `sha256:`, later calls with the same `FilePart` object, such as the next step of an agent loop, skip the hash, and skip the download too once the content is kept for a provider that needs the bytes. The result is kept on the object only, so a `FilePart` rebuilt with `from_hash` is checked again.
 
 | Option            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -251,6 +251,7 @@ With [`config.future.file_downloads`](#future-flags) on, riffer calls the downlo
 - Return the raw (not base64-encoded) content, at most `max_bytes` long.
 - When `file.sha256` is set, raise `Riffer::FileChecksumMismatchError` if the content doesn't match it. Riffer doesn't hash downloaded content again.
 - Any other exception your downloader raises reaches the caller unchanged.
+- To delegate to `Riffer::Files::Downloader`, pass it the `FilePart`, not `file.url`: it checks `sha256` only when it gets the `FilePart`.
 
 ```ruby
 class S3Downloader
