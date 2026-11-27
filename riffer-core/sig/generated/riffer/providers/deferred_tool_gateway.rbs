@@ -23,6 +23,11 @@ module Riffer::Providers::DeferredToolGateway
   # : (Riffer::Providers::_EventSink, Array[singleton(Riffer::Tool)]) -> Riffer::Providers::_EventSink
   def unwrapping_sink: (Riffer::Providers::_EventSink, Array[singleton(Riffer::Tool)]) -> Riffer::Providers::_EventSink
 
+  # Deterministic, since a load without stored text is re-described on every request and the prompt cache must hold.
+  # --
+  # : (Array[singleton(Riffer::Tool)]) -> String
+  def describe_loaded_tools: (Array[singleton(Riffer::Tool)]) -> String
+
   private
 
   # --
@@ -44,13 +49,12 @@ module Riffer::Providers::DeferredToolGateway
   def wrap_tool_result: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Riffer::Messages::Tool
 
   # --
+  # : (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> String
+  def describe_load: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> String
+
+  # --
   # : (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def loaded_deferred_tools: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
-
-  # Deterministic, so an earlier tool result reads the same on every request and the prompt cache holds.
-  # --
-  # : (Array[singleton(Riffer::Tool)]) -> String
-  def describe_loaded_tools: (Array[singleton(Riffer::Tool)]) -> String
 
   # --
   # : () -> String

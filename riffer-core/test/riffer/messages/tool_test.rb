@@ -93,7 +93,7 @@ describe Riffer::Messages::Tool do
         error_type: :unknown_tool,
       )
 
-      assert_round_trips message, omitted: [:loaded_tools]
+      assert_round_trips message, omitted: %i[loaded_tools loaded_tools_description]
     end
 
     it "round-trips every attribute of a load" do
@@ -103,6 +103,7 @@ describe Riffer::Messages::Tool do
         tool_call_id: "123",
         name: "find_tools",
         loaded_tools: %w[list_events create_event],
+        loaded_tools_description: "These tools are now loaded.",
       )
 
       assert_round_trips message, omitted: %i[error error_type]
@@ -156,10 +157,10 @@ describe Riffer::Messages::Tool do
       expect(message.to_h[:loaded_tools]).must_equal ["list_events"]
     end
 
-    it "excludes loaded_tools when nothing was loaded" do
+    it "excludes loaded_tools and loaded_tools_description when nothing was loaded" do
       message = Riffer::Messages::Tool.new("Success", tool_call_id: "123", name: "my_tool")
 
-      expect(message.to_h.key?(:loaded_tools)).must_equal false
+      expect(message.to_h.keys & %i[loaded_tools loaded_tools_description]).must_equal []
     end
   end
 

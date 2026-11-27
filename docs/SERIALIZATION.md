@@ -69,7 +69,7 @@ Structured output crosses as **provider-neutral JSON Schema** (`Riffer::Params#t
 
 `deferred_tools_strategy` carries the [strategy](AGENTS.md#deferred-tools-strategy-experimental) the agent was configured with, so a `:gateway` agent rebuilds as `:gateway`. A hash without the key decodes as `:native`.
 
-Which deferred tools are loaded isn't part of the hash: riffer works it out from the `loaded_tools` on the conversation's [tool messages](MESSAGES.md#tool). Pass the restored history as `session:` and the loaded tools stay loaded. Riffer matches loads by tool name, so this works with body-less shells too.
+Which deferred tools are loaded isn't part of the hash: riffer works it out from the `loaded_tools` on the conversation's [tool messages](MESSAGES.md#tool). Pass the restored history as `session:` and the loaded tools stay loaded. Riffer matches loads by tool name, so this works with body-less shells too. With the gateway strategy, each load is sent with the `loaded_tools_description` stored on its tool message, so a tool whose description or parameters changed since it loaded still reads as it did then in that result.
 
 ## Reconstructing tools
 

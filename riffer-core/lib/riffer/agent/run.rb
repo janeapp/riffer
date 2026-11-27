@@ -306,6 +306,7 @@ module Riffer::Agent::Run
           error: result.error_message,
           error_type: result.error_type,
           loaded_tools: result.loaded_tools.map(&:name),
+          loaded_tools_description: describe_loaded_tools(result.loaded_tools),
         ),
       )
     end
@@ -320,6 +321,13 @@ module Riffer::Agent::Run
     names = tool_messages.reject(&:error?).flat_map(&:loaded_tools)
     # By name, since an agent rebuilt with +from_h+ holds body-less shells rather than the original classes.
     deferred_tools.select { |tool| names.include?(tool.name) }
+  end
+
+  # Stored whatever the agent's strategy, since a gateway agent can later send this history.
+  #--
+  #: (Array[singleton(Riffer::Tool)]) -> String?
+  def describe_loaded_tools(tools)
+    Riffer::Providers::DeferredToolGateway.describe_loaded_tools(tools) unless tools.empty?
   end
 
   #--

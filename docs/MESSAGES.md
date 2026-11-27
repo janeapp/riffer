@@ -329,6 +329,8 @@ msg.loaded_tools  # => ["list_events", "create_event"]
 msg.to_h          # => {role: :tool, content: "", tool_call_id: "call_456", name: "connect_calendar", loaded_tools: ["list_events", "create_event"]}
 ```
 
+A tool message the agent records for a load also carries `loaded_tools_description` (`nil` otherwise): the text the [gateway strategy](TOOLS.md#the-gateway-strategy) appends to the result, with each loaded tool's description and parameters as they were when it loaded. Riffer stores it whatever the strategy. `to_h` includes the key only when it is set, and `from_hash` reads it back, so a restored history sends the load as the model first saw it. A message without it, such as one saved by an earlier release, is described from the tools' current definitions.
+
 ## File Parts
 
 `Riffer::Messages::User::FilePart` represents a file attachment (image or document) that can be included with user messages.

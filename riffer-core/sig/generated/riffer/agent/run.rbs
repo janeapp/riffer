@@ -60,6 +60,11 @@ module Riffer::Agent::Run
   # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def loaded_tools: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
 
+  # Stored whatever the agent's strategy, since a gateway agent can later send this history.
+  # --
+  # : (Array[singleton(Riffer::Tool)]) -> String?
+  def describe_loaded_tools: (Array[singleton(Riffer::Tool)]) -> String?
+
   # --
   # : (Riffer::Agent, Riffer::Tools::Response) -> Riffer::Tools::Response
   def reject_invalid_load: (Riffer::Agent, Riffer::Tools::Response) -> Riffer::Tools::Response

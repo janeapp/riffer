@@ -57,6 +57,16 @@ module Riffer::Providers::DeferredToolGateway
     deferred_tools.empty? ? sink : Sink.new(sink, deferred_tools: deferred_tools)
   end
 
+  # Deterministic, since a load without stored text is re-described on every request and the prompt cache must hold.
+  #--
+  #: (Array[singleton(Riffer::Tool)]) -> String
+  def describe_loaded_tools(tools)
+    entries = tools.map do |tool|
+      { name: tool.name, description: tool.description, parameters: tool.parameters_schema }
+    end
+    [loaded_tools_header, JSON.generate(entries)].join("\n\n")
+  end
+
   private
 
   #--
@@ -111,14 +121,25 @@ module Riffer::Providers::DeferredToolGateway
     return message if loaded.empty? && !deferred_call
 
     Riffer::Messages::Tool.new(
-      loaded.empty? ? message.content : [message.content, describe_loaded_tools(loaded)].reject(&:empty?).join("\n\n"),
+      loaded.empty? ? message.content : [message.content, describe_load(message, loaded)].reject(&:empty?).join("\n\n"),
       tool_call_id: message.tool_call_id,
       name: deferred_call ? Tool.name : message.name,
       id: message.id,
       error: message.error,
       error_type: message.error_type,
       loaded_tools: message.loaded_tools,
+      loaded_tools_description: message.loaded_tools_description,
     )
+  end
+
+  #--
+  #: (Riffer::Messages::Tool, Array[singleton(Riffer::Tool)]) -> String
+  def describe_load(message, loaded)
+    stored = message.loaded_tools_description
+    # Stored text would still offer a tool the agent no longer defers, which the gateway can't route, so re-describe.
+    return stored if stored && (message.loaded_tools - loaded.map(&:name)).empty?
+
+    describe_loaded_tools(loaded)
   end
 
   #--
@@ -127,16 +148,6 @@ module Riffer::Providers::DeferredToolGateway
     return [] if message.error?
 
     deferred_tools.select { |tool| message.loaded_tools.include?(tool.name) }
-  end
-
-  # Deterministic, so an earlier tool result reads the same on every request and the prompt cache holds.
-  #--
-  #: (Array[singleton(Riffer::Tool)]) -> String
-  def describe_loaded_tools(tools)
-    entries = tools.map do |tool|
-      { name: tool.name, description: tool.description, parameters: tool.parameters_schema }
-    end
-    [loaded_tools_header, JSON.generate(entries)].join("\n\n")
   end
 
   #--

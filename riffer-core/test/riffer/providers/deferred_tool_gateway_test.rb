@@ -25,8 +25,10 @@ describe Riffer::Providers::DeferredToolGateway do
     tool_call(gateway_name, id, arguments)
   end
 
-  def result(id, name, content: "", loaded: [], error: nil)
-    Riffer::Messages::Tool.new(content, tool_call_id: id, name: name, loaded_tools: loaded, error: error)
+  def result(id, name, content: "", loaded: [], error: nil, description: nil)
+    Riffer::Messages::Tool.new(
+      content, tool_call_id: id, name: name, loaded_tools: loaded, error: error, loaded_tools_description: description,
+    )
   end
 
   describe "Tool" do
@@ -98,6 +100,22 @@ describe Riffer::Providers::DeferredToolGateway do
 
         [{"name":"calendar/list_events","description":"Lists calendar events","parameters":{"type":"object","properties":{"date":{"type":"string","description":"The date, as YYYY-MM-DD"}},"required":["date"],"additionalProperties":false}},{"name":"create_event","description":"Creates a calendar event","parameters":{"type":"object","properties":{},"required":[],"additionalProperties":false}}]
       TEXT
+    end
+
+    it "replays a load's stored description word for word after its tools' definitions change" do
+      stored = gateway.describe_loaded_tools([list_events])
+      list_events.description "Lists calendar events, newest first"
+      loading = result("c_1", "connect_calendar", content: "Done.", loaded: [list_events.name], description: stored)
+
+      expect(gateway.wrap_messages([loading], deferred).first.content).must_equal "Done.\n\n#{stored}"
+    end
+
+    it "describes a load from the current definitions once one of its stored tools is no longer deferred" do
+      stored = gateway.describe_loaded_tools([list_events, create_event])
+      loading = result("c_1", "connect_calendar", loaded: %w[create_event calendar/list_events], description: stored)
+
+      expect(gateway.wrap_messages([loading], [create_event]).first.content).
+        must_equal gateway.describe_loaded_tools([create_event])
     end
 
     it "keeps a loading result's own content ahead of the description" do
