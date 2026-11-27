@@ -7,6 +7,7 @@ require "uri"
 class Riffer::Files::Resolver::LegacyDownloader
   MAX_REDIRECTS = 3 #: Integer
 
+  #--
   #: (String, max_bytes: Integer, timeout: Integer) -> String
   def call(url, max_bytes:, timeout:)
     fetch(url, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS)
@@ -18,6 +19,7 @@ class Riffer::Files::Resolver::LegacyDownloader
 
   private
 
+  #--
   #: (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
   def fetch(url, max_bytes:, timeout:, redirects_remaining:)
     uri = begin
@@ -62,6 +64,7 @@ class Riffer::Files::Resolver::LegacyDownloader
     content #: String
   end
 
+  #--
   #: (Net::HTTPResponse, max_bytes: Integer) -> String
   def read_capped(response, max_bytes:)
     content_length = response["content-length"]&.to_i
@@ -75,6 +78,7 @@ class Riffer::Files::Resolver::LegacyDownloader
     buffer
   end
 
+  #--
   #: () -> singleton(Riffer::FileError)
   def too_large_error
     Riffer::Deprecation.allow { Riffer::FileTooLargeError }

@@ -7,12 +7,29 @@ require "uri"
 class Riffer::Files::Downloader
   MAX_REDIRECTS = 3 #: Integer
 
-  # A URL comes from a custom downloader on the deprecated
-  # call(url, max_bytes:, timeout:) contract that wraps this one.
+  # Faraday's default encoder sorts the query, drops repeated keys and turns
+  # %20 into +, which breaks presigned URLs. This one keeps the query as sent.
+  module RawQuery
+    #--
+    #: (String?) -> Hash[String, nil]
+    def self.decode(query)
+      query.to_s.empty? ? {} : { query.to_s => nil }
+    end
+
+    #--
+    #: (Hash[String, untyped]) -> String
+    def self.encode(params)
+      params.keys.join("&")
+    end
+  end
+  private_constant :RawQuery
+
   #--
   #: (Array[Riffer::Messages::User::FilePart]) -> Array[String]
   #: (String, max_bytes: Integer, timeout: Integer) -> String
   def call(files, max_bytes: nil, timeout: nil)
+    # The resolver's pre-flag path, and custom downloaders on the deprecated
+    # call(url, max_bytes:, timeout:) contract that wrap this one, pass a URL.
     if files.is_a?(String)
       size_limit = max_bytes #: Integer
       seconds = timeout #: Integer
@@ -53,6 +70,6 @@ class Riffer::Files::Downloader
     # Net::HTTP connects to localhost when the host is empty.
     raise Riffer::FileDownloadError, "Invalid file URL: missing host" if uri.host.to_s.empty?
 
-    Faraday.new.get(uri)
+    Faraday.new(request: { params_encoder: RawQuery }).get(uri)
   end
 end

@@ -95,13 +95,11 @@ class Riffer::Files::Resolver
     raise Riffer::Deprecation.allow { Riffer::FileChecksumMismatchError }, "File checksum mismatch"
   end
 
-  # The built-in downloader is on the call(files) contract, so this path
-  # swaps in the old implementation to keep max_bytes, timeout and https-only.
   #--
   #: () -> untyped
   def downloader
     configured = @config.downloader
-    return LegacyDownloader.new if configured.instance_of?(Riffer::Files::Downloader)
+    return configured if configured.instance_of?(Riffer::Files::Downloader)
 
     Riffer::Deprecation.warn(
       id: :files_downloader_contract,

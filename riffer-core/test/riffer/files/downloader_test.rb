@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "webrick"
 
 describe Riffer::Files::Downloader do
   let(:downloader) { Riffer::Files::Downloader.new }
@@ -84,6 +85,58 @@ describe Riffer::Files::Downloader do
       error = expect { downloader.call([file_for("s3://bucket/a.pdf")]) }.must_raise Riffer::FileDownloadError
 
       expect(error.message).must_equal "Unsupported URL scheme: s3"
+    end
+
+    # WebMock and VCR sort the query before matching, so these record the
+    # request line a real server receives.
+    describe "query strings" do
+      before do
+        WebMock.disable_net_connect!(allow_localhost: true)
+        @request_paths = []
+        paths = @request_paths
+        @server = WEBrick::HTTPServer.new(Port: 0, BindAddress: "127.0.0.1", Logger: WEBrick::Log.new(File::NULL),
+                                          AccessLog: [],)
+        @server.mount_proc("/") do |req, res|
+          paths << req.request_line.split[1]
+          if req.path == "/redirect"
+            res.status = 302
+            res["Location"] = "/final?z=1&a=2&a=1&s=%20x"
+          else
+            res.body = "ok"
+          end
+        end
+        @thread = Thread.new { @server.start }
+      end
+
+      after do
+        WebMock.disable_net_connect!
+        @server&.shutdown
+        @thread&.join
+      end
+
+      def fetch(path)
+        VCR.turned_off { downloader.call([file_for("http://127.0.0.1:#{@server.config[:Port]}#{path}")]) }
+      end
+
+      ["/a?b=2&a=1", "/a?a=1&a=2", "/a?x=%20y&sig=ab%2Fcd", "/a"].each do |path|
+        it "requests #{path} as given" do
+          fetch(path)
+
+          expect(@request_paths).must_equal [path]
+        end
+      end
+
+      it "requests an empty query without the ?" do
+        fetch("/a?")
+
+        expect(@request_paths).must_equal ["/a"]
+      end
+
+      it "follows a redirect Location with its query as given" do
+        fetch("/redirect?q=1")
+
+        expect(@request_paths).must_equal ["/redirect?q=1", "/final?z=1&a=2&a=1&s=%20x"]
+      end
     end
 
     describe "called with a URL by a downloader on the old contract" do

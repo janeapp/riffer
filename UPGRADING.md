@@ -167,6 +167,8 @@ Other changes with the flag:
 - The default downloader fetches http as well as https, and follows redirects between them.
 - A `sha256:` no longer makes riffer download a file the provider takes as a URL.
 
+With or without the flag, `defined?(Riffer::FileTooLargeError)` now returns nil and `Riffer.const_defined?(:FileTooLargeError)` returns false for the three deprecated error constants (`TooManyFilesError`, `FileTooLargeError`, `FileChecksumMismatchError`). Referencing them still works, with a deprecation warning.
+
 ## 0.58.0
 
 ### `config.pricing` is removed

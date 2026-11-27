@@ -3,8 +3,18 @@
 class Riffer::Files::Downloader
   MAX_REDIRECTS: Integer
 
-  # A URL comes from a custom downloader on the deprecated
-  # call(url, max_bytes:, timeout:) contract that wraps this one.
+  # Faraday's default encoder sorts the query, drops repeated keys and turns
+  # %20 into +, which breaks presigned URLs. This one keeps the query as sent.
+  module RawQuery
+    # --
+    # : (String?) -> Hash[String, nil]
+    def self.decode: (String?) -> Hash[String, nil]
+
+    # --
+    # : (Hash[String, untyped]) -> String
+    def self.encode: (Hash[String, untyped]) -> String
+  end
+
   # --
   # : (Array[Riffer::Messages::User::FilePart]) -> Array[String]
   # : (String, max_bytes: Integer, timeout: Integer) -> String

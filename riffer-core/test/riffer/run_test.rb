@@ -2373,6 +2373,18 @@ describe Riffer::Agent::Run do
         expect(pdf.data_bytes).must_equal "legacy"
       end
 
+      it "raises Riffer::ArgumentError for :after_files_download guardrails registered while the flag was on" do
+        Riffer.config.future.file_downloads = true
+        klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+        klass.guardrail(:after_files_download, with: Riffer::Guardrail)
+        Riffer.config.future.file_downloads = false
+        agent = klass.new
+        error = expect { agent.generate("Read this", files: [pdf]) }.must_raise Riffer::ArgumentError
+
+        expect(error.message).must_include "config.future.file_downloads"
+        expect(agent.provider.calls).must_be_empty
+      end
+
       it "raises Riffer::ArgumentError when an :after_files_download guardrail is registered" do
         klass = stub_agent("Agent") { model "mock/riffer-1" }
         error = expect { klass.guardrail(:after_files_download, with: Riffer::Guardrail) }.must_raise Riffer::ArgumentError

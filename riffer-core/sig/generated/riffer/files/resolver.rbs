@@ -27,8 +27,6 @@ class Riffer::Files::Resolver
 
   def verify_bytes!: (untyped bytes, untyped sha256) -> untyped
 
-  # The built-in downloader is on the call(files) contract, so this path
-  # swaps in the old implementation to keep max_bytes, timeout and https-only.
   # --
   # : () -> untyped
   def downloader: () -> untyped

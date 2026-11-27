@@ -55,11 +55,17 @@ module Riffer::Agent::Run
     run_usage = nil #: Riffer::Providers::TokenUsage?
     run_steps = 0
 
+    file_downloads = Riffer.config.future.enabled?(:file_downloads)
+    if !file_downloads && !agent.config.guardrails_for(:after_files_download).empty?
+      raise Riffer::ArgumentError,
+            "#{agent.identifier} has :after_files_download guardrails, which need config.future.file_downloads"
+    end
+
     run_input_guardrails(agent, :before, stream_yielder, all_modifications, tags) do |tripwire|
       return tripwire_response(agent, stream_yielder, tripwire, all_modifications, steps: run_steps)
     end
 
-    if Riffer.config.future.enabled?(:file_downloads)
+    if file_downloads
       download_files(agent, tags)
       run_input_guardrails(agent, :after_files_download, stream_yielder, all_modifications, tags) do |tripwire|
         return tripwire_response(agent, stream_yielder, tripwire, all_modifications, steps: run_steps)
