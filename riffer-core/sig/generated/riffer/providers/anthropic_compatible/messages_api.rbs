@@ -103,8 +103,21 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def structured_output_config: (Riffer::Agent::StructuredOutput) -> Hash[Symbol, untyped]
 
   # --
-  # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
-  def partition_messages: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Hash[Symbol, untyped]
+  # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)], gateway: bool) -> Hash[Symbol, untyped]
+  def partition_messages: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)], gateway: bool) -> Hash[Symbol, untyped]
+
+  # Claude signs each thinking block over the conversation before it, so the
+  # thinking after a load that lost references no longer verifies. Earlier turns
+  # can go without it, but the API requires the current turn to keep its
+  # thinking, so a load that lost references inside the current turn can't be
+  # sent once thinking follows it.
+  # --
+  # : (Array[Riffer::Messages::Base], Array[String]) -> Range[Integer]
+  def stale_thinking_indices: (Array[Riffer::Messages::Base], Array[String]) -> Range[Integer]
+
+  # --
+  # : (Riffer::Messages::Base) -> bool
+  def signed_thinking?: (Riffer::Messages::Base) -> bool
 
   # A load goes as tool_reference blocks alone, since the API rejects them mixed
   # with text. Only this request's deferred tools are referenced: the API rejects
@@ -115,8 +128,8 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   def tool_result_content: (Riffer::Messages::Tool, Array[String]) -> (String | Array[Hash[Symbol, untyped]])
 
   # --
-  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-  def convert_assistant: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::Assistant, ?replay_reasoning: bool) -> Hash[Symbol, untyped]
+  def convert_assistant: (Riffer::Messages::Assistant, ?replay_reasoning: bool) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart) -> Hash[Symbol, untyped]?
