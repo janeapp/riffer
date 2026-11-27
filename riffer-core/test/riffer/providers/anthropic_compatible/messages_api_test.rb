@@ -129,6 +129,38 @@ describe Riffer::Providers::AnthropicCompatible::MessagesAPI do
       expect(params.key?(:deferred_tools)).must_equal false
     end
 
+    it "raises InvalidToolsError when every tool would be deferred" do
+      err = expect { request([question], tools: []) }.must_raise Riffer::InvalidToolsError
+
+      expect(err.message).must_equal "At least one tool must not be deferred: calendar/list_events, send_invoice"
+    end
+
+    it "counts web search as a tool that isn't deferred" do
+      params = request([question], tools: [], web_search: true)
+
+      expect(params[:tools].map { |tool| [tool[:name], tool[:defer_loading]] }).must_equal [
+        ["web_search", nil],
+        ["calendar__list_events", true],
+        ["send_invoice", true],
+      ]
+    end
+
+    it "raises from generate_text before sending when every tool would be deferred" do
+      expect { provider.generate_text(prompt: "Hi", model: "claude-x", deferred_tools: [list_events]) }.
+        must_raise Riffer::InvalidToolsError
+    end
+
+    it "sends only the gateway when every tool is deferred with the gateway strategy" do
+      stub = stub_request(:post, "https://llm.example.test/models/claude-x:rawPredict").
+        with { |req| JSON.parse(req.body)["tools"].map { |tool| tool["name"] } == ["riffer_gateway"] }.
+        to_return(status: 200, body: '{"content":[{"type":"text","text":"Hello"}],"stop_reason":"end_turn"}')
+
+      provider.generate_text(prompt: "Hi", model: "claude-x", deferred_tools: [list_events],
+                             riffer_deferred_tools_strategy: :gateway,)
+
+      assert_requested stub
+    end
+
     it "sends the same tools after a load" do
       before_load = request([question])
       after_load = request(loaded_history("calendar/list_events"))

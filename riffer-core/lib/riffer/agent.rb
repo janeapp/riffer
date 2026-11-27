@@ -353,7 +353,7 @@ class Riffer::Agent
       skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
 
       if tools.any? { |t| t.name == skill_activate_tool_class.name }
-        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
+        raise Riffer::InvalidToolsError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
       end
 
       tools += [skill_activate_tool_class]
@@ -375,6 +375,12 @@ class Riffer::Agent
     tools += [Riffer::Providers::DeferredToolGateway::Tool] if @config.deferred_tools_strategy == :gateway
     assert_distinct_tool_names!(tools)
     deferred.each(&:validate_as_tool!)
+    # Only a tool the agent has up front can load a deferred tool; the gateway calls loaded tools but loads none.
+    if @tools.empty?
+      raise Riffer::InvalidToolsError,
+            "Deferred tools need a tool in uses_tools to load them: #{deferred.map(&:name).join(', ')}"
+    end
+
     deferred
   end
 
@@ -393,6 +399,6 @@ class Riffer::Agent
     dupes = tally.filter_map { |name, n| name if n > 1 }
     return if dupes.empty?
 
-    raise Riffer::ArgumentError, "Duplicate tool names: #{dupes.sort.join(', ')}"
+    raise Riffer::InvalidToolsError, "Duplicate tool names: #{dupes.sort.join(', ')}"
   end
 end

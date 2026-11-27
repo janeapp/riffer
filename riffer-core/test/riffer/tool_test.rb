@@ -272,7 +272,7 @@ describe Riffer::Tool do
     it "raises when description is missing" do
       klass = Class.new(Riffer::Tool)
 
-      expect { klass.validate_as_tool! }.must_raise(Riffer::ArgumentError)
+      expect { klass.validate_as_tool! }.must_raise(Riffer::InvalidToolsError)
     end
 
     it "succeeds when description and identifier are present" do

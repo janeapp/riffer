@@ -30,6 +30,10 @@ module Riffer
 
   class ArgumentError < ::ArgumentError; end
 
+  # Raised apart from other argument errors so a host that builds agents from
+  # external tool definitions can reject the one bad definition.
+  class InvalidToolsError < ArgumentError; end
+
   class ValidationError < Error; end
 
   # A provider answered with a non-success status, or sent an in-stream error

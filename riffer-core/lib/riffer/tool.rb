@@ -76,10 +76,13 @@ class Riffer::Tool
     #: () -> true
     def validate_as_tool!
       if description.nil? || description.to_s.strip.empty?
-        raise Riffer::ArgumentError,
+        raise Riffer::InvalidToolsError,
               "#{self} must define a description"
       end
-      raise Riffer::ArgumentError, "#{self} must have an identifier" if identifier.nil? || identifier.to_s.strip.empty?
+      if identifier.nil? || identifier.to_s.strip.empty?
+        raise Riffer::InvalidToolsError,
+              "#{self} must have an identifier"
+      end
 
       true
     end

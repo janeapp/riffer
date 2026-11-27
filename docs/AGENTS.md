@@ -124,6 +124,8 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+Building the agent raises `Riffer::InvalidToolsError` when its tools can't be sent as configured: two tools share a name, a tool shares the name of the [skills](SKILLS.md) activation tool, or a tool has a blank description or identifier. `Riffer::InvalidToolsError` is a `Riffer::ArgumentError`, so existing rescues still catch it, and a host that builds agents from external tool definitions can rescue it on its own to reject the one bad definition. `Agent.from_h` builds through `Agent.new`, so it raises the same error.
+
 ### deferred_tools (experimental)
 
 Holds tools back from the model until one of the agent's own tools loads them. Every tool you pass to `uses_tools` costs tokens on every request, and models pick tools less reliably from a long list, so defer the ones most turns don't need:
@@ -144,11 +146,13 @@ Like `uses_tools`, `deferred_tools` takes an Array or a lambda that receives the
 deferred_tools ->(context) { context[:billing] ? [ListEvents, SendInvoice] : [ListEvents] }
 ```
 
-A tool can't be both: one that's in `uses_tools` (or comes from skills) and in `deferred_tools` raises `Riffer::ArgumentError` when the agent is built. The resolved list is `agent.deferred_tools`, and tools read it at call time as `context.deferred_tools`.
+A tool can't be both: one that's in `uses_tools` (or comes from skills) and in `deferred_tools` raises `Riffer::InvalidToolsError` when the agent is built. The resolved list is `agent.deferred_tools`, and tools read it at call time as `context.deferred_tools`.
 
 Any tool loads deferred tools by returning `load_tools(...)`; see [Tools → Loading deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer records each load in the conversation, so a loaded tool stays loaded for the rest of it, including after the agent and its session are [serialized](SERIALIZATION.md) and restored. A call to a deferred tool that hasn't been loaded is refused.
 
 By default deferred tools load natively. `anthropic` and `anthropic_vertex` (see [Anthropic → Deferred Tools](providers/ANTHROPIC.md#deferred-tools)), [OpenAI](providers/OPENAI.md#deferred-tools-experimental) and [Azure OpenAI](providers/AZURE_OPENAI.md#deferred-tools-experimental) load them natively, and the [Mock provider](providers/MOCK_PROVIDER.md) does too, for tests. The agent builds on any provider, but on one without native loading in riffer, each `generate` or `stream` raises `Riffer::ArgumentError` before sending a request, pointing at the [gateway strategy](#deferred-tools-strategy-experimental); a [custom provider](providers/CUSTOM_PROVIDERS.md#deferred-tools-experimental) decides for itself. Native loading is per model, and riffer doesn't check which models support it, so an unsupported model on one of those providers gets the provider's own error.
+
+Only one of the agent's own tools can load a deferred tool, so an agent with deferred tools and no tool in `uses_tools` or from skills raises `Riffer::InvalidToolsError` when it's built. Web search and the [gateway](#deferred-tools-strategy-experimental) don't count: neither loads tools.
 
 Nothing tells the model that more tools exist unless you do, in a tool's description or the instructions. If no tool ever returns `load_tools`, the deferred tools can't be reached, and riffer can't detect that.
 
