@@ -169,6 +169,42 @@ describe Riffer::Providers::Base do
     end
   end
 
+  describe "malformed tool calls in the history" do
+    let(:provider) { Riffer::Providers::Mock.new }
+    let(:history) { malformed_tool_call_history }
+    let(:replayed) do
+      [
+        [{ part: :tool_call, call_id: "c_1", name: Riffer::Wire::INVALID_TOOL_NAME, arguments: "{}" },
+         { part: :tool_call, call_id: "c_2", name: "list_events", arguments: "{}" },],
+        [Riffer::Wire::INVALID_TOOL_NAME, "list_events"],
+      ]
+    end
+
+    def sent_calls_and_result_names
+      sent = provider.calls.last[:messages]
+      [sent[1][:parts], sent[2..].map { |message| message[:name] }]
+    end
+
+    it "sends each call in a form the provider accepts" do
+      provider.generate_text(messages: history, model: "riffer-1")
+
+      expect(sent_calls_and_result_names).must_equal replayed
+    end
+
+    it "sends each call in a form the provider accepts when streaming" do
+      provider.stream_text(messages: history, model: "riffer-1").each { |_| }
+
+      expect(sent_calls_and_result_names).must_equal replayed
+    end
+
+    it "leaves the caller's messages as they were" do
+      before = history.map(&:to_h)
+      provider.generate_text(messages: history, model: "riffer-1")
+
+      expect(history.map(&:to_h)).must_equal before
+    end
+  end
+
   describe "deferred tools gateway" do
     let(:provider) { Riffer::Providers::Mock.new }
     let(:gateway_name) { Riffer::Providers::DeferredToolGateway::Tool.name }
@@ -264,6 +300,22 @@ describe Riffer::Providers::Base do
       expect(provider.calls.last[:tools]).must_equal [loader]
       expect(provider.calls.last[:deferred_tools]).must_equal [list_events]
       expect(provider.calls.last[:messages]).must_equal loaded_history.map(&:to_h)
+    end
+
+    it "sends a deferred call with unparseable arguments wrapped as they came" do
+      history = [question, Riffer::Messages::Assistant.new("", tool_calls: [call("calendar/list_events", "c_2", "{")])]
+      generate(history)
+
+      expect(provider.calls.last[:messages][1][:parts].first[:arguments]).
+        must_equal '{"name":"calendar/list_events","arguments":"{"}'
+    end
+
+    it "sends a gateway call it can't unwrap with empty arguments" do
+      history = [question, Riffer::Messages::Assistant.new("", tool_calls: [call(gateway_name, "c_2", "{")])]
+      generate(history)
+
+      expect(provider.calls.last[:messages][1][:parts].first.slice(:name, :arguments)).
+        must_equal({ name: gateway_name, arguments: "{}" })
     end
 
     it "sends no gateway without deferred tools" do

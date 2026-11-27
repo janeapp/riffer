@@ -77,15 +77,10 @@ module Riffer::Providers::DeferredToolGateway
   def wrap_assistant(message, deferred_names)
     return message if message.tool_calls.none? { |tool_call| deferred_names.include?(tool_call.name) }
 
-    Riffer::Messages::Assistant.new(
-      id: message.id,
-      parts: message.parts.map do |part|
+    message.with_parts(
+      message.parts.map do |part|
         part.is_a?(Riffer::Messages::Assistant::ToolCall) ? wrap_tool_call(part, deferred_names) : part
       end,
-      token_usage: message.token_usage,
-      structured_output: message.structured_output,
-      finish_reason: message.finish_reason,
-      finish_reason_raw: message.finish_reason_raw,
     )
   end
 
@@ -110,15 +105,8 @@ module Riffer::Providers::DeferredToolGateway
     deferred_call = deferred_tools.any? { |tool| tool.name == message.name }
     return message if loaded.empty? && !deferred_call
 
-    Riffer::Messages::Tool.new(
-      loaded.empty? ? message.content : [message.content, describe_loaded_tools(loaded)].reject(&:empty?).join("\n\n"),
-      tool_call_id: message.tool_call_id,
-      name: deferred_call ? Tool.name : message.name,
-      id: message.id,
-      error: message.error,
-      error_type: message.error_type,
-      loaded_tools: message.loaded_tools,
-    )
+    content = [message.content, describe_loaded_tools(loaded)].reject(&:empty?).join("\n\n") unless loaded.empty?
+    message.with(content: content || message.content, name: deferred_call ? Tool.name : message.name)
   end
 
   #--

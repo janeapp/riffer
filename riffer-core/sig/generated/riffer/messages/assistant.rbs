@@ -61,6 +61,10 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   def +: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
 
   # --
+  # : (Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]) -> Riffer::Messages::Assistant
+  def with_parts: (Array[Riffer::Messages::Assistant::TextPart | Riffer::Messages::Assistant::ReasoningPart | Riffer::Messages::Assistant::ToolCall | Riffer::Messages::Assistant::ServerToolPart]) -> Riffer::Messages::Assistant
+
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 

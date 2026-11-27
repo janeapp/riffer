@@ -520,6 +520,26 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "malformed tool calls in the history" do
+    it "replays them in a form Gemini accepts, with results named after their calls" do
+      requests = []
+      client = Object.new
+      client.define_singleton_method(:post) do |_path, body|
+        requests << body
+        { candidates: [{ content: { parts: [{ text: "OK" }] }, finishReason: "STOP" }] }
+      end
+      Riffer.config.gemini.client = client
+
+      Riffer::Providers::Gemini.new.generate_text(messages: malformed_tool_call_history, model: "gemini-3.5-flash-lite")
+
+      calls = requests.last[:contents][1][:parts].map { |part| part[:functionCall].slice(:name, :args) }
+      results = requests.last[:contents][2][:parts].map { |part| part[:functionResponse][:name] }
+
+      expect(calls).must_equal [{ name: Riffer::Wire::INVALID_TOOL_NAME, args: {} }, { name: "list_events", args: {} }]
+      expect(results).must_equal [Riffer::Wire::INVALID_TOOL_NAME, "list_events"]
+    end
+  end
+
   describe "web search" do
     let(:provider) { Riffer::Providers::Gemini.new }
     let(:model) { "gemini-3.5-flash-lite" }

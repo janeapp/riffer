@@ -54,6 +54,10 @@ class Riffer::Providers::Base
   def decodable_tools: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
 
   # --
+  # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Base]
+  def request_messages: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Base]
+
+  # --
   # : (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
   def gateway_deferred_tools: (Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
 

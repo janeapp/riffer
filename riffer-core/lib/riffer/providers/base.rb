@@ -42,7 +42,7 @@ class Riffer::Providers::Base
     options = apply_reasoning(model, options)
     gateway_tools = gateway_deferred_tools(options)
     params = build_request_params(
-      Riffer::Providers::DeferredToolGateway.wrap_messages(messages, gateway_tools),
+      request_messages(messages, gateway_tools),
       model,
       request_options(options),
     )
@@ -84,7 +84,7 @@ class Riffer::Providers::Base
     options = apply_reasoning(model, options)
     gateway_tools = gateway_deferred_tools(options)
     params = build_request_params(
-      Riffer::Providers::DeferredToolGateway.wrap_messages(messages, gateway_tools),
+      request_messages(messages, gateway_tools),
       model,
       request_options(options),
     )
@@ -147,6 +147,12 @@ class Riffer::Providers::Base
   def decodable_tools(options)
     tools = (options[:tools] || []) + (options[:deferred_tools] || [])
     gateway_deferred_tools(options).empty? ? tools : tools + [Riffer::Providers::DeferredToolGateway::Tool]
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[Riffer::Messages::Base]
+  def request_messages(messages, gateway_tools)
+    Riffer::Wire.replayable_messages(Riffer::Providers::DeferredToolGateway.wrap_messages(messages, gateway_tools))
   end
 
   #--

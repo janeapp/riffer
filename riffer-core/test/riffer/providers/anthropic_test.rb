@@ -669,6 +669,28 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "malformed tool calls in the history" do
+    it "replays them in a form Anthropic accepts" do
+      requests = []
+      stub_request(:post, "https://api.anthropic.com/v1/messages").to_return do |request|
+        requests << JSON.parse(request.body, symbolize_names: true)
+        body = { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn",
+                 usage: { input_tokens: 1, output_tokens: 1 }, }
+        { status: 200, body: body.to_json }
+      end
+
+      Riffer::Providers::Anthropic.new.generate_text(
+        messages: malformed_tool_call_history,
+        model: "claude-haiku-4-5-20251001",
+      )
+
+      expect(requests.last[:messages][1][:content]).must_equal [
+        { type: "tool_use", id: "c_1", name: Riffer::Wire::INVALID_TOOL_NAME, input: {} },
+        { type: "tool_use", id: "c_2", name: "list_events", input: {} },
+      ]
+    end
+  end
+
   describe "tool schema strict mode" do
     it "applies strict_schema to tool parameters" do
       tool = stub_tool("TestTool") do

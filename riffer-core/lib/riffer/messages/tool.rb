@@ -41,6 +41,20 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   end
 
   #--
+  #: (?content: String, ?name: String) -> Riffer::Messages::Tool
+  def with(content: self.content, name: self.name)
+    self.class.new(
+      content,
+      tool_call_id: tool_call_id,
+      name: name,
+      id: id,
+      error: error,
+      error_type: error_type,
+      loaded_tools: loaded_tools,
+    )
+  end
+
+  #--
   #: () -> bool
   def error?
     !@error.nil?

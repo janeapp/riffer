@@ -3,6 +3,11 @@
 module Riffer::Wire
   TOOL_NAME_SEPARATOR: String
 
+  # The tool name pattern Anthropic, Bedrock and OpenAI require.
+  TOOL_NAME_PATTERN: Regexp
+
+  INVALID_TOOL_NAME: String
+
   # --
   # : (String) -> String
   def encode_tool_name: (String) -> String
@@ -14,4 +19,34 @@ module Riffer::Wire
   # --
   # : (String) -> Hash[String, untyped]
   def parse_tool_arguments: (String) -> Hash[String, untyped]
+
+  # A model can emit a tool call with a name that isn't a valid tool name or arguments that aren't a JSON object.
+  # Every later request replaying it as-is is rejected, by the provider or while riffer builds it, so the call goes
+  # out as INVALID_TOOL_NAME or with +{}+ arguments, so the model still sees the error it got.
+  # --
+  # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def replayable_messages: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+
+  private
+
+  # --
+  # : (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+  def replayable_assistant: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+
+  # --
+  # : (Riffer::Messages::Assistant::ToolCall) -> Riffer::Messages::Assistant::ToolCall
+  def replayable_tool_call: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Messages::Assistant::ToolCall
+
+  # The result is renamed with its call, staying paired for the providers that send a result's name.
+  # --
+  # : (Riffer::Messages::Tool) -> Riffer::Messages::Tool
+  def replayable_tool_result: (Riffer::Messages::Tool) -> Riffer::Messages::Tool
+
+  # --
+  # : (String) -> String
+  def replayable_tool_name: (String) -> String
+
+  # --
+  # : (String) -> bool
+  def tool_arguments_object?: (String) -> bool
 end

@@ -120,3 +120,16 @@ def install_in_memory_tracer_provider
   Riffer.config.tracing.backend = Riffer::Tracing::Otel.build(provider: provider)
   exporter
 end
+
+def malformed_tool_call_history
+  calls = [
+    Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: " list_events", arguments: "{}"),
+    Riffer::Messages::Assistant::ToolCall.new(call_id: "c_2", name: "list_events", arguments: '{"day":'),
+  ]
+  [
+    Riffer::Messages::User.new("What's on?"),
+    Riffer::Messages::Assistant.new("", tool_calls: calls),
+    Riffer::Messages::Tool.new("Unknown tool ' list_events'", tool_call_id: "c_1", name: " list_events"),
+    Riffer::Messages::Tool.new("Invalid JSON in tool arguments", tool_call_id: "c_2", name: "list_events"),
+  ]
+end
