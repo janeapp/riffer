@@ -281,19 +281,32 @@ module Riffer::Agent::Run
     # resumed turn already has some of its results in the session.
     earlier = agent.session.messages.take_while { |message| !message.equal?(assistant_message) }
     loaded = loaded_tools(earlier, agent.deferred_tools)
+    callable_tools = agent.tools + loaded
+    callable_names = callable_tools.map(&:name)
     unloaded_names = (agent.deferred_tools - loaded).map(&:name)
-    # Refused here rather than by the runtime, since a custom runtime may ignore +tools:+.
-    refused, callable = tool_calls.partition { |tool_call| unloaded_names.include?(tool_call.name) }
+    # Answered here rather than by the runtime, since a custom runtime may ignore +tools:+, and added before it
+    # runs, since one that hands the calls elsewhere may interrupt the run and never return.
+    refused, callable = tool_calls.partition { |tool_call| !callable_names.include?(tool_call.name) }
+    refusals = refused.to_h do |tool_call|
+      name = tool_call.name
+      [tool_call, unloaded_names.include?(name) ? tool_not_loaded(tool_call) : Riffer::Tools::Response.unknown_tool(name)]
+    end
+    add_tool_results(agent, refused, refusals)
+    return if callable.empty?
 
     dispatched = agent.tool_runtime.execute(
       callable,
-      tools: agent.tools + loaded,
+      tools: callable_tools,
       context: agent.context,
       assistant_message: assistant_message,
       tags: tags,
     ).to_h { |tool_call, result| [tool_call, reject_invalid_load(agent, result)] }
+    add_tool_results(agent, callable, dispatched)
+  end
 
-    results = dispatched.merge(refused.to_h { |tool_call| [tool_call, tool_not_loaded(tool_call)] })
+  #--
+  #: (Riffer::Agent, Array[Riffer::Messages::Assistant::ToolCall], Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
+  def add_tool_results(agent, tool_calls, results)
     tool_calls.each do |tool_call|
       result = results.fetch(tool_call, nil)
       next unless result

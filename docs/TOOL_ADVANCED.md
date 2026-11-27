@@ -104,7 +104,7 @@ A tool never raises into the agent loop — every `StandardError` raised during 
 | `Riffer::ToolExecutionError` | `:execution_error`  | the exception message                                |
 | Any other `StandardError`    | `:unhandled_error`  | `Error executing tool: <ExceptionClass>: <message>` |
 
-Riffer also returns two errors of its own for [deferred tools](TOOLS.md#loading-deferred-tools-experimental). The first replaces the loading tool's result; the second is returned without running the call:
+Riffer also returns two errors of its own for [deferred tools](TOOLS.md#loading-deferred-tools-experimental). The first replaces the loading tool's result; the second is returned without calling the runtime:
 
 | Failure                                     | Error type           | Response content                                                         |
 | ------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
@@ -249,6 +249,8 @@ end
 ```
 
 Anything that escapes `dispatch_tool_call` propagates out of the run — rescue whatever your transport can raise and return an error response. The base class handles only an unknown tool name and malformed argument JSON.
+
+In an agent loop, the runtime gets only calls to the agent's tools and its loaded [deferred tools](TOOLS.md#loading-deferred-tools-experimental). Riffer answers a call to any other name itself, as `:unknown_tool` or `:tool_not_loaded`, and adds those results to the session before the runtime runs, so they're kept even when a runtime that hands its calls elsewhere interrupts the run instead of returning. When no call is left, riffer doesn't call the runtime at all. The runtime's results follow riffer's own, each in the order of their calls.
 
 ### Around-Call Hook
 

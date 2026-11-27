@@ -124,7 +124,14 @@ describe Riffer::Providers::DeferredToolGateway do
         result("c_2", "connect_calendar", loaded: ["archived_tool"]),
       ]
 
-      expect(gateway.wrap_messages(messages, deferred)).must_equal messages
+      expect(gateway.wrap_messages(messages, deferred).map(&:to_h)).
+        must_equal(messages.map { |message| message.to_h.except(:loaded_tools) })
+    end
+
+    it "sends a load with no loaded_tools, since its loads go out as text" do
+      loading = result("c_1", "connect_calendar", loaded: ["calendar/list_events"])
+
+      expect(gateway.wrap_messages([loading], deferred).first.loaded_tools).must_equal []
     end
 
     it "returns the same bytes on every call" do

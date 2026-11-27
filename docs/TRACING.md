@@ -173,7 +173,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 
 A tool failure comes in three shapes, distinguished by span status:
 
-- **Handled error** — the tool call produced a deliberate error response, from the tool itself or from the runtime (an unknown tool, malformed arguments). `error.type` carries the category and the **span status stays unset** (the run continues). The framework's categories are `unknown_tool`, `validation_error`, `timeout_error`, and `execution_error`; a custom tool may set its own via `Riffer::Tools::Response.error(type:)`.
+- **Handled error** — the tool call produced a deliberate error response, from the tool itself or from the runtime (an unknown tool, malformed arguments). `error.type` carries the category and the **span status stays unset** (the run continues). The framework's categories are `unknown_tool`, `validation_error`, `timeout_error`, and `execution_error`; a custom tool may set its own via `Riffer::Tools::Response.error(type:)`. In an agent loop, riffer answers a call to a tool the agent doesn't have (`unknown_tool`) or to a [deferred tool](TOOLS.md#loading-deferred-tools-experimental) that isn't loaded (`tool_not_loaded`) without the runtime, so those calls get no `execute_tool` span and no `around_tool_call`.
 - **Unhandled error** — the tool raised an unanticipated `StandardError`. `error.type` is `unhandled_error`, the **span status is `ERROR`**, and the exception is recorded on the span. The run continues — the LLM receives the error response.
 - **Host code raising** around the tool call (an `around_tool_call` hook, a tracing callback) propagates out of the run. `error.type` is the exception class name and the span status is `ERROR`.
 

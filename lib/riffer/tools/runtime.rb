@@ -61,12 +61,7 @@ class Riffer::Tools::Runtime
   def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
     tool_class = tools.find { |tc| tc.name == tool_call.name }
 
-    if tool_class.nil?
-      return Riffer::Tools::Response.error(
-        "Unknown tool '#{tool_call.name}'",
-        type: :unknown_tool,
-      )
-    end
+    return Riffer::Tools::Response.unknown_tool(tool_call.name) if tool_class.nil?
 
     tool_instance = tool_class.new
     arguments = parse_arguments(tool_call.arguments)

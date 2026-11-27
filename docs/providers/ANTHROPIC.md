@@ -249,11 +249,11 @@ end
 ```
 
 - Every deferred tool is sent on every request with `defer_loading: true`, after the agent's other tools, whether it has been loaded or not. The `tools` array stays the same for the whole conversation, so a load doesn't break the prompt cache.
-- A tool result that [loads tools](../TOOLS.md#loading-deferred-tools-experimental) is sent as `tool_reference` blocks only, one per loaded tool. From then on Claude sees those tools' definitions and calls them by their own names. A load that names a tool the agent no longer defers, for example in a restored history, leaves that tool out, since the API rejects a reference to a tool that isn't in the request.
+- A tool result that [loads tools](../TOOLS.md#loading-deferred-tools-experimental) is sent as `tool_reference` blocks only, one per loaded tool. From then on Claude sees those tools' definitions and calls them by their own names. A load that names a tool the agent no longer defers, for example in a restored history, leaves that tool out, since the API rejects a reference to a tool that isn't in the request. That changes the conversation Claude signed its later thinking over, so riffer also leaves out the thinking blocks of the earlier turns after that load rather than replay them with a signature the API rejects. The current turn keeps its thinking, since the API needs it; a session restored partway through a turn after its deferred tools changed can still get the API's signature error.
 
 Things to know:
 
-- At least one tool in the request must not be deferred, or the API returns a 400 (`All tools cannot be deferred`). An agent needs a tool in `uses_tools` to load its deferred tools anyway.
+- At least one tool in the request must not be deferred. An agent always sends one, since it [can't be built](../AGENTS.md#deferred_tools-experimental) without a tool of its own to load them; a direct `generate_text` or `stream_text` call whose tools are all deferred raises `Riffer::ArgumentError` before it's sent. Web search counts as a tool that isn't deferred.
 - A deferred tool can't carry `cache_control` (400). Riffer never sets it on a tool; the top-level `model_options cache_control: {type: "ephemeral"}` works with deferred tools.
 - Deferred loading needs Claude Haiku 4.5, Sonnet 4.5, Opus 4.5 or a later model. An older model gets the API's own error.
 

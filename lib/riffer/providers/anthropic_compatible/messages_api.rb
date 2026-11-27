@@ -200,7 +200,7 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
-    tools = options[:tools]
+    tools = options[:tools] || []
     deferred_tools = options[:deferred_tools] || []
     partitioned_messages = partition_messages(messages, deferred_tools)
     structured_output = options[:structured_output]
@@ -222,8 +222,14 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     params[:metadata] = metadata if metadata
 
     api_tools = [] #: Array[Hash[Symbol, untyped]]
-    api_tools.concat(tools.map { |t| convert_tool(t) }) if tools && !tools.empty?
+    api_tools.concat(tools.map { |t| convert_tool(t) })
     api_tools << web_search_tool(web_search) if web_search
+    if api_tools.empty? && !deferred_tools.empty?
+      raise Riffer::ArgumentError,
+            "#{self.class} can't defer every tool: the API needs at least one tool that isn't deferred, " \
+            "such as the one that loads them"
+    end
+
     # Every deferred tool goes on every request, loaded or not, so the tools
     # array never changes and the prompt cache survives a load.
     api_tools.concat(deferred_tools.map { |t| convert_tool(t).merge(defer_loading: true) })
@@ -275,8 +281,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     deferred_names = deferred_tools.map(&:name)
     system_prompts = [] #: Array[Hash[Symbol, untyped]]
     conversation_messages = [] #: Array[Hash[Symbol, untyped]]
+    replay_reasoning = true
+    last_user = messages.rindex { |message| message.is_a?(Riffer::Messages::User) } || -1
 
-    messages.each do |message|
+    messages.each_with_index do |message, index|
       case message
       when Riffer::Messages::System
         system_prompts << { type: "text", text: message.content }
@@ -289,8 +297,15 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
           conversation_messages << { role: "user", content: content }
         end
       when Riffer::Messages::Assistant
-        conversation_messages << convert_assistant(message)
+        # The current turn's thinking was signed over this request's shape, and the API requires the turn's last
+        # assistant message to start with its thinking, so only earlier turns lose theirs. A session restored
+        # mid-turn after the deferred set changed still replays a stale signature: nothing records the shape a
+        # message was signed over.
+        conversation_messages << convert_assistant(message, replay_reasoning: replay_reasoning || index > last_user)
       when Riffer::Messages::Tool
+        # A load whose reference is left out changes what every later thinking block was signed over, and the API
+        # rejects a signature replayed over a different conversation.
+        replay_reasoning &&= (message.loaded_tools - deferred_names).empty?
         conversation_messages << {
           role: "user",
           content: [{
@@ -322,9 +337,10 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
   end
 
   #--
-  #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-  def convert_assistant(message)
-    { role: "assistant", content: message.parts.filter_map { |part| convert_part(part) } }
+  #: (Riffer::Messages::Assistant, replay_reasoning: bool) -> Hash[Symbol, untyped]
+  def convert_assistant(message, replay_reasoning:)
+    parts = replay_reasoning ? message.parts : message.parts.grep_v(Riffer::Messages::Assistant::ReasoningPart)
+    { role: "assistant", content: parts.filter_map { |part| convert_part(part) } }
   end
 
   #--

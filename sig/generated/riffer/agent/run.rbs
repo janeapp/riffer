@@ -57,6 +57,10 @@ module Riffer::Agent::Run
   def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?tags: Hash[String, String]) -> void
 
   # --
+  # : (Riffer::Agent, Array[Riffer::Messages::Assistant::ToolCall], Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
+  def add_tool_results: (Riffer::Agent, Array[Riffer::Messages::Assistant::ToolCall], Hash[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]) -> void
+
+  # --
   # : (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
   def loaded_tools: (Array[Riffer::Messages::Base], Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
 

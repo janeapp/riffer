@@ -30,6 +30,13 @@ describe Riffer::Agent::Serializer do
     end
   end
 
+  def deferred_agent_class(**options)
+    build_agent_class do
+      uses_tools [SerializerWeatherTool]
+      deferred_tools [SerializerForecastTool], **options
+    end
+  end
+
   describe ".to_h" do
     it "snapshots the core data fields" do
       dict = build_agent_class.new.to_h
@@ -96,13 +103,13 @@ describe Riffer::Agent::Serializer do
     end
 
     it "emits deferred tools as descriptors" do
-      klass = build_agent_class { deferred_tools [SerializerForecastTool] }
+      klass = deferred_agent_class
 
       expect(klass.new.to_h[:deferred_tools].map { |d| d[:name] }).must_equal ["serializer_forecast_tool"]
     end
 
     it "carries the deferred tools strategy" do
-      klass = build_agent_class { deferred_tools [SerializerForecastTool], strategy: :gateway }
+      klass = deferred_agent_class(strategy: :gateway)
 
       expect(klass.new.to_h[:deferred_tools_strategy]).must_equal :gateway
     end
@@ -160,21 +167,22 @@ describe Riffer::Agent::Serializer do
     end
 
     it "round-trips deferred tools through JSON" do
-      dict = build_agent_class { deferred_tools [SerializerForecastTool] }.new.to_h
+      dict = deferred_agent_class.new.to_h
       agent = Riffer::Agent.from_json(JSON.generate(dict))
 
-      expect([agent.tools, agent.deferred_tools.map(&:name)]).must_equal [[], ["serializer_forecast_tool"]]
+      expect([agent.tools.map(&:name), agent.deferred_tools.map(&:name)]).
+        must_equal [["serializer_weather_tool"], ["serializer_forecast_tool"]]
     end
 
     it "round-trips the gateway deferred tools strategy through JSON" do
-      klass = build_agent_class { deferred_tools [SerializerForecastTool], strategy: :gateway }
+      klass = deferred_agent_class(strategy: :gateway)
       agent = Riffer::Agent.from_json(klass.new.to_json)
 
       expect(agent.config.deferred_tools_strategy).must_equal :gateway
     end
 
     it "decodes a hash without a deferred tools strategy as native" do
-      dict = build_agent_class { deferred_tools [SerializerForecastTool], strategy: :gateway }.new.to_h
+      dict = deferred_agent_class(strategy: :gateway).new.to_h
 
       expect(Riffer::Agent.from_h(dict.except(:deferred_tools_strategy)).config.deferred_tools_strategy).
         must_equal :native
@@ -187,8 +195,11 @@ describe Riffer::Agent::Serializer do
     end
 
     it "resolves deferred tools through the tool_resolver" do
-      dict = build_agent_class { deferred_tools [SerializerForecastTool] }.new.to_h
-      agent = Riffer::Agent.from_h(dict, tool_resolver: ->(_descriptor) { SerializerForecastTool })
+      dict = deferred_agent_class.new.to_h
+      resolver = lambda do |descriptor|
+        descriptor[:name] == "serializer_forecast_tool" ? SerializerForecastTool : SerializerWeatherTool
+      end
+      agent = Riffer::Agent.from_h(dict, tool_resolver: resolver)
 
       expect(agent.deferred_tools).must_equal [SerializerForecastTool]
     end

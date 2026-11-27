@@ -49,6 +49,12 @@ class Riffer::Tools::Response
   end
 
   #--
+  #: (String) -> Riffer::Tools::Response
+  def self.unknown_tool(name)
+    error("Unknown tool '#{name}'", type: :unknown_tool)
+  end
+
+  #--
   #: (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
   def self.error(message, type: :execution_error, exception: nil)
     new(content: message, success: false, error_message: message, error_type: type, exception: exception)
