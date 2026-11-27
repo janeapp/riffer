@@ -253,7 +253,7 @@ end
 
 Things to know:
 
-- At least one tool in the request must not be deferred, or the API returns a 400 (`All tools cannot be deferred`). An agent needs a tool in `uses_tools` to load its deferred tools anyway.
+- At least one tool in the request must not be deferred, or the API returns a 400. Riffer raises `Riffer::InvalidToolsError` before sending such a request, for example from a direct `generate_text` or `stream_text` call with `deferred_tools:` and no `tools:`; web search counts as a tool that isn't deferred. An agent can't get there, since [building one](../AGENTS.md#deferred_tools-experimental) with deferred tools and no tool to load them raises the same error.
 - A deferred tool can't carry `cache_control` (400). Riffer never sets it on a tool; the top-level `model_options cache_control: {type: "ephemeral"}` works with deferred tools.
 - Deferred loading needs Claude Haiku 4.5, Sonnet 4.5, Opus 4.5 or a later model. An older model gets the API's own error.
 

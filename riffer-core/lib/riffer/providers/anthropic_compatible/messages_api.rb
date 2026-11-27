@@ -224,6 +224,12 @@ class Riffer::Providers::AnthropicCompatible::MessagesAPI < Riffer::Providers::B
     api_tools = [] #: Array[Hash[Symbol, untyped]]
     api_tools.concat(tools.map { |t| convert_tool(t) }) if tools && !tools.empty?
     api_tools << web_search_tool(web_search) if web_search
+    # The API answers a request whose tools are all deferred with a 400.
+    if api_tools.empty? && !deferred_tools.empty?
+      raise Riffer::InvalidToolsError,
+            "At least one tool must not be deferred: #{deferred_tools.map(&:name).join(', ')}"
+    end
+
     # Every deferred tool goes on every request, loaded or not, so the tools
     # array never changes and the prompt cache survives a load.
     api_tools.concat(deferred_tools.map { |t| convert_tool(t).merge(defer_loading: true) })

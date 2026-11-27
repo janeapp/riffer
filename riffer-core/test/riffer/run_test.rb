@@ -4231,7 +4231,7 @@ describe Riffer::Agent::Run do
     end
 
     it "passes the deferred tools to the provider when streaming" do
-      agent = deferred_agent(uses: [], deferred: [list_events])
+      agent = deferred_agent(uses: [get_weather], deferred: [list_events])
       agent.stream("hi").each { |_| }
 
       expect(agent.provider.calls.last[:deferred_tools]).must_equal [list_events]
@@ -4379,7 +4379,7 @@ describe Riffer::Agent::Run do
       list_events_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "list_events", arguments: "{}")
       pending = Riffer::Messages::Assistant.new("", tool_calls: [list_events_call])
       session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("hi"), pending])
-      agent = deferred_agent(uses: [], deferred: [list_events], session: session)
+      agent = deferred_agent(uses: [get_weather], deferred: [list_events], session: session)
       agent.generate
 
       expect(tool_results(agent)).must_equal [["c_1", :tool_not_loaded, []]]
@@ -4457,7 +4457,7 @@ describe Riffer::Agent::Run do
       end
 
       it "refuses a gateway call to a tool that hasn't been loaded" do
-        agent = gateway_agent(uses: [], deferred: [list_events])
+        agent = gateway_agent(uses: [get_weather], deferred: [list_events])
         agent.provider.stub_response("", tool_calls: [gateway_call("list_events", "c_1")])
         agent.generate("hi")
 
@@ -4465,7 +4465,7 @@ describe Riffer::Agent::Run do
       end
 
       it "returns an error result for a gateway call it can't unwrap" do
-        agent = gateway_agent(uses: [], deferred: [list_events])
+        agent = gateway_agent(uses: [get_weather], deferred: [list_events])
         malformed = { name: Riffer::Providers::DeferredToolGateway::Tool.name, arguments: "{}", call_id: "c_1" }
         agent.provider.stub_response("", tool_calls: [malformed])
         agent.generate("hi")

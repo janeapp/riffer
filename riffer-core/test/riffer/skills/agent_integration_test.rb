@@ -193,8 +193,22 @@ describe "Agent skills integration" do
         end
       end
 
-      error = assert_raises(Riffer::ArgumentError) { agent_class.new }
+      error = assert_raises(Riffer::InvalidToolsError) { agent_class.new }
       assert_match(/Tool name conflict/, error.message)
+    end
+
+    it "builds an agent whose deferred tools only the skill tool can load" do
+      deferred = stub_tool("ListEvents") { description "Lists calendar events" }
+
+      agent_class = stub_agent("Agent") do
+        model "mock/riffer-1"
+        deferred_tools [deferred]
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      assert_equal [deferred], agent_class.new.deferred_tools
     end
 
     it "passes skills context in context" do
