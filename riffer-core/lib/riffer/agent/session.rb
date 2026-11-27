@@ -193,6 +193,7 @@ class Riffer::Agent::Session
     when Riffer::Messages::Assistant
       rebuild_assistant(old, attrs)
     when Riffer::Messages::Tool
+      loaded_tools = attrs.fetch(:loaded_tools, old.loaded_tools)
       Riffer::Messages::Tool.new(
         attrs.fetch(:content, old.content),
         tool_call_id: old.tool_call_id,
@@ -200,7 +201,10 @@ class Riffer::Agent::Session
         id: attrs.fetch(:id, old.id),
         error: attrs.fetch(:error, old.error),
         error_type: attrs.fetch(:error_type, old.error_type),
-        loaded_tools: attrs.fetch(:loaded_tools, old.loaded_tools),
+        loaded_tools: loaded_tools,
+        loaded_tools_description: attrs.fetch(:loaded_tools_description) do
+          old.loaded_tools_description if loaded_tools == old.loaded_tools
+        end,
       )
     when Riffer::Messages::User
       Riffer::Messages::User.new(

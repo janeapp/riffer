@@ -351,11 +351,26 @@ describe Riffer::Agent::Session do
       expect(result.error?).must_equal true
     end
 
-    it "keeps loaded_tools when another attribute changes" do
-      loading = Riffer::Messages::Tool.new("", id: "t_1", tool_call_id: "c_1", name: "find", loaded_tools: ["weather"])
+    it "keeps loaded_tools and loaded_tools_description when another attribute changes" do
+      loading = Riffer::Messages::Tool.new(
+        "", id: "t_1", tool_call_id: "c_1", name: "find", loaded_tools: ["weather"], loaded_tools_description: "Loaded",
+      )
       session = Riffer::Agent::Session.new(messages: [user, tool_assistant, loading])
 
-      expect(session.update(tool_call_id: "c_1", content: "").loaded_tools).must_equal ["weather"]
+      result = session.update(tool_call_id: "c_1", content: "")
+
+      expect([result.loaded_tools, result.loaded_tools_description]).must_equal [["weather"], "Loaded"]
+    end
+
+    it "drops loaded_tools_description when loaded_tools changes without a new description" do
+      loading = Riffer::Messages::Tool.new(
+        "", id: "t_1", tool_call_id: "c_1", name: "find", loaded_tools: ["weather"], loaded_tools_description: "Loaded",
+      )
+      session = Riffer::Agent::Session.new(messages: [user, tool_assistant, loading])
+
+      result = session.update(tool_call_id: "c_1", loaded_tools: %w[weather news])
+
+      expect([result.loaded_tools, result.loaded_tools_description]).must_equal [%w[weather news], nil]
     end
 
     it "replaces loaded_tools when given" do

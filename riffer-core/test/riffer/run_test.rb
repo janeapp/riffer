@@ -4255,6 +4255,16 @@ describe Riffer::Agent::Run do
       expect(agent.session.messages.grep(Riffer::Messages::Tool).last.content).must_equal "3 events"
     end
 
+    it "stores the gateway's description of a load on the tool message that loaded it" do
+      agent = deferred_agent(uses: [connect_calendar(list_events)], deferred: [list_events])
+      agent.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+      agent.provider.stub_response("", tool_calls: [call("list_events", "c_2")])
+      agent.generate("What's on today?")
+
+      expect(agent.session.messages.grep(Riffer::Messages::Tool).map(&:loaded_tools_description)).
+        must_equal [Riffer::Providers::DeferredToolGateway.describe_loaded_tools([list_events]), nil]
+    end
+
     it "refuses a call to an unloaded tool, keeping results in call order" do
       agent = deferred_agent(uses: [get_weather], deferred: [list_events, create_event])
       agent.provider.stub_response(
@@ -4454,6 +4464,24 @@ describe Riffer::Agent::Run do
         expect(sent.last[2][:content]).must_match(/"name":"list_events"/)
         expect(agent.session.messages.grep(Riffer::Messages::Tool).first.content).must_equal ""
         expect(agent.provider.calls.none? { |c| c.key?(:deferred_tools) }).must_equal true
+      end
+
+      it "sends a load's description as it was at load time to an agent restored from JSON after a definition change" do
+        loader = connect_calendar(list_events)
+        original = gateway_agent(uses: [loader], deferred: [list_events])
+        original.provider.stub_response("", tool_calls: [call("connect_calendar", "c_1")])
+        original.provider.stub_response("Done")
+        original.generate("What's on today?")
+        load_text = original.provider.calls.last[:messages][2][:content]
+        persisted = JSON.parse(JSON.generate(original.session.messages.map(&:to_h)), symbolize_names: true)
+        list_events.description "Lists calendar events, newest first"
+
+        session = Riffer::Agent::Session.new(messages: persisted.map { |m| Riffer::Messages::Base.from_hash(m) })
+        restored = original.class.new(session: session)
+        restored.generate("And now?")
+
+        expect(restored.provider.calls.last[:messages][2][:content]).must_equal load_text
+        expect(load_text).must_include '"description":"Lists calendar events"'
       end
 
       it "refuses a gateway call to a tool that hasn't been loaded" do
