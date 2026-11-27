@@ -7,8 +7,9 @@ require "uri"
 class Riffer::Files::Downloader
   MAX_REDIRECTS = 3 #: Integer
 
-  # Faraday's default encoder sorts the query, drops repeated keys and turns
-  # %20 into +, which breaks presigned URLs. This one keeps the query as sent.
+  # Faraday rebuilds every query string from a params hash, which reorders and
+  # re-escapes it. This encoder passes the query through untouched, so each
+  # request goes to exactly the URL it was given.
   module RawQuery
     #--
     #: (String?) -> Hash[String, nil]
